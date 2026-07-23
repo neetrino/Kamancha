@@ -14,6 +14,7 @@ export const STORE_SETTING_KEYS = [
   "store.revenue",
   "store.globalDiscount",
   "store.fxRates",
+  "store.delivery",
 ] as const;
 
 export type StoreSettingKey = (typeof STORE_SETTING_KEYS)[number];

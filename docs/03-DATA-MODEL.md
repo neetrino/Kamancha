@@ -2,9 +2,9 @@
 
 **Database.** PostgreSQL (Neon)
 **ORM/migrations.** Drizzle ORM / Drizzle Kit
-**Կարգավիճակ.** Canonical 25-table schema migrated; idempotent seed available (`pnpm db:seed`)
-**Canonical table count.** 25
-**Վերջին թարմացում.** 2026-07-18
+**Կարգավիճակ.** Canonical 29-table schema migrated; idempotent seed available (`pnpm db:seed`)
+**Canonical table count.** 29
+**Վերջին թարմացում.** 2026-07-23
 
 ## 1. Սխեմայի նպատակը
 
@@ -29,7 +29,7 @@
 - Financial, stock և audit records-ը hard delete չեն ընդունում։
 - Flexible JSONB-ը միշտ Zod schema/version ունի և business-critical relational կապերը չի փոխարինում։
 
-## 3. Canonical 25-table inventory
+## 3. Canonical 29-table inventory
 
 | # | Table | Domain | Նշանակություն |
 |---:|---|---|---|
@@ -41,28 +41,33 @@
 | 6 | `products` | Catalog | Product, translations, price, current stock |
 | 7 | `categories` | Catalog | Hierarchy և translations |
 | 8 | `product_categories` | Catalog | Product/category many-to-many կապ |
-| 9 | `stock_movements` | Inventory | Immutable stock ledger |
-| 10 | `hero_slides` | Content | Hero configuration և translations |
-| 11 | `blog_posts` | Content | Blog content, translations և tags |
-| 12 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
-| 13 | `cart_items` | Commerce | Cart product quantities |
-| 14 | `wishlist_items` | Commerce | Customer wishlist entries |
-| 15 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
-| 16 | `promotion_users` | Pricing | User-restricted promotion allowlist |
-| 17 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
-| 18 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
-| 19 | `order_items` | Orders | Immutable purchased-item snapshots |
-| 20 | `order_events` | Orders | Status, notes և payment provider events |
-| 21 | `payments` | Payments | Payment attempts/current provider state |
-| 22 | `reviews` | Engagement | Verified-purchase reviews/moderation |
-| 23 | `contact_messages` | Support | Contact inbox |
-| 24 | `audit_logs` | Security | Immutable admin/security audit |
-| 25 | `outbox_events` | Reliability | Reliable post-commit email/provider/cache work |
+| 9 | `product_modifiers` | Catalog | Global additions (priced) և exceptions (unpriced) |
+| 10 | `product_modifier_links` | Catalog | Product↔modifier availability |
+| 11 | `stock_movements` | Inventory | Immutable stock ledger |
+| 12 | `hero_slides` | Content | Hero configuration և translations |
+| 13 | `blog_posts` | Content | Blog content, translations և tags |
+| 14 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
+| 15 | `cart_items` | Commerce | Cart product quantities + selection key |
+| 16 | `cart_item_modifiers` | Commerce | Selected modifiers on a cart line |
+| 17 | `wishlist_items` | Commerce | Customer wishlist entries |
+| 18 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
+| 19 | `promotion_users` | Pricing | User-restricted promotion allowlist |
+| 20 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
+| 21 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
+| 22 | `order_items` | Orders | Immutable purchased-item snapshots |
+| 23 | `order_item_modifiers` | Orders | Immutable addition/exception snapshots |
+| 24 | `order_events` | Orders | Status, notes և payment provider events |
+| 25 | `payments` | Payments | Payment attempts/current provider state |
+| 26 | `reviews` | Engagement | Verified-purchase reviews/moderation |
+| 27 | `contact_messages` | Support | Contact inbox |
+| 28 | `audit_logs` | Security | Immutable admin/security audit |
+| 29 | `outbox_events` | Reliability | Reliable post-commit email/provider/cache work |
 
 ### Count assumptions
 
 - Login-ը email/password է։ OAuth ավելացնելիս կարող է ավելանալ `accounts` table։
 - Product variants-ը launch scope-ում table չունի։ Variants ավելացնելիս առանձին schema migration է պահանջվում։
+- Product modifiers (additions/exceptions) reusable library են՝ per-product links-ով։
 - COD և online payment attempts-ը երկուսն էլ տեղավորվում են `payments`-ում։
 - Verification/reset tokens-ը PostgreSQL table չեն. դրանք Upstash Redis-ում hashed, expiring, atomic single-use records են։
 
@@ -162,7 +167,15 @@ Self-referencing `parent_id`, `translations JSONB`, sort order, active/archive s
 
 Composite unique `(product_id, category_id)`, optional `is_primary`, sort metadata և reverse lookup indexes։ Պահվում է, որովհետև product-ը կարող է ունենալ մի քանի category։
 
-### 6.4 `stock_movements`
+### 6.4 `product_modifiers`
+
+Global reusable library՝ `kind` = `ADDITION` | `EXCEPTION`, display `name`, AMD `price_amount` (ADDITION ≥ 0, EXCEPTION always 0), `is_active`։ Unique `(kind, name)`։
+
+### 6.5 `product_modifier_links`
+
+Composite unique `(product_id, modifier_id)` — որ library items-ն են հասանելի տվյալ product-ի PDP-ում։
+
+### 6.6 `stock_movements`
 
 Immutable ledger՝ product, signed delta, reason (`ORDER`,`CANCEL`,`RETURN`,`ADMIN_ADJUSTMENT`,`IMPORT`...), optional order/actor, resulting balance, correlation ID և timestamp։
 
@@ -188,9 +201,13 @@ Nullable user կամ guest token hash, status (`ACTIVE`,`MERGED`,`CONVERTED`,`AB
 
 ### 8.2 `cart_items`
 
-Cart/product, quantity > 0, timestamps և unique `(cart_id, product_id)`։ Cart-ի ցուցադրվող price-ը authoritative snapshot չէ. checkout-ը նորից հաշվարկում է։
+Cart/product, `selection_key` (sorted modifier IDs), quantity > 0, timestamps և unique `(cart_id, product_id, selection_key)`։ Նույն product-ը տարբեր modifier ընտրությամբ առանձին line է։ Cart-ի ցուցադրվող price-ը authoritative snapshot չէ. checkout-ը նորից հաշվարկում է։
 
-### 8.3 `wishlist_items`
+### 8.3 `cart_item_modifiers`
+
+Selected modifier IDs per cart line։ Checkout-ը resolves է current library name/price և snapshot է անում `order_item_modifiers`-ում։
+
+### 8.4 `wishlist_items`
 
 Direct `(user_id, product_id)` unique relation և timestamps։ Առանձին `wishlists` container table պետք չէ։ Guest wishlist-ը կարող է local preference լինել մինչև login merge policy հաստատելը։
 
@@ -223,9 +240,11 @@ Coupon redemption history-ը derive է արվում indexed `orders.promotion_id
 
 Composite unique `(promotion_id, user_id)` allowlist։ Zero rows նշանակում է promotion-ը user-restricted չէ։ Այս table-ը պահվում է UUID array/JSONB-ից խուսափելու և FK integrity ապահովելու համար։
 
-### 9.3 `delivery_rules`
+### 9.3 Delivery pricing
 
-Country, optional region/city, AMD price, optional free threshold, estimated days, active, priority և timestamps։ Matcher՝ City > Region > Country, ապա priority և deterministic ID tie-breaker։
+**Primary (current):** `store_settings` key `store.delivery` — origin address + lat/lng, AMD `pricePerKmAmount`, `isActive`. Checkout uses Google Geocoding + Routes API; fee = round(meters × AMD/km / 1000).
+
+**Legacy:** `delivery_rules` — country/optional region/city fixed AMD price, free threshold, estimated days, active, priority. Kept for historical order FKs; new storefront flow does not select city rules.
 
 ## 10. Orders և payments
 
@@ -246,9 +265,13 @@ Order JSON snapshots-ը versioned Zod schema ունեն։ Client total/stock/pro
 
 ### 10.2 `order_items`
 
-Order, nullable product reference, product title/SKU/image/attributes snapshots, quantity, unit base/display amounts, compare-at, discount/tax/line totals և currency context։ Product update/archive-ից հետո պատմական order-ը նույնն է մնում։
+Order, nullable product reference, product title/SKU/image/attributes snapshots, quantity, unit base/display amounts, compare-at, discount/tax/line totals և currency context։ Unit amount-ը ներառում է selected addition prices։ Product update/archive-ից հետո պատմական order-ը նույնն է մնում։
 
-### 10.3 `order_events`
+### 10.3 `order_item_modifiers`
+
+Immutable per-line snapshots՝ kind, name, unit price (0 for exceptions)։ Library փոփոխությունները պատմական order-ը չեն փոխում։
+
+### 10.4 `order_events`
 
 Միավորում է order status history, internal admin notes և verified payment provider events։ Fields՝ order, event type, from/to state, actor, visibility, safe structured payload, provider event ID, correlation ID և timestamp։
 
@@ -256,7 +279,7 @@ Order, nullable product reference, product title/SKU/image/attributes snapshots,
 - Customer response-ը raw events չի վերադարձնում. միայն explicitly public event type allowlist է օգտագործվում, որպեսզի internal note-ը չարտահոսի։
 - Event rows immutable են։
 
-### 10.4 `payments`
+### 10.5 `payments`
 
 Order, provider/method, provider reference, requested amount/currency, current status, attempt number, safe metadata և timestamps։ Մեկ order-ը կարող է ունենալ COD row կամ բազմաթիվ online attempts։ Card/secret/full sensitive payload չի պահվում։
 

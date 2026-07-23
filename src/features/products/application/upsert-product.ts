@@ -13,6 +13,8 @@ import {
   type TranslationsJson,
 } from "@/db/schema";
 import { persistProductMedia } from "@/features/products/application/persist-product-media";
+import { syncProductModifierLinks } from "@/features/products/application/product-modifiers";
+import { syncProductDiscount } from "@/features/products/application/sync-product-discount";
 import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
@@ -25,9 +27,17 @@ const productUpsertSchema = z.object({
   slug: z.string().trim().min(1).max(200),
   description: z.string().trim().max(5000).optional(),
   priceAmount: z.number().int().nonnegative(),
-  compareAtAmount: z.number().int().nonnegative().nullable(),
   stockOnHand: z.number().int().nonnegative(),
   categoryIds: z.array(z.string().uuid()),
+  modifierIds: z.array(z.string().uuid()),
+  discount: z
+    .object({
+      type: z.enum(["PERCENTAGE", "FIXED"]),
+      value: z.number().int().positive(),
+      startsAt: z.string().nullable(),
+      endsAt: z.string().nullable(),
+    })
+    .nullable(),
   status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]),
   primaryExistingId: z.string().uuid().nullable(),
   primaryNewIndex: z.number().int().nullable(),
@@ -133,12 +143,12 @@ export async function createProductFromDrawerAction(
   }
 
   if (
-    data.compareAtAmount != null &&
-    data.compareAtAmount < data.priceAmount
+    data.discount?.type === "PERCENTAGE" &&
+    (data.discount.value < 1 || data.discount.value > 100)
   ) {
     return err(
       "VALIDATION_ERROR",
-      "Compare-at price must be greater than or equal to price.",
+      "Percentage discount must be between 1 and 100.",
     );
   }
 
@@ -150,7 +160,7 @@ export async function createProductFromDrawerAction(
     id,
     sku: data.sku,
     priceAmount: data.priceAmount,
-    compareAtAmount: data.compareAtAmount,
+    compareAtAmount: null,
     stockOnHand: data.stockOnHand,
     status: data.status,
     translations: buildTranslations(data),
@@ -159,6 +169,16 @@ export async function createProductFromDrawerAction(
   const categoryError = await syncProductCategories(id, data.categoryIds);
   if (categoryError) {
     return err("VALIDATION_ERROR", categoryError);
+  }
+
+  const modifierError = await syncProductModifierLinks(id, data.modifierIds);
+  if (modifierError) {
+    return err("VALIDATION_ERROR", modifierError);
+  }
+
+  const discountError = await syncProductDiscount(id, data.discount);
+  if (discountError) {
+    return err("VALIDATION_ERROR", discountError);
   }
 
   if (data.stockOnHand > 0) {
@@ -203,12 +223,12 @@ export async function updateProductFromDrawerAction(
   }
 
   if (
-    data.compareAtAmount != null &&
-    data.compareAtAmount < data.priceAmount
+    data.discount?.type === "PERCENTAGE" &&
+    (data.discount.value < 1 || data.discount.value > 100)
   ) {
     return err(
       "VALIDATION_ERROR",
-      "Compare-at price must be greater than or equal to price.",
+      "Percentage discount must be between 1 and 100.",
     );
   }
 
@@ -235,7 +255,6 @@ export async function updateProductFromDrawerAction(
     .set({
       sku: data.sku,
       priceAmount: data.priceAmount,
-      compareAtAmount: data.compareAtAmount,
       stockOnHand: data.stockOnHand,
       status: data.status || existing.status,
       translations: buildTranslations(data),
@@ -249,6 +268,19 @@ export async function updateProductFromDrawerAction(
   );
   if (categoryError) {
     return err("VALIDATION_ERROR", categoryError);
+  }
+
+  const modifierError = await syncProductModifierLinks(
+    existing.id,
+    data.modifierIds,
+  );
+  if (modifierError) {
+    return err("VALIDATION_ERROR", modifierError);
+  }
+
+  const discountError = await syncProductDiscount(existing.id, data.discount);
+  if (discountError) {
+    return err("VALIDATION_ERROR", discountError);
   }
 
   const delta = data.stockOnHand - existing.stockOnHand;

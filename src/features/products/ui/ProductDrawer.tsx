@@ -13,15 +13,19 @@ import type {
   AdminCategoryOption,
   AdminProductListItem,
 } from "@/features/products/application/list-admin-products";
+import type { ProductModifierOption } from "@/features/products/types/modifiers";
+import type { ProductDiscountDraft } from "@/features/products/types/product-discount";
 import {
   createProductFromDrawerAction,
   updateProductFromDrawerAction,
 } from "@/features/products/application/upsert-product";
 import { ProductDrawerCategories } from "@/features/products/ui/ProductDrawerCategories";
+import { ProductDrawerDiscount } from "@/features/products/ui/ProductDrawerDiscount";
 import {
   ProductDrawerImages,
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
+import { ProductDrawerModifiers } from "@/features/products/ui/ProductDrawerModifiers";
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
@@ -31,10 +35,11 @@ type ProductDrawerProduct = Pick<
   | "slug"
   | "description"
   | "priceAmount"
-  | "compareAtAmount"
   | "stockOnHand"
   | "status"
   | "categoryIds"
+  | "modifierIds"
+  | "discount"
   | "images"
 >;
 
@@ -44,6 +49,7 @@ type ProductDrawerProps = {
   onClose: () => void;
   product?: ProductDrawerProduct | null;
   categories: AdminCategoryOption[];
+  modifierLibrary: ProductModifierOption[];
 };
 
 function imagesFromProduct(
@@ -64,6 +70,7 @@ export function ProductDrawer({
   onClose,
   product = null,
   categories: initialCategories,
+  modifierLibrary: initialModifierLibrary,
 }: ProductDrawerProps) {
   const router = useRouter();
   const isEdit = product != null;
@@ -75,8 +82,12 @@ export function ProductDrawer({
   const [categories, setCategories] =
     useState<AdminCategoryOption[]>(initialCategories);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [modifierLibrary, setModifierLibrary] = useState<ProductModifierOption[]>(
+    initialModifierLibrary,
+  );
+  const [modifierIds, setModifierIds] = useState<string[]>([]);
+  const [discount, setDiscount] = useState<ProductDiscountDraft | null>(null);
   const [priceAmount, setPriceAmount] = useState("");
-  const [compareAtAmount, setCompareAtAmount] = useState("");
   const [sku, setSku] = useState("");
   const [stockOnHand, setStockOnHand] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +97,7 @@ export function ProductDrawer({
     if (!open) return;
 
     setCategories(initialCategories);
+    setModifierLibrary(initialModifierLibrary);
     if (product) {
       setTitle(product.title);
       setSlug(product.slug);
@@ -93,10 +105,22 @@ export function ProductDrawer({
       setImages(imagesFromProduct(product));
       setRemovedImageIds([]);
       setCategoryIds(product.categoryIds);
-      setPriceAmount(String(product.priceAmount));
-      setCompareAtAmount(
-        product.compareAtAmount != null ? String(product.compareAtAmount) : "",
+      setModifierIds(product.modifierIds);
+      setDiscount(
+        product.discount
+          ? {
+              type: product.discount.type,
+              value: product.discount.value,
+              startsAt: product.discount.startsAt
+                ? new Date(product.discount.startsAt).toISOString()
+                : null,
+              endsAt: product.discount.endsAt
+                ? new Date(product.discount.endsAt).toISOString()
+                : null,
+            }
+          : null,
       );
+      setPriceAmount(String(product.priceAmount));
       setSku(product.sku);
       setStockOnHand(String(product.stockOnHand));
       setError(null);
@@ -107,13 +131,14 @@ export function ProductDrawer({
       setImages([]);
       setRemovedImageIds([]);
       setCategoryIds([]);
+      setModifierIds([]);
+      setDiscount(null);
       setPriceAmount("");
-      setCompareAtAmount("");
       setSku("");
       setStockOnHand("");
       setError(null);
     }
-  }, [open, product, initialCategories]);
+  }, [open, product, initialCategories, initialModifierLibrary]);
 
   function handleImagesChange(next: ProductDraftImage[]): void {
     const nextKeys = new Set(next.map((image) => image.key));
@@ -160,11 +185,10 @@ export function ProductDrawer({
               slug: slug.trim(),
               description: description.trim() || undefined,
               priceAmount: Number(priceAmount),
-              compareAtAmount: compareAtAmount.trim()
-                ? Number(compareAtAmount)
-                : null,
               stockOnHand: Number(stockOnHand),
               categoryIds,
+              modifierIds,
+              discount,
               status: (product?.status === "ACTIVE" ||
               product?.status === "ARCHIVED"
                 ? product.status
@@ -185,22 +209,34 @@ export function ProductDrawer({
 
             startTransition(async () => {
               setError(null);
-              const result =
-                isEdit && product
-                  ? await updateProductFromDrawerAction(
-                      locale,
-                      product.id,
-                      formData,
-                    )
-                  : await createProductFromDrawerAction(locale, formData);
+              try {
+                const result =
+                  isEdit && product
+                    ? await updateProductFromDrawerAction(
+                        locale,
+                        product.id,
+                        formData,
+                      )
+                    : await createProductFromDrawerAction(locale, formData);
 
-              if (!result.ok) {
-                setError(result.error.message);
-                return;
+                if (!result.ok) {
+                  setError(result.error.message);
+                  return;
+                }
+
+                onClose();
+                router.refresh();
+              } catch (caught) {
+                const message =
+                  caught instanceof Error ? caught.message : "Save failed.";
+                if (/body exceeded|413|too large/i.test(message)) {
+                  setError(
+                    "Images are too large to upload together. Use fewer or smaller files (max 5MB each).",
+                  );
+                  return;
+                }
+                setError(message);
               }
-
-              onClose();
-              router.refresh();
             });
           }}
         >
@@ -260,6 +296,15 @@ export function ProductDrawer({
               onSelectedChange={setCategoryIds}
             />
 
+            <ProductDrawerModifiers
+              locale={locale}
+              library={modifierLibrary}
+              selectedIds={modifierIds}
+              disabled={isPending}
+              onLibraryChange={setModifierLibrary}
+              onSelectedChange={setModifierIds}
+            />
+
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
@@ -276,18 +321,11 @@ export function ProductDrawer({
                   disabled={isPending}
                 />
               </label>
-              <label>
-                <span className={ADMIN_LABEL}>Compare at price</span>
-                <input
-                  min={0}
-                  type="number"
-                  value={compareAtAmount}
-                  onChange={(event) => setCompareAtAmount(event.target.value)}
-                  placeholder="Optional"
-                  className={ADMIN_INPUT}
-                  disabled={isPending}
-                />
-              </label>
+              <ProductDrawerDiscount
+                value={discount}
+                disabled={isPending}
+                onChange={setDiscount}
+              />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">

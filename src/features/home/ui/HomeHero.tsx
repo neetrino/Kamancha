@@ -14,6 +14,9 @@ type HomeHeroProps = {
   fallbackCtaHref: string;
 };
 
+const HERO_ROTATE_MS = 5000;
+const HERO_FADE_MS = 700;
+
 function isInternalHref(href: string): boolean {
   return href.startsWith("/");
 }
@@ -26,6 +29,7 @@ export function HomeHero({
   fallbackCtaHref,
 }: HomeHeroProps) {
   const [index, setIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
   const hasSlides = slides.length > 0;
   const active = hasSlides ? slides[index] : null;
 
@@ -34,11 +38,21 @@ export function HomeHero({
       return;
     }
 
+    let fadeTimeout: number | undefined;
     const timer = window.setInterval(() => {
-      setIndex((current) => (current + 1) % slides.length);
-    }, 5000);
+      setIsVisible(false);
+      fadeTimeout = window.setTimeout(() => {
+        setIndex((current) => (current + 1) % slides.length);
+        setIsVisible(true);
+      }, HERO_FADE_MS / 2);
+    }, HERO_ROTATE_MS);
 
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearInterval(timer);
+      if (fadeTimeout != null) {
+        window.clearTimeout(fadeTimeout);
+      }
+    };
   }, [slides.length]);
 
   const title = active?.copy.title ?? fallbackTitle;
@@ -74,25 +88,36 @@ export function HomeHero({
     <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-[560px] w-screen overflow-hidden sm:h-[500px] md:h-[600px] lg:h-[700px]">
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
 
-      {desktopProps ? (
-        <picture>
-          {mobileProps?.srcSet ? (
-            <source
-              media="(max-width: 767px)"
-              srcSet={mobileProps.srcSet}
-              sizes={mobileProps.sizes}
-            />
-          ) : null}
-          {/* Decorative LCP plane — title is in the overlay heading. */}
-          {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
-          <img {...desktopProps} />
-        </picture>
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-400" />
-      )}
+      <div
+        className="absolute inset-0 transition-opacity duration-700 ease-out"
+        style={{ opacity: isVisible ? 1 : 0 }}
+      >
+        {desktopProps ? (
+          <picture>
+            {mobileProps?.srcSet ? (
+              <source
+                media="(max-width: 767px)"
+                srcSet={mobileProps.srcSet}
+                sizes={mobileProps.sizes}
+              />
+            ) : null}
+            {/* Decorative LCP plane — title is in the overlay heading. */}
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
+            <img {...desktopProps} />
+          </picture>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-400" />
+        )}
+      </div>
 
       <div className="absolute inset-0 z-20 flex flex-col items-start justify-start px-4 pt-28 pb-16 pointer-events-none sm:justify-center sm:px-6 sm:pt-0 sm:pb-0 md:px-12 lg:px-20 xl:px-32">
-        <div className="pointer-events-auto max-w-full rounded-2xl border border-white/5 bg-white/5 p-4 shadow-2xl backdrop-blur-md sm:max-w-2xl sm:p-6 md:p-10 lg:p-12">
+        <div
+          className="pointer-events-auto max-w-full rounded-2xl border border-white/5 bg-white/5 p-4 shadow-2xl backdrop-blur-md transition-all duration-700 ease-out sm:max-w-2xl sm:p-6 md:p-10 lg:p-12"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? "translateY(0)" : "translateY(12px)",
+          }}
+        >
           <h1 className="mb-4 text-3xl leading-tight font-bold text-gray-900 sm:mb-6 sm:text-4xl md:text-5xl lg:text-6xl">
             {title}
           </h1>
@@ -130,10 +155,16 @@ export function HomeHero({
               aria-current={slideIndex === index}
               className={
                 slideIndex === index
-                  ? "h-2.5 w-8 rounded-full bg-white"
-                  : "h-2.5 w-2.5 rounded-full bg-white/50"
+                  ? "h-2.5 w-8 rounded-full bg-white transition-all"
+                  : "h-2.5 w-2.5 rounded-full bg-white/50 transition-all"
               }
-              onClick={() => setIndex(slideIndex)}
+              onClick={() => {
+                setIsVisible(false);
+                window.setTimeout(() => {
+                  setIndex(slideIndex);
+                  setIsVisible(true);
+                }, HERO_FADE_MS / 2);
+              }}
             />
           ))}
         </div>

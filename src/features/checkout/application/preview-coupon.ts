@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import { promotions } from "@/db/schema";
 import { getCartWithItems } from "@/features/cart/cart";
+import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
@@ -47,9 +48,9 @@ export async function previewCouponAction(
       compareAtAmount: product.compareAtAmount,
     })),
   );
-  const subtotal = items.reduce((sum, { item, product }) => {
+  const subtotal = items.reduce((sum, { item, product, modifiers }) => {
     const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
-    return sum + item.quantity * unit;
+    return sum + item.quantity * cartLineUnitAmount(unit, modifiers);
   }, 0);
 
   const [coupon] = await getDb()

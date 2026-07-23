@@ -28,10 +28,12 @@
     "storePickup": "Store Pickup",
     "storePickupDescription": "Pick up your order from our store (Free)",
     "delivery": "Delivery",
-    "deliveryDescription": "We will deliver your order to your address",
+    "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
     "freePickup": "Free (Store Pickup)",
     "enterCity": "Enter City",
-    "selectDeliveryLocation": "Select delivery location"
+    "selectDeliveryLocation": "Select delivery location",
+    "enterDeliveryAddress": "Enter a delivery address to calculate shipping",
+    "calculatingDelivery": "Calculating delivery…"
   },
   "payment": {
     "cashOnDelivery": "Cash on Delivery",

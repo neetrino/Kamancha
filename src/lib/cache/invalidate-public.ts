@@ -25,6 +25,11 @@ function collectTranslationSlugs(
   return [...slugs];
 }
 
+/** Invalidates storefront category list caches. */
+export function invalidateCategoriesCache(): void {
+  updateTag(CACHE_TAGS.categories);
+}
+
 /** Invalidates catalog list caches and optional per-product / per-slug PDP caches. */
 export function invalidateProductsCache(input?: {
   productId?: string;

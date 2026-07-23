@@ -28,10 +28,12 @@
     "storePickup": "Ինքնաառաքում",
     "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
     "delivery": "Առաքում",
-    "deliveryDescription": "Կառաքենք ձեր հասցեով",
+    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
     "freePickup": "Անվճար (Ինքնաառաքում)",
     "enterCity": "Մուտքագրեք քաղաքը",
-    "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
+    "selectDeliveryLocation": "Ընտրեք առաքման վայրը",
+    "enterDeliveryAddress": "Մուտքագրեք հասցեն՝ առաքման գինը հաշվելու համար",
+    "calculatingDelivery": "Առաքման գինը հաշվվում է…"
   },
   "payment": {
     "cashOnDelivery": "Կանխիկ առաքման պահին",

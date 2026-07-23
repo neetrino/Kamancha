@@ -28,10 +28,12 @@
     "storePickup": "Самовывоз",
     "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
     "delivery": "Доставка",
-    "deliveryDescription": "Доставим заказ по вашему адресу",
+    "deliveryDescription": "Доставим заказ по вашему адресу. Цена зависит от расстояния.",
     "freePickup": "Бесплатно (Самовывоз)",
     "enterCity": "Укажите город",
-    "selectDeliveryLocation": "Выберите место доставки"
+    "selectDeliveryLocation": "Выберите место доставки",
+    "enterDeliveryAddress": "Введите адрес, чтобы рассчитать доставку",
+    "calculatingDelivery": "Расчёт доставки…"
   },
   "payment": {
     "cashOnDelivery": "Наличными при получении",

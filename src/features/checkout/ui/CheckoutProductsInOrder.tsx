@@ -106,6 +106,14 @@ export function CheckoutProductsInOrder({
             <p className="mt-2 truncate text-sm text-gray-900" title={product.title}>
               {product.title}
             </p>
+            {product.modifierSummary ? (
+              <p
+                className="mt-0.5 line-clamp-2 text-xs text-gray-500"
+                title={product.modifierSummary}
+              >
+                {product.modifierSummary}
+              </p>
+            ) : null}
           </li>
         ))}
       </ul>

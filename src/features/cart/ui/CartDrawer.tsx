@@ -185,6 +185,11 @@ export function CartDrawer({
                           <p className="line-clamp-2 text-sm font-medium text-gray-900">
                             {item.title}
                           </p>
+                          {item.modifierSummary ? (
+                            <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
+                              {item.modifierSummary}
+                            </p>
+                          ) : null}
                           <p className="mt-1 text-sm font-semibold text-gray-900">
                             {item.lineTotalFormatted}
                           </p>

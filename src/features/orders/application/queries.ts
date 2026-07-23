@@ -17,6 +17,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   orderEvents,
+  orderItemModifiers,
   orderItems,
   orders,
   payments,
@@ -42,9 +43,20 @@ export type AdminOrderListItem = {
   isArchived: boolean;
 };
 
+export type OrderItemModifierSnapshot = {
+  id: string;
+  kind: "ADDITION" | "EXCEPTION";
+  name: string;
+  unitPriceAmount: number;
+};
+
 export type AdminOrderDetail = {
   order: typeof orders.$inferSelect;
-  items: Array<typeof orderItems.$inferSelect>;
+  items: Array<
+    typeof orderItems.$inferSelect & {
+      modifiers: OrderItemModifierSnapshot[];
+    }
+  >;
   events: Array<typeof orderEvents.$inferSelect>;
   payments: Array<typeof payments.$inferSelect>;
 };
@@ -203,7 +215,42 @@ export async function getAdminOrderByNumber(
       .orderBy(desc(payments.attemptNumber)),
   ]);
 
-  return { order, items, events, payments: paymentRows };
+  const itemIds = items.map((item) => item.id);
+  const modifierRows =
+    itemIds.length === 0
+      ? []
+      : await getDb()
+          .select({
+            id: orderItemModifiers.id,
+            orderItemId: orderItemModifiers.orderItemId,
+            kind: orderItemModifiers.kind,
+            name: orderItemModifiers.nameSnapshot,
+            unitPriceAmount: orderItemModifiers.unitPriceAmount,
+          })
+          .from(orderItemModifiers)
+          .where(inArray(orderItemModifiers.orderItemId, itemIds));
+
+  const modifiersByItem = new Map<string, OrderItemModifierSnapshot[]>();
+  for (const row of modifierRows) {
+    const entry = modifiersByItem.get(row.orderItemId) ?? [];
+    entry.push({
+      id: row.id,
+      kind: row.kind,
+      name: row.name,
+      unitPriceAmount: row.unitPriceAmount,
+    });
+    modifiersByItem.set(row.orderItemId, entry);
+  }
+
+  return {
+    order,
+    items: items.map((item) => ({
+      ...item,
+      modifiers: modifiersByItem.get(item.id) ?? [],
+    })),
+    events,
+    payments: paymentRows,
+  };
 }
 
 export type DashboardMetrics = {

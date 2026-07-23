@@ -7,6 +7,7 @@ import type {
   AdminCategoryOption,
   AdminProductListItem,
 } from "@/features/products/application/list-admin-products";
+import type { ProductModifierOption } from "@/features/products/types/modifiers";
 import { AdminProductsTable } from "@/features/products/ui/AdminProductsTable";
 import { ProductDrawer } from "@/features/products/ui/ProductDrawer";
 
@@ -22,6 +23,7 @@ type AdminProductsViewProps = {
   products: AdminProductListItem[];
   sortLinks: AdminProductsSortLinks;
   categories: AdminCategoryOption[];
+  modifierLibrary: ProductModifierOption[];
 };
 
 export function AdminProductsView({
@@ -29,6 +31,7 @@ export function AdminProductsView({
   products,
   sortLinks,
   categories,
+  modifierLibrary,
 }: AdminProductsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingProduct, setEditingProduct] =
@@ -73,6 +76,7 @@ export function AdminProductsView({
         onClose={closeDrawer}
         product={editingProduct}
         categories={categories}
+        modifierLibrary={modifierLibrary}
       />
     </>
   );

@@ -5,6 +5,7 @@ import { and, asc, eq, inArray, or } from "drizzle-orm";
 import { getCartWithItems } from "@/features/cart/cart";
 import { getDb } from "@/db/client";
 import { mediaAssets } from "@/db/schema";
+import { sumAdditionPrices } from "@/features/products/domain/modifier-selection";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type { Locale } from "@/lib/i18n/config";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
@@ -21,6 +22,7 @@ export type CartDrawerItemView = {
   imageUrl: string | null;
   unitPriceFormatted: string;
   lineTotalFormatted: string;
+  modifierSummary: string | null;
 };
 
 export type CartDrawerView = {
@@ -100,11 +102,21 @@ export async function getCartDrawerView(
   const items: CartDrawerItemView[] = [];
   let subtotalBase = 0;
 
-  for (const { item, product } of rows) {
+  for (const { item, product, modifiers } of rows) {
     const translation =
       product.translations[locale] ?? product.translations.hy;
-    const unitAmount =
+    const baseUnit =
       prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    const unitAmount = baseUnit + sumAdditionPrices(modifiers);
+    const additions = modifiers.filter((row) => row.kind === "ADDITION");
+    const exceptions = modifiers.filter((row) => row.kind === "EXCEPTION");
+    const parts: string[] = [];
+    if (additions.length > 0) {
+      parts.push(`+ ${additions.map((row) => row.name).join(", ")}`);
+    }
+    if (exceptions.length > 0) {
+      parts.push(`− ${exceptions.map((row) => row.name).join(", ")}`);
+    }
 
     items.push({
       id: item.id,
@@ -123,6 +135,7 @@ export async function getCartDrawerView(
         currency,
         locale,
       ),
+      modifierSummary: parts.length > 0 ? parts.join(" · ") : null,
     });
     subtotalBase += item.quantity * unitAmount;
   }

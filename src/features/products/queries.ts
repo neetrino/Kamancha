@@ -1,6 +1,17 @@
 import "server-only";
 
-import { and, asc, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gt,
+  inArray,
+  isNotNull,
+  isNull,
+  or,
+  sql,
+} from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
@@ -10,8 +21,15 @@ import {
   mediaAssets,
   productCategories,
   products,
+  promotions,
 } from "@/db/schema";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { enrichCatalogProducts } from "@/features/products/application/catalog-product-enrichment";
+import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
+import { listLinkedModifiersForProduct } from "@/features/products/application/product-modifiers";
+import {
+  DEFAULT_CATALOG_PAGE_SIZE,
+  DEFAULT_CATALOG_SORT,
+} from "@/features/products/schemas/catalog-list";
 import type {
   CatalogProduct,
   ProductCategoryRef,
@@ -23,6 +41,7 @@ import {
   PUBLIC_CACHE_REVALIDATE_SECONDS,
 } from "@/lib/cache/tags";
 import type { Locale } from "@/lib/i18n/config";
+import { defaultCurrency } from "@/lib/money/currency";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
 export type {
@@ -33,102 +52,9 @@ export type {
 } from "@/features/products/types";
 
 const RELATED_PRODUCTS_LIMIT = 4;
-export const CATALOG_PAGE_SIZE = 24;
-
-function toCatalogProduct(
-  product: typeof products.$inferSelect,
-  locale: Locale,
-  imageUrl: string | null = null,
-): Omit<
-  CatalogProduct,
-  "priceAmount" | "compareAtAmount" | "discountPercent" | "listPriceAmount"
-> | null {
-  const translation = product.translations[locale] ?? product.translations.hy;
-  if (!translation) {
-    return null;
-  }
-
-  return {
-    id: product.id,
-    sku: product.sku,
-    stockOnHand: product.stockOnHand,
-    translation,
-    imageUrl,
-  };
-}
-
-async function loadPrimaryProductImages(
-  productIds: string[],
-): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
-  if (productIds.length === 0) {
-    return map;
-  }
-
-  const rows = await getDb()
-    .select({
-      productId: mediaAssets.productId,
-      objectKey: mediaAssets.objectKey,
-      isPrimary: mediaAssets.isPrimary,
-      role: mediaAssets.role,
-      sortOrder: mediaAssets.sortOrder,
-    })
-    .from(mediaAssets)
-    .where(
-      and(
-        inArray(mediaAssets.productId, productIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, "PRIMARY")),
-      ),
-    )
-    .orderBy(asc(mediaAssets.sortOrder));
-
-  for (const row of rows) {
-    if (!row.productId || map.has(row.productId)) {
-      continue;
-    }
-    map.set(row.productId, mediaPublicUrl(row.objectKey));
-  }
-
-  return map;
-}
-
-async function withProductImages(
-  rows: Array<typeof products.$inferSelect>,
-  locale: Locale,
-): Promise<CatalogProduct[]> {
-  const productIds = rows.map((row) => row.id);
-  const [images, prices] = await Promise.all([
-    loadPrimaryProductImages(productIds),
-    resolveProductPrices(
-      rows.map((row) => ({
-        id: row.id,
-        priceAmount: row.priceAmount,
-        compareAtAmount: row.compareAtAmount,
-      })),
-    ),
-  ]);
-
-  return rows
-    .map((product) => {
-      const base = toCatalogProduct(
-        product,
-        locale,
-        images.get(product.id) ?? null,
-      );
-      if (!base) return null;
-
-      const resolved = prices.get(product.id);
-      return {
-        ...base,
-        listPriceAmount: resolved?.listAmount ?? product.priceAmount,
-        priceAmount: resolved?.unitAmount ?? product.priceAmount,
-        compareAtAmount: resolved?.compareAtAmount ?? null,
-        discountPercent: resolved?.discountPercent ?? null,
-      } satisfies CatalogProduct;
-    })
-    .filter((product): product is CatalogProduct => product !== null);
-}
+const HOME_OFFERS_LIMIT = 8;
+const HOME_OFFERS_CANDIDATE_LIMIT = 48;
+export const CATALOG_PAGE_SIZE = DEFAULT_CATALOG_PAGE_SIZE;
 
 const activeCatalogWhere = and(
   eq(products.status, "ACTIVE"),
@@ -149,53 +75,32 @@ export async function getActiveProductsByIds(
     .from(products)
     .where(and(inArray(products.id, productIds), activeCatalogWhere));
 
-  return withProductImages(rows, locale);
+  return enrichCatalogProducts(rows, locale);
 }
 
-async function loadActiveProductsPage(
-  locale: Locale,
-  page: number,
-): Promise<{ products: CatalogProduct[]; total: number; pageSize: number }> {
-  const offset = (page - 1) * CATALOG_PAGE_SIZE;
-
-  const [[countRow], rows] = await Promise.all([
-    getDb()
-      .select({ count: sql<number>`count(*)::int` })
-      .from(products)
-      .where(activeCatalogWhere),
-    getDb()
-      .select()
-      .from(products)
-      .where(activeCatalogWhere)
-      .orderBy(desc(products.createdAt))
-      .limit(CATALOG_PAGE_SIZE)
-      .offset(offset),
-  ]);
-
-  const enriched = await withProductImages(rows, locale);
-
-  return {
-    products: enriched,
-    total: countRow?.count ?? 0,
-    pageSize: CATALOG_PAGE_SIZE,
-  };
-}
-
-/** Paginated active catalog for the storefront (tag-cached). */
+/** Paginated active catalog — thin wrapper over filtered catalog listing. */
 export async function getActiveProductsPage(
   locale: Locale,
   page: number,
+  categorySlug?: string,
 ): Promise<{ products: CatalogProduct[]; total: number; pageSize: number }> {
   const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
-
-  return unstable_cache(
-    async () => loadActiveProductsPage(locale, safePage),
-    ["active-products-page", locale, String(safePage)],
+  const result = await listCatalogProducts(
+    locale,
     {
-      tags: [CACHE_TAGS.products],
-      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+      sort: DEFAULT_CATALOG_SORT,
+      page: safePage,
+      pageSize: DEFAULT_CATALOG_PAGE_SIZE,
+      category: categorySlug?.trim() || undefined,
     },
-  )();
+    defaultCurrency,
+  );
+
+  return {
+    products: result.products,
+    total: result.total,
+    pageSize: result.pageSize,
+  };
 }
 
 /** @deprecated Prefer getActiveProductsPage — kept for narrow internal callers. */
@@ -208,7 +113,7 @@ export async function getActiveProducts(
   }
 
   const rows = await getDb().select().from(products).where(activeCatalogWhere);
-  return withProductImages(rows, locale);
+  return enrichCatalogProducts(rows, locale);
 }
 
 async function loadFeaturedProducts(
@@ -226,7 +131,7 @@ async function loadFeaturedProducts(
     )
     .limit(8);
 
-  return withProductImages(rows, locale);
+  return enrichCatalogProducts(rows, locale);
 }
 
 export async function getFeaturedProducts(
@@ -235,6 +140,98 @@ export async function getFeaturedProducts(
   return unstable_cache(
     async () => loadFeaturedProducts(locale),
     ["featured-products", locale],
+    {
+      tags: [CACHE_TAGS.products],
+      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+    },
+  )();
+}
+
+async function loadOfferProducts(locale: Locale): Promise<CatalogProduct[]> {
+  const promoRows = await getDb()
+    .select({
+      productId: promotions.productId,
+      categoryId: promotions.categoryId,
+    })
+    .from(promotions)
+    .where(
+      and(
+        eq(promotions.kind, "AUTOMATIC"),
+        eq(promotions.isActive, true),
+      ),
+    );
+
+  const promoProductIds = promoRows
+    .map((row) => row.productId)
+    .filter((id): id is string => id != null);
+  const promoCategoryIds = promoRows
+    .map((row) => row.categoryId)
+    .filter((id): id is string => id != null);
+
+  const categoryProductIds =
+    promoCategoryIds.length > 0
+      ? (
+          await getDb()
+            .select({ productId: productCategories.productId })
+            .from(productCategories)
+            .where(inArray(productCategories.categoryId, promoCategoryIds))
+        ).map((row) => row.productId)
+      : [];
+
+  const targetedIds = [...new Set([...promoProductIds, ...categoryProductIds])];
+
+  const saleCondition =
+    targetedIds.length > 0
+      ? or(
+          and(
+            isNotNull(products.compareAtAmount),
+            gt(products.compareAtAmount, products.priceAmount),
+          ),
+          inArray(products.id, targetedIds),
+        )
+      : and(
+          isNotNull(products.compareAtAmount),
+          gt(products.compareAtAmount, products.priceAmount),
+        );
+
+  const [saleRows, recentRows] = await Promise.all([
+    getDb()
+      .select()
+      .from(products)
+      .where(and(activeCatalogWhere, saleCondition))
+      .orderBy(desc(products.updatedAt))
+      .limit(HOME_OFFERS_CANDIDATE_LIMIT),
+    getDb()
+      .select()
+      .from(products)
+      .where(activeCatalogWhere)
+      .orderBy(desc(products.updatedAt))
+      .limit(HOME_OFFERS_CANDIDATE_LIMIT),
+  ]);
+
+  const byId = new Map<string, typeof products.$inferSelect>();
+  for (const row of [...saleRows, ...recentRows]) {
+    if (!byId.has(row.id)) {
+      byId.set(row.id, row);
+    }
+  }
+
+  const enriched = await enrichCatalogProducts([...byId.values()], locale);
+  return enriched
+    .filter(
+      (product) =>
+        product.discountPercent != null && product.discountPercent > 0,
+    )
+    .slice(0, HOME_OFFERS_LIMIT);
+}
+
+/** Active products currently on sale for the home offers section. */
+export async function getOfferProducts(
+  locale: Locale,
+): Promise<CatalogProduct[]> {
+  return unstable_cache(
+    async () => loadOfferProducts(locale),
+    ["offer-products", locale],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
@@ -262,7 +259,7 @@ export async function getProductBySlug(
     return null;
   }
 
-  const [enriched] = await withProductImages([product], locale);
+  const [enriched] = await enrichCatalogProducts([product], locale);
   return enriched ?? null;
 }
 
@@ -342,9 +339,10 @@ async function loadProductDetailBySlug(
     return null;
   }
 
-  const [images, productCats] = await Promise.all([
+  const [images, productCats, linkedModifiers] = await Promise.all([
     loadProductGallery(product.id, locale, product.translation.title),
     loadProductCategories(product.id, locale),
+    listLinkedModifiersForProduct(product.id),
   ]);
 
   const gallery =
@@ -365,6 +363,20 @@ async function loadProductDetailBySlug(
     ...product,
     images: gallery,
     categories: productCats,
+    additions: linkedModifiers
+      .filter((row) => row.kind === "ADDITION")
+      .map((row) => ({
+        id: row.id,
+        name: row.name,
+        priceAmount: row.priceAmount,
+      })),
+    exceptions: linkedModifiers
+      .filter((row) => row.kind === "EXCEPTION")
+      .map((row) => ({
+        id: row.id,
+        name: row.name,
+        priceAmount: 0,
+      })),
   };
 }
 
@@ -416,5 +428,5 @@ export async function getRelatedProducts(
     .where(and(inArray(products.id, relatedIds), activeCatalogWhere))
     .limit(RELATED_PRODUCTS_LIMIT);
 
-  return withProductImages(rows, locale);
+  return enrichCatalogProducts(rows, locale);
 }

@@ -9,8 +9,8 @@ import { getProviders } from "@/config/providers";
 import {
   cartItems,
   carts,
-  deliveryRules,
   orderEvents,
+  orderItemModifiers,
   orderItems,
   orders,
   payments,
@@ -23,11 +23,16 @@ import {
   getCartWithItems,
   revalidateCartPaths,
 } from "@/features/cart/cart";
+import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import {
   checkoutSchema,
   type CheckoutInput,
 } from "@/features/checkout/schemas";
 import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
+import {
+  quoteDistanceDelivery,
+  type DistanceDeliveryQuote,
+} from "@/features/delivery/application/quote-distance-delivery";
 import {
   ORDER_NUMBER_LOCK_KEY,
   formatOrderNumber,
@@ -51,14 +56,6 @@ import {
 
 function hashValue(value: string): string {
   return createHash("sha256").update(value).digest("hex");
-}
-
-function deliveryLabel(countryCode: string, city: string | null): string {
-  const cityPart = city?.trim();
-  if (cityPart) {
-    return `${cityPart}, ${countryCode}`;
-  }
-  return countryCode;
 }
 
 export type CreateOrderResult =
@@ -93,20 +90,33 @@ export async function createOrderAction(
     return { ok: false, error: "Exchange rate unavailable. Try again shortly." };
   }
 
+  let deliveryQuote: DistanceDeliveryQuote | null = null;
+  if (input.shippingMethod === "delivery") {
+    const quoted = await quoteDistanceDelivery(input.line1 ?? "");
+    if (!quoted.ok) {
+      return { ok: false, error: quoted.error };
+    }
+    deliveryQuote = quoted.quote;
+  }
+
   const contactName = `${input.firstName} ${input.lastName}`.trim();
   const scopeHash = hashValue(user?.id ?? cart.guestTokenHash ?? cart.id);
   const keyHash = hashValue(input.idempotencyKey);
   const fingerprint = hashValue(
     JSON.stringify({
       cartId: cart.id,
-      items: items.map(({ item }) => ({
+      items: items.map(({ item, modifiers }) => ({
         productId: item.productId,
         quantity: item.quantity,
+        selectionKey: item.selectionKey,
+        modifierIds: modifiers.map((modifier) => modifier.id).sort(),
       })),
       email: input.contactEmail.toLowerCase(),
       shippingMethod: input.shippingMethod,
       paymentMethod: input.paymentMethod,
-      deliveryRuleId: input.deliveryRuleId ?? null,
+      line1: input.shippingMethod === "delivery" ? input.line1?.trim() : null,
+      deliveryAmount: deliveryQuote?.deliveryAmount ?? 0,
+      distanceMeters: deliveryQuote?.distanceMeters ?? null,
     }),
   );
 
@@ -128,44 +138,25 @@ export async function createOrderAction(
         return existing.orderNumber;
       }
 
-      let delivery: typeof deliveryRules.$inferSelect | null = null;
-      if (input.shippingMethod === "delivery") {
-        if (!input.deliveryRuleId) {
-          throw new Error("Delivery location is required.");
-        }
-
-        const [matched] = await tx
-          .select()
-          .from(deliveryRules)
-          .where(
-            and(
-              eq(deliveryRules.id, input.deliveryRuleId),
-              eq(deliveryRules.isActive, true),
-            ),
-          )
-          .limit(1);
-
-        if (!matched) {
-          throw new Error("Selected delivery location is unavailable.");
-        }
-
-        delivery = matched;
-      }
-
       const address = {
         recipientFirstName: input.firstName,
         recipientLastName: input.lastName,
         phone: input.contactPhone,
-        countryCode: delivery?.countryCode ?? "AM",
+        countryCode:
+          deliveryQuote?.countryCode?.trim().toUpperCase().slice(0, 2) || "AM",
         region: input.region,
         city:
           input.shippingMethod === "pickup"
             ? (input.city?.trim() || "Yerevan")
-            : (delivery?.city?.trim() || input.city?.trim() || ""),
+            : (deliveryQuote?.city?.trim() ||
+              input.city?.trim() ||
+              "Yerevan"),
         line1:
           input.shippingMethod === "pickup"
             ? (input.line1?.trim() || "Store pickup")
-            : (input.line1 ?? ""),
+            : (deliveryQuote?.destinationFormattedAddress ||
+              input.line1?.trim() ||
+              ""),
         line2: input.line2,
         postalCode: input.postalCode,
       };
@@ -181,50 +172,70 @@ export async function createOrderAction(
         compareAtAmount: number | null;
         lineDiscountAmount: number;
         lineTotal: number;
-        nextStock: number;
+        modifiers: Array<{
+          modifierId: string;
+          kind: "ADDITION" | "EXCEPTION";
+          name: string;
+          unitPriceAmount: number;
+        }>;
       }> = [];
 
-      const lockedProducts: Array<{
-        product: typeof products.$inferSelect;
-        quantity: number;
-      }> = [];
-
+      const qtyByProduct = new Map<string, number>();
       for (const { item, product } of items) {
         if (product.status !== "ACTIVE") {
           throw new Error("A product in the cart is unavailable.");
         }
+        qtyByProduct.set(
+          product.id,
+          (qtyByProduct.get(product.id) ?? 0) + item.quantity,
+        );
+      }
 
+      const lockedById = new Map<string, typeof products.$inferSelect>();
+      for (const [productId, neededQty] of qtyByProduct) {
         const [locked] = await tx
           .select()
           .from(products)
-          .where(eq(products.id, product.id))
+          .where(eq(products.id, productId))
           .for("update")
           .limit(1);
 
-        if (!locked || locked.stockOnHand < item.quantity) {
+        if (!locked || locked.stockOnHand < neededQty) {
           throw new Error("Insufficient stock for one or more items.");
         }
-
-        lockedProducts.push({ product: locked, quantity: item.quantity });
+        lockedById.set(productId, locked);
       }
 
       const pricedUnits = await resolveProductPrices(
-        lockedProducts.map(({ product }) => ({
+        [...lockedById.values()].map((product) => ({
           id: product.id,
           priceAmount: product.priceAmount,
           compareAtAmount: product.compareAtAmount,
         })),
       );
 
-      for (const { product: locked, quantity } of lockedProducts) {
+      const remainingStock = new Map(
+        [...lockedById.entries()].map(([id, product]) => [
+          id,
+          product.stockOnHand,
+        ]),
+      );
+
+      for (const { item, product, modifiers } of items) {
+        const locked = lockedById.get(product.id);
+        if (!locked) {
+          throw new Error("A product in the cart is unavailable.");
+        }
+
         const resolved = pricedUnits.get(locked.id);
-        const unitAmount = resolved?.unitAmount ?? locked.priceAmount;
+        const baseUnit = resolved?.unitAmount ?? locked.priceAmount;
+        const unitAmount = cartLineUnitAmount(baseUnit, modifiers);
         const compareAtAmount = resolved?.compareAtAmount ?? null;
         const lineDiscountAmount = Math.max(
           0,
-          (resolved?.listAmount ?? locked.priceAmount) - unitAmount,
+          (resolved?.listAmount ?? locked.priceAmount) - baseUnit,
         );
-        const lineTotal = unitAmount * quantity;
+        const lineTotal = unitAmount * item.quantity;
         const unitDisplayAmount = Number(
           convertAmount(
             unitAmount,
@@ -234,6 +245,11 @@ export async function createOrderAction(
           ).amount,
         );
         subtotal += lineTotal;
+
+        const nextStock =
+          (remainingStock.get(locked.id) ?? locked.stockOnHand) - item.quantity;
+        remainingStock.set(locked.id, nextStock);
+
         lineSnapshots.push({
           productId: locked.id,
           title:
@@ -241,24 +257,28 @@ export async function createOrderAction(
             locked.translations.hy?.title ??
             locked.sku,
           sku: locked.sku,
-          quantity,
+          quantity: item.quantity,
           unitAmount,
           unitDisplayAmount,
           compareAtAmount,
           lineDiscountAmount,
           lineTotal,
-          nextStock: locked.stockOnHand - quantity,
+          modifiers: modifiers.map((modifier) => ({
+            modifierId: modifier.id,
+            kind: modifier.kind,
+            name: modifier.name,
+            unitPriceAmount:
+              modifier.kind === "ADDITION" ? modifier.priceAmount : 0,
+          })),
         });
       }
+
+      const stockAfterOrder = remainingStock;
 
       const deliveryAmount =
         input.shippingMethod === "pickup"
           ? 0
-          : delivery &&
-              (delivery.freeThresholdAmount === null ||
-                subtotal < delivery.freeThresholdAmount)
-            ? delivery.priceAmount
-            : 0;
+          : (deliveryQuote?.deliveryAmount ?? 0);
 
       let discountAmount = 0;
       let appliedPromotion: typeof promotions.$inferSelect | null = null;
@@ -335,19 +355,18 @@ export async function createOrderAction(
         promotionTypeSnapshot: appliedPromotion?.discountType ?? null,
         promotionValueSnapshot: appliedPromotion?.discountValue ?? null,
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
-        deliveryRuleId:
-          input.shippingMethod === "delivery" ? (delivery?.id ?? null) : null,
+        deliveryRuleId: null,
         deliveryLabelSnapshot:
           input.shippingMethod === "pickup"
             ? "Store pickup"
-            : delivery
-              ? deliveryLabel(delivery.countryCode, delivery.city)
+            : deliveryQuote
+              ? `Distance delivery (${deliveryQuote.distanceLabel})`
               : "Delivery",
         deliveryEstimateSnapshot:
           input.shippingMethod === "pickup"
             ? null
-            : delivery
-              ? `${delivery.estimatedDaysMin ?? 1}-${delivery.estimatedDaysMax ?? 3} days`
+            : deliveryQuote
+              ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
               : null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
@@ -357,8 +376,9 @@ export async function createOrderAction(
       });
 
       for (const line of lineSnapshots) {
+        const orderItemId = createId();
         await tx.insert(orderItems).values({
-          id: createId(),
+          id: orderItemId,
           orderId,
           productId: line.productId,
           productTitleSnapshot: line.title,
@@ -372,22 +392,39 @@ export async function createOrderAction(
           currency: defaultCurrency,
         });
 
+        if (line.modifiers.length > 0) {
+          await tx.insert(orderItemModifiers).values(
+            line.modifiers.map((modifier) => ({
+              id: createId(),
+              orderItemId,
+              modifierId: modifier.modifierId,
+              kind: modifier.kind,
+              nameSnapshot: modifier.name,
+              unitPriceAmount: modifier.unitPriceAmount,
+            })),
+          );
+        }
+      }
+
+      for (const [productId, nextStock] of stockAfterOrder) {
         await tx
           .update(products)
           .set({
-            stockOnHand: line.nextStock,
+            stockOnHand: nextStock,
             version: sql`${products.version} + 1`,
             updatedAt: now,
           })
-          .where(eq(products.id, line.productId));
+          .where(eq(products.id, productId));
 
+        const orderedQty =
+          (qtyByProduct.get(productId) ?? 0);
         await tx.insert(stockMovements).values({
           id: createId(),
-          productId: line.productId,
-          delta: -line.quantity,
+          productId,
+          delta: -orderedQty,
           reason: "ORDER",
           orderId,
-          resultingBalance: line.nextStock,
+          resultingBalance: nextStock,
           correlationId: number,
         });
       }

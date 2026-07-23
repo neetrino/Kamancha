@@ -5,6 +5,7 @@ import {
   listAdminCategoryOptions,
   listAdminProducts,
 } from "@/features/products/application/list-admin-products";
+import { listModifiersForProductAdmin } from "@/features/products/application/product-modifiers";
 import { adminProductsFilterSchema } from "@/features/products/schemas/admin-list";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
@@ -80,10 +81,12 @@ export default async function AdminProductsPage({
         categoryId: undefined,
       };
 
-  const [{ rows, total, pageSize }, categories] = await Promise.all([
-    listAdminProducts(locale, filters),
-    listAdminCategoryOptions(locale),
-  ]);
+  const [{ rows, total, pageSize }, categories, modifierLibrary] =
+    await Promise.all([
+      listAdminProducts(locale, filters),
+      listAdminCategoryOptions(locale),
+      listModifiersForProductAdmin(null),
+    ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   function sortHref(sort: "title" | "stock" | "price" | "created"): string {
@@ -124,6 +127,7 @@ export default async function AdminProductsPage({
         products={rows}
         sortLinks={sortLinks}
         categories={categories}
+        modifierLibrary={modifierLibrary}
       />
 
       {totalPages > 1 ? (

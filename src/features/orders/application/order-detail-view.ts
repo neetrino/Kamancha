@@ -16,6 +16,12 @@ export type AdminOrderDetailItemView = {
   unitPriceAmount: number;
   lineTotalAmount: number;
   currency: string;
+  modifiers: Array<{
+    id: string;
+    kind: "ADDITION" | "EXCEPTION";
+    name: string;
+    unitPriceAmount: number;
+  }>;
 };
 
 export type AdminOrderDetailView = {
@@ -118,6 +124,7 @@ export function toAdminOrderDetailView(
       unitPriceAmount: item.unitBaseAmount,
       lineTotalAmount: item.lineTotalAmount,
       currency: item.currency,
+      modifiers: item.modifiers,
     })),
   };
 }

@@ -36,4 +36,12 @@ export type ProductCategoryRef = {
 export type ProductDetail = CatalogProduct & {
   images: ProductGalleryImage[];
   categories: ProductCategoryRef[];
+  additions: ProductModifierChoice[];
+  exceptions: ProductModifierChoice[];
+};
+
+export type ProductModifierChoice = {
+  id: string;
+  name: string;
+  priceAmount: number;
 };

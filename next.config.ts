@@ -70,6 +70,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  // Product/category/hero drawers upload images via Server Actions (up to 5MB each).
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "25mb",
+    },
+  },
   images: {
     remotePatterns: buildImageRemotePatterns(),
   },

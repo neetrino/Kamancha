@@ -3,17 +3,13 @@ import "server-only";
 import { and, asc, eq, inArray, or } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { cartItems, mediaAssets, products } from "@/db/schema";
+import { mediaAssets } from "@/db/schema";
+import type { CartItemWithProduct } from "@/features/cart/cart";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
 export type { CheckoutOrderProduct };
-
-type CartItemWithProduct = {
-  item: typeof cartItems.$inferSelect;
-  product: typeof products.$inferSelect;
-};
 
 async function loadPrimaryProductImages(
   productIds: string[],
@@ -57,14 +53,24 @@ export async function getCheckoutOrderProducts(
     rows.map(({ product }) => product.id),
   );
 
-  return rows.map(({ item, product }) => {
+  return rows.map(({ item, product, modifiers }) => {
     const translation =
       product.translations[locale] ?? product.translations.hy;
+    const parts: string[] = [];
+    const additions = modifiers.filter((row) => row.kind === "ADDITION");
+    const exceptions = modifiers.filter((row) => row.kind === "EXCEPTION");
+    if (additions.length > 0) {
+      parts.push(`+ ${additions.map((row) => row.name).join(", ")}`);
+    }
+    if (exceptions.length > 0) {
+      parts.push(`− ${exceptions.map((row) => row.name).join(", ")}`);
+    }
     return {
       id: item.id,
       title: translation?.title ?? product.sku,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
+      modifierSummary: parts.length > 0 ? parts.join(" · ") : null,
     };
   });
 }

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { listAdminDeliveryLocations } from "@/features/delivery/application/queries";
+import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
 import { AdminDeliveryView } from "@/features/delivery/ui/AdminDeliveryView";
 import { isLocale } from "@/lib/i18n/config";
 
@@ -16,7 +16,7 @@ export default async function AdminDeliveryPage({
     notFound();
   }
 
-  const locations = await listAdminDeliveryLocations();
+  const settings = await getDeliverySettings();
 
-  return <AdminDeliveryView locale={locale} locations={locations} />;
+  return <AdminDeliveryView locale={locale} settings={settings} />;
 }

@@ -21,10 +21,13 @@ import {
   categories,
   mediaAssets,
   productCategories,
+  productModifierLinks,
   products,
   type LocaleTranslation,
 } from "@/db/schema";
 import { loadProductImagesForAdmin } from "@/features/products/application/persist-product-media";
+import { loadProductDiscounts } from "@/features/products/application/sync-product-discount";
+import type { AdminProductDiscount } from "@/features/products/types/product-discount";
 import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
@@ -52,6 +55,8 @@ export type AdminProductListItem = {
   imageUrl: string | null;
   categoryIds: string[];
   categoryLabels: string[];
+  modifierIds: string[];
+  discount: AdminProductDiscount | null;
   images: AdminProductImage[];
 };
 
@@ -154,6 +159,30 @@ async function loadPrimaryImages(
   return map;
 }
 
+async function loadModifierIds(
+  productIds: string[],
+): Promise<Map<string, string[]>> {
+  const map = new Map<string, string[]>();
+  if (productIds.length === 0) return map;
+
+  const rows = await getDb()
+    .select({
+      productId: productModifierLinks.productId,
+      modifierId: productModifierLinks.modifierId,
+      sortOrder: productModifierLinks.sortOrder,
+    })
+    .from(productModifierLinks)
+    .where(inArray(productModifierLinks.productId, productIds))
+    .orderBy(asc(productModifierLinks.sortOrder));
+
+  for (const row of rows) {
+    const entry = map.get(row.productId) ?? [];
+    entry.push(row.modifierId);
+    map.set(row.productId, entry);
+  }
+  return map;
+}
+
 async function loadCategoryMeta(
   productIds: string[],
   locale: Locale,
@@ -211,11 +240,14 @@ export async function listAdminProducts(
     .offset(offset);
 
   const ids = rows.map((row) => row.id);
-  const [primaryImages, categoryMap, galleryImages] = await Promise.all([
-    loadPrimaryImages(ids),
-    loadCategoryMeta(ids, locale),
-    loadProductImagesForAdmin(ids),
-  ]);
+  const [primaryImages, categoryMap, modifierMap, discountMap, galleryImages] =
+    await Promise.all([
+      loadPrimaryImages(ids),
+      loadCategoryMeta(ids, locale),
+      loadModifierIds(ids),
+      loadProductDiscounts(ids),
+      loadProductImagesForAdmin(ids),
+    ]);
 
   return {
     total,
@@ -223,6 +255,7 @@ export async function listAdminProducts(
     rows: rows.map((product) => {
       const translation = translationFor(product.translations, locale);
       const categoryMeta = categoryMap.get(product.id);
+      const discount = discountMap.get(product.id) ?? null;
       return {
         id: product.id,
         sku: product.sku,
@@ -238,6 +271,8 @@ export async function listAdminProducts(
         imageUrl: primaryImages.get(product.id) ?? null,
         categoryIds: categoryMeta?.ids ?? [],
         categoryLabels: categoryMeta?.labels ?? [],
+        modifierIds: modifierMap.get(product.id) ?? [],
+        discount,
         images: galleryImages.get(product.id) ?? [],
       };
     }),

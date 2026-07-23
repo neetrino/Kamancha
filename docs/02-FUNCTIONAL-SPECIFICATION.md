@@ -40,7 +40,7 @@
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| HOME-001 | `/{locale}` page-ը պարունակում է Header, Hero, Featured Products, short About, CTA և Footer։ |
+| HOME-001 | `/{locale}` page-ը պարունակում է Header, Hero, Categories, Featured Products, Offers, Why choose us, short About, CTA և Footer (contact + social)։ |
 | HOME-002 | Hero query-ն վերադարձնում է միայն active slide-երը sort order-ով և locale translation-ով։ |
 | HOME-003 | Slide-ը ունի desktop/mobile media; responsive `<picture>`/image behavior-ը ճիշտ asset-ն է ընտրում։ |
 | HOME-004 | Hero action URL-ը validation է անցնում; internal URL-ը render է լինում `Link`-ով։ |
@@ -52,7 +52,7 @@
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| CAT-001 | Search, min/max price, category, in-stock, sort (`newest`, `price_asc`, `price_desc`, `popular`) և page size-ը URL params-ում են։ |
+| CAT-001 | Search, min/max price, category, in-stock, on-sale, sort (`newest`, `price_asc`, `price_desc`, `popular`) և page size-ը URL params-ում են։ |
 | CAT-002 | Params-ը server-side parse/normalize են արվում; invalid values-ը safe default կամ validation response են տալիս։ |
 | CAT-003 | Filters-ը share/refresh-ից հետո պահպանվում են; Clear Filters-ը հեռացնում է միայն catalog filter params-ը։ |
 | CAT-004 | Active filter chips-ը յուրաքանչյուր filter-ի removal control ունեն։ |
@@ -242,7 +242,7 @@
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| APROD-001 | Fields՝ title/description/SEO + generated/editable slug **ընտրված locale-ի համար** (մեկ դաշտերի հավաքածու + locale selector, `DEC-017`), SKU, media, primary/sort, categories, price, compare-at, stock, threshold, status, featured/upcoming, badge style/position։ Locale-ից անկախ fields-ը (SKU, price, stock, …) մեկ անգամ են։ |
+| APROD-001 | Fields՝ title/description/SEO + generated/editable slug **ընտրված locale-ի համար** (մեկ դաշտերի հավաքածու + locale selector, `DEC-017`), SKU, media, primary/sort, categories, price, **product discount** (`%` կամ ֏ FIXED + optional starts/ends schedule via AUTOMATIC promotion), stock, threshold, status, featured/upcoming, badge style/position։ Locale-ից անկախ fields-ը (SKU, price, stock, …) մեկ անգամ են։ |
 | APROD-002 | SKU unique է; `(locale, slug)` unique է և server-side ստուգվում է constraint-ով՝ յուրաքանչյուր լրացված locale-ի համար։ |
 | APROD-003 | Price/compare-at/stock/threshold constraints-ը server + DB checks ունեն։ |
 | APROD-004 | Multiple images-ի primary uniqueness և sort order-ը պահպանվում են transaction-safe։ |
@@ -250,6 +250,8 @@
 | APROD-006 | Stock manual adjustment-ը ստեղծում է stock movement, ոչ ուղղակի անբացատրելի overwrite։ |
 | APROD-007 | Variant model-ի extension point կա, բայց launch UI-ը `OPEN-007`-ով է որոշվում։ |
 | APROD-008 | Publish-ին պարտադիր է առնվազն մեկ լրիվ locale translation; բացակա locale-ում product-ը public catalog-ում չի երևում։ |
+| APROD-009 | Product-ը կարող է կցել global Ավելացում (անուն + AMD գին) և Բացառություն (անուն միայն) modifiers։ Library item-ները reusable են մյուս products-ի համար։ |
+| APROD-010 | PDP-ում linked additions/exceptions multi-select dropdown են։ Addition prices-ը մտնում են cart/checkout unit total։ Selected modifiers snapshot են լինում order details-ում (admin + profile)։ |
 
 ## 14. Admin categories
 
@@ -296,10 +298,12 @@
 
 ## 18. Delivery
 
-- Rule fields՝ country, optional region/city, AMD price, optional free-delivery threshold, estimate days, active, priority։
-- Matcher-ը ընտրում է City > Region > Country specificity, հետո priority և deterministic tie-breaker։
-- Invalid overlapping rules-ը admin UI-ում warning/validation են ստանում։
-- Order-ը snapshot է անում ընտրված rule label/details և final delivery amount-ը։
+- Admin configures **store origin address** (geocoded) and **AMD price per kilometer**.
+- Checkout delivery fee = driving distance (Google Routes API) × AMD/km.
+- Fractional kilometers are kept (e.g. 1.101 km × 1000 AMD/km → 1101 AMD); final fee rounds to whole dram.
+- Client-quoted delivery amounts are ignored; order create re-quotes server-side and snapshots distance + rate + amount.
+- Pickup remains free. Delivery is offered only when settings are active and origin is geocoded.
+- Legacy `delivery_rules` city rows may remain for historical orders; new checkouts use distance settings (`store.delivery`).
 
 ## 19. Blog և content
 

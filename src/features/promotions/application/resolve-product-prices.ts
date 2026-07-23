@@ -1,11 +1,12 @@
 import "server-only";
 
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull, lte, or, gte } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { productCategories, promotions } from "@/db/schema";
 import {
   resolveCatalogPrice,
+  type ProductAutomaticDiscount,
   type ResolvedCatalogPrice,
 } from "@/features/promotions/domain/resolve-automatic-discount";
 import { getStoreGlobalDiscount } from "@/features/settings/application/queries";
@@ -16,11 +17,17 @@ export type ProductPriceInput = {
   compareAtAmount?: number | null;
 };
 
-type AutomaticPromoRow = {
-  discountValue: number;
-  productId: string | null;
-  categoryId: string | null;
-};
+function isPromotionActiveNow(
+  row: {
+    startsAt: Date | null;
+    endsAt: Date | null;
+  },
+  now: Date,
+): boolean {
+  if (row.startsAt && row.startsAt.getTime() > now.getTime()) return false;
+  if (row.endsAt && row.endsAt.getTime() < now.getTime()) return false;
+  return true;
+}
 
 /**
  * Batch-resolves catalog unit prices with automatic discounts applied.
@@ -35,20 +42,28 @@ export async function resolveProductPrices(
   }
 
   const productIds = products.map((product) => product.id);
+  const now = new Date();
   const [globalDiscount, promoRows, categoryLinks] = await Promise.all([
     getStoreGlobalDiscount(),
     getDb()
       .select({
+        discountType: promotions.discountType,
         discountValue: promotions.discountValue,
         productId: promotions.productId,
         categoryId: promotions.categoryId,
+        startsAt: promotions.startsAt,
+        endsAt: promotions.endsAt,
       })
       .from(promotions)
       .where(
         and(
           eq(promotions.kind, "AUTOMATIC"),
-          eq(promotions.discountType, "PERCENTAGE"),
           eq(promotions.isActive, true),
+          or(
+            isNull(promotions.startsAt),
+            lte(promotions.startsAt, now),
+          ),
+          or(isNull(promotions.endsAt), gte(promotions.endsAt, now)),
         ),
       ),
     getDb()
@@ -60,16 +75,25 @@ export async function resolveProductPrices(
       .where(inArray(productCategories.productId, productIds)),
   ]);
 
-  const productPercent = new Map<string, number>();
+  const productDiscount = new Map<string, ProductAutomaticDiscount>();
   const categoryPercent = new Map<string, number>();
-  for (const promo of promoRows as AutomaticPromoRow[]) {
+
+  for (const promo of promoRows) {
+    if (!isPromotionActiveNow(promo, now)) continue;
+
     if (promo.productId) {
-      const current = productPercent.get(promo.productId);
-      if (current == null || promo.discountValue > current) {
-        productPercent.set(promo.productId, promo.discountValue);
+      const current = productDiscount.get(promo.productId);
+      // Prefer higher effective cut: keep first product rule; product drawer
+      // enforces a single AUTOMATIC product promo.
+      if (!current) {
+        productDiscount.set(promo.productId, {
+          type: promo.discountType,
+          value: promo.discountValue,
+        });
       }
     }
-    if (promo.categoryId) {
+
+    if (promo.categoryId && promo.discountType === "PERCENTAGE") {
       const current = categoryPercent.get(promo.categoryId);
       if (current == null || promo.discountValue > current) {
         categoryPercent.set(promo.categoryId, promo.discountValue);
@@ -94,7 +118,7 @@ export async function resolveProductPrices(
       product.id,
       resolveCatalogPrice({
         listAmount: product.priceAmount,
-        productPercent: productPercent.get(product.id) ?? null,
+        productDiscount: productDiscount.get(product.id) ?? null,
         categoryPercents,
         globalPercent: globalDiscount.percentage,
         manualCompareAtAmount: product.compareAtAmount ?? null,

@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 
+import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { getCartWithItems } from "@/features/cart/cart";
-import { getCheckoutDeliveryOptions } from "@/features/checkout/application/get-checkout-delivery";
 import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
+import { isCheckoutDistanceDeliveryEnabled } from "@/features/delivery/application/get-delivery-settings";
 import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -22,10 +23,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliveryOptions] = await Promise.all([
+  const [user, { items }, deliveryEnabled] = await Promise.all([
     getCurrentUser(),
     getCartWithItems(),
-    getCheckoutDeliveryOptions(),
+    isCheckoutDistanceDeliveryEnabled(),
   ]);
   const [defaultAddress, prices, orderProducts] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
@@ -38,9 +39,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     ),
     getCheckoutOrderProducts(rawLocale, items),
   ]);
-  const subtotal = items.reduce((sum, { item, product }) => {
-    const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
-    return sum + item.quantity * unit;
+  const subtotal = items.reduce((sum, { item, product, modifiers }) => {
+    const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    return sum + item.quantity * cartLineUnitAmount(base, modifiers);
   }, 0);
 
   return (
@@ -59,7 +60,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       defaultPhone={defaultAddress?.phone ?? user?.phone ?? ""}
       defaultLine1={defaultAddress?.line1 ?? ""}
       subtotalAmount={subtotal}
-      deliveryOptions={deliveryOptions}
+      deliveryEnabled={deliveryEnabled}
       labels={{
         title: copy.title,
         productsInOrder: copy.productsInOrder,
@@ -75,20 +76,16 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         lastName: copy.form.lastName,
         email: copy.form.email,
         phone: copy.form.phone,
-        city: copy.form.city,
         address: copy.form.address,
-        deliveryLocation: copy.form.deliveryLocation,
-        selectLocation: copy.form.selectLocation,
         phonePlaceholder: copy.placeholders.phone,
-        cityPlaceholder: copy.placeholders.city,
         addressPlaceholder: copy.placeholders.address,
         storePickup: copy.shipping.storePickup,
         storePickupDescription: copy.shipping.storePickupDescription,
         delivery: copy.shipping.delivery,
         deliveryDescription: copy.shipping.deliveryDescription,
         freePickup: copy.shipping.freePickup,
-        enterCity: copy.shipping.enterCity,
-        selectDeliveryLocation: copy.shipping.selectDeliveryLocation,
+        enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
+        calculatingDelivery: copy.shipping.calculatingDelivery,
         cashOnDelivery: copy.payment.cashOnDelivery,
         cashOnDeliveryDescription: copy.payment.cashOnDeliveryDescription,
         idram: copy.payment.idram,

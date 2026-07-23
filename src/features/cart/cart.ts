@@ -1,22 +1,40 @@
 "use server";
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { getDb } from "@/db/client";
-import { cartItems, carts, products } from "@/db/schema";
+import {
+  cartItemModifiers,
+  cartItems,
+  carts,
+  productModifiers,
+  products,
+} from "@/db/schema";
 import {
   getGuestCartToken,
   hashGuestToken,
   peekGuestCartToken,
 } from "@/features/cart/guest-token";
+import { buildModifierSelectionKey } from "@/features/products/domain/modifier-selection";
+import { resolveSelectedModifiersForProduct } from "@/features/products/application/product-modifiers";
+import type { ProductModifierRow } from "@/features/products/types/modifiers";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createId } from "@/lib/id";
 
 type CartRow = typeof carts.$inferSelect;
-type CartItemWithProduct = {
+
+export type CartItemModifierView = {
+  id: string;
+  kind: "ADDITION" | "EXCEPTION";
+  name: string;
+  priceAmount: number;
+};
+
+export type CartItemWithProduct = {
   item: typeof cartItems.$inferSelect;
   product: typeof products.$inferSelect;
+  modifiers: CartItemModifierView[];
 };
 
 async function getCartOwnerForWrite(): Promise<{
@@ -72,6 +90,41 @@ export async function getOrCreateCart(): Promise<CartRow> {
   return created;
 }
 
+async function loadModifiersForCartItems(
+  itemIds: string[],
+): Promise<Map<string, CartItemModifierView[]>> {
+  const map = new Map<string, CartItemModifierView[]>();
+  if (itemIds.length === 0) return map;
+
+  const rows = await getDb()
+    .select({
+      cartItemId: cartItemModifiers.cartItemId,
+      id: productModifiers.id,
+      kind: productModifiers.kind,
+      name: productModifiers.name,
+      priceAmount: productModifiers.priceAmount,
+    })
+    .from(cartItemModifiers)
+    .innerJoin(
+      productModifiers,
+      eq(cartItemModifiers.modifierId, productModifiers.id),
+    )
+    .where(inArray(cartItemModifiers.cartItemId, itemIds));
+
+  for (const row of rows) {
+    const entry = map.get(row.cartItemId) ?? [];
+    entry.push({
+      id: row.id,
+      kind: row.kind,
+      name: row.name,
+      priceAmount: row.priceAmount,
+    });
+    map.set(row.cartItemId, entry);
+  }
+
+  return map;
+}
+
 /** Loads cart lines without creating a cart or guest cookie.
  * Used by header, cart page, and checkout reads.
  */
@@ -89,13 +142,24 @@ export async function getCartWithItems(): Promise<{
     return { cart: null, items: [] };
   }
 
-  const items = await getDb()
+  const rows = await getDb()
     .select({ item: cartItems, product: products })
     .from(cartItems)
     .innerJoin(products, eq(cartItems.productId, products.id))
     .where(eq(cartItems.cartId, cart.id));
 
-  return { cart, items };
+  const modifiersByItem = await loadModifiersForCartItems(
+    rows.map((row) => row.item.id),
+  );
+
+  return {
+    cart,
+    items: rows.map((row) => ({
+      item: row.item,
+      product: row.product,
+      modifiers: modifiersByItem.get(row.item.id) ?? [],
+    })),
+  };
 }
 
 /** Cheap badge count for the header — no cart creation, no line enrichment. */
@@ -120,9 +184,14 @@ export async function getCartItemCount(): Promise<number> {
   return row?.total ?? 0;
 }
 
+export type AddToCartModifiers = {
+  modifierIds?: ReadonlyArray<string>;
+};
+
 export async function addToCart(
   productId: string,
   quantity = 1,
+  options: AddToCartModifiers = {},
 ): Promise<void> {
   if (!Number.isInteger(quantity) || quantity < 1) {
     throw new Error("Invalid quantity.");
@@ -142,19 +211,66 @@ export async function addToCart(
     throw new Error("Product unavailable.");
   }
 
+  const resolved = await resolveSelectedModifiersForProduct(
+    productId,
+    options.modifierIds ?? [],
+  );
+  if (!resolved.ok) {
+    throw new Error(resolved.error);
+  }
+
+  const selectionKey = buildModifierSelectionKey(
+    resolved.modifiers.map((modifier) => modifier.id),
+  );
   const addQty = Math.min(quantity, product.stock);
 
-  await getDb()
-    .insert(cartItems)
-    .values({ id: createId(), cartId: cart.id, productId, quantity: addQty })
-    .onConflictDoUpdate({
-      target: [cartItems.cartId, cartItems.productId],
-      set: {
-        quantity: sql`least(${cartItems.quantity} + ${addQty}, ${product.stock})`,
+  const [existing] = await getDb()
+    .select({ id: cartItems.id, quantity: cartItems.quantity })
+    .from(cartItems)
+    .where(
+      and(
+        eq(cartItems.cartId, cart.id),
+        eq(cartItems.productId, productId),
+        eq(cartItems.selectionKey, selectionKey),
+      ),
+    )
+    .limit(1);
+
+  if (existing) {
+    await getDb()
+      .update(cartItems)
+      .set({
+        quantity: Math.min(existing.quantity + addQty, product.stock),
         updatedAt: new Date(),
-      },
+      })
+      .where(eq(cartItems.id, existing.id));
+  } else {
+    const itemId = createId();
+    await getDb().insert(cartItems).values({
+      id: itemId,
+      cartId: cart.id,
+      productId,
+      selectionKey,
+      quantity: addQty,
     });
+    await insertCartItemModifiers(itemId, resolved.modifiers);
+  }
+
   await revalidateCartPaths();
+}
+
+async function insertCartItemModifiers(
+  cartItemId: string,
+  modifiers: ReadonlyArray<ProductModifierRow>,
+): Promise<void> {
+  if (modifiers.length === 0) return;
+  await getDb().insert(cartItemModifiers).values(
+    modifiers.map((modifier) => ({
+      id: createId(),
+      cartItemId,
+      modifierId: modifier.id,
+    })),
+  );
 }
 
 export async function updateQuantity(

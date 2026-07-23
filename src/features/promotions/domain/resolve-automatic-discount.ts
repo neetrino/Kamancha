@@ -1,6 +1,7 @@
 /**
  * Pure automatic-discount resolution for catalog and checkout pricing.
  * Precedence: product rule > best category rule > store global %.
+ * Product rules may be percentage or fixed AMD amount.
  */
 
 export type AutomaticDiscountSource = "product" | "category" | "global" | null;
@@ -9,6 +10,10 @@ export type AutomaticDiscountPick = {
   percent: number | null;
   source: AutomaticDiscountSource;
 };
+
+export type ProductAutomaticDiscount =
+  | { type: "PERCENTAGE"; value: number }
+  | { type: "FIXED"; value: number };
 
 export type ResolvedCatalogPrice = {
   listAmount: number;
@@ -21,6 +26,12 @@ export type ResolvedCatalogPrice = {
 function normalizePercent(value: number | null | undefined): number | null {
   if (value == null) return null;
   if (!Number.isInteger(value) || value < 1 || value > 100) return null;
+  return value;
+}
+
+function normalizeFixed(value: number | null | undefined): number | null {
+  if (value == null) return null;
+  if (!Number.isInteger(value) || value < 1) return null;
   return value;
 }
 
@@ -89,16 +100,72 @@ export function applyPercentageToListPrice(
   };
 }
 
+/** Applies a fixed AMD amount off the list price. */
+export function applyFixedToListPrice(
+  listAmount: number,
+  fixedAmount: number | null,
+  source: AutomaticDiscountSource = "product",
+): ResolvedCatalogPrice {
+  const safeList = Math.max(0, Math.floor(listAmount));
+  const safeFixed = normalizeFixed(fixedAmount);
+
+  if (safeFixed == null) {
+    return {
+      listAmount: safeList,
+      unitAmount: safeList,
+      compareAtAmount: null,
+      discountPercent: null,
+      source: null,
+    };
+  }
+
+  const unitAmount = Math.max(0, safeList - safeFixed);
+  const discountPercent =
+    safeList > 0
+      ? Math.min(100, Math.round(((safeList - unitAmount) * 100) / safeList))
+      : null;
+
+  return {
+    listAmount: safeList,
+    unitAmount,
+    compareAtAmount: unitAmount < safeList ? safeList : null,
+    discountPercent:
+      discountPercent != null && discountPercent > 0 ? discountPercent : null,
+    source: unitAmount < safeList ? source : null,
+  };
+}
+
 /** Resolves final catalog unit price from list + automatic discount inputs. */
 export function resolveCatalogPrice(input: {
   listAmount: number;
+  productDiscount?: ProductAutomaticDiscount | null;
   productPercent?: number | null;
   categoryPercents?: ReadonlyArray<number | null | undefined>;
   globalPercent?: number | null;
   /** Manual compare-at from the product row when no automatic discount applies. */
   manualCompareAtAmount?: number | null;
 }): ResolvedCatalogPrice {
-  const picked = pickAutomaticDiscountPercent(input);
+  if (input.productDiscount?.type === "FIXED") {
+    const fixedResolved = applyFixedToListPrice(
+      input.listAmount,
+      input.productDiscount.value,
+      "product",
+    );
+    if (fixedResolved.source != null) {
+      return fixedResolved;
+    }
+  }
+
+  const productPercent =
+    input.productDiscount?.type === "PERCENTAGE"
+      ? input.productDiscount.value
+      : input.productPercent;
+
+  const picked = pickAutomaticDiscountPercent({
+    productPercent,
+    categoryPercents: input.categoryPercents,
+    globalPercent: input.globalPercent,
+  });
   const resolved = applyPercentageToListPrice(
     input.listAmount,
     picked.percent,

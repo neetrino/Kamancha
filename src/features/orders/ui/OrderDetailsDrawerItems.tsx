@@ -40,9 +40,28 @@ export function OrderDetailsDrawerItems({
                       title={item.title}
                       imageUrl={item.imageUrl}
                     />
-                    <span className="font-medium text-gray-900">
-                      {item.title}
-                    </span>
+                    <div className="min-w-0">
+                      <span className="font-medium text-gray-900">
+                        {item.title}
+                      </span>
+                      {item.modifiers.length > 0 ? (
+                        <ul className="mt-1 space-y-0.5 text-xs text-gray-600">
+                          {item.modifiers.map((modifier) => (
+                            <li key={modifier.id}>
+                              {modifier.kind === "ADDITION" ? "+ " : "− "}
+                              {modifier.name}
+                              {modifier.kind === "ADDITION" &&
+                              modifier.unitPriceAmount > 0
+                                ? ` (+${formatOrderDrawerMoney(
+                                    modifier.unitPriceAmount,
+                                    item.currency,
+                                  )})`
+                                : ""}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </div>
                   </div>
                 </td>
                 <td className={ADMIN_TABLE_TD}>{item.sku}</td>
