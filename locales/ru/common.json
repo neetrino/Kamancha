@@ -21,7 +21,13 @@
     "logout": "Выход",
     "profile": "Профиль",
     "admin": "Админ",
-    "createAccount": "Создать аккаунт"
+    "createAccount": "Создать аккаунт",
+    "search": "Поиск",
+    "searchClose": "Закрыть поиск",
+    "searchPlaceholder": "Искать товары…",
+    "searchIdle": "Введите название товара",
+    "searchEmpty": "Товары не найдены",
+    "searchViewAll": "Смотреть все результаты"
   },
   "footer": {
     "shop": "Магазин",

@@ -7,6 +7,7 @@ import {
 } from "@/components/layout/site-header-classes";
 import { AppLink } from "@/components/ui/AppLink";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
+import { HeaderSearch } from "@/features/products/ui/HeaderSearch";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -32,6 +33,26 @@ function navLinkClassName(): string {
   return "rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-gray-900";
 }
 
+function headerSearchLabels(
+  header: Dictionary["header"],
+): {
+  open: string;
+  close: string;
+  placeholder: string;
+  idle: string;
+  empty: string;
+  viewAll: string;
+} {
+  return {
+    open: header.search,
+    close: header.searchClose,
+    placeholder: header.searchPlaceholder,
+    idle: header.searchIdle,
+    empty: header.searchEmpty,
+    viewAll: header.searchViewAll,
+  };
+}
+
 export function SiteHeaderMainNav({
   locale,
   currency,
@@ -41,6 +62,8 @@ export function SiteHeaderMainNav({
   cartItemCount,
   wishlistCount,
 }: SiteHeaderMainNavProps) {
+  const searchLabels = headerSearchLabels(dictionary.header);
+
   return (
     <header className="relative z-40 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm backdrop-blur-sm">
       <div className={SITE_HEADER_INNER}>
@@ -55,6 +78,11 @@ export function SiteHeaderMainNav({
             </AppLink>
 
           <div className="flex items-center gap-2 md:hidden">
+            <HeaderSearch
+              locale={locale}
+              currency={currency}
+              labels={searchLabels}
+            />
             <LocaleCurrencySwitcher
               locale={locale}
               currency={currency}
@@ -88,6 +116,11 @@ export function SiteHeaderMainNav({
           <div
             className={`${SITE_HEADER_ACTIONS_RAIL} ml-auto hidden justify-center gap-2 md:flex`}
           >
+            <HeaderSearch
+              locale={locale}
+              currency={currency}
+              labels={searchLabels}
+            />
             <AccountControls
               locale={locale}
               loginLabel={dictionary.header.login}

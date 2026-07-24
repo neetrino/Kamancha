@@ -102,8 +102,8 @@ export function ProductDetailView({
             productId={product.id}
             stockOnHand={product.stockOnHand}
             basePriceAmount={product.priceAmount}
-            additions={product.additions}
-            exceptions={product.exceptions}
+            additions={product.additions ?? []}
+            exceptions={product.exceptions ?? []}
             inWishlist={inWishlist}
             isSignedIn={isSignedIn}
             wishlistLabel={dictionary.nav.wishlist}

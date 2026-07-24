@@ -21,7 +21,13 @@
     "logout": "Ելք",
     "profile": "Պրոֆիլ",
     "admin": "Ադմին",
-    "createAccount": "Գրանցվել"
+    "createAccount": "Գրանցվել",
+    "search": "Որոնում",
+    "searchClose": "Փակել որոնումը",
+    "searchPlaceholder": "Որոնել ապրանքներ…",
+    "searchIdle": "Գրեք ապրանքի անունը",
+    "searchEmpty": "Ապրանքներ չեն գտնվել",
+    "searchViewAll": "Տեսնել բոլոր արդյունքները"
   },
   "footer": {
     "shop": "Խանութ",

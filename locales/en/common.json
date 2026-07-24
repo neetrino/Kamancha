@@ -21,7 +21,13 @@
     "logout": "Logout",
     "profile": "Profile",
     "admin": "Admin",
-    "createAccount": "Create account"
+    "createAccount": "Create account",
+    "search": "Search",
+    "searchClose": "Close search",
+    "searchPlaceholder": "Search products…",
+    "searchIdle": "Type a product name",
+    "searchEmpty": "No products found",
+    "searchViewAll": "View all results"
   },
   "footer": {
     "shop": "Shop",

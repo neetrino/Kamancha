@@ -385,7 +385,7 @@ export const getProductDetailBySlug = cache(
   async (locale: Locale, slug: string): Promise<ProductDetail | null> => {
     return unstable_cache(
       async () => loadProductDetailBySlug(locale, slug),
-      ["product-detail", locale, slug],
+      ["product-detail-v2", locale, slug],
       {
         tags: [
           CACHE_TAGS.productDetail,
