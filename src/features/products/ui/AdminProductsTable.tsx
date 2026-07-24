@@ -6,10 +6,7 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ConfirmDialog,
-  deleteConfirmDescription,
-} from "@/components/ui/ConfirmDialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -29,6 +26,7 @@ import {
 } from "@/features/products/application/admin-product-actions";
 import type { AdminProductListItem } from "@/features/products/application/list-admin-products";
 import { AdminProductRow } from "@/features/products/ui/AdminProductRow";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminProductsSortLinks = {
   title: string;
@@ -37,11 +35,18 @@ type AdminProductsSortLinks = {
   created: string;
 };
 
+type TableCopy = {
+  table: Dictionary["admin"]["products"]["table"];
+  common: Dictionary["admin"]["common"];
+  confirm: Dictionary["admin"]["confirm"];
+};
+
 type AdminProductsTableProps = {
   locale: string;
   products: AdminProductListItem[];
   sortLinks: AdminProductsSortLinks;
   onEdit: (product: AdminProductListItem) => void;
+  copy: TableCopy;
 };
 
 export function AdminProductsTable({
@@ -49,6 +54,7 @@ export function AdminProductsTable({
   products,
   sortLinks,
   onEdit,
+  copy,
 }: AdminProductsTableProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -84,7 +90,7 @@ export function AdminProductsTable({
         await action();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(caught instanceof Error ? caught.message : copy.common.actionFailed);
       }
     });
   }
@@ -92,13 +98,14 @@ export function AdminProductsTable({
   function deleteSelected(): void {
     if (selected.size === 0) return;
     const count = selected.size;
+    const label =
+      count === 1
+        ? copy.confirm.selectedProduct
+        : copy.confirm.selectedProducts.replace("{count}", String(count));
     setPendingDelete({
       kind: "bulk",
       productIds: [...selected],
-      label:
-        count === 1
-          ? "selected product"
-          : `${count} selected products`,
+      label,
     });
   }
 
@@ -110,6 +117,7 @@ export function AdminProductsTable({
       try {
         const result = await softDeleteProductsAction(locale, { productIds });
         if (!result.ok) throw new Error(result.error.message);
+
         setSelected((prev) => {
           const next = new Set(prev);
           for (const id of productIds) next.delete(id);
@@ -118,17 +126,24 @@ export function AdminProductsTable({
         setPendingDelete(null);
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(caught instanceof Error ? caught.message : copy.common.actionFailed);
       }
     });
   }
 
+  const selectedLabel = copy.common.selectedCount
+    .replace("{count}", String(selected.size))
+    .replace(
+      "{entity}",
+      selected.size === 1
+        ? copy.common.entitySingular.product
+        : copy.common.entitySingular.products,
+    );
+
   return (
     <div className="flex flex-col gap-4">
       <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">
-          Selected {selected.size} product{selected.size === 1 ? "" : "s"}
-        </p>
+        <p className="text-sm text-gray-700">{selectedLabel}</p>
         <Button
           type="button"
           size="sm"
@@ -136,7 +151,7 @@ export function AdminProductsTable({
           disabled={isPending || selected.size === 0}
           onClick={deleteSelected}
         >
-          Delete Selected
+          {copy.table.deleteSelected}
         </Button>
       </Card>
 
@@ -145,7 +160,7 @@ export function AdminProductsTable({
       <Card className={ADMIN_TABLE_CARD}>
         {products.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No products match these filters.
+            {copy.table.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
@@ -159,33 +174,33 @@ export function AdminProductsTable({
                       checked={allSelected}
                       onChange={toggleAll}
                       disabled={isPending}
-                      aria-label="Select all products"
+                      aria-label={copy.table.selectAllAria}
                     />
                   </th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link href={sortLinks.title} className="hover:text-gray-900">
-                      Product
+                      {copy.table.product}
                     </Link>
                   </th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link href={sortLinks.stock} className="hover:text-gray-900">
-                      Stock
+                      {copy.table.stock}
                     </Link>
                   </th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link href={sortLinks.price} className="hover:text-gray-900">
-                      Price
+                      {copy.table.price}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>Category</th>
-                  <th className={ADMIN_TABLE_TH}>Featured</th>
-                  <th className={ADMIN_TABLE_TH}>Actions</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.category}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.featured}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.table.actions}</th>
                   <th className={ADMIN_TABLE_TH}>
                     <Link
                       href={sortLinks.created}
                       className="hover:text-gray-900"
                     >
-                      Created
+                      {copy.table.created}
                     </Link>
                   </th>
                 </tr>
@@ -198,6 +213,7 @@ export function AdminProductsTable({
                     product={product}
                     selected={selected.has(product.id)}
                     disabled={isPending}
+                    copy={{ table: copy.table, common: copy.common }}
                     onToggle={() => toggleOne(product.id)}
                     onEdit={() => onEdit(product)}
                     onFeatured={() =>
@@ -244,12 +260,19 @@ export function AdminProductsTable({
 
       <ConfirmDialog
         open={pendingDelete !== null}
-        title="Delete"
+        title={copy.confirm.deleteTitle}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
         description={
           pendingDelete?.kind === "bulk"
-            ? `Are you sure you want to delete ${pendingDelete.label}? This action cannot be undone.`
+            ? copy.confirm.deleteSelectedProducts.replace(
+                "{label}",
+                pendingDelete.label,
+              )
             : pendingDelete
-              ? deleteConfirmDescription("product", pendingDelete.label)
+              ? copy.confirm.deleteEntity
+                  .replace("{entity}", copy.confirm.entityLabels.product)
+                  .replace("{name}", pendingDelete.label)
               : ""
         }
         isPending={isPending}

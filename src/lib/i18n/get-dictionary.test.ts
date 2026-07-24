@@ -18,4 +18,10 @@ describe("getDictionary", () => {
     expect(getDictionary("hy").nav.home).toBe("Գլխավոր");
     expect(getDictionary("ru").nav.home).toBe("Главная");
   });
+
+  it("exposes admin.nav.dashboard for all locales", () => {
+    expect(getDictionary("en").admin.nav.dashboard).toBe("Dashboard");
+    expect(typeof getDictionary("hy").admin.nav.dashboard).toBe("string");
+    expect(typeof getDictionary("ru").admin.nav.dashboard).toBe("string");
+  });
 });

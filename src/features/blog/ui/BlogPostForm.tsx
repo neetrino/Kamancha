@@ -25,6 +25,7 @@ import {
 } from "@/features/blog/domain/blog-rules";
 import type { UpsertBlogPostFormInput } from "@/features/blog/schemas/blog";
 import { isLocale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type BlogPostFormProps = {
   locale: string;
@@ -32,6 +33,7 @@ type BlogPostFormProps = {
   postId?: string;
   status?: BlogPostStatus;
   defaults?: Partial<UpsertBlogPostFormInput>;
+  copy: Dictionary["admin"];
 };
 
 function blogStatusBadgeClass(status: string): string {
@@ -48,6 +50,7 @@ export function BlogPostForm({
   postId,
   status,
   defaults,
+  copy,
 }: BlogPostFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -94,12 +97,12 @@ export function BlogPostForm({
           }}
         >
           <h2 className={ADMIN_SECTION_TITLE}>
-            {mode === "edit" ? "Edit blog post" : "Create blog post"}
+            {mode === "edit" ? copy.blog.form.editTitle : copy.blog.form.createTitle}
           </h2>
 
           {status ? (
             <p className="text-sm text-gray-600">
-              Status:{" "}
+              {copy.blog.form.status}{" "}
               <span
                 className={`${ADMIN_BADGE} ${blogStatusBadgeClass(status)}`}
               >
@@ -109,7 +112,7 @@ export function BlogPostForm({
           ) : null}
 
           <label>
-            <span className={ADMIN_LABEL}>Title</span>
+            <span className={ADMIN_LABEL}>{copy.blog.form.title}</span>
             <input
               name="title"
               required
@@ -119,18 +122,18 @@ export function BlogPostForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Slug</span>
+            <span className={ADMIN_LABEL}>{copy.blog.form.slug}</span>
             <input
               name="slug"
               required
               defaultValue={defaults?.slug ?? ""}
-              placeholder="my-post-title"
+              placeholder={copy.blog.form.slugPlaceholder}
               className={ADMIN_INPUT}
               disabled={isPending}
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Excerpt</span>
+            <span className={ADMIN_LABEL}>{copy.blog.form.excerpt}</span>
             <textarea
               name="excerpt"
               rows={2}
@@ -140,7 +143,7 @@ export function BlogPostForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Content (HTML)</span>
+            <span className={ADMIN_LABEL}>{copy.blog.form.contentHtml}</span>
             <textarea
               name="content"
               required
@@ -151,7 +154,7 @@ export function BlogPostForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>SEO title</span>
+            <span className={ADMIN_LABEL}>{copy.blog.form.seoTitle}</span>
             <input
               name="seoTitle"
               defaultValue={defaults?.seoTitle ?? ""}
@@ -160,7 +163,7 @@ export function BlogPostForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>SEO description</span>
+            <span className={ADMIN_LABEL}>{copy.blog.form.seoDescription}</span>
             <textarea
               name="seoDescription"
               rows={2}
@@ -170,7 +173,7 @@ export function BlogPostForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Tags (comma-separated)</span>
+            <span className={ADMIN_LABEL}>{copy.blog.form.tags}</span>
             <input
               name="tags"
               defaultValue={tagsDefault}
@@ -182,10 +185,10 @@ export function BlogPostForm({
           {error ? <p className="text-sm text-red-700">{error}</p> : null}
           <Button type="submit" disabled={isPending}>
             {isPending
-              ? "Saving…"
+              ? copy.common.saving
               : mode === "edit"
-                ? "Save changes"
-                : "Create"}
+                ? copy.blog.form.saveChanges
+                : copy.common.create}
           </Button>
         </form>
       </Card>
@@ -212,7 +215,7 @@ export function BlogPostForm({
                 });
               }}
             >
-              Publish
+              {copy.blog.form.publish}
             </Button>
           ) : null}
           {canArchiveBlogPost(status) ? (
@@ -235,7 +238,7 @@ export function BlogPostForm({
                 });
               }}
             >
-              Archive
+              {copy.blog.form.archive}
             </Button>
           ) : null}
         </div>

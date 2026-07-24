@@ -13,17 +13,20 @@ import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import type { AdminHeroSlideListItem } from "@/features/hero/application/queries";
 import { HeroSlideControls } from "@/features/hero/ui/HeroSlideControls";
 import { HeroSlideModal } from "@/features/hero/ui/HeroSlideModal";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminHeroViewProps = {
   locale: string;
   slides: AdminHeroSlideListItem[];
   initialEditId?: string;
+  copy: Dictionary["admin"];
 };
 
 export function AdminHeroView({
   locale,
   slides,
   initialEditId,
+  copy,
 }: AdminHeroViewProps) {
   const initialSlide =
     initialEditId != null
@@ -52,18 +55,22 @@ export function AdminHeroView({
     <section>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className={ADMIN_PAGE_TITLE}>Hero slides</h1>
+          <h1 className={ADMIN_PAGE_TITLE}>{copy.hero.title}</h1>
           <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-            {slides.length} slide{slides.length === 1 ? "" : "s"}
+            {slides.length === 1
+              ? copy.hero.slideCount.replace("{count}", "1")
+              : copy.hero.slideCountPlural.replace("{count}", String(slides.length))}
           </p>
         </div>
         <Button type="button" onClick={openCreate}>
-          Create hero slide
+          {copy.hero.createHeroSlide}
         </Button>
       </div>
 
       <div className="mb-4">
-        <h2 className={ADMIN_SECTION_TITLE}>Slides ({slides.length})</h2>
+        <h2 className={ADMIN_SECTION_TITLE}>
+          {copy.hero.slidesHeading.replace("{count}", String(slides.length))}
+        </h2>
       </div>
 
       <div className="space-y-3">
@@ -80,7 +87,7 @@ export function AdminHeroView({
                   />
                 ) : (
                   <div className="flex h-16 w-24 shrink-0 items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50 text-xs text-gray-400">
-                    No image
+                    {copy.hero.noImage}
                   </div>
                 )}
                 <div className="min-w-0">
@@ -95,7 +102,7 @@ export function AdminHeroView({
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <span className="text-xs text-gray-500">
-                      sort {slide.sortOrder}
+                      {copy.hero.sortOrder.replace("{order}", String(slide.sortOrder))}
                     </span>
                     <span
                       className={`${ADMIN_BADGE} ${
@@ -104,7 +111,7 @@ export function AdminHeroView({
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      {slide.isActive ? "PUBLISHED" : "DRAFT"}
+                      {slide.isActive ? copy.hero.published : copy.hero.draft}
                     </span>
                   </div>
                   {slide.subtitle ? (
@@ -118,6 +125,7 @@ export function AdminHeroView({
                 slideTitle={slide.title}
                 isActive={slide.isActive}
                 onEdit={() => openEdit(slide)}
+                copy={copy}
               />
             </div>
           </Card>
@@ -125,7 +133,7 @@ export function AdminHeroView({
         {slides.length === 0 ? (
           <Card className="p-6">
             <p className="text-center text-sm text-gray-600">
-              No hero slides yet.
+              {copy.hero.empty}
             </p>
           </Card>
         ) : null}
@@ -136,6 +144,7 @@ export function AdminHeroView({
         open={modalOpen}
         onClose={closeModal}
         slide={editingSlide}
+        copy={copy}
       />
     </section>
   );

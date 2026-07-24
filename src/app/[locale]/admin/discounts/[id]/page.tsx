@@ -11,6 +11,7 @@ import {
 } from "@/features/promotions/application/queries";
 import { PromotionForm } from "@/features/promotions/ui/PromotionForm";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminDiscountDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
@@ -24,9 +25,10 @@ export default async function AdminDiscountDetailPage({
     notFound();
   }
 
-  const [promo, targets] = await Promise.all([
+  const [promo, targets, dict] = await Promise.all([
     getAdminPromotionById(id),
     listPromotionTargetOptions(),
+    getDictionary(locale),
   ]);
 
   if (!promo || promo.kind !== "AUTOMATIC") {
@@ -41,7 +43,7 @@ export default async function AdminDiscountDetailPage({
             href={`/${locale}/admin/discounts`}
             className="font-medium text-gray-700 hover:underline"
           >
-            Discounts
+            {dict.admin.discounts.title}
           </Link>
         </p>
         <h1 className={ADMIN_PAGE_TITLE}>Automatic discount</h1>
@@ -58,6 +60,7 @@ export default async function AdminDiscountDetailPage({
         lockKind
         targets={targets}
         redirectTo={`/${locale}/admin/discounts`}
+        copy={{ form: dict.admin.discounts.form, common: dict.admin.common }}
         defaults={{
           code: promo.code,
           productId: promo.productId,

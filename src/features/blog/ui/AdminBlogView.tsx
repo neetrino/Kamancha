@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
   ConfirmDialog,
-  deleteConfirmDescription,
 } from "@/components/ui/ConfirmDialog";
 import {
   ADMIN_INPUT,
@@ -18,10 +17,12 @@ import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteBlogPostAction } from "@/features/blog/application/manage-blog";
 import type { AdminBlogListItem } from "@/features/blog/application/queries";
 import { BlogPostDrawer } from "@/features/blog/ui/BlogPostDrawer";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminBlogViewProps = {
   locale: string;
   posts: AdminBlogListItem[];
+  copy: Dictionary["admin"];
 };
 
 function statusBadgeClass(status: string): string {
@@ -32,15 +33,7 @@ function statusBadgeClass(status: string): string {
   return "bg-gray-100 text-gray-800";
 }
 
-function statusLabel(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "PUBLISHED") return "Published";
-  if (normalized === "DRAFT") return "Draft";
-  if (normalized === "ARCHIVED") return "Archived";
-  return status;
-}
-
-export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
+export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -101,7 +94,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>Blog</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.blog.title}</h1>
         <Button
           type="button"
           size="sm"
@@ -109,16 +102,16 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
           className="inline-flex items-center gap-1.5"
         >
           <Plus className="h-4 w-4" aria-hidden />
-          Add Post
+          {copy.blog.addPost}
         </Button>
       </div>
 
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search by title or slug"
+        placeholder={copy.blog.searchPlaceholder}
         className={`${ADMIN_INPUT} mb-4`}
-        aria-label="Search blog posts"
+        aria-label={copy.blog.searchAria}
       />
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
@@ -127,9 +120,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
         {filtered.length === 0 ? (
           <Card className="rounded-xl p-8">
             <p className="text-center text-sm text-gray-600">
-              {posts.length === 0
-                ? "No blog posts yet."
-                : "No posts match this search."}
+              {posts.length === 0 ? copy.blog.empty : copy.blog.noMatch}
             </p>
           </Card>
         ) : (
@@ -150,7 +141,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 text-xs font-medium text-white/70">
-                        Blog
+                        {copy.blog.coverFallback}
                       </div>
                     )}
                   </div>
@@ -174,14 +165,18 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
                   <span
                     className={`${ADMIN_BADGE} ${statusBadgeClass(post.status)}`}
                   >
-                    {statusLabel(post.status)}
+                    {post.status === "PUBLISHED"
+                      ? copy.blog.statusPublished
+                      : post.status === "DRAFT"
+                        ? copy.blog.statusDraft
+                        : copy.blog.statusArchived}
                   </span>
                   <button
                     type="button"
                     disabled={isPending}
                     onClick={() => openEdit(post)}
                     className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-                    aria-label={`Edit ${post.title}`}
+                    aria-label={copy.blog.editAria.replace("{title}", post.title)}
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
@@ -190,7 +185,7 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
                     disabled={isPending}
                     onClick={() => requestDelete(post.id, post.title)}
                     className="rounded p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-50"
-                    aria-label={`Delete ${post.title}`}
+                    aria-label={copy.blog.deleteAria.replace("{title}", post.title)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -208,17 +203,22 @@ export function AdminBlogView({ locale, posts }: AdminBlogViewProps) {
           open
           onClose={closeDrawer}
           post={editingPost}
+          copy={copy}
         />
       ) : null}
 
       <ConfirmDialog
         open={pendingDelete !== null}
-        title="Delete"
+        title={copy.confirm.deleteTitle}
         description={
           pendingDelete
-            ? deleteConfirmDescription("post", pendingDelete.title)
+            ? copy.confirm.deleteEntity
+                .replace("{entity}", copy.confirm.entityLabels.post)
+                .replace("{name}", pendingDelete.title)
             : ""
         }
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
         isPending={isPending}
         onClose={() => {
           if (!isPending) setPendingDelete(null);

@@ -11,10 +11,13 @@ import {
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminMenuDrawerProps = {
   locale: string;
   pathname: string;
+  shell: Dictionary["admin"]["shell"];
+  nav: Dictionary["admin"]["nav"];
 };
 
 function isNestedVisible(
@@ -28,9 +31,14 @@ function isNestedVisible(
   return productsNestedExpanded;
 }
 
-export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
+export function AdminMenuDrawer({
+  locale,
+  pathname,
+  shell,
+  nav,
+}: AdminMenuDrawerProps) {
   const [open, setOpen] = useState(false);
-  const tabs = getAdminMenuItems(locale);
+  const tabs = getAdminMenuItems(locale, nav);
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
 
@@ -56,13 +64,13 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
             d="M4 6H20M4 12H16M4 18H12"
           />
         </svg>
-        Menu
+        {shell.menu}
       </button>
 
       <SideSheet
         open={open}
         onClose={() => setOpen(false)}
-        ariaLabel="Admin menu"
+        ariaLabel={shell.adminMenuAria}
         side="left"
         panelClassName="w-1/2 min-w-[16rem] max-w-full"
       >
@@ -76,7 +84,7 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
                 className="text-sm font-semibold text-gray-900"
                 onClick={() => setOpen(false)}
               >
-                White Shop
+                {shell.brandName}
               </Link>
             </div>
 
@@ -116,7 +124,7 @@ export function AdminMenuDrawer({ locale, pathname }: AdminMenuDrawerProps) {
                       <button
                         type="button"
                         aria-expanded={productsNestedExpanded}
-                        aria-label="Toggle product subpages"
+                        aria-label={shell.toggleProductSubpages}
                         onClick={toggleProductsNested}
                         className={`shrink-0 border-l px-3 py-3 ${
                           isActive

@@ -16,12 +16,14 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline'",
+      // Google Maps JS loads from maps.googleapis.com / maps.gstatic.com
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
+      "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' https:",
-      "frame-src 'self' https://www.google.com https://maps.google.com",
+      "worker-src 'self' blob:",
+      "frame-src 'self' https://www.google.com https://maps.google.com https://maps.googleapis.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

@@ -6,6 +6,7 @@ import type { AdminOrderDetailView } from "@/features/orders/application/order-d
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
 import { CustomerOrdersTable } from "@/features/orders/ui/CustomerOrdersTable";
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrdersViewOrder = {
   id: string;
@@ -20,9 +21,10 @@ type CustomerOrdersViewOrder = {
 type CustomerOrdersViewProps = {
   locale: string;
   orders: CustomerOrdersViewOrder[];
+  copy: Dictionary["admin"];
 };
 
-export function CustomerOrdersView({ locale, orders }: CustomerOrdersViewProps) {
+export function CustomerOrdersView({ locale, orders, copy }: CustomerOrdersViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +61,7 @@ export function CustomerOrdersView({ locale, orders }: CustomerOrdersViewProps) 
         detail={detail}
         error={error}
         isLoading={isPending}
+        copy={copy}
       />
     </>
   );

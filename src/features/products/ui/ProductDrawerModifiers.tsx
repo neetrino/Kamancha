@@ -11,6 +11,9 @@ import {
   createProductModifierAction,
   deactivateProductModifierAction,
 } from "@/features/products/application/modifier-actions";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type ModifiersCopy = Dictionary["admin"]["products"]["modifiers"];
 
 type ProductDrawerModifiersProps = {
   locale: string;
@@ -19,6 +22,7 @@ type ProductDrawerModifiersProps = {
   disabled?: boolean;
   onLibraryChange: (next: ProductModifierOption[]) => void;
   onSelectedChange: (next: string[]) => void;
+  copy: ModifiersCopy;
 };
 
 type ColumnKind = "ADDITION" | "EXCEPTION";
@@ -30,42 +34,43 @@ export function ProductDrawerModifiers({
   disabled = false,
   onLibraryChange,
   onSelectedChange,
+  copy,
 }: ProductDrawerModifiersProps) {
   return (
     <div className="space-y-3">
       <div>
         <h3 className="text-sm font-semibold text-gray-900">
-          Ավելացում / Բացառություն
+          {copy.sectionTitle}
         </h3>
-        <p className="mt-0.5 text-xs text-gray-500">
-          Գլոբալ ցանկ — նշիր այս ապրանքի համար, նորերը հասանելի կլինեն մյուսներին ևս։
-        </p>
+        <p className="mt-0.5 text-xs text-gray-500">{copy.sectionHint}</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <ModifierColumn
           locale={locale}
           kind="ADDITION"
-          title="Ավելացում"
-          subtitle="ingredient"
-          placeholder="Նոր ավելացում..."
+          title={copy.addition}
+          subtitle={copy.additionSubtitle}
+          placeholder={copy.additionPlaceholder}
           withPrice
           library={library}
           selectedIds={selectedIds}
           disabled={disabled}
+          copy={copy}
           onLibraryChange={onLibraryChange}
           onSelectedChange={onSelectedChange}
         />
         <ModifierColumn
           locale={locale}
           kind="EXCEPTION"
-          title="Բացառություն"
-          subtitle="topping"
-          placeholder="Նոր բացառություն..."
+          title={copy.exception}
+          subtitle={copy.exceptionSubtitle}
+          placeholder={copy.exceptionPlaceholder}
           withPrice={false}
           library={library}
           selectedIds={selectedIds}
           disabled={disabled}
+          copy={copy}
           onLibraryChange={onLibraryChange}
           onSelectedChange={onSelectedChange}
         />
@@ -84,6 +89,7 @@ function ModifierColumn({
   library,
   selectedIds,
   disabled,
+  copy,
   onLibraryChange,
   onSelectedChange,
 }: {
@@ -96,6 +102,7 @@ function ModifierColumn({
   library: ProductModifierOption[];
   selectedIds: string[];
   disabled: boolean;
+  copy: ModifiersCopy;
   onLibraryChange: (next: ProductModifierOption[]) => void;
   onSelectedChange: (next: string[]) => void;
 }) {
@@ -119,7 +126,7 @@ function ModifierColumn({
     if (!trimmed) return;
     const priceAmount = withPrice ? Number(price) : 0;
     if (withPrice && (!Number.isFinite(priceAmount) || priceAmount < 0)) {
-      setError("Price must be a non-negative number.");
+      setError(copy.priceMustBeNonNegative);
       return;
     }
 
@@ -179,7 +186,7 @@ function ModifierColumn({
 
       <ul className="max-h-56 flex-1 space-y-0.5 overflow-y-auto px-2 py-2">
         {rows.length === 0 ? (
-          <li className="px-2 py-3 text-xs text-gray-400">Դատարկ է</li>
+          <li className="px-2 py-3 text-xs text-gray-400">{copy.empty}</li>
         ) : (
           rows.map((row) => (
             <li
@@ -198,7 +205,7 @@ function ModifierColumn({
                 {row.name}
                 {withPrice ? (
                   <span className="ml-1 text-xs text-gray-500">
-                    ({row.priceAmount} AMD)
+                    {copy.priceAmd.replace("{amount}", String(row.priceAmount))}
                   </span>
                 ) : null}
               </span>
@@ -207,7 +214,7 @@ function ModifierColumn({
                 disabled={disabled || pending}
                 onClick={() => handleRemove(row.id)}
                 className="rounded p-1 text-red-500 transition hover:bg-red-50 disabled:opacity-40"
-                aria-label={`Remove ${row.name}`}
+                aria-label={copy.removeAria.replace("{name}", row.name)}
               >
                 <X className="h-4 w-4" aria-hidden />
               </button>
@@ -230,13 +237,13 @@ function ModifierColumn({
           </label>
           {withPrice ? (
             <label className="block">
-              <span className="sr-only">Price AMD</span>
+              <span className="sr-only">{copy.priceAmdAria}</span>
               <input
                 type="number"
                 min={0}
                 value={price}
                 onChange={(event) => setPrice(event.target.value)}
-                placeholder="AMD"
+                placeholder={copy.pricePlaceholder}
                 disabled={disabled || pending}
                 className={ADMIN_INPUT}
               />
@@ -249,7 +256,7 @@ function ModifierColumn({
           onClick={handleAdd}
           className="flex h-10 w-full items-center justify-center rounded-xl bg-gray-800 text-sm font-medium text-white transition hover:bg-gray-700 disabled:opacity-40"
         >
-          + Ավելացնել
+          {copy.add}
         </button>
         {error ? <p className="text-xs text-red-600">{error}</p> : null}
       </div>

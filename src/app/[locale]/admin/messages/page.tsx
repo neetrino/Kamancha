@@ -28,6 +28,7 @@ import { listAdminContactMessages } from "@/features/contact/application/queries
 import { CONTACT_STATUSES } from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminMessagesPageProps = {
   params: Promise<{ locale: string }>;
@@ -61,6 +62,9 @@ export default async function AdminMessagesPage({
     notFound();
   }
 
+  const dictionary = getDictionary(locale);
+  const t = dictionary.admin.messages;
+
   const raw = await searchParams;
   const parsed = adminContactFilterSchema.safeParse({
     status: firstParam(raw.status) || undefined,
@@ -75,35 +79,41 @@ export default async function AdminMessagesPage({
   const { rows, total, pageSize } = await listAdminContactMessages(filters);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  const countLabel = filters.status
+    ? t.countWithStatus
+        .replace("{total}", String(total))
+        .replace("{plural}", total === 1 ? "" : "s")
+        .replace("{status}", filters.status)
+    : total === 1
+      ? t.count.replace("{total}", String(total))
+      : t.countPlural.replace("{total}", String(total));
+
   return (
     <section>
       <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>Messages</h1>
-        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          {total} message{total === 1 ? "" : "s"}
-          {filters.status ? ` · ${filters.status}` : ""}
-        </p>
+        <h1 className={ADMIN_PAGE_TITLE}>{t.title}</h1>
+        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{countLabel}</p>
       </div>
 
       <Card className="mb-6 p-4">
         <form method="get" className="flex flex-wrap items-end gap-3">
           <label className="min-w-[180px] flex-1">
-            <span className={ADMIN_LABEL}>Search</span>
+            <span className={ADMIN_LABEL}>{t.search}</span>
             <input
               name="q"
               defaultValue={filters.q ?? ""}
-              placeholder="Name, email, subject…"
+              placeholder={t.searchPlaceholder}
               className={ADMIN_INPUT}
             />
           </label>
           <label className="min-w-[140px]">
-            <span className={ADMIN_LABEL}>Status</span>
+            <span className={ADMIN_LABEL}>{t.status}</span>
             <select
               name="status"
               defaultValue={filters.status ?? ""}
               className={ADMIN_SELECT}
             >
-              <option value="">All</option>
+              <option value="">{t.all}</option>
               {CONTACT_STATUSES.map((status) => (
                 <option key={status} value={status}>
                   {status}
@@ -112,7 +122,7 @@ export default async function AdminMessagesPage({
             </select>
           </label>
           <Button type="submit" size="sm">
-            Filter
+            {t.filter}
           </Button>
         </form>
       </Card>
@@ -120,17 +130,17 @@ export default async function AdminMessagesPage({
       <Card className={ADMIN_TABLE_CARD}>
         {rows.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No messages match these filters.
+            {t.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
-                  <th className={ADMIN_TABLE_TH}>Subject</th>
-                  <th className={ADMIN_TABLE_TH}>From</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Status</th>
-                  <th className={ADMIN_TABLE_TH}>Received</th>
+                  <th className={ADMIN_TABLE_TH}>{t.table.subject}</th>
+                  <th className={ADMIN_TABLE_TH}>{t.table.from}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{t.table.status}</th>
+                  <th className={ADMIN_TABLE_TH}>{t.table.received}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -156,7 +166,10 @@ export default async function AdminMessagesPage({
                       </span>
                       {message.spamScore !== null ? (
                         <p className="mt-1 text-xs text-gray-500">
-                          spam {message.spamScore}
+                          {t.table.spamScore.replace(
+                            "{score}",
+                            String(message.spamScore),
+                          )}
                         </p>
                       ) : null}
                     </td>
@@ -166,7 +179,7 @@ export default async function AdminMessagesPage({
                           .toISOString()
                           .slice(0, 16)
                           .replace("T", " ")}{" "}
-                        UTC
+                        {dictionary.admin.common.utc}
                       </span>
                     </td>
                   </tr>
@@ -180,7 +193,9 @@ export default async function AdminMessagesPage({
       {totalPages > 1 ? (
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
           <span>
-            Page {filters.page} / {totalPages}
+            {dictionary.admin.common.pageOf
+              .replace("{page}", String(filters.page))
+              .replace("{totalPages}", String(totalPages))}
           </span>
         </nav>
       ) : null}

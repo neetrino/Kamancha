@@ -12,12 +12,14 @@ import {
 } from "@/features/admin/ui/admin-form-classes";
 import { changePaymentStatusAction } from "@/features/orders/application/change-payment-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ChangePaymentStatusFormProps = {
   locale: string;
   orderNumber: string;
   currentStatus: PaymentStatus;
   eligibleStatuses: PaymentStatus[];
+  copy: Dictionary["admin"];
 };
 
 export function ChangePaymentStatusForm({
@@ -25,6 +27,7 @@ export function ChangePaymentStatusForm({
   orderNumber,
   currentStatus,
   eligibleStatuses,
+  copy,
 }: ChangePaymentStatusFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -33,9 +36,7 @@ export function ChangePaymentStatusForm({
 
   if (eligibleStatuses.length === 0) {
     return (
-      <p className="text-sm text-gray-600">
-        Terminal payment status — no further transitions.
-      </p>
+      <p className="text-sm text-gray-600">{copy.orders.changePayment.terminal}</p>
     );
   }
 
@@ -66,13 +67,13 @@ export function ChangePaymentStatusForm({
         }}
       >
         <p className="text-sm text-gray-700">
-          Current: <strong className="text-gray-900">{currentStatus}</strong>
+          {copy.common.current.replace("{value}", currentStatus)}
         </p>
         <div>
-          <span className={ADMIN_LABEL}>New payment status</span>
+          <span className={ADMIN_LABEL}>{copy.orders.changePayment.newPaymentStatus}</span>
           <SelectDropdown
             name="toStatus"
-            ariaLabel="New payment status"
+            ariaLabel={copy.orders.changePayment.newPaymentStatusAria}
             value={toStatus}
             options={eligibleStatuses.map((status) => ({
               label: status,
@@ -85,7 +86,7 @@ export function ChangePaymentStatusForm({
           />
         </div>
         <label>
-          <span className={ADMIN_LABEL}>Note (optional)</span>
+          <span className={ADMIN_LABEL}>{copy.orders.changePayment.noteOptional}</span>
           <textarea
             name="note"
             rows={2}
@@ -96,7 +97,7 @@ export function ChangePaymentStatusForm({
         </label>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? "Updating…" : "Update payment"}
+          {isPending ? copy.common.updating : copy.orders.changePayment.updatePayment}
         </Button>
       </form>
     </Card>

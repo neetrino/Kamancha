@@ -10,6 +10,7 @@ import { adminProductsFilterSchema } from "@/features/products/schemas/admin-lis
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminProductsPageProps = {
   params: Promise<{ locale: string }>;
@@ -57,6 +58,9 @@ export default async function AdminProductsPage({
   if (!isLocale(locale)) {
     notFound();
   }
+
+  const dict = getDictionary(locale);
+  const adminCopy = dict.admin;
 
   const raw = await searchParams;
   const parsed = adminProductsFilterSchema.safeParse({
@@ -120,6 +124,7 @@ export default async function AdminProductsPage({
         categories={categories}
         sort={filters.sort}
         dir={filters.dir}
+        copy={adminCopy.products.filters}
       />
 
       <AdminProductsView
@@ -128,6 +133,11 @@ export default async function AdminProductsPage({
         sortLinks={sortLinks}
         categories={categories}
         modifierLibrary={modifierLibrary}
+        copy={{
+          products: adminCopy.products,
+          common: adminCopy.common,
+          confirm: adminCopy.confirm,
+        }}
       />
 
       {totalPages > 1 ? (
@@ -137,18 +147,20 @@ export default async function AdminProductsPage({
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page - 1 })}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {adminCopy.common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {adminCopy.common.pageOf
+              .replace("{page}", String(filters.page))
+              .replace("{totalPages}", String(totalPages))}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page + 1 })}`}
               className="font-medium hover:underline"
             >
-              Next
+              {adminCopy.common.next}
             </Link>
           ) : null}
         </nav>

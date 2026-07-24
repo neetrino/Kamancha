@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type MetricTone = "blue" | "green" | "purple";
 
@@ -44,28 +45,30 @@ type AnalyticsMetricCardsProps = {
   orderCount: number;
   revenueLabel: string;
   userCount: number;
+  copy: Dictionary["admin"];
 };
 
 export function AnalyticsMetricCards({
   orderCount,
   revenueLabel,
   userCount,
+  copy,
 }: AnalyticsMetricCardsProps) {
   const metrics: MetricCard[] = [
     {
-      label: "Total Orders",
+      label: copy.analytics.metrics.totalOrders,
       value: String(orderCount),
       tone: "blue",
       icon: ClipboardList,
     },
     {
-      label: "Total Revenue",
+      label: copy.analytics.metrics.totalRevenue,
       value: revenueLabel,
       tone: "green",
       icon: DollarSign,
     },
     {
-      label: "Total Users",
+      label: copy.analytics.metrics.totalUsers,
       value: String(userCount),
       tone: "purple",
       icon: Users,

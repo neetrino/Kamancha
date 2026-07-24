@@ -17,9 +17,12 @@ import {
   ADMIN_SIDEBAR_NAV,
 } from "@/features/admin/ui/admin-shell-classes";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminSidebarProps = {
   locale: string;
+  shell: Dictionary["admin"]["shell"];
+  nav: Dictionary["admin"]["nav"];
 };
 
 function isNestedVisible(
@@ -35,9 +38,9 @@ function isNestedVisible(
   return productsNestedExpanded;
 }
 
-export function AdminSidebar({ locale }: AdminSidebarProps) {
+export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
-  const tabs = getAdminMenuItems(locale);
+  const tabs = getAdminMenuItems(locale, nav);
   const { collapsed } = useAdminSidebarCollapse();
   const [productsNestedExpanded, toggleProductsNested] =
     useAdminProductsSubnavExpanded(pathname, locale);
@@ -52,13 +55,13 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
             href={`/${locale}`}
             className="min-w-0 shrink text-sm font-semibold text-gray-900"
           >
-            White Shop
+            {shell.brandName}
           </Link>
-          <AdminMenuDrawer locale={locale} pathname={pathname} />
+          <AdminMenuDrawer locale={locale} pathname={pathname} shell={shell} nav={nav} />
         </div>
       </div>
       <aside className={`${ADMIN_SIDEBAR_ASIDE} ${asideWidthClass}`}>
-        <AdminSidebarBrand locale={locale} />
+        <AdminSidebarBrand locale={locale} shell={shell} />
         <nav
           className={`${ADMIN_SIDEBAR_NAV} ${collapsed ? "px-1" : "px-2"}`}
         >
@@ -111,8 +114,8 @@ export function AdminSidebar({ locale }: AdminSidebarProps) {
                   <button
                     type="button"
                     aria-expanded={productsNestedExpanded}
-                    aria-label="Toggle product subpages"
-                    title="Toggle product subpages"
+                    aria-label={shell.toggleProductSubpages}
+                    title={shell.toggleProductSubpages}
                     onClick={(event) => {
                       event.preventDefault();
                       toggleProductsNested();

@@ -9,17 +9,19 @@ import {
   ADMIN_MAIN_INNER,
   ADMIN_PAGE_SHELL,
 } from "@/features/admin/ui/admin-shell-classes";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminShellProps = {
   locale: string;
+  copy: Dictionary["admin"];
   children: ReactNode;
 };
 
-export function AdminShell({ locale, children }: AdminShellProps) {
+export function AdminShell({ locale, copy, children }: AdminShellProps) {
   return (
     <AdminSidebarCollapseProvider>
       <div className={ADMIN_PAGE_SHELL}>
-        <AdminSidebar locale={locale} />
+        <AdminSidebar locale={locale} shell={copy.shell} nav={copy.nav} />
         <div className={ADMIN_MAIN_COLUMN}>
           <div className={ADMIN_MAIN_INNER}>{children}</div>
         </div>

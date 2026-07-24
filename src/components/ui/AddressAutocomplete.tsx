@@ -32,6 +32,8 @@ export function AddressAutocomplete({
 }: AddressAutocompleteProps) {
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<number | null>(null);
+  const requestIdRef = useRef(0);
   const [open, setOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<PlaceAutocompleteSuggestion[]>(
     [],
@@ -39,8 +41,6 @@ export function AddressAutocomplete({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [highlightIndex, setHighlightIndex] = useState(-1);
-  /** Skip fetch right after picking a suggestion. */
-  const skipNextFetchRef = useRef(false);
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent): void {
@@ -54,28 +54,44 @@ export function AddressAutocomplete({
   }, []);
 
   useEffect(() => {
-    if (skipNextFetchRef.current) {
-      skipNextFetchRef.current = false;
-      return;
+    return () => {
+      if (debounceRef.current != null) {
+        window.clearTimeout(debounceRef.current);
+      }
+      requestIdRef.current += 1;
+    };
+  }, []);
+
+  function clearSuggestions(): void {
+    setSuggestions([]);
+    setOpen(false);
+    setPending(false);
+    setError(null);
+    setHighlightIndex(-1);
+  }
+
+  function scheduleFetch(input: string): void {
+    if (debounceRef.current != null) {
+      window.clearTimeout(debounceRef.current);
     }
 
-    const trimmed = value.trim();
+    const trimmed = input.trim();
     if (trimmed.length < 2 || disabled) {
-      setSuggestions([]);
-      setOpen(false);
-      setPending(false);
-      setError(null);
+      requestIdRef.current += 1;
+      clearSuggestions();
       return;
     }
 
-    let cancelled = false;
-    const timer = window.setTimeout(() => {
-      setPending(true);
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
+    setPending(true);
+
+    debounceRef.current = window.setTimeout(() => {
       void autocompleteAddressAction({
         input: trimmed,
         languageCode,
       }).then((result) => {
-        if (cancelled) return;
+        if (requestIdRef.current !== requestId) return;
         setPending(false);
         if (!result.ok) {
           setSuggestions([]);
@@ -89,20 +105,15 @@ export function AddressAutocomplete({
         setHighlightIndex(-1);
       });
     }, DEBOUNCE_MS);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [value, languageCode, disabled]);
+  }
 
   function selectSuggestion(suggestion: PlaceAutocompleteSuggestion): void {
-    skipNextFetchRef.current = true;
+    if (debounceRef.current != null) {
+      window.clearTimeout(debounceRef.current);
+    }
+    requestIdRef.current += 1;
     onValueChange(suggestion.fullText);
-    setSuggestions([]);
-    setOpen(false);
-    setHighlightIndex(-1);
-    setError(null);
+    clearSuggestions();
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
@@ -143,7 +154,11 @@ export function AddressAutocomplete({
       <input
         name={name}
         value={value}
-        onChange={(event) => onValueChange(event.target.value)}
+        onChange={(event) => {
+          const next = event.target.value;
+          onValueChange(next);
+          scheduleFetch(next);
+        }}
         onFocus={() => {
           if (suggestions.length > 0) {
             setOpen(true);

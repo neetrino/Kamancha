@@ -8,6 +8,7 @@ import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status
 import { AdminOrdersFilters } from "@/features/orders/ui/AdminOrdersFilters";
 import { AdminOrdersView } from "@/features/orders/ui/AdminOrdersView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminOrdersPageProps = {
   params: Promise<{ locale: string }>;
@@ -49,6 +50,9 @@ export default async function AdminOrdersPage({
     notFound();
   }
 
+  const dictionary = getDictionary(locale);
+  const copy = dictionary.admin;
+
   const raw = await searchParams;
   const parsed = adminOrdersFilterSchema.safeParse({
     status: firstParam(raw.status) || undefined,
@@ -76,7 +80,7 @@ export default async function AdminOrdersPage({
   return (
     <section>
       <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>Orders</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.orders.title}</h1>
       </div>
 
       <AdminOrdersFilters
@@ -84,9 +88,10 @@ export default async function AdminOrdersPage({
         status={filters.status}
         paymentStatus={filters.paymentStatus}
         q={filters.q}
+        copy={copy}
       />
 
-      <AdminOrdersView locale={locale} orders={rows} />
+      <AdminOrdersView locale={locale} orders={rows} copy={copy} />
 
       {totalPages > 1 ? (
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
@@ -95,18 +100,20 @@ export default async function AdminOrdersPage({
               href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {copy.common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {copy.common.pageOf
+              .replace("{page}", String(filters.page))
+              .replace("{totalPages}", String(totalPages))}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
               className="font-medium hover:underline"
             >
-              Next
+              {copy.common.next}
             </Link>
           ) : null}
         </nav>

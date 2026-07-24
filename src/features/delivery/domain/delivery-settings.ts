@@ -1,3 +1,14 @@
+import {
+  createDefaultCashChangeDenominations,
+  parseCashChangeDenominations,
+  type CashChangeDenomination,
+} from "@/features/delivery/domain/cash-change";
+import {
+  DEFAULT_DELIVERY_SCHEDULE,
+  parseDeliverySchedule,
+  type DeliveryScheduleSettings,
+} from "@/features/delivery/domain/delivery-schedule";
+
 export type StoreDeliverySettings = {
   originAddress: string;
   originLat: number | null;
@@ -5,6 +16,9 @@ export type StoreDeliverySettings = {
   /** Whole AMD charged per kilometer (fractional km kept in fee math). */
   pricePerKmAmount: number;
   isActive: boolean;
+  schedule: DeliveryScheduleSettings;
+  /** COD banknote options customers can select for change. */
+  cashChangeDenominations: CashChangeDenomination[];
 };
 
 export const DEFAULT_DELIVERY_SETTINGS: StoreDeliverySettings = {
@@ -13,6 +27,8 @@ export const DEFAULT_DELIVERY_SETTINGS: StoreDeliverySettings = {
   originLng: null,
   pricePerKmAmount: 0,
   isActive: false,
+  schedule: structuredClone(DEFAULT_DELIVERY_SCHEDULE),
+  cashChangeDenominations: createDefaultCashChangeDenominations(),
 };
 
 function isFiniteNumber(value: unknown): value is number {
@@ -22,7 +38,7 @@ function isFiniteNumber(value: unknown): value is number {
 /** Parses `store.delivery` JSON into a safe settings object. */
 export function parseDeliverySettings(value: unknown): StoreDeliverySettings {
   if (!value || typeof value !== "object") {
-    return { ...DEFAULT_DELIVERY_SETTINGS };
+    return structuredClone(DEFAULT_DELIVERY_SETTINGS);
   }
 
   const record = value as Record<string, unknown>;
@@ -49,6 +65,10 @@ export function parseDeliverySettings(value: unknown): StoreDeliverySettings {
         ? pricePerKmAmount
         : 0,
     isActive: record.isActive === true,
+    schedule: parseDeliverySchedule(record.schedule),
+    cashChangeDenominations: parseCashChangeDenominations(
+      record.cashChangeDenominations,
+    ),
   };
 }
 

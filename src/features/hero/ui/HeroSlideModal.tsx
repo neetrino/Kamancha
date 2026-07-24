@@ -13,12 +13,14 @@ import {
   updateHeroSlideAction,
 } from "@/features/hero/application/manage-hero";
 import type { AdminHeroSlideListItem } from "@/features/hero/application/queries";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type HeroSlideModalProps = {
   locale: string;
   open: boolean;
   onClose: () => void;
   slide?: AdminHeroSlideListItem | null;
+  copy: Dictionary["admin"];
 };
 
 export function HeroSlideModal({
@@ -26,6 +28,7 @@ export function HeroSlideModal({
   open,
   onClose,
   slide = null,
+  copy,
 }: HeroSlideModalProps) {
   const isEdit = slide != null;
 
@@ -33,7 +36,7 @@ export function HeroSlideModal({
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={isEdit ? "Edit hero slide" : "Create hero slide"}
+      ariaLabel={isEdit ? copy.hero.drawer.editAria : copy.hero.drawer.createAria}
       panelClassName="w-full max-w-lg"
     >
       <HeroSlideDrawerForm
@@ -41,6 +44,7 @@ export function HeroSlideModal({
         locale={locale}
         onClose={onClose}
         slide={slide}
+        copy={copy}
       />
     </SideSheet>
   );
@@ -50,12 +54,14 @@ type HeroSlideDrawerFormProps = {
   locale: string;
   onClose: () => void;
   slide: AdminHeroSlideListItem | null;
+  copy: Dictionary["admin"];
 };
 
 function HeroSlideDrawerForm({
   locale,
   onClose,
   slide,
+  copy,
 }: HeroSlideDrawerFormProps) {
   const router = useRouter();
   const isEdit = slide != null;
@@ -76,7 +82,7 @@ function HeroSlideDrawerForm({
     <>
         <div className="border-b border-gray-200 px-5 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit hero slide" : "Create hero slide"}
+            {isEdit ? copy.hero.drawer.editTitle : copy.hero.drawer.createTitle}
           </h2>
         </div>
 
@@ -113,7 +119,7 @@ function HeroSlideDrawerForm({
         >
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
             <label className="block">
-              <span className={ADMIN_LABEL}>Title</span>
+              <span className={ADMIN_LABEL}>{copy.hero.drawer.title}</span>
               <input
                 required
                 value={title}
@@ -124,7 +130,7 @@ function HeroSlideDrawerForm({
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Subtitle</span>
+              <span className={ADMIN_LABEL}>{copy.hero.drawer.subtitle}</span>
               <input
                 value={subtitle}
                 onChange={(event) => setSubtitle(event.target.value)}
@@ -134,7 +140,7 @@ function HeroSlideDrawerForm({
             </label>
 
             <div>
-              <span className={ADMIN_LABEL}>Upload image</span>
+              <span className={ADMIN_LABEL}>{copy.hero.drawer.uploadImage}</span>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -142,7 +148,9 @@ function HeroSlideDrawerForm({
                   onClick={() => fileInputRef.current?.click()}
                   className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  {imagePreview ? "Change image" : "+ Upload image"}
+                  {imagePreview
+                    ? copy.hero.drawer.changeImage
+                    : copy.hero.drawer.uploadImageButton}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -181,7 +189,7 @@ function HeroSlideDrawerForm({
                     }}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
-                    Remove
+                    {copy.hero.drawer.remove}
                   </button>
                 ) : null}
               </div>
@@ -202,18 +210,18 @@ function HeroSlideDrawerForm({
             <Button type="submit" disabled={isPending || !title.trim()}>
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? copy.common.saving
+                  : copy.common.creating
                 : isEdit
-                  ? "Edit"
-                  : "Create"}
+                  ? copy.hero.drawer.edit
+                  : copy.hero.drawer.create}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {copy.common.cancel}
             </button>
           </div>
         </form>

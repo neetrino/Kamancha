@@ -161,6 +161,48 @@ export async function geocodeAddress(address: string): Promise<GeocodeResult> {
   );
 }
 
+/** Reverse-geocodes coordinates via Google Geocoding API (Armenia-biased). */
+export async function reverseGeocode(
+  location: GeoPoint,
+): Promise<GeocodeResult> {
+  if (!Number.isFinite(location.lat) || !Number.isFinite(location.lng)) {
+    throw new Error("Invalid map coordinates.");
+  }
+
+  const key = requireMapsApiKey();
+  const url = new URL("https://maps.googleapis.com/maps/api/geocode/json");
+  url.searchParams.set("latlng", `${location.lat},${location.lng}`);
+  url.searchParams.set("region", "am");
+  url.searchParams.set("language", "en");
+  url.searchParams.set("key", key);
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    logger.error("maps.reverse_geocode_http_failed", {
+      status: response.status,
+    });
+    throw new Error("Unable to resolve address for this map point.");
+  }
+
+  const payload = (await response.json()) as GeocodeApiResponse;
+  if (payload.status === "OK" && payload.results?.[0]) {
+    return toGeocodeResult(
+      payload.results[0],
+      `${location.lat.toFixed(5)}, ${location.lng.toFixed(5)}`,
+    );
+  }
+
+  logger.warn("maps.reverse_geocode_failed", {
+    status: payload.status,
+    message: payload.error_message,
+  });
+  throw new Error("No address found for this map point.");
+}
+
 /** Driving distance between two points via Routes API (computeRoutes). */
 export async function getDrivingDistanceMeters(
   origin: GeoPoint,

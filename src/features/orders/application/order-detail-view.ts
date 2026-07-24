@@ -43,6 +43,11 @@ export type AdminOrderDetailView = {
   shippingMethod: string;
   addressLine: string;
   addressHint: string | null;
+  floor: string | null;
+  intercomCode: string | null;
+  scheduledDelivery: string | null;
+  cashChangeAmount: number | null;
+  cashChangeImageUrl: string | null;
   paymentMethod: string;
   paymentAmount: number;
   items: AdminOrderDetailItemView[];
@@ -108,6 +113,24 @@ export function toAdminOrderDetailView(
     addressLine: formatAddressLine(order.shippingAddress),
     addressHint: isPickup
       ? "You can pick up your order at this store"
+      : null,
+    floor: order.shippingAddress.floor?.trim() || null,
+    intercomCode: order.shippingAddress.intercomCode?.trim() || null,
+    scheduledDelivery:
+      order.shippingAddress.scheduledDeliveryDate &&
+      order.shippingAddress.scheduledDeliveryStart &&
+      order.shippingAddress.scheduledDeliveryEnd
+        ? `${order.shippingAddress.scheduledDeliveryDate} ${order.shippingAddress.scheduledDeliveryStart}–${order.shippingAddress.scheduledDeliveryEnd}`
+        : order.deliveryEstimateSnapshot &&
+            /\d{4}-\d{2}-\d{2}/.test(order.deliveryEstimateSnapshot)
+          ? order.deliveryEstimateSnapshot
+          : null,
+    cashChangeAmount:
+      typeof order.shippingAddress.cashChangeAmount === "number"
+        ? order.shippingAddress.cashChangeAmount
+        : null,
+    cashChangeImageUrl: order.shippingAddress.cashChangeImageKey
+      ? mediaPublicUrl(order.shippingAddress.cashChangeImageKey)
       : null,
     paymentMethod: latestPayment
       ? paymentMethodLabel(latestPayment.method)

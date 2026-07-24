@@ -34,6 +34,7 @@ import {
   updateUserStatusAction,
 } from "@/features/users/application/update-user";
 import type { AdminUserListItem } from "@/features/users/application/queries";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminUsersViewProps = {
   locale: string;
@@ -41,6 +42,7 @@ type AdminUsersViewProps = {
   total: number;
   q?: string;
   role?: string;
+  copy: Dictionary["admin"];
 };
 
 function roleFilterHref(
@@ -73,6 +75,7 @@ export function AdminUsersView({
   total,
   q,
   role,
+  copy,
 }: AdminUsersViewProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -104,7 +107,7 @@ export function AdminUsersView({
         await action();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(caught instanceof Error ? caught.message : copy.common.actionFailed);
       }
     });
   }
@@ -120,15 +123,15 @@ export function AdminUsersView({
         setConfirmOpen(false);
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "Action failed.");
+        setError(caught instanceof Error ? caught.message : copy.common.actionFailed);
       }
     });
   }
 
   const rolePills = [
-    { label: "All", value: undefined },
-    { label: "Admins", value: "ADMIN" },
-    { label: "Customers", value: "CUSTOMER" },
+    { label: copy.users.roleAll, value: undefined },
+    { label: copy.users.roleAdmins, value: "ADMIN" },
+    { label: copy.users.roleCustomers, value: "CUSTOMER" },
   ] as const;
 
   return (
@@ -137,19 +140,19 @@ export function AdminUsersView({
         <input
           name="q"
           defaultValue={q ?? ""}
-          placeholder="Search by email, phone, name..."
+          placeholder={copy.users.searchPlaceholder}
           className={`${ADMIN_INPUT} min-w-[220px] flex-1`}
-          aria-label="Search users"
+          aria-label={copy.users.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}
         <Button type="submit" size="sm">
-          Search
+          {copy.users.search}
         </Button>
       </form>
 
       <div className="mb-4">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-          Admin / Customer
+          {copy.users.roleFilterLabel}
         </p>
         <div className="flex flex-wrap gap-2">
           {rolePills.map((pill) => {
@@ -171,13 +174,19 @@ export function AdminUsersView({
         </div>
       </div>
 
-      <p className="mb-3 text-sm text-gray-600">Total users: {total}</p>
+      <p className="mb-3 text-sm text-gray-600">
+        {copy.users.totalUsers.replace("{total}", String(total))}
+      </p>
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
       <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
         <p className="text-sm text-gray-700">
-          Selected {selected.size} user{selected.size === 1 ? "" : "s"}
+          {copy.common.selectedCount
+            .replace("{count}", String(selected.size))
+            .replace("{entity}", selected.size === 1
+              ? copy.common.entitySingular.user
+              : copy.common.entitySingular.users)}
         </p>
         <Button
           type="button"
@@ -189,14 +198,14 @@ export function AdminUsersView({
             setConfirmOpen(true);
           }}
         >
-          Delete Selected
+          {copy.users.deleteSelected}
         </Button>
       </Card>
 
       <Card className={ADMIN_TABLE_CARD}>
         {users.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No users match these filters.
+            {copy.users.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
@@ -210,15 +219,15 @@ export function AdminUsersView({
                       checked={allSelected}
                       onChange={toggleAll}
                       disabled={isPending || users.length === 0}
-                      aria-label="Select all users"
+                      aria-label={copy.users.selectAllAria}
                     />
                   </th>
-                  <th className={ADMIN_TABLE_TH}>User</th>
-                  <th className={ADMIN_TABLE_TH}>Contact</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Orders</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Roles</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Status</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Created</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.users.table.user}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.users.table.contact}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.orders}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.roles}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.status}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.created}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -236,7 +245,7 @@ export function AdminUsersView({
                           checked={selected.has(user.id)}
                           onChange={() => toggleOne(user.id)}
                           disabled={isPending || user.status === "ANONYMIZED"}
-                          aria-label={`Select ${displayName(user)}`}
+                          aria-label={copy.users.selectOneAria.replace("{name}", displayName(user))}
                         />
                       </td>
                       <td className={ADMIN_TABLE_TD}>
@@ -255,7 +264,7 @@ export function AdminUsersView({
                       <td className={ADMIN_TABLE_TD}>
                         <p className="text-sm text-gray-600">{user.email}</p>
                         <p className="text-sm text-gray-500">
-                          {user.phone ?? "—"}
+                          {user.phone ?? copy.common.none}
                         </p>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
@@ -299,8 +308,8 @@ export function AdminUsersView({
                           }`}
                           aria-label={
                             isActive
-                              ? `Suspend ${displayName(user)}`
-                              : `Activate ${displayName(user)}`
+                              ? copy.users.suspendAria.replace("{name}", displayName(user))
+                              : copy.users.activateAria.replace("{name}", displayName(user))
                           }
                         >
                           <span
@@ -326,8 +335,12 @@ export function AdminUsersView({
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete"
-        description={`Are you sure you want to delete ${selected.size} selected user${selected.size === 1 ? "" : "s"}? This anonymizes their accounts and cannot be undone.`}
+        title={copy.confirm.deleteTitle}
+        description={copy.confirm.deleteSelectedUsers
+          .replace("{count}", String(selected.size))
+          .replace("{plural}", selected.size === 1 ? "" : "s")}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
         isPending={isPending}
         onClose={() => {
           if (!isPending) setConfirmOpen(false);

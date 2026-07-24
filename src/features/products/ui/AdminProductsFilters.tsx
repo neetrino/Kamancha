@@ -6,6 +6,7 @@ import { flushSync } from "react-dom";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 const FILTER_INPUT =
   "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300";
@@ -19,14 +20,8 @@ type AdminProductsFiltersProps = {
   categories: AdminCategoryOption[];
   sort: string;
   dir: string;
+  copy: Dictionary["admin"]["products"]["filters"];
 };
-
-const STOCK_OPTIONS = [
-  { label: "All Products", value: "all" },
-  { label: "In stock", value: "in_stock" },
-  { label: "Out of stock", value: "out_of_stock" },
-  { label: "Low stock", value: "low_stock" },
-] as const;
 
 export function AdminProductsFilters({
   total,
@@ -37,6 +32,7 @@ export function AdminProductsFilters({
   categories,
   sort,
   dir,
+  copy,
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [categoryValue, setCategoryValue] = useState(categoryId ?? "");
@@ -46,6 +42,13 @@ export function AdminProductsFilters({
     label: category.title,
     value: category.id,
   }));
+
+  const stockOptions = [
+    { label: copy.allProducts, value: "all" as const },
+    { label: copy.inStock, value: "in_stock" as const },
+    { label: copy.outOfStock, value: "out_of_stock" as const },
+    { label: copy.lowStock, value: "low_stock" as const },
+  ];
 
   function applyCategory(next: string): void {
     flushSync(() => setCategoryValue(next));
@@ -61,7 +64,9 @@ export function AdminProductsFilters({
 
   return (
     <div className="mb-4">
-      <p className="mb-3 text-sm text-gray-600">Total products: {total}</p>
+      <p className="mb-3 text-sm text-gray-600">
+        {copy.totalProducts.replace("{total}", String(total))}
+      </p>
       <form
         ref={formRef}
         method="get"
@@ -70,44 +75,44 @@ export function AdminProductsFilters({
         <input type="hidden" name="sort" value={sort} />
         <input type="hidden" name="dir" value={dir} />
         <label>
-          <span className={ADMIN_LABEL}>Search by title or slug</span>
+          <span className={ADMIN_LABEL}>{copy.searchByTitleOrSlug}</span>
           <input
             name="q"
             defaultValue={q ?? ""}
-            placeholder="Search by title or slug..."
+            placeholder={copy.searchByTitleOrSlugPlaceholder}
             className={`${FILTER_INPUT} mt-1`}
-            aria-label="Search by title or slug"
+            aria-label={copy.searchByTitleOrSlugAria}
           />
         </label>
         <label>
-          <span className={ADMIN_LABEL}>Search by SKU</span>
+          <span className={ADMIN_LABEL}>{copy.searchBySku}</span>
           <input
             name="sku"
             defaultValue={sku ?? ""}
-            placeholder="Enter SKU code"
+            placeholder={copy.searchBySkuPlaceholder}
             className={`${FILTER_INPUT} mt-1`}
-            aria-label="Search by SKU"
+            aria-label={copy.searchBySkuAria}
           />
         </label>
         <div>
-          <span className={ADMIN_LABEL}>Filter by Category</span>
+          <span className={ADMIN_LABEL}>{copy.filterByCategory}</span>
           <SelectDropdown
             name="categoryId"
-            ariaLabel="Filter by category"
+            ariaLabel={copy.filterByCategoryAria}
             value={categoryValue}
-            allLabel="All Categories"
+            allLabel={copy.allCategories}
             options={categoryOptions}
             className="mt-1"
             onValueChange={applyCategory}
           />
         </div>
         <div>
-          <span className={ADMIN_LABEL}>Filter by Stock</span>
+          <span className={ADMIN_LABEL}>{copy.filterByStock}</span>
           <SelectDropdown
             name="stock"
-            ariaLabel="Filter by stock"
+            ariaLabel={copy.filterByStockAria}
             value={stockValue}
-            options={STOCK_OPTIONS}
+            options={stockOptions}
             className="mt-1"
             onValueChange={applyStock}
           />

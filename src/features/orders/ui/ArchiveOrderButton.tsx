@@ -10,17 +10,20 @@ import {
 } from "@/components/ui/ConfirmDialog";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { archiveOrderAction } from "@/features/orders/application/archive-order";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ArchiveOrderButtonProps = {
   locale: string;
   orderNumber: string;
   isArchived: boolean;
+  copy: Dictionary["admin"];
 };
 
 export function ArchiveOrderButton({
   locale,
   orderNumber,
   isArchived,
+  copy,
 }: ArchiveOrderButtonProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -48,11 +51,11 @@ export function ArchiveOrderButton({
   return (
     <Card className="p-6">
       <div className="flex flex-col gap-3">
-        <h2 className={ADMIN_SECTION_TITLE}>Archive</h2>
+        <h2 className={ADMIN_SECTION_TITLE}>{copy.orders.archive.title}</h2>
         <p className="text-sm text-gray-600">
           {isArchived
-            ? "This order is archived. Restore it to show in default lists."
-            : "Archive hides the order from default admin lists without deleting data."}
+            ? copy.orders.archive.archivedHint
+            : copy.orders.archive.activeHint}
         </p>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button
@@ -69,18 +72,19 @@ export function ArchiveOrderButton({
           }}
         >
           {isPending
-            ? "Saving…"
+            ? copy.common.saving
             : isArchived
-              ? "Restore order"
-              : "Archive order"}
+              ? copy.orders.archive.restoreOrder
+              : copy.orders.archive.archiveOrder}
         </Button>
       </div>
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Archive"
-        description={`Are you sure you want to archive order "${orderNumber}"? It will be hidden from default admin lists.`}
-        confirmLabel="Archive"
+        title={copy.confirm.archiveTitle}
+        description={copy.confirm.archiveOrder.replace("{orderNumber}", orderNumber)}
+        confirmLabel={copy.confirm.archiveConfirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
         isPending={isPending}
         onClose={() => {
           if (!isPending) setConfirmOpen(false);

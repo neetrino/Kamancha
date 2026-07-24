@@ -2,19 +2,21 @@
 
 import { Card } from "@/components/ui/Card";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
+import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import { CashChangePicker } from "@/features/checkout/ui/CashChangePicker";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
+import { DeliverySlotPicker } from "@/features/checkout/ui/DeliverySlotPicker";
+import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
+import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
+import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
 import type { Locale } from "@/lib/i18n/config";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-2xl border border-gray-200 px-4 text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300 disabled:bg-gray-50";
 
-const RADIO_SELECTED = "border-gray-900 bg-gray-50";
-const RADIO_IDLE = "border-gray-300 hover:bg-gray-50";
-
 type CheckoutDetailsLabels = {
   contactInformation: string;
-  shippingMethod: string;
   shippingAddress: string;
   paymentMethod: string;
   firstName: string;
@@ -22,13 +24,28 @@ type CheckoutDetailsLabels = {
   email: string;
   phone: string;
   address: string;
+  floor: string;
+  intercomCode: string;
   phonePlaceholder: string;
   addressPlaceholder: string;
-  storePickup: string;
-  storePickupDescription: string;
-  delivery: string;
-  deliveryDescription: string;
+  floorPlaceholder: string;
+  intercomCodePlaceholder: string;
+  openMap: string;
+  mapTitle: string;
+  mapHint: string;
+  mapConfirm: string;
+  mapCancel: string;
+  mapResolving: string;
   calculatingDelivery: string;
+  scheduleTitle: string;
+  schedulePickDate: string;
+  schedulePickTime: string;
+  scheduleNoSlots: string;
+  schedulePrevMonth: string;
+  scheduleNextMonth: string;
+  cashChangeTitle: string;
+  cashChangeHint: string;
+  cashChangeAria: string;
 };
 
 type PaymentOption = {
@@ -42,9 +59,12 @@ type CheckoutDetailsSectionsProps = {
   labels: CheckoutDetailsLabels;
   locale: Locale;
   pending: boolean;
-  shippingMethod: "pickup" | "delivery";
-  onShippingMethodChange: (method: "pickup" | "delivery") => void;
-  deliveryEnabled: boolean;
+  deliverySchedule: DeliveryScheduleSettings;
+  deliverySlot: SelectedDeliverySlot | null;
+  onDeliverySlotChange: (value: SelectedDeliverySlot | null) => void;
+  cashChangeOptions: CashChangeDenominationView[];
+  cashChangeAmount: number | null;
+  onCashChangeAmountChange: (amount: number) => void;
   line1: string;
   onLine1Change: (value: string) => void;
   deliveryQuotePending: boolean;
@@ -63,9 +83,12 @@ export function CheckoutDetailsSections({
   labels,
   locale,
   pending,
-  shippingMethod,
-  onShippingMethodChange,
-  deliveryEnabled,
+  deliverySchedule,
+  deliverySlot,
+  onDeliverySlotChange,
+  cashChangeOptions,
+  cashChangeAmount,
+  onCashChangeAmountChange,
   line1,
   onLine1Change,
   deliveryQuotePending,
@@ -141,88 +164,103 @@ export function CheckoutDetailsSections({
 
       <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
         <h2 className="mb-6 text-xl font-semibold text-gray-900">
-          {labels.shippingMethod}
+          {labels.shippingAddress}
         </h2>
-        <div className="space-y-3">
-          <label
-            className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 ${
-              shippingMethod === "pickup" ? RADIO_SELECTED : RADIO_IDLE
-            }`}
-          >
-            <input
-              type="radio"
-              name="shippingMethodUi"
-              value="pickup"
-              checked={shippingMethod === "pickup"}
-              onChange={() => onShippingMethodChange("pickup")}
-              disabled={pending}
-              className="mt-1"
-            />
-            <div>
-              <div className="font-medium text-gray-900">
-                {labels.storePickup}
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <span className="text-sm font-medium text-gray-700">
+              {labels.address}
+            </span>
+            <div className="flex items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <AddressAutocomplete
+                  name="line1"
+                  required
+                  value={line1}
+                  onValueChange={onLine1Change}
+                  placeholder={labels.addressPlaceholder}
+                  disabled={pending}
+                  className={FIELD_CLASS}
+                  languageCode={locale}
+                />
               </div>
-              <p className="mt-0.5 text-sm text-gray-600">
-                {labels.storePickupDescription}
-              </p>
+              <AddressMapPicker
+                addressValue={line1}
+                disabled={pending}
+                onAddressSelected={onLine1Change}
+                labels={{
+                  openMap: labels.openMap,
+                  title: labels.mapTitle,
+                  hint: labels.mapHint,
+                  confirm: labels.mapConfirm,
+                  cancel: labels.mapCancel,
+                  resolving: labels.mapResolving,
+                }}
+              />
             </div>
-          </label>
-
-          <label
-            className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 ${
-              shippingMethod === "delivery" ? RADIO_SELECTED : RADIO_IDLE
-            } ${!deliveryEnabled ? "cursor-not-allowed opacity-60" : ""}`}
-          >
-            <input
-              type="radio"
-              name="shippingMethodUi"
-              value="delivery"
-              checked={shippingMethod === "delivery"}
-              onChange={() => onShippingMethodChange("delivery")}
-              disabled={pending || !deliveryEnabled}
-              className="mt-1"
-            />
-            <div>
-              <div className="font-medium text-gray-900">{labels.delivery}</div>
-              <p className="mt-0.5 text-sm text-gray-600">
-                {labels.deliveryDescription}
-              </p>
-            </div>
-          </label>
-        </div>
-      </Card>
-
-      {shippingMethod === "delivery" ? (
-        <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-          <h2 className="mb-6 text-xl font-semibold text-gray-900">
-            {labels.shippingAddress}
-          </h2>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-            {labels.address}
-            <AddressAutocomplete
-              name="line1"
-              required
-              value={line1}
-              onValueChange={onLine1Change}
-              placeholder={labels.addressPlaceholder}
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+              {labels.floor}
+              <input
+                name="floor"
+                disabled={pending}
+                placeholder={labels.floorPlaceholder}
+                className={FIELD_CLASS}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+              {labels.intercomCode}
+              <input
+                name="intercomCode"
+                disabled={pending}
+                placeholder={labels.intercomCodePlaceholder}
+                className={FIELD_CLASS}
+              />
+            </label>
+          </div>
+          <DeliverySlotPicker
+            schedule={deliverySchedule}
+            selected={deliverySlot}
+            onChange={onDeliverySlotChange}
+            disabled={pending}
+            locale={locale}
+            labels={{
+              title: labels.scheduleTitle,
+              pickDate: labels.schedulePickDate,
+              pickTime: labels.schedulePickTime,
+              noSlots: labels.scheduleNoSlots,
+              prevMonth: labels.schedulePrevMonth,
+              nextMonth: labels.scheduleNextMonth,
+            }}
+          />
+          {paymentMethod === "cash_on_delivery" ? (
+            <CashChangePicker
+              options={cashChangeOptions}
+              value={cashChangeAmount}
+              onChange={onCashChangeAmountChange}
               disabled={pending}
-              className={FIELD_CLASS}
-              languageCode={locale}
+              locale={locale}
+              labels={{
+                title: labels.cashChangeTitle,
+                hint: labels.cashChangeHint,
+                ariaLabel: labels.cashChangeAria,
+              }}
             />
-          </label>
-          {deliveryQuotePending ? (
-            <p className="mt-2 text-sm text-gray-500">
-              {labels.calculatingDelivery}
-            </p>
           ) : null}
-          {deliveryQuoteError ? (
-            <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
-          ) : null}
-          {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
-            <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
-          ) : null}
-        </Card>
-      ) : null}
+        </div>
+        {deliveryQuotePending ? (
+          <p className="mt-2 text-sm text-gray-500">
+            {labels.calculatingDelivery}
+          </p>
+        ) : null}
+        {deliveryQuoteError ? (
+          <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
+        ) : null}
+        {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
+          <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
+        ) : null}
+      </Card>
 
       <CheckoutPaymentMethods
         title={labels.paymentMethod}

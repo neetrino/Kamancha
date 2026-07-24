@@ -8,11 +8,13 @@ import type {
   ProductDiscountDraft,
   ProductDiscountType,
 } from "@/features/products/types/product-discount";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ProductDrawerDiscountProps = {
   value: ProductDiscountDraft | null;
   disabled?: boolean;
   onChange: (next: ProductDiscountDraft | null) => void;
+  copy: Dictionary["admin"]["products"]["discount"];
 };
 
 function toLocalInput(iso: string | null): string {
@@ -34,6 +36,7 @@ export function ProductDrawerDiscount({
   value,
   disabled = false,
   onChange,
+  copy,
 }: ProductDrawerDiscountProps) {
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [typeMenuOpen, setTypeMenuOpen] = useState(false);
@@ -103,7 +106,7 @@ export function ProductDrawerDiscount({
 
   return (
     <div ref={rootRef} className="relative">
-      <span className={ADMIN_LABEL}>Զեղչ</span>
+      <span className={ADMIN_LABEL}>{copy.label}</span>
       <div className="flex items-stretch gap-2">
         <div className="relative flex min-w-0 flex-1 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm focus-within:border-gray-300">
           <button
@@ -126,7 +129,7 @@ export function ProductDrawerDiscount({
             max={type === "PERCENTAGE" ? 100 : undefined}
             value={amount}
             disabled={disabled}
-            placeholder="0"
+            placeholder={copy.placeholder}
             onChange={(event) => {
               const next = event.target.value;
               setAmount(next);
@@ -141,7 +144,7 @@ export function ProductDrawerDiscount({
           disabled={disabled}
           aria-expanded={scheduleOpen}
           aria-controls={scheduleId}
-          aria-label="Discount schedule"
+          aria-label={copy.scheduleAria}
           onClick={() => {
             setTypeMenuOpen(false);
             setScheduleOpen((open) => !open);
@@ -193,7 +196,7 @@ export function ProductDrawerDiscount({
         >
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-gray-600">
-              Սկիզբ
+              {copy.starts}
             </span>
             <input
               type="datetime-local"
@@ -209,7 +212,7 @@ export function ProductDrawerDiscount({
           </label>
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-gray-600">
-              Ավարտ
+              {copy.ends}
             </span>
             <input
               type="datetime-local"
@@ -234,7 +237,7 @@ export function ProductDrawerDiscount({
               }}
               className="text-xs font-medium text-gray-600 hover:text-gray-900"
             >
-              Մաքրել ժամանակացույցը
+              {copy.clearSchedule}
             </button>
           ) : null}
         </div>

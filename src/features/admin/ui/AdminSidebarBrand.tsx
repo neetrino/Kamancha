@@ -3,12 +3,14 @@
 import Link from "next/link";
 
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminSidebarBrandProps = {
   locale: string;
+  shell: Dictionary["admin"]["shell"];
 };
 
-export function AdminSidebarBrand({ locale }: AdminSidebarBrandProps) {
+export function AdminSidebarBrand({ locale, shell }: AdminSidebarBrandProps) {
   const { collapsed, toggleCollapsed } = useAdminSidebarCollapse();
 
   return (
@@ -23,16 +25,16 @@ export function AdminSidebarBrand({ locale }: AdminSidebarBrandProps) {
         <Link
           href={`/${locale}`}
           className="flex h-9 w-9 items-center justify-center rounded-md text-sm font-bold text-gray-900 hover:bg-gray-50"
-          title="White Shop home"
+          title={shell.brandHomeTitle}
         >
-          W
+          {shell.brandInitial}
         </Link>
       ) : (
         <Link
           href={`/${locale}`}
           className="min-w-0 flex-1 rounded-md px-2 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
         >
-          White Shop
+          {shell.brandName}
         </Link>
       )}
       <button
@@ -40,8 +42,8 @@ export function AdminSidebarBrand({ locale }: AdminSidebarBrandProps) {
         onClick={toggleCollapsed}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-gray-200 text-gray-600 transition-colors hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900"
         aria-expanded={!collapsed}
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        aria-label={collapsed ? shell.expandSidebar : shell.collapseSidebar}
+        title={collapsed ? shell.expandSidebar : shell.collapseSidebar}
       >
         {collapsed ? (
           <svg

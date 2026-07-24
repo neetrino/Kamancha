@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { listAdminHeroSlides } from "@/features/hero/application/queries";
 import { AdminHeroView } from "@/features/hero/ui/AdminHeroView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminHeroPageProps = {
   params: Promise<{ locale: string }>;
@@ -18,11 +19,17 @@ export default async function AdminHeroPage({
     notFound();
   }
 
+  const dictionary = getDictionary(locale);
   const { edit } = await searchParams;
   const slides = await listAdminHeroSlides();
 
   return (
-    <AdminHeroView locale={locale} slides={slides} initialEditId={edit} />
+    <AdminHeroView
+      locale={locale}
+      slides={slides}
+      initialEditId={edit}
+      copy={dictionary.admin}
+    />
   );
 }
 

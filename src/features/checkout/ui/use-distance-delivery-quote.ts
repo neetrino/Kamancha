@@ -16,24 +16,13 @@ export type DeliveryQuoteState = {
 /**
  * Debounced distance-delivery quote for the checkout address field.
  */
-export function useDistanceDeliveryQuote(
-  shippingMethod: "pickup" | "delivery",
-  line1: string,
-): DeliveryQuoteState {
+export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
   const [deliveryAmount, setDeliveryAmount] = useState(0);
   const [distanceLabel, setDistanceLabel] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (shippingMethod !== "delivery") {
-      setDeliveryAmount(0);
-      setDistanceLabel(null);
-      setError(null);
-      setPending(false);
-      return;
-    }
-
     const trimmed = line1.trim();
     if (trimmed.length < 3) {
       setDeliveryAmount(0);
@@ -65,7 +54,7 @@ export function useDistanceDeliveryQuote(
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [line1, shippingMethod]);
+  }, [line1]);
 
   return { deliveryAmount, distanceLabel, pending, error };
 }

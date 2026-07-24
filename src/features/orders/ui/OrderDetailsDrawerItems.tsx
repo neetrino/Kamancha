@@ -9,26 +9,30 @@ import {
 } from "@/features/admin/ui/admin-table-classes";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type OrderDetailsDrawerItemsProps = {
   detail: AdminOrderDetailView;
+  copy: Dictionary["admin"];
 };
 
 export function OrderDetailsDrawerItems({
   detail,
+  copy,
 }: OrderDetailsDrawerItemsProps) {
+  const d = copy.orders.drawer;
   return (
     <div className="rounded-2xl border border-gray-200 px-5 py-4">
-      <h3 className="mb-4 text-base font-semibold text-gray-900">Items</h3>
+      <h3 className="mb-4 text-base font-semibold text-gray-900">{d.items}</h3>
       <div className={`${ADMIN_TABLE_OUTER_SCROLL} rounded-xl border border-gray-100`}>
         <table className={ADMIN_TABLE}>
           <thead className={ADMIN_TABLE_THEAD}>
             <tr>
-              <th className={ADMIN_TABLE_TH}>Product</th>
-              <th className={ADMIN_TABLE_TH}>SKU</th>
-              <th className={ADMIN_TABLE_TH}>Qty</th>
-              <th className={ADMIN_TABLE_TH}>Price</th>
-              <th className={ADMIN_TABLE_TH}>Total</th>
+              <th className={ADMIN_TABLE_TH}>{d.product}</th>
+              <th className={ADMIN_TABLE_TH}>{d.sku}</th>
+              <th className={ADMIN_TABLE_TH}>{d.qty}</th>
+              <th className={ADMIN_TABLE_TH}>{d.price}</th>
+              <th className={ADMIN_TABLE_TH}>{d.itemTotal}</th>
             </tr>
           </thead>
           <tbody className={ADMIN_TABLE_TBODY}>

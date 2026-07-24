@@ -24,7 +24,7 @@ const envSchema = z.object({
   R2_ENDPOINT: z.string().url().optional(),
   EMAIL_FROM: z.string().email().optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
-  /** Server-only Google Maps Platform key (Geocoding + Distance Matrix). */
+  /** Server + browser Google Maps Platform key (Geocoding, Routes, Places, Maps JS). */
   GOOGLE_MAPS_API_KEY: z.string().min(1).optional(),
 });
 

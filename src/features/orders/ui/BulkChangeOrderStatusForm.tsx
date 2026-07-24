@@ -27,6 +27,7 @@ import {
 } from "@/features/admin/ui/admin-table-classes";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type BulkOrderRow = {
   id: string;
@@ -45,6 +46,7 @@ type BulkChangeOrderStatusFormProps = {
   locale: string;
   orders: BulkOrderRow[];
   onOpenOrder: (orderNumber: string) => void;
+  copy: Dictionary["admin"];
 };
 
 function formatMoney(amount: number, currency: string): string {
@@ -55,6 +57,7 @@ export function BulkChangeOrderStatusForm({
   locale,
   orders,
   onOpenOrder,
+  copy,
 }: BulkChangeOrderStatusFormProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -85,7 +88,7 @@ export function BulkChangeOrderStatusForm({
 
   function deleteSelected(): void {
     if (selected.size === 0) {
-      setError("Select at least one order.");
+      setError(copy.orders.bulk.selectAtLeastOne);
       return;
     }
     setConfirmOpen(true);
@@ -106,7 +109,9 @@ export function BulkChangeOrderStatusForm({
       }
 
       setMessage(
-        `Deleted ${result.value.archived}, skipped ${result.value.skipped}.`,
+        copy.orders.bulk.deletedSummary
+          .replace("{archived}", String(result.value.archived))
+          .replace("{skipped}", String(result.value.skipped)),
       );
       setSelected(new Set());
       setConfirmOpen(false);
@@ -114,12 +119,19 @@ export function BulkChangeOrderStatusForm({
     });
   }
 
+  const selectedCountLabel = copy.common.selectedCount
+    .replace("{count}", String(selected.size))
+    .replace(
+      "{entity}",
+      selected.size === 1
+        ? copy.common.entitySingular.order
+        : copy.common.entitySingular.orders,
+    );
+
   return (
     <div className="flex flex-col gap-4">
       <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">
-          Selected {selected.size} order{selected.size === 1 ? "" : "s"}
-        </p>
+        <p className="text-sm text-gray-700">{selectedCountLabel}</p>
         <Button
           type="button"
           size="sm"
@@ -127,7 +139,7 @@ export function BulkChangeOrderStatusForm({
           disabled={isPending || selected.size === 0}
           onClick={deleteSelected}
         >
-          {isPending ? "Deleting…" : "Delete selected"}
+          {isPending ? copy.common.deleting : copy.orders.bulk.deleteSelected}
         </Button>
         {error ? (
           <p className="w-full text-sm text-red-700">{error}</p>
@@ -149,41 +161,47 @@ export function BulkChangeOrderStatusForm({
                     checked={allSelected}
                     onChange={toggleAll}
                     disabled={isPending || orders.length === 0}
-                    aria-label="Select all orders on page"
+                    aria-label={copy.orders.bulk.selectAllAria}
                   />
                 </th>
-                <th className={ADMIN_TABLE_TH}>Order</th>
-                <th className={ADMIN_TABLE_TH}>Customer</th>
-                <th className={ADMIN_TABLE_TH_METRIC}>Status</th>
-                <th className={ADMIN_TABLE_TH_METRIC}>Payment</th>
-                <th className={ADMIN_TABLE_TH_METRIC}>Total</th>
-                <th className={ADMIN_TABLE_TH}>Placed</th>
+                <th className={ADMIN_TABLE_TH}>{copy.orders.table.order}</th>
+                <th className={ADMIN_TABLE_TH}>{copy.orders.table.customer}</th>
+                <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.status}</th>
+                <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.payment}</th>
+                <th className={ADMIN_TABLE_TH_METRIC}>{copy.orders.table.total}</th>
+                <th className={ADMIN_TABLE_TH}>{copy.orders.table.placed}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
               {orders.map((order) => (
-                <tr key={order.id} className={ADMIN_TABLE_ROW}>
-                  <td className={ADMIN_TABLE_TD_CHECK}>
+                <tr
+                  key={order.id}
+                  className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                  onClick={() => onOpenOrder(order.orderNumber)}
+                >
+                  <td
+                    className={ADMIN_TABLE_TD_CHECK}
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     <input
                       type="checkbox"
                       className={ADMIN_TABLE_CHECKBOX}
                       checked={selected.has(order.orderNumber)}
                       onChange={() => toggleOne(order.orderNumber)}
                       disabled={isPending || order.isArchived}
-                      aria-label={`Select ${order.orderNumber}`}
+                      aria-label={copy.orders.bulk.selectOneAria.replace(
+                        "{orderNumber}",
+                        order.orderNumber,
+                      )}
                     />
                   </td>
                   <td className={ADMIN_TABLE_TD}>
-                    <button
-                      type="button"
-                      onClick={() => onOpenOrder(order.orderNumber)}
-                      className="font-medium text-gray-900 hover:underline"
-                    >
+                    <span className="font-medium text-gray-900">
                       {order.orderNumber}
-                    </button>
+                    </span>
                     {order.isArchived ? (
                       <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
-                        Archived
+                        {copy.orders.table.archivedBadge}
                       </span>
                     ) : null}
                   </td>
@@ -191,22 +209,30 @@ export function BulkChangeOrderStatusForm({
                     <p className="text-sm text-gray-900">{order.contactName}</p>
                     <p className="text-xs text-gray-500">{order.contactEmail}</p>
                   </td>
-                  <td className={ADMIN_TABLE_TD_METRIC}>
+                  <td
+                    className={ADMIN_TABLE_TD_METRIC}
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     <AdminInlineStatusSelect
                       locale={locale}
                       orderNumber={order.orderNumber}
                       kind="order"
                       value={order.status}
                       disabled={isPending || order.isArchived}
+                      copy={copy}
                     />
                   </td>
-                  <td className={ADMIN_TABLE_TD_METRIC}>
+                  <td
+                    className={ADMIN_TABLE_TD_METRIC}
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     <AdminInlineStatusSelect
                       locale={locale}
                       orderNumber={order.orderNumber}
                       kind="payment"
                       value={order.paymentStatus}
                       disabled={isPending || order.isArchived}
+                      copy={copy}
                     />
                   </td>
                   <td className={ADMIN_TABLE_TD_METRIC}>
@@ -220,7 +246,7 @@ export function BulkChangeOrderStatusForm({
                         .toISOString()
                         .slice(0, 16)
                         .replace("T", " ")}{" "}
-                      UTC
+                      {copy.common.utc}
                     </span>
                   </td>
                 </tr>
@@ -230,12 +256,12 @@ export function BulkChangeOrderStatusForm({
         </div>
         {orders.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No orders match these filters.
+            {copy.orders.bulk.empty}
           </p>
         ) : (
           <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
             <p className="text-sm text-gray-600">
-              {selected.size} selected on this page
+              {copy.orders.bulk.selectedOnPage.replace("{count}", String(selected.size))}
             </p>
           </div>
         )}
@@ -243,8 +269,12 @@ export function BulkChangeOrderStatusForm({
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete"
-        description={`Are you sure you want to delete ${selected.size} selected order${selected.size === 1 ? "" : "s"}? This action cannot be undone.`}
+        title={copy.confirm.deleteTitle}
+        description={copy.confirm.deleteSelectedOrders
+          .replace("{count}", String(selected.size))
+          .replace("{plural}", selected.size === 1 ? "" : "s")}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
         isPending={isPending}
         onClose={() => {
           if (!isPending) setConfirmOpen(false);

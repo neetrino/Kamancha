@@ -26,6 +26,7 @@ import {
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
 import { ProductDrawerModifiers } from "@/features/products/ui/ProductDrawerModifiers";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
@@ -43,6 +44,15 @@ type ProductDrawerProduct = Pick<
   | "images"
 >;
 
+type DrawerCopy = {
+  drawer: Dictionary["admin"]["products"]["drawer"];
+  categories: Dictionary["admin"]["products"]["categories"];
+  images: Dictionary["admin"]["products"]["images"];
+  discount: Dictionary["admin"]["products"]["discount"];
+  modifiers: Dictionary["admin"]["products"]["modifiers"];
+  common: Dictionary["admin"]["common"];
+};
+
 type ProductDrawerProps = {
   locale: string;
   open: boolean;
@@ -50,6 +60,7 @@ type ProductDrawerProps = {
   product?: ProductDrawerProduct | null;
   categories: AdminCategoryOption[];
   modifierLibrary: ProductModifierOption[];
+  copy: DrawerCopy;
 };
 
 function imagesFromProduct(
@@ -71,6 +82,7 @@ export function ProductDrawer({
   product = null,
   categories: initialCategories,
   modifierLibrary: initialModifierLibrary,
+  copy,
 }: ProductDrawerProps) {
   const router = useRouter();
   const isEdit = product != null;
@@ -160,12 +172,12 @@ export function ProductDrawer({
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={isEdit ? "Edit product" : "Add new product"}
+      ariaLabel={isEdit ? copy.drawer.editAria : copy.drawer.addAria}
       panelClassName="w-[min(100%,42rem)] sm:w-[40%]"
     >
         <div className="border-b border-gray-200 px-5 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit product" : "Add new product"}
+            {isEdit ? copy.drawer.editTitle : copy.drawer.addTitle}
           </h2>
         </div>
 
@@ -228,11 +240,9 @@ export function ProductDrawer({
                 router.refresh();
               } catch (caught) {
                 const message =
-                  caught instanceof Error ? caught.message : "Save failed.";
+                  caught instanceof Error ? caught.message : copy.common.saveFailed;
                 if (/body exceeded|413|too large/i.test(message)) {
-                  setError(
-                    "Images are too large to upload together. Use fewer or smaller files (max 5MB each).",
-                  );
+                  setError(copy.drawer.imagesTooLarge);
                   return;
                 }
                 setError(message);
@@ -244,26 +254,28 @@ export function ProductDrawer({
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  Title <span className="text-red-600">*</span>
+                  {copy.drawer.title}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
-                  placeholder="Product title"
+                  placeholder={copy.drawer.titlePlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
               <label>
                 <span className={ADMIN_LABEL}>
-                  Slug <span className="text-red-600">*</span>
+                  {copy.drawer.slug}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
                   value={slug}
                   onChange={(event) => setSlug(event.target.value)}
-                  placeholder="product-slug"
+                  placeholder={copy.drawer.slugPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
@@ -271,11 +283,11 @@ export function ProductDrawer({
             </div>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Description</span>
+              <span className={ADMIN_LABEL}>{copy.drawer.description}</span>
               <textarea
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                placeholder="Product description"
+                placeholder={copy.drawer.descriptionPlaceholder}
                 className={ADMIN_TEXTAREA}
                 disabled={isPending}
               />
@@ -285,6 +297,7 @@ export function ProductDrawer({
               images={images}
               disabled={isPending}
               onChange={handleImagesChange}
+              copy={copy.images}
             />
 
             <ProductDrawerCategories
@@ -294,6 +307,7 @@ export function ProductDrawer({
               disabled={isPending}
               onCategoriesChange={setCategories}
               onSelectedChange={setCategoryIds}
+              copy={copy.categories}
             />
 
             <ProductDrawerModifiers
@@ -303,12 +317,14 @@ export function ProductDrawer({
               disabled={isPending}
               onLibraryChange={setModifierLibrary}
               onSelectedChange={setModifierIds}
+              copy={copy.modifiers}
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  Price <span className="text-red-600">*</span>
+                  {copy.drawer.price}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
@@ -316,7 +332,7 @@ export function ProductDrawer({
                   type="number"
                   value={priceAmount}
                   onChange={(event) => setPriceAmount(event.target.value)}
-                  placeholder="AMD price"
+                  placeholder={copy.drawer.pricePlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
@@ -325,26 +341,29 @@ export function ProductDrawer({
                 value={discount}
                 disabled={isPending}
                 onChange={setDiscount}
+                copy={copy.discount}
               />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  SKU <span className="text-red-600">*</span>
+                  {copy.drawer.sku}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
                   value={sku}
                   onChange={(event) => setSku(event.target.value)}
-                  placeholder="SKU"
+                  placeholder={copy.drawer.skuPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
               <label>
                 <span className={ADMIN_LABEL}>
-                  Quantity <span className="text-red-600">*</span>
+                  {copy.drawer.quantity}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
@@ -352,7 +371,7 @@ export function ProductDrawer({
                   type="number"
                   value={stockOnHand}
                   onChange={(event) => setStockOnHand(event.target.value)}
-                  placeholder="Stock"
+                  placeholder={copy.drawer.quantityPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
@@ -366,18 +385,18 @@ export function ProductDrawer({
             <Button type="submit" disabled={isPending}>
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? copy.common.saving
+                  : copy.common.creating
                 : isEdit
-                  ? "Save"
-                  : "Create"}
+                  ? copy.common.save
+                  : copy.common.create}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {copy.common.cancel}
             </button>
           </div>
         </form>

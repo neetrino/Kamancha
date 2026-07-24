@@ -9,12 +9,14 @@ import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import { updateContactStatusAction } from "@/features/contact/application/update-contact-status";
 import type { ContactStatus } from "@/features/contact/domain/contact-rules";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type UpdateContactStatusFormProps = {
   locale: string;
   messageId: string;
   currentStatus: ContactStatus;
   eligibleStatuses: ContactStatus[];
+  copy: Dictionary["admin"];
 };
 
 export function UpdateContactStatusForm({
@@ -22,6 +24,7 @@ export function UpdateContactStatusForm({
   messageId,
   currentStatus,
   eligibleStatuses,
+  copy,
 }: UpdateContactStatusFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +33,9 @@ export function UpdateContactStatusForm({
 
   if (eligibleStatuses.length === 0) {
     return (
-      <p className="text-sm text-gray-600">No further status changes.</p>
+      <p className="text-sm text-gray-600">
+        {copy.messages.updateStatus.noFurtherChanges}
+      </p>
     );
   }
 
@@ -56,13 +61,15 @@ export function UpdateContactStatusForm({
         }}
       >
         <p className="text-sm text-gray-700">
-          Current: <strong className="text-gray-900">{currentStatus}</strong>
+          {copy.common.current.replace("{value}", currentStatus)}
         </p>
         <div>
-          <span className={ADMIN_LABEL}>New status</span>
+          <span className={ADMIN_LABEL}>
+            {copy.messages.updateStatus.newStatus}
+          </span>
           <SelectDropdown
             name="status"
-            ariaLabel="New status"
+            ariaLabel={copy.messages.updateStatus.newStatusAria}
             value={status}
             options={eligibleStatuses.map((item) => ({
               label: item,
@@ -76,7 +83,9 @@ export function UpdateContactStatusForm({
         </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? "Updating…" : "Update status"}
+          {isPending
+            ? copy.common.updating
+            : copy.messages.updateStatus.updateStatus}
         </Button>
       </form>
     </Card>

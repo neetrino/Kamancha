@@ -26,6 +26,8 @@ describe("parseDeliverySettings", () => {
       originLng: 44.51,
       pricePerKmAmount: 1000,
       isActive: true,
+      schedule: DEFAULT_DELIVERY_SETTINGS.schedule,
+      cashChangeDenominations: DEFAULT_DELIVERY_SETTINGS.cashChangeDenominations,
     });
   });
 });
@@ -48,6 +50,8 @@ describe("isDistanceDeliveryReady", () => {
         originLng: 44.5,
         pricePerKmAmount: 500,
         isActive: true,
+        schedule: DEFAULT_DELIVERY_SETTINGS.schedule,
+        cashChangeDenominations: DEFAULT_DELIVERY_SETTINGS.cashChangeDenominations,
       }),
     ).toBe(true);
   });

@@ -13,24 +13,33 @@ import {
   updateDeliveryLocationAction,
 } from "@/features/delivery/application/manage-delivery";
 import type { AdminDeliveryLocation } from "@/features/delivery/application/queries";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type LocationDrawerCopy = {
+  locationDrawer: Dictionary["admin"]["delivery"]["locationDrawer"];
+  common: Dictionary["admin"]["common"];
+};
 
 type DeliveryLocationDrawerProps = {
   locale: string;
   open: boolean;
   onClose: () => void;
   location?: AdminDeliveryLocation | null;
+  copy: LocationDrawerCopy;
 };
 
 type DeliveryLocationFormProps = {
   locale: string;
   location: AdminDeliveryLocation | null;
   onClose: () => void;
+  copy: LocationDrawerCopy;
 };
 
 function DeliveryLocationForm({
   locale,
   location,
   onClose,
+  copy,
 }: DeliveryLocationFormProps) {
   const router = useRouter();
   const isEdit = location != null;
@@ -87,11 +96,11 @@ function DeliveryLocationForm({
       <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Country</span>
+            <span className={ADMIN_LABEL}>{copy.locationDrawer.country}</span>
             <input
               value={country}
               onChange={(event) => setCountry(event.target.value)}
-              placeholder="Armenia"
+              placeholder={copy.locationDrawer.countryPlaceholder}
               required
               className={ADMIN_INPUT}
               disabled={isPending}
@@ -99,11 +108,11 @@ function DeliveryLocationForm({
           </label>
 
           <label>
-            <span className={ADMIN_LABEL}>City</span>
+            <span className={ADMIN_LABEL}>{copy.locationDrawer.city}</span>
             <input
               value={city}
               onChange={(event) => setCity(event.target.value)}
-              placeholder="Yerevan"
+              placeholder={copy.locationDrawer.cityPlaceholder}
               required
               className={ADMIN_INPUT}
               disabled={isPending}
@@ -113,7 +122,7 @@ function DeliveryLocationForm({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Price (AMD)</span>
+            <span className={ADMIN_LABEL}>{copy.locationDrawer.priceAmd}</span>
             <input
               type="number"
               min={0}
@@ -121,21 +130,23 @@ function DeliveryLocationForm({
               required
               value={priceAmount}
               onChange={(event) => setPriceAmount(event.target.value)}
-              placeholder="1500"
+              placeholder={copy.locationDrawer.pricePlaceholder}
               className={ADMIN_INPUT}
               disabled={isPending}
             />
           </label>
 
           <label>
-            <span className={ADMIN_LABEL}>Free delivery from (AMD)</span>
+            <span className={ADMIN_LABEL}>
+              {copy.locationDrawer.freeDeliveryFrom}
+            </span>
             <input
               type="number"
               min={0}
               step={1}
               value={freeThresholdAmount}
               onChange={(event) => setFreeThresholdAmount(event.target.value)}
-              placeholder="50000"
+              placeholder={copy.locationDrawer.freeDeliveryPlaceholder}
               className={ADMIN_INPUT}
               disabled={isPending}
             />
@@ -147,14 +158,14 @@ function DeliveryLocationForm({
 
       <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving…" : "Save"}
+          {isPending ? copy.common.saving : copy.common.save}
         </Button>
         <button
           type="button"
           onClick={onClose}
           className="text-sm font-medium text-gray-600 hover:text-gray-900"
         >
-          Cancel
+          {copy.common.cancel}
         </button>
       </div>
     </form>
@@ -166,6 +177,7 @@ export function DeliveryLocationDrawer({
   open,
   onClose,
   location = null,
+  copy,
 }: DeliveryLocationDrawerProps) {
   const formKey = location?.id ?? "new";
 
@@ -173,11 +185,17 @@ export function DeliveryLocationDrawer({
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={location ? "Edit location" : "Add location"}
+      ariaLabel={
+        location
+          ? copy.locationDrawer.editAria
+          : copy.locationDrawer.addAria
+      }
     >
       <div className="border-b border-gray-200 px-5 py-4">
         <h2 className="text-lg font-semibold text-gray-900">
-          {location ? "Edit location" : "Add location"}
+          {location
+            ? copy.locationDrawer.editTitle
+            : copy.locationDrawer.addTitle}
         </h2>
       </div>
 
@@ -186,6 +204,7 @@ export function DeliveryLocationDrawer({
         locale={locale}
         location={location}
         onClose={onClose}
+        copy={copy}
       />
     </SideSheet>
   );

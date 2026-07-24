@@ -33,6 +33,15 @@ import {
   quoteDistanceDelivery,
   type DistanceDeliveryQuote,
 } from "@/features/delivery/application/quote-distance-delivery";
+import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
+import {
+  findActiveCashChangeByAmount,
+  listActiveCashChangeDenominations,
+} from "@/features/delivery/domain/cash-change";
+import {
+  formatDeliverySlotSnapshot,
+  isDeliverySlotAvailable,
+} from "@/features/delivery/domain/delivery-schedule";
 import {
   ORDER_NUMBER_LOCK_KEY,
   formatOrderNumber,
@@ -91,12 +100,56 @@ export async function createOrderAction(
   }
 
   let deliveryQuote: DistanceDeliveryQuote | null = null;
+  let deliverySlotSnapshot: string | null = null;
+  let cashChangeAmount: number | undefined;
+  let cashChangeImageKey: string | undefined;
+  const deliverySettings = await getDeliverySettings();
+
   if (input.shippingMethod === "delivery") {
     const quoted = await quoteDistanceDelivery(input.line1 ?? "");
     if (!quoted.ok) {
       return { ok: false, error: quoted.error };
     }
     deliveryQuote = quoted.quote;
+
+    const selectedSlot = {
+      date: input.scheduledDeliveryDate ?? "",
+      startTime: input.scheduledDeliveryStart ?? "",
+      endTime: input.scheduledDeliveryEnd ?? "",
+    };
+    if (!isDeliverySlotAvailable(deliverySettings.schedule, selectedSlot)) {
+      return {
+        ok: false,
+        error: "Selected delivery time is no longer available.",
+      };
+    }
+    deliverySlotSnapshot = formatDeliverySlotSnapshot(selectedSlot);
+  }
+
+  if (input.paymentMethod === "cash_on_delivery") {
+    const activeCashChange = listActiveCashChangeDenominations(
+      deliverySettings.cashChangeDenominations,
+    );
+    if (activeCashChange.length > 0) {
+      if (input.cashChangeAmount == null) {
+        return {
+          ok: false,
+          error: "Please select the banknote you will pay with.",
+        };
+      }
+      const matched = findActiveCashChangeByAmount(
+        deliverySettings.cashChangeDenominations,
+        input.cashChangeAmount,
+      );
+      if (!matched) {
+        return {
+          ok: false,
+          error: "Selected cash-change amount is no longer available.",
+        };
+      }
+      cashChangeAmount = matched.amount;
+      cashChangeImageKey = matched.imageObjectKey ?? undefined;
+    }
   }
 
   const contactName = `${input.firstName} ${input.lastName}`.trim();
@@ -117,6 +170,15 @@ export async function createOrderAction(
       line1: input.shippingMethod === "delivery" ? input.line1?.trim() : null,
       deliveryAmount: deliveryQuote?.deliveryAmount ?? 0,
       distanceMeters: deliveryQuote?.distanceMeters ?? null,
+      scheduledDeliveryDate:
+        input.shippingMethod === "delivery"
+          ? input.scheduledDeliveryDate
+          : null,
+      scheduledDeliveryStart:
+        input.shippingMethod === "delivery"
+          ? input.scheduledDeliveryStart
+          : null,
+      cashChangeAmount: cashChangeAmount ?? null,
     }),
   );
 
@@ -159,6 +221,21 @@ export async function createOrderAction(
               ""),
         line2: input.line2,
         postalCode: input.postalCode,
+        ...(input.shippingMethod === "delivery"
+          ? {
+              floor: input.floor?.trim() || undefined,
+              intercomCode: input.intercomCode?.trim() || undefined,
+              scheduledDeliveryDate: input.scheduledDeliveryDate,
+              scheduledDeliveryStart: input.scheduledDeliveryStart,
+              scheduledDeliveryEnd: input.scheduledDeliveryEnd,
+              ...(cashChangeAmount != null
+                ? {
+                    cashChangeAmount,
+                    cashChangeImageKey,
+                  }
+                : {}),
+            }
+          : {}),
       };
 
       let subtotal = 0;
@@ -365,9 +442,14 @@ export async function createOrderAction(
         deliveryEstimateSnapshot:
           input.shippingMethod === "pickup"
             ? null
-            : deliveryQuote
-              ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
-              : null,
+            : [
+                deliveryQuote
+                  ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
+                  : null,
+                deliverySlotSnapshot,
+              ]
+                .filter(Boolean)
+                .join(" · ") || null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,
