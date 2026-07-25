@@ -15,23 +15,52 @@
     "email": "Email",
     "phone": "Телефон",
     "address": "Адрес",
+    "floor": "Этаж",
+    "intercomCode": "Код домофона",
     "city": "Город",
     "deliveryLocation": "Место доставки",
     "selectLocation": "Выберите место"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
-    "address": "Улица, квартира, офис и т.д.",
+    "address": "Улица, дом и т.д.",
+    "floor": "напр. 3",
+    "intercomCode": "напр. 24#",
     "city": "Город"
+  },
+  "map": {
+    "openMap": "Карта",
+    "title": "Выберите адрес на карте",
+    "hint": "Нажмите на карту или перетащите метку, чтобы выбрать точную точку доставки.",
+    "confirm": "Использовать этот адрес",
+    "cancel": "Закрыть",
+    "resolving": "Определяем адрес…"
+  },
+  "schedule": {
+    "title": "Дата и время доставки",
+    "pickDate": "Выберите день",
+    "pickTime": "Выберите время",
+    "noSlots": "Сейчас нет доступных слотов доставки.",
+    "prevMonth": "Назад",
+    "nextMonth": "Далее",
+    "selectSlot": "Выберите дату и время доставки"
+  },
+  "cashChange": {
+    "title": "Сдача с купюры",
+    "hint": "Выберите купюру, которой будете платить, чтобы курьер привёз сдачу.",
+    "aria": "Купюра для сдачи",
+    "select": "Выберите купюру, которой будете платить"
   },
   "shipping": {
     "storePickup": "Самовывоз",
     "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
     "delivery": "Доставка",
-    "deliveryDescription": "Доставим заказ по вашему адресу",
+    "deliveryDescription": "Доставим заказ по вашему адресу. Цена зависит от расстояния.",
     "freePickup": "Бесплатно (Самовывоз)",
     "enterCity": "Укажите город",
-    "selectDeliveryLocation": "Выберите место доставки"
+    "selectDeliveryLocation": "Выберите место доставки",
+    "enterDeliveryAddress": "Введите адрес, чтобы рассчитать доставку",
+    "calculatingDelivery": "Расчёт доставки…"
   },
   "payment": {
     "cashOnDelivery": "Наличными при получении",

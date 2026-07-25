@@ -26,6 +26,12 @@ export {
   wishlistItems,
 } from "@/db/schema/commerce";
 export {
+  cartItemModifiers,
+  orderItemModifiers,
+  productModifierLinks,
+  productModifiers,
+} from "@/db/schema/modifiers";
+export {
   createdAtColumn,
   deletedAtColumn,
   idColumn,

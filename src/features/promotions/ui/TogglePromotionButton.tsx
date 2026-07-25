@@ -5,17 +5,25 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { togglePromotionAction } from "@/features/promotions/application/upsert-promotion";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type TogglePromotionButtonCopy = {
+  toggle: Dictionary["admin"]["discounts"]["toggle"];
+  common: Dictionary["admin"]["common"];
+};
 
 type TogglePromotionButtonProps = {
   locale: string;
   promotionId: string;
   isActive: boolean;
+  copy: TogglePromotionButtonCopy;
 };
 
 export function TogglePromotionButton({
   locale,
   promotionId,
   isActive,
+  copy,
 }: TogglePromotionButtonProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +51,11 @@ export function TogglePromotionButton({
           });
         }}
       >
-        {isPending ? "Updating…" : isActive ? "Deactivate" : "Activate"}
+        {isPending
+          ? copy.common.updating
+          : isActive
+            ? copy.toggle.deactivate
+            : copy.toggle.activate}
       </Button>
       {error ? <p className="text-xs text-red-700">{error}</p> : null}
     </div>

@@ -6,6 +6,7 @@ import {
   removeItem,
   updateQuantity,
 } from "@/features/cart/cart";
+import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { isLocale } from "@/lib/i18n/config";
 
@@ -24,17 +25,20 @@ export default async function CartPage({ params }: CartPageProps) {
     })),
   );
 
-  const total = items.reduce((sum, { item, product }) => {
-    const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
-    return sum + item.quantity * unit;
+  const total = items.reduce((sum, { item, product, modifiers }) => {
+    const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    return sum + item.quantity * cartLineUnitAmount(base, modifiers);
   }, 0);
 
   return (
     <section className="flex max-w-2xl flex-col gap-4">
       <h1 className="text-3xl font-semibold">Cart</h1>
-      {items.map(({ item, product }) => {
-        const unit =
+      {items.map(({ item, product, modifiers }) => {
+        const base =
           prices.get(product.id)?.unitAmount ?? product.priceAmount;
+        const unit = cartLineUnitAmount(base, modifiers);
+        const additions = modifiers.filter((row) => row.kind === "ADDITION");
+        const exceptions = modifiers.filter((row) => row.kind === "EXCEPTION");
         return (
           <div
             className="flex items-center justify-between border p-3"
@@ -42,6 +46,16 @@ export default async function CartPage({ params }: CartPageProps) {
           >
             <div>
               <p>{product.translations[locale]?.title ?? product.sku}</p>
+              {additions.length > 0 ? (
+                <p className="text-xs text-gray-600">
+                  + {additions.map((row) => row.name).join(", ")}
+                </p>
+              ) : null}
+              {exceptions.length > 0 ? (
+                <p className="text-xs text-gray-600">
+                  − {exceptions.map((row) => row.name).join(", ")}
+                </p>
+              ) : null}
               <p className="text-sm">
                 {unit} AMD × {item.quantity}
               </p>

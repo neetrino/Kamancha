@@ -10,6 +10,7 @@ import {
 import { createCategoryAction } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ProductDrawerCategoriesProps = {
   locale: string;
@@ -18,6 +19,7 @@ type ProductDrawerCategoriesProps = {
   disabled: boolean;
   onCategoriesChange: (categories: AdminCategoryOption[]) => void;
   onSelectedChange: (ids: string[]) => void;
+  copy: Dictionary["admin"]["products"]["categories"];
 };
 
 export function ProductDrawerCategories({
@@ -27,6 +29,7 @@ export function ProductDrawerCategories({
   disabled,
   onCategoriesChange,
   onSelectedChange,
+  copy,
 }: ProductDrawerCategoriesProps) {
   const listId = useId();
   const [open, setOpen] = useState(false);
@@ -40,7 +43,7 @@ export function ProductDrawerCategories({
     .map((category) => category.title);
   const triggerLabel =
     selectedTitles.length === 0
-      ? "Select categories"
+      ? copy.selectCategories
       : selectedTitles.join(", ");
 
   function toggleCategory(id: string): void {
@@ -54,7 +57,7 @@ export function ProductDrawerCategories({
   function createCategory(): void {
     const title = newTitle.trim();
     if (!title) {
-      setError("Category title is required.");
+      setError(copy.categoryTitleRequired);
       return;
     }
 
@@ -83,7 +86,7 @@ export function ProductDrawerCategories({
 
   return (
     <div>
-      <span className={ADMIN_LABEL}>Categories</span>
+      <span className={ADMIN_LABEL}>{copy.label}</span>
       <div className={`relative mt-1 ${open ? "z-50" : "z-0"}`}>
         <button
           type="button"
@@ -123,7 +126,7 @@ export function ProductDrawerCategories({
             >
               {categories.length === 0 ? (
                 <p className="px-4 py-2.5 text-sm text-gray-500">
-                  No categories yet.
+                  {copy.empty}
                 </p>
               ) : (
                 categories.map((category) => {
@@ -177,7 +180,7 @@ export function ProductDrawerCategories({
           onClick={() => setShowAdd((value) => !value)}
           className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
         >
-          + Add category
+          {copy.addCategory}
         </button>
       </div>
 
@@ -185,12 +188,12 @@ export function ProductDrawerCategories({
         <div className="mt-3 space-y-2 rounded-xl border border-gray-200 bg-gray-50 p-3">
           <label className="block">
             <span className={ADMIN_LABEL}>
-              Category title <span className="text-red-600">*</span>
+              {copy.categoryTitle} <span className="text-red-600">*</span>
             </span>
             <input
               value={newTitle}
               onChange={(event) => setNewTitle(event.target.value)}
-              placeholder="Enter category title"
+              placeholder={copy.categoryTitlePlaceholder}
               className={ADMIN_INPUT}
               disabled={disabled || isPending}
             />
@@ -202,7 +205,7 @@ export function ProductDrawerCategories({
               onClick={createCategory}
               className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
             >
-              {isPending ? "Adding…" : "Add"}
+              {isPending ? copy.adding : copy.add}
             </button>
             <button
               type="button"

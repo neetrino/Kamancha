@@ -21,6 +21,7 @@ import {
   type BlogTranslations,
 } from "@/features/blog/domain/blog-rules";
 import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type LocaleDraft = {
   title: string;
@@ -35,6 +36,7 @@ type BlogPostDrawerProps = {
   open: boolean;
   onClose: () => void;
   post?: AdminBlogListItem | null;
+  copy: Dictionary["admin"];
 };
 
 function emptyDraft(): LocaleDraft {
@@ -84,6 +86,7 @@ export function BlogPostDrawer({
   open,
   onClose,
   post = null,
+  copy,
 }: BlogPostDrawerProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -158,12 +161,12 @@ export function BlogPostDrawer({
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={isEdit ? "Edit blog post" : "Add blog post"}
+      ariaLabel={isEdit ? copy.blog.drawer.editAria : copy.blog.drawer.addAria}
       panelClassName="w-full max-w-lg"
     >
         <div className="border-b border-gray-200 px-5 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit blog post" : "Add blog post"}
+            {isEdit ? copy.blog.drawer.editTitle : copy.blog.drawer.addTitle}
           </h2>
         </div>
 
@@ -174,7 +177,7 @@ export function BlogPostDrawer({
             const current = drafts[activeLocale];
             const slug = resolvedSlug(current);
             if (!current.title.trim() || !current.content.trim()) {
-              setError("Title and full text are required.");
+              setError(copy.blog.drawer.titleAndFullTextRequired);
               return;
             }
 
@@ -221,7 +224,7 @@ export function BlogPostDrawer({
           <div className="flex-1 space-y-6 overflow-y-auto px-5 py-5">
             <div>
               <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                Translations
+                {copy.blog.drawer.translations}
               </p>
               <div className="flex flex-wrap gap-2">
                 {locales.map((loc) => {
@@ -246,7 +249,8 @@ export function BlogPostDrawer({
 
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Title <span className="text-red-600">*</span>
+                {copy.blog.drawer.title}{" "}
+                <span className="text-red-600">{copy.common.requiredMark}</span>
               </span>
               <input
                 required
@@ -260,7 +264,7 @@ export function BlogPostDrawer({
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Short excerpt</span>
+              <span className={ADMIN_LABEL}>{copy.blog.drawer.shortExcerpt}</span>
               <input
                 value={draft.excerpt}
                 onChange={(event) =>
@@ -273,7 +277,8 @@ export function BlogPostDrawer({
 
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Full text <span className="text-red-600">*</span>
+                {copy.blog.drawer.fullText}{" "}
+                <span className="text-red-600">{copy.common.requiredMark}</span>
               </span>
               <textarea
                 required
@@ -286,17 +291,17 @@ export function BlogPostDrawer({
                 disabled={isPending}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                Plain text or HTML. Double line breaks create new paragraphs.
+                {copy.blog.drawer.fullTextHint}
               </span>
             </label>
 
             <div>
               <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                Common
+                {copy.blog.drawer.common}
               </p>
               <div className="space-y-4">
                 <label className="block">
-                  <span className={ADMIN_LABEL}>Publication date</span>
+                  <span className={ADMIN_LABEL}>{copy.blog.drawer.publicationDate}</span>
                   <input
                     type="date"
                     value={publishedAt}
@@ -305,18 +310,18 @@ export function BlogPostDrawer({
                     disabled={isPending}
                   />
                   <span className="mt-1 block text-xs text-gray-500">
-                    Shown on the post. Leave empty to use today when publishing.
+                    {copy.blog.drawer.publicationDateHint}
                   </span>
                 </label>
                 <div>
-                  <span className={ADMIN_LABEL}>Status</span>
+                  <span className={ADMIN_LABEL}>{copy.blog.drawer.status}</span>
                   <SelectDropdown
-                    ariaLabel="Status"
+                    ariaLabel={copy.blog.drawer.statusAria}
                     value={status}
                     options={[
-                      { label: "Draft", value: "DRAFT" },
-                      { label: "Published", value: "PUBLISHED" },
-                      { label: "Archived", value: "ARCHIVED" },
+                      { label: copy.blog.drawer.draft, value: "DRAFT" },
+                      { label: copy.blog.drawer.published, value: "PUBLISHED" },
+                      { label: copy.blog.drawer.archived, value: "ARCHIVED" },
                     ]}
                     disabled={isPending}
                     deferChange={false}
@@ -330,7 +335,7 @@ export function BlogPostDrawer({
             </div>
 
             <div>
-              <span className={ADMIN_LABEL}>Cover image</span>
+              <span className={ADMIN_LABEL}>{copy.blog.drawer.coverImage}</span>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -338,7 +343,9 @@ export function BlogPostDrawer({
                   onClick={() => fileInputRef.current?.click()}
                   className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  {imagePreview ? "Change image" : "+ Upload image"}
+                  {imagePreview
+                    ? copy.blog.drawer.changeImage
+                    : copy.blog.drawer.uploadImage}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -377,7 +384,7 @@ export function BlogPostDrawer({
                     }}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
-                    Remove
+                    {copy.blog.drawer.remove}
                   </button>
                 ) : null}
               </div>
@@ -390,7 +397,7 @@ export function BlogPostDrawer({
                 />
               ) : null}
               <p className="mt-1 text-xs text-gray-500">
-                JPEG, PNG, WebP, or GIF. Max 5MB.
+                {copy.blog.drawer.coverHint}
               </p>
             </div>
 
@@ -399,7 +406,7 @@ export function BlogPostDrawer({
 
           <div className="border-t border-gray-200 px-5 py-4">
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Saving…" : "Save"}
+              {isPending ? copy.common.saving : copy.common.save}
             </Button>
           </div>
         </form>

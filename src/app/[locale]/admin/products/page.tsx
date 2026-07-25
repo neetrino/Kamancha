@@ -5,10 +5,12 @@ import {
   listAdminCategoryOptions,
   listAdminProducts,
 } from "@/features/products/application/list-admin-products";
+import { listModifiersForProductAdmin } from "@/features/products/application/product-modifiers";
 import { adminProductsFilterSchema } from "@/features/products/schemas/admin-list";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminProductsPageProps = {
   params: Promise<{ locale: string }>;
@@ -57,6 +59,9 @@ export default async function AdminProductsPage({
     notFound();
   }
 
+  const dict = getDictionary(locale);
+  const adminCopy = dict.admin;
+
   const raw = await searchParams;
   const parsed = adminProductsFilterSchema.safeParse({
     q: firstParam(raw.q) || undefined,
@@ -80,10 +85,12 @@ export default async function AdminProductsPage({
         categoryId: undefined,
       };
 
-  const [{ rows, total, pageSize }, categories] = await Promise.all([
-    listAdminProducts(locale, filters),
-    listAdminCategoryOptions(locale),
-  ]);
+  const [{ rows, total, pageSize }, categories, modifierLibrary] =
+    await Promise.all([
+      listAdminProducts(locale, filters),
+      listAdminCategoryOptions(locale),
+      listModifiersForProductAdmin(null),
+    ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   function sortHref(sort: "title" | "stock" | "price" | "created"): string {
@@ -117,6 +124,7 @@ export default async function AdminProductsPage({
         categories={categories}
         sort={filters.sort}
         dir={filters.dir}
+        copy={adminCopy.products.filters}
       />
 
       <AdminProductsView
@@ -124,6 +132,12 @@ export default async function AdminProductsPage({
         products={rows}
         sortLinks={sortLinks}
         categories={categories}
+        modifierLibrary={modifierLibrary}
+        copy={{
+          products: adminCopy.products,
+          common: adminCopy.common,
+          confirm: adminCopy.confirm,
+        }}
       />
 
       {totalPages > 1 ? (
@@ -133,18 +147,20 @@ export default async function AdminProductsPage({
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page - 1 })}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {adminCopy.common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {adminCopy.common.pageOf
+              .replace("{page}", String(filters.page))
+              .replace("{totalPages}", String(totalPages))}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page + 1 })}`}
               className="font-medium hover:underline"
             >
-              Next
+              {adminCopy.common.next}
             </Link>
           ) : null}
         </nav>

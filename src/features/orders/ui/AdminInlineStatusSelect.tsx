@@ -22,6 +22,7 @@ import {
 } from "@/features/admin/ui/status-badge";
 import { changeOrderStatusAction } from "@/features/orders/application/change-order-status";
 import { changePaymentStatusAction } from "@/features/orders/application/change-payment-status";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import {
   ADMIN_ORDER_STATUS_OPTIONS,
   orderStatusLabel,
@@ -45,6 +46,7 @@ type AdminInlineStatusSelectProps = {
   kind: "order" | "payment";
   value: string;
   disabled?: boolean;
+  copy: Dictionary["admin"];
 };
 
 export function AdminInlineStatusSelect({
@@ -53,6 +55,7 @@ export function AdminInlineStatusSelect({
   kind,
   value,
   disabled = false,
+  copy,
 }: AdminInlineStatusSelectProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -198,6 +201,11 @@ export function AdminInlineStatusSelect({
     }, DROPDOWN_ANIMATION_MS);
   }
 
+  const ariaLabel =
+    kind === "order"
+      ? copy.orders.inlineStatus.changeOrderAria
+      : copy.orders.inlineStatus.changePaymentAria;
+
   const menu =
     mounted && menuPosition
       ? createPortal(
@@ -218,7 +226,7 @@ export function AdminInlineStatusSelect({
             <div
               id={menuId}
               role="listbox"
-              aria-label={`Change ${kind} status`}
+              aria-label={ariaLabel}
               className="overflow-hidden rounded-2xl border border-gray-100 bg-white py-2"
             >
               {options.map((option) => {
@@ -249,7 +257,7 @@ export function AdminInlineStatusSelect({
         type="button"
         disabled={disabled || isPending}
         className={`inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium outline-none transition-opacity disabled:opacity-50 ${badgeClassName}`}
-        aria-label={`Change ${kind} status`}
+        aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={menuId}

@@ -21,7 +21,13 @@
     "logout": "Выход",
     "profile": "Профиль",
     "admin": "Админ",
-    "createAccount": "Создать аккаунт"
+    "createAccount": "Создать аккаунт",
+    "search": "Поиск",
+    "searchClose": "Закрыть поиск",
+    "searchPlaceholder": "Искать товары…",
+    "searchIdle": "Введите название товара",
+    "searchEmpty": "Товары не найдены",
+    "searchViewAll": "Смотреть все результаты"
   },
   "footer": {
     "shop": "Магазин",
@@ -31,6 +37,7 @@
     "privacyPolicy": "Политика конфиденциальности",
     "terms": "Условия",
     "contactInfo": "Контактная информация",
+    "followUs": "Мы в соцсетях",
     "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
   }
 }

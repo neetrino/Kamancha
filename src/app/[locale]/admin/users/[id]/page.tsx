@@ -21,6 +21,7 @@ import {
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
@@ -56,6 +57,9 @@ export default async function AdminUserDetailPage({
     notFound();
   }
 
+  const dictionary = getDictionary(locale);
+  const t = dictionary.admin;
+
   const detail = await getAdminUserById(id);
   if (!detail) {
     notFound();
@@ -75,7 +79,7 @@ export default async function AdminUserDetailPage({
             href={`/${locale}/admin/users`}
             className="font-medium text-gray-700 hover:underline"
           >
-            Users
+            {t.users.breadcrumb}
           </Link>
         </p>
         <h1 className={ADMIN_PAGE_TITLE}>
@@ -87,7 +91,7 @@ export default async function AdminUserDetailPage({
       <Card className="mb-6 p-6">
         <div className="grid gap-3 text-sm md:grid-cols-2">
           <p className="text-gray-700">
-            Role:{" "}
+            {t.users.detail.role}{" "}
             <span
               className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
             >
@@ -95,29 +99,37 @@ export default async function AdminUserDetailPage({
             </span>
           </p>
           <p className="text-gray-700">
-            Status:{" "}
+            {t.users.detail.status}{" "}
             <span
               className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
             >
               {user.status}
             </span>
           </p>
-          <p className="text-gray-700">Phone: {user.phone ?? "—"}</p>
           <p className="text-gray-700">
-            Email verified:{" "}
-            {user.emailVerifiedAt
-              ? user.emailVerifiedAt.toISOString().slice(0, 10)
-              : "no"}
+            {t.users.detail.phone.replace("{phone}", user.phone ?? t.common.none)}
           </p>
           <p className="text-gray-700">
-            Last login:{" "}
-            {user.lastLoginAt
-              ? user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")
-              : "never"}{" "}
-            UTC
+            {t.users.detail.emailVerified.replace(
+              "{value}",
+              user.emailVerifiedAt
+                ? user.emailVerifiedAt.toISOString().slice(0, 10)
+                : t.users.detail.emailVerifiedNo,
+            )}
           </p>
           <p className="text-gray-700">
-            Created: {user.createdAt.toISOString().slice(0, 10)}
+            {t.users.detail.lastLogin.replace(
+              "{value}",
+              user.lastLoginAt
+                ? user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")
+                : t.users.detail.lastLoginNever,
+            )}
+          </p>
+          <p className="text-gray-700">
+            {t.users.detail.created.replace(
+              "{date}",
+              user.createdAt.toISOString().slice(0, 10),
+            )}
           </p>
         </div>
       </Card>
@@ -129,9 +141,10 @@ export default async function AdminUserDetailPage({
             userId={user.id}
             currentRole={role}
             disabled={isAnonymized}
+            copy={t}
           />
         ) : (
-          <p className="text-sm text-red-700">Unknown role.</p>
+          <p className="text-sm text-red-700">{t.users.detail.unknownRole}</p>
         )}
         {status ? (
           <UpdateUserStatusForm
@@ -139,14 +152,15 @@ export default async function AdminUserDetailPage({
             userId={user.id}
             currentStatus={status}
             eligibleStatuses={eligibleStatuses}
+            copy={t}
           />
         ) : (
-          <p className="text-sm text-red-700">Unknown status.</p>
+          <p className="text-sm text-red-700">{t.users.detail.unknownStatus}</p>
         )}
       </div>
 
       <Card className="p-6">
-        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>Recent orders</h2>
+        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{t.users.detail.recentOrders}</h2>
         <div className="space-y-3">
           {recentOrders.map((order) => (
             <Link
@@ -175,7 +189,7 @@ export default async function AdminUserDetailPage({
             </Link>
           ))}
           {recentOrders.length === 0 ? (
-            <p className="text-sm text-gray-600">No orders.</p>
+            <p className="text-sm text-gray-600">{t.users.detail.noOrders}</p>
           ) : null}
         </div>
       </Card>

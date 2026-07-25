@@ -15,6 +15,12 @@ import {
 } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type DrawerCopy = {
+  drawer: Dictionary["admin"]["categories"]["drawer"];
+  common: Dictionary["admin"]["common"];
+};
 
 type AddCategoryDrawerProps = {
   locale: string;
@@ -22,6 +28,7 @@ type AddCategoryDrawerProps = {
   onClose: () => void;
   categories: AdminCategoryListItem[];
   category?: AdminCategoryListItem | null;
+  copy: DrawerCopy;
 };
 
 export function AddCategoryDrawer({
@@ -30,6 +37,7 @@ export function AddCategoryDrawer({
   onClose,
   categories,
   category = null,
+  copy,
 }: AddCategoryDrawerProps) {
   const router = useRouter();
   const isEdit = category != null;
@@ -78,12 +86,12 @@ export function AddCategoryDrawer({
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={isEdit ? "Edit Category" : "Add Category"}
+      ariaLabel={isEdit ? copy.drawer.editAria : copy.drawer.addAria}
       panelClassName="w-full max-w-lg"
     >
       <div className="border-b border-gray-200 px-5 py-4">
         <h2 className="text-lg font-semibold text-gray-900">
-          {isEdit ? "Edit Category" : "Add Category"}
+          {isEdit ? copy.drawer.editTitle : copy.drawer.addTitle}
         </h2>
       </div>
 
@@ -132,41 +140,42 @@ export function AddCategoryDrawer({
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
             <label className="block">
               <span className={ADMIN_LABEL}>
-                Category Title <span className="text-red-600">*</span>
+                {copy.drawer.categoryTitle}{" "}
+                <span className="text-red-600">{copy.common.requiredMark}</span>
               </span>
               <input
                 required
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="Enter category title"
+                placeholder={copy.drawer.categoryTitlePlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
             </label>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Slug</span>
+              <span className={ADMIN_LABEL}>{copy.drawer.slug}</span>
               <input
                 value={displaySlug === "---" ? "" : displaySlug}
                 onChange={(event) => {
                   setSlugTouched(true);
                   setSlug(event.target.value);
                 }}
-                placeholder="---"
+                placeholder={copy.drawer.slugPlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                Generated automatically from the title and used on /products.
+                {copy.drawer.slugHint}
               </span>
             </label>
 
             <div>
-              <span className={ADMIN_LABEL}>Parent Category</span>
+              <span className={ADMIN_LABEL}>{copy.drawer.parentCategory}</span>
               <SelectDropdown
-                ariaLabel="Parent Category"
+                ariaLabel={copy.drawer.parentCategoryAria}
                 value={parentId}
-                allLabel="None (Root Category)"
+                allLabel={copy.drawer.noneRootCategory}
                 options={parentOptions.map((item) => ({
                   label: item.title,
                   value: item.id,
@@ -179,13 +188,13 @@ export function AddCategoryDrawer({
             </div>
 
             <div>
-              <span className={ADMIN_LABEL}>Status</span>
+              <span className={ADMIN_LABEL}>{copy.drawer.status}</span>
               <SelectDropdown
-                ariaLabel="Status"
+                ariaLabel={copy.drawer.statusAria}
                 value={status}
                 options={[
-                  { label: "Published", value: "ACTIVE" },
-                  { label: "Archived", value: "ARCHIVED" },
+                  { label: copy.drawer.published, value: "ACTIVE" },
+                  { label: copy.drawer.archived, value: "ARCHIVED" },
                 ]}
                 disabled={isPending}
                 deferChange={false}
@@ -197,7 +206,7 @@ export function AddCategoryDrawer({
             </div>
 
             <div>
-              <span className={ADMIN_LABEL}>Image</span>
+              <span className={ADMIN_LABEL}>{copy.drawer.image}</span>
               <div className="mt-1 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -205,7 +214,7 @@ export function AddCategoryDrawer({
                   onClick={() => fileInputRef.current?.click()}
                   className="inline-flex items-center rounded-xl border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 disabled:opacity-50"
                 >
-                  {imagePreview ? "Change Image" : "+ Upload Image"}
+                  {imagePreview ? copy.drawer.changeImage : copy.drawer.uploadImage}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -230,22 +239,22 @@ export function AddCategoryDrawer({
                   <button
                     type="button"
                     disabled={isPending}
-                    onClick={() => {
-                      setImageFile(null);
-                      setImagePreview((current) => {
-                        if (current?.startsWith("blob:")) {
-                          URL.revokeObjectURL(current);
-                        }
-                        return null;
-                      });
-                      if (isEdit && category?.imageUrl) {
-                        setRemoveExistingImage(true);
+                  onClick={() => {
+                    setImageFile(null);
+                    setImagePreview((current) => {
+                      if (current?.startsWith("blob:")) {
+                        URL.revokeObjectURL(current);
                       }
-                    }}
-                    className="text-sm font-medium text-gray-600 hover:text-red-600"
-                  >
-                    Remove
-                  </button>
+                      return null;
+                    });
+                    if (isEdit && category?.imageUrl) {
+                      setRemoveExistingImage(true);
+                    }
+                  }}
+                  className="text-sm font-medium text-gray-600 hover:text-red-600"
+                >
+                  {copy.drawer.remove}
+                </button>
                 ) : null}
               </div>
               {imagePreview ? (
@@ -264,18 +273,18 @@ export function AddCategoryDrawer({
             <Button type="submit" disabled={isPending || !title.trim()}>
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? copy.common.saving
+                  : copy.common.creating
                 : isEdit
-                  ? "Save"
-                  : "Create Category"}
+                  ? copy.common.save
+                  : copy.drawer.createCategory}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="whitespace-nowrap text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {copy.common.cancel}
             </button>
           </div>
         </form>

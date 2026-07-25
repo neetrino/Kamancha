@@ -101,6 +101,9 @@ export function ProductDetailView({
             locale={locale}
             productId={product.id}
             stockOnHand={product.stockOnHand}
+            basePriceAmount={product.priceAmount}
+            additions={product.additions ?? []}
+            exceptions={product.exceptions ?? []}
             inWishlist={inWishlist}
             isSignedIn={isSignedIn}
             wishlistLabel={dictionary.nav.wishlist}
@@ -113,6 +116,10 @@ export function ProductDetailView({
               outOfStock: labels.outOfStock,
               added: labels.added,
               error: labels.addError,
+              additions: labels.additions,
+              exceptions: labels.exceptions,
+              additionsEmpty: labels.additionsEmpty,
+              exceptionsEmpty: labels.exceptionsEmpty,
             }}
           />
         </div>

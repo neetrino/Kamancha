@@ -15,12 +15,14 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/domain/user-lifecycle";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type UpdateUserRoleFormProps = {
   locale: string;
   userId: string;
   currentRole: UserRole;
   disabled?: boolean;
+  copy: Dictionary["admin"];
 };
 
 export function UpdateUserRoleForm({
@@ -28,6 +30,7 @@ export function UpdateUserRoleForm({
   userId,
   currentRole,
   disabled = false,
+  copy,
 }: UpdateUserRoleFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -56,15 +59,15 @@ export function UpdateUserRoleForm({
           });
         }}
       >
-        <h3 className={ADMIN_SECTION_TITLE}>Role</h3>
+        <h3 className={ADMIN_SECTION_TITLE}>{copy.users.roleForm.title}</h3>
         <p className="text-sm text-gray-700">
-          Current: <strong className="text-gray-900">{currentRole}</strong>
+          {copy.common.current.replace("{value}", currentRole)}
         </p>
         <div>
-          <span className={ADMIN_LABEL}>New role</span>
+          <span className={ADMIN_LABEL}>{copy.users.roleForm.newRole}</span>
           <SelectDropdown
             name="role"
-            ariaLabel="New role"
+            ariaLabel={copy.users.roleForm.newRoleAria}
             value={role}
             options={roleOptions.map((item) => ({
               label: item,
@@ -78,7 +81,7 @@ export function UpdateUserRoleForm({
         </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={disabled || isPending}>
-          {isPending ? "Updating…" : "Update role"}
+          {isPending ? copy.common.updating : copy.users.roleForm.updateRole}
         </Button>
       </form>
     </Card>

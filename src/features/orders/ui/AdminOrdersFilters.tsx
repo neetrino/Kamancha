@@ -7,28 +7,17 @@ import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 const FILTER_SEARCH =
   "h-11 min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300";
-
-const ORDER_STATUS_FILTERS = [
-  { label: "Pending", value: "PENDING" },
-  { label: "Processing", value: "PROCESSING" },
-  { label: "Completed", value: "DELIVERED" },
-  { label: "Cancelled", value: "CANCELLED" },
-] as const satisfies ReadonlyArray<{ label: string; value: OrderStatus }>;
-
-const PAYMENT_STATUS_FILTERS = [
-  { label: "Paid", value: "CAPTURED" },
-  { label: "Pending", value: "PENDING" },
-  { label: "Failed", value: "FAILED" },
-] as const satisfies ReadonlyArray<{ label: string; value: PaymentStatus }>;
 
 type AdminOrdersFiltersProps = {
   total: number;
   status?: OrderStatus;
   paymentStatus?: string;
   q?: string;
+  copy: Dictionary["admin"];
 };
 
 export function AdminOrdersFilters({
@@ -36,10 +25,26 @@ export function AdminOrdersFilters({
   status,
   paymentStatus,
   q,
+  copy,
 }: AdminOrdersFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [statusValue, setStatusValue] = useState(status ?? "");
   const [paymentValue, setPaymentValue] = useState(paymentStatus ?? "");
+
+  const f = copy.orders.filters;
+
+  const orderStatusFilters = [
+    { label: f.statusPending, value: "PENDING" as OrderStatus },
+    { label: f.statusProcessing, value: "PROCESSING" as OrderStatus },
+    { label: f.statusCompleted, value: "DELIVERED" as OrderStatus },
+    { label: f.statusCancelled, value: "CANCELLED" as OrderStatus },
+  ];
+
+  const paymentStatusFilters = [
+    { label: f.paymentPaid, value: "CAPTURED" as PaymentStatus },
+    { label: f.paymentPending, value: "PENDING" as PaymentStatus },
+    { label: f.paymentFailed, value: "FAILED" as PaymentStatus },
+  ];
 
   function applyStatus(next: string): void {
     flushSync(() => setStatusValue(next));
@@ -60,32 +65,34 @@ export function AdminOrdersFilters({
       >
         <SelectDropdown
           name="status"
-          ariaLabel="Order status"
+          ariaLabel={f.orderStatusAria}
           value={statusValue}
-          allLabel="All statuses"
-          options={ORDER_STATUS_FILTERS}
+          allLabel={f.allStatuses}
+          options={orderStatusFilters}
           className="w-[180px] shrink-0"
           onValueChange={applyStatus}
         />
         <SelectDropdown
           name="paymentStatus"
-          ariaLabel="Payment status"
+          ariaLabel={f.paymentStatusAria}
           value={paymentValue}
-          allLabel="All payment statuses"
-          options={PAYMENT_STATUS_FILTERS}
+          allLabel={f.allPaymentStatuses}
+          options={paymentStatusFilters}
           className="w-[200px] shrink-0"
           onValueChange={applyPayment}
         />
         <input
           name="q"
           defaultValue={q ?? ""}
-          placeholder="Search by order #, customer, email, phone…"
+          placeholder={f.searchPlaceholder}
           className={FILTER_SEARCH}
-          aria-label="Search orders"
+          aria-label={f.searchAria}
         />
       </form>
       <div className="border-t border-gray-200 px-4 py-3">
-        <p className="text-sm text-gray-600">Total orders: {total}</p>
+        <p className="text-sm text-gray-600">
+          {f.totalOrders.replace("{total}", String(total))}
+        </p>
       </div>
     </Card>
   );

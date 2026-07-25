@@ -8,7 +8,10 @@ import { getDb } from "@/db/client";
 import { categories, type TranslationsJson } from "@/db/schema";
 import { persistCategoryImage, removeCategoryImage } from "@/features/categories/application/persist-category-media";
 import { requireAdmin } from "@/lib/auth/policies";
-import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
+import {
+  invalidateCategoriesCache,
+  invalidateProductsCache,
+} from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
@@ -31,6 +34,8 @@ function revalidateCategories(locale: string): void {
   revalidatePath(`/${locale}/admin/categories`);
   revalidatePath(`/${locale}/admin/products`);
   revalidatePath(`/${locale}/products`);
+  revalidatePath(`/${locale}`);
+  invalidateCategoriesCache();
   invalidateProductsCache({ allProductDetails: true });
 }
 

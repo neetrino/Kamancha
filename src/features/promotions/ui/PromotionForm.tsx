@@ -20,10 +20,16 @@ import type {
   PromotionKind,
 } from "@/features/promotions/domain/promotion-rules";
 import type { UpsertPromotionInput } from "@/features/promotions/schemas/admin-promotions";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type TargetOptions = {
   products: Array<{ id: string; sku: string; title: string }>;
   categories: Array<{ id: string; title: string }>;
+};
+
+type PromotionFormCopy = {
+  form: Dictionary["admin"]["discounts"]["form"];
+  common: Dictionary["admin"]["common"];
 };
 
 type PromotionFormProps = {
@@ -50,6 +56,7 @@ type PromotionFormProps = {
   }>;
   targets: TargetOptions;
   redirectTo: string;
+  copy: PromotionFormCopy;
 };
 
 function toDateInput(value: Date | null | undefined): string {
@@ -68,6 +75,7 @@ export function PromotionForm({
   defaults,
   targets,
   redirectTo,
+  copy,
 }: PromotionFormProps) {
   const router = useRouter();
   const [kind, setKind] = useState<PromotionKind>(initialKind);
@@ -76,10 +84,12 @@ export function PromotionForm({
 
   const title = useMemo(() => {
     if (mode === "edit") {
-      return "Edit promotion";
+      return copy.form.editPromotion;
     }
-    return kind === "COUPON" ? "Create coupon" : "Create automatic discount";
-  }, [kind, mode]);
+    return kind === "COUPON"
+      ? copy.form.createCoupon
+      : copy.form.createAutomaticDiscount;
+  }, [kind, mode, copy.form]);
 
   return (
     <Card className="max-w-xl p-6">
@@ -138,7 +148,7 @@ export function PromotionForm({
         <h2 className={ADMIN_SECTION_TITLE}>{title}</h2>
 
         <label>
-          <span className={ADMIN_LABEL}>Kind</span>
+          <span className={ADMIN_LABEL}>{copy.form.kind}</span>
           <select
             name="kind"
             className={ADMIN_SELECT}
@@ -146,34 +156,34 @@ export function PromotionForm({
             disabled={lockKind || isPending}
             onChange={(event) => setKind(event.target.value as PromotionKind)}
           >
-            <option value="COUPON">COUPON</option>
-            <option value="AUTOMATIC">AUTOMATIC</option>
+            <option value="COUPON">{copy.form.kindCoupon}</option>
+            <option value="AUTOMATIC">{copy.form.kindAutomatic}</option>
           </select>
         </label>
 
         {kind === "COUPON" ? (
           <label>
-            <span className={ADMIN_LABEL}>Code</span>
+            <span className={ADMIN_LABEL}>{copy.form.code}</span>
             <input
               name="code"
               required
               defaultValue={defaults?.code ?? ""}
               className={`${ADMIN_INPUT} uppercase`}
-              placeholder="WELCOME10"
+              placeholder={copy.form.codePlaceholder}
               disabled={isPending}
             />
           </label>
         ) : (
           <>
             <label>
-              <span className={ADMIN_LABEL}>Product target</span>
+              <span className={ADMIN_LABEL}>{copy.form.productTarget}</span>
               <select
                 name="productId"
                 className={ADMIN_SELECT}
                 defaultValue={defaults?.productId ?? ""}
                 disabled={isPending}
               >
-                <option value="">— none —</option>
+                <option value="">{copy.form.noneTarget}</option>
                 {targets.products.map((product) => (
                   <option key={product.id} value={product.id}>
                     {product.sku} · {product.title}
@@ -182,14 +192,14 @@ export function PromotionForm({
               </select>
             </label>
             <label>
-              <span className={ADMIN_LABEL}>Category target</span>
+              <span className={ADMIN_LABEL}>{copy.form.categoryTarget}</span>
               <select
                 name="categoryId"
                 className={ADMIN_SELECT}
                 defaultValue={defaults?.categoryId ?? ""}
                 disabled={isPending}
               >
-                <option value="">— none —</option>
+                <option value="">{copy.form.noneTarget}</option>
                 {targets.categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.title}
@@ -197,27 +207,25 @@ export function PromotionForm({
                 ))}
               </select>
             </label>
-            <p className="text-xs text-gray-500">
-              Choose exactly one target: product or category.
-            </p>
+            <p className="text-xs text-gray-500">{copy.form.chooseOneTarget}</p>
           </>
         )}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Discount type</span>
+            <span className={ADMIN_LABEL}>{copy.form.discountType}</span>
             <select
               name="discountType"
               className={ADMIN_SELECT}
               defaultValue={defaults?.discountType ?? "PERCENTAGE"}
               disabled={isPending}
             >
-              <option value="PERCENTAGE">PERCENTAGE</option>
-              <option value="FIXED">FIXED (AMD minor units)</option>
+              <option value="PERCENTAGE">{copy.form.percentage}</option>
+              <option value="FIXED">{copy.form.fixedAmd}</option>
             </select>
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Discount value</span>
+            <span className={ADMIN_LABEL}>{copy.form.discountValue}</span>
             <input
               name="discountValue"
               type="number"
@@ -232,7 +240,7 @@ export function PromotionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Max discount (optional)</span>
+            <span className={ADMIN_LABEL}>{copy.form.maxDiscountOptional}</span>
             <input
               name="maxDiscountAmount"
               type="number"
@@ -243,7 +251,7 @@ export function PromotionForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Min order (optional)</span>
+            <span className={ADMIN_LABEL}>{copy.form.minOrderOptional}</span>
             <input
               name="minimumOrderAmount"
               type="number"
@@ -257,7 +265,7 @@ export function PromotionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Total usage limit</span>
+            <span className={ADMIN_LABEL}>{copy.form.totalUsageLimit}</span>
             <input
               name="totalUsageLimit"
               type="number"
@@ -268,7 +276,7 @@ export function PromotionForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Per-user limit</span>
+            <span className={ADMIN_LABEL}>{copy.form.perUserLimit}</span>
             <input
               name="perUserUsageLimit"
               type="number"
@@ -282,7 +290,7 @@ export function PromotionForm({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
-            <span className={ADMIN_LABEL}>Starts at</span>
+            <span className={ADMIN_LABEL}>{copy.form.startsAt}</span>
             <input
               name="startsAt"
               type="datetime-local"
@@ -292,7 +300,7 @@ export function PromotionForm({
             />
           </label>
           <label>
-            <span className={ADMIN_LABEL}>Ends at</span>
+            <span className={ADMIN_LABEL}>{copy.form.endsAt}</span>
             <input
               name="endsAt"
               type="datetime-local"
@@ -304,7 +312,7 @@ export function PromotionForm({
         </div>
 
         <label>
-          <span className={ADMIN_LABEL}>Priority</span>
+          <span className={ADMIN_LABEL}>{copy.form.priority}</span>
           <input
             name="priority"
             type="number"
@@ -323,7 +331,7 @@ export function PromotionForm({
             disabled={isPending}
             className="h-4 w-4 rounded border-gray-300"
           />
-          Allow stacking
+          {copy.form.allowStacking}
         </label>
         <label className="flex items-center gap-2 text-sm text-gray-700">
           <input
@@ -333,12 +341,18 @@ export function PromotionForm({
             disabled={isPending}
             className="h-4 w-4 rounded border-gray-300"
           />
-          Active
+          {copy.form.active}
         </label>
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving…" : mode === "edit" ? "Save changes" : "Create"}
+          {isPending
+            ? mode === "edit"
+              ? copy.common.saving
+              : copy.common.creating
+            : mode === "edit"
+              ? copy.form.saveChanges
+              : copy.common.create}
         </Button>
       </form>
     </Card>

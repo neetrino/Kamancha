@@ -6,10 +6,7 @@ import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import {
-  ConfirmDialog,
-  deleteConfirmDescription,
-} from "@/components/ui/ConfirmDialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   ADMIN_INPUT,
   ADMIN_PAGE_TITLE,
@@ -33,10 +30,18 @@ import {
 } from "@/features/categories/actions";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
 import { AddCategoryDrawer } from "@/features/categories/ui/AddCategoryDrawer";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type CategoriesViewCopy = {
+  categories: Dictionary["admin"]["categories"];
+  common: Dictionary["admin"]["common"];
+  confirm: Dictionary["admin"]["confirm"];
+};
 
 type AdminCategoriesViewProps = {
   locale: string;
   categories: AdminCategoryListItem[];
+  copy: CategoriesViewCopy;
 };
 
 function moveItem<T>(list: T[], fromIndex: number, toIndex: number): T[] {
@@ -67,6 +72,7 @@ function sameOrder(
 export function AdminCategoriesView({
   locale,
   categories,
+  copy,
 }: AdminCategoriesViewProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -164,7 +170,7 @@ export function AdminCategoriesView({
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className={ADMIN_PAGE_TITLE}>Categories</h1>
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.categories.title}</h1>
         <Button
           type="button"
           size="sm"
@@ -175,21 +181,21 @@ export function AdminCategoriesView({
           className="inline-flex items-center gap-1.5"
         >
           <Plus className="h-4 w-4" aria-hidden />
-          Add Category
+          {copy.categories.addCategory}
         </Button>
       </div>
 
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Enter category title"
+        placeholder={copy.categories.searchPlaceholder}
         className={`${ADMIN_INPUT} mb-4`}
-        aria-label="Search categories"
+        aria-label={copy.categories.searchAria}
       />
 
       {isFiltering ? (
         <p className="mb-3 text-xs text-gray-500">
-          Clear search to reorder categories.
+          {copy.categories.clearSearchToReorder}
         </p>
       ) : null}
 
@@ -199,19 +205,22 @@ export function AdminCategoriesView({
         {visible.length === 0 ? (
           <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
             {categories.length === 0
-              ? "No categories yet."
-              : "No categories match this search."}
+              ? copy.categories.empty
+              : copy.categories.noMatch}
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
-                  <th className={`${ADMIN_TABLE_TH} w-8`} aria-label="Reorder" />
-                  <th className={ADMIN_TABLE_TH}>Image</th>
-                  <th className={ADMIN_TABLE_TH}>Category Title</th>
-                  <th className={ADMIN_TABLE_TH}>Category</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Actions</th>
+                  <th
+                    className={`${ADMIN_TABLE_TH} w-8`}
+                    aria-label={copy.categories.reorderAria}
+                  />
+                  <th className={ADMIN_TABLE_TH}>{copy.categories.image}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.categories.categoryTitle}</th>
+                  <th className={ADMIN_TABLE_TH}>{copy.categories.category}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.common.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -260,7 +269,10 @@ export function AdminCategoriesView({
                             setDraggingId(null);
                           }}
                           className="inline-flex cursor-grab touch-none text-gray-400 active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-40"
-                          aria-label={`Reorder ${category.title}`}
+                          aria-label={copy.categories.reorderItemAria.replace(
+                            "{title}",
+                            category.title,
+                          )}
                         >
                           <GripVertical className="h-4 w-4" />
                         </button>
@@ -285,7 +297,7 @@ export function AdminCategoriesView({
                       </td>
                       <td className={ADMIN_TABLE_TD}>
                         <span className="text-sm text-gray-500">
-                          {category.parentTitle ?? "None (Root Category)"}
+                          {category.parentTitle ?? copy.categories.noneRootCategory}
                         </span>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
@@ -293,7 +305,10 @@ export function AdminCategoriesView({
                           <button
                             type="button"
                             className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                            aria-label={`Edit ${category.title}`}
+                            aria-label={copy.categories.editAria.replace(
+                              "{title}",
+                              category.title,
+                            )}
                             onClick={() => {
                               setEditingCategory(category);
                               setDrawerOpen(true);
@@ -308,14 +323,20 @@ export function AdminCategoriesView({
                               requestDelete(category.id, category.title)
                             }
                             className="rounded p-1.5 text-red-600 hover:bg-red-50"
-                            aria-label={`Delete ${category.title}`}
+                            aria-label={copy.categories.deleteAria.replace(
+                              "{title}",
+                              category.title,
+                            )}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
                           {category.childCount > 0 ? (
                             <span
                               className="ml-1 text-gray-400"
-                              aria-label={`${category.childCount} subcategories`}
+                              aria-label={copy.categories.subcategoriesAria.replace(
+                                "{count}",
+                                String(category.childCount),
+                              )}
                             >
                               <ChevronRight className="h-4 w-4" />
                             </span>
@@ -340,14 +361,19 @@ export function AdminCategoriesView({
         }}
         categories={categories}
         category={editingCategory}
+        copy={{ drawer: copy.categories.drawer, common: copy.common }}
       />
 
       <ConfirmDialog
         open={pendingDelete !== null}
-        title="Delete"
+        title={copy.confirm.deleteTitle}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
         description={
           pendingDelete
-            ? deleteConfirmDescription("category", pendingDelete.title)
+            ? copy.confirm.deleteEntity
+                .replace("{entity}", copy.confirm.entityLabels.category)
+                .replace("{name}", pendingDelete.title)
             : ""
         }
         isPending={isPending}

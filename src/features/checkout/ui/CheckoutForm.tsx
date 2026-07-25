@@ -12,7 +12,10 @@ import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-m
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
-import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
+import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
+import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
+import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
+import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -23,7 +26,6 @@ type CheckoutLabels = {
   itemsMany: string;
   removeItem: string;
   contactInformation: string;
-  shippingMethod: string;
   shippingAddress: string;
   paymentMethod: string;
   orderSummary: string;
@@ -31,20 +33,32 @@ type CheckoutLabels = {
   lastName: string;
   email: string;
   phone: string;
-  city: string;
   address: string;
-  deliveryLocation: string;
-  selectLocation: string;
+  floor: string;
+  intercomCode: string;
   phonePlaceholder: string;
-  cityPlaceholder: string;
   addressPlaceholder: string;
-  storePickup: string;
-  storePickupDescription: string;
-  delivery: string;
-  deliveryDescription: string;
-  freePickup: string;
-  enterCity: string;
-  selectDeliveryLocation: string;
+  floorPlaceholder: string;
+  intercomCodePlaceholder: string;
+  openMap: string;
+  mapTitle: string;
+  mapHint: string;
+  mapConfirm: string;
+  mapCancel: string;
+  mapResolving: string;
+  enterDeliveryAddress: string;
+  calculatingDelivery: string;
+  scheduleTitle: string;
+  schedulePickDate: string;
+  schedulePickTime: string;
+  scheduleNoSlots: string;
+  schedulePrevMonth: string;
+  scheduleNextMonth: string;
+  selectDeliverySlot: string;
+  selectCashChange: string;
+  cashChangeTitle: string;
+  cashChangeHint: string;
+  cashChangeAria: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
   idram: string;
@@ -77,23 +91,10 @@ type CheckoutFormProps = {
   defaultPhone: string;
   defaultLine1: string;
   subtotalAmount: number;
-  deliveryOptions: CheckoutDeliveryOption[];
+  deliverySchedule: DeliveryScheduleSettings;
+  cashChangeOptions: CashChangeDenominationView[];
   hasItems: boolean;
 };
-
-function quoteDeliveryAmount(
-  option: CheckoutDeliveryOption | undefined,
-  subtotalAmount: number,
-): number {
-  if (!option) return 0;
-  if (
-    option.freeThresholdAmount !== null &&
-    subtotalAmount >= option.freeThresholdAmount
-  ) {
-    return 0;
-  }
-  return option.priceAmount;
-}
 
 export function CheckoutForm({
   locale,
@@ -106,16 +107,18 @@ export function CheckoutForm({
   defaultPhone,
   defaultLine1,
   subtotalAmount,
-  deliveryOptions,
+  deliverySchedule,
+  cashChangeOptions,
   hasItems,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
-  const defaultRuleId = deliveryOptions[0]?.id ?? "";
-  const [shippingMethod, setShippingMethod] = useState<"pickup" | "delivery">(
-    deliveryOptions.length > 0 ? "delivery" : "pickup",
+  const [line1, setLine1] = useState(defaultLine1);
+  const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
+    null,
   );
-  const [deliveryRuleId, setDeliveryRuleId] = useState(defaultRuleId);
+  const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);
+  const deliveryQuote = useDistanceDeliveryQuote(line1);
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
@@ -127,10 +130,6 @@ export function CheckoutForm({
   const [couponError, setCouponError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
-
-  const selectedDelivery = deliveryOptions.find(
-    (option) => option.id === deliveryRuleId,
-  );
 
   const paymentOptions = useMemo(
     () => [
@@ -167,17 +166,22 @@ export function CheckoutForm({
     return formatMoneyAmount(amount, "AMD", locale);
   }
 
-  const quotedDelivery = quoteDeliveryAmount(selectedDelivery, subtotalAmount);
-  const shippingAmount = shippingMethod === "pickup" ? 0 : quotedDelivery;
+  const shippingAmount = deliveryQuote.deliveryAmount;
   const totalAmount =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
 
-  const shippingFormatted =
-    shippingMethod === "pickup"
-      ? labels.freePickup
-      : selectedDelivery
-        ? `${formatMoney(shippingAmount)} (${selectedDelivery.label})`
-        : labels.selectDeliveryLocation;
+  const shippingFormatted = deliveryQuote.pending
+    ? labels.calculatingDelivery
+    : deliveryQuote.error
+      ? labels.enterDeliveryAddress
+      : deliveryQuote.distanceLabel
+        ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
+        : labels.enterDeliveryAddress;
+
+  const deliveryQuoteHint =
+    deliveryQuote.distanceLabel && !deliveryQuote.error
+      ? `${deliveryQuote.distanceLabel} · ${formatMoney(shippingAmount)}`
+      : null;
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -236,6 +240,29 @@ export function CheckoutForm({
     const data = new FormData(event.currentTarget);
     setError(null);
 
+    if (
+      deliveryQuote.pending ||
+      deliveryQuote.error ||
+      !deliveryQuote.distanceLabel
+    ) {
+      setError(labels.enterDeliveryAddress);
+      return;
+    }
+
+    if (!deliverySlot) {
+      setError(labels.selectDeliverySlot);
+      return;
+    }
+
+    if (
+      paymentMethod === "cash_on_delivery" &&
+      cashChangeOptions.length > 0 &&
+      cashChangeAmount == null
+    ) {
+      setError(labels.selectCashChange);
+      return;
+    }
+
     startTransition(async () => {
       const result = await createOrderAction({
         locale,
@@ -244,17 +271,17 @@ export function CheckoutForm({
         lastName: String(data.get("lastName") ?? ""),
         contactEmail: String(data.get("contactEmail") ?? ""),
         contactPhone: String(data.get("contactPhone") ?? ""),
-        shippingMethod,
+        shippingMethod: "delivery",
         paymentMethod,
-        deliveryRuleId:
-          shippingMethod === "delivery" ? deliveryRuleId || undefined : undefined,
-        city:
-          shippingMethod === "delivery"
-            ? selectedDelivery?.city
-            : undefined,
-        line1:
-          shippingMethod === "delivery"
-            ? String(data.get("line1") ?? "")
+        line1,
+        floor: String(data.get("floor") ?? ""),
+        intercomCode: String(data.get("intercomCode") ?? ""),
+        scheduledDeliveryDate: deliverySlot.date,
+        scheduledDeliveryStart: deliverySlot.startTime,
+        scheduledDeliveryEnd: deliverySlot.endTime,
+        cashChangeAmount:
+          paymentMethod === "cash_on_delivery"
+            ? (cashChangeAmount ?? undefined)
             : undefined,
         couponCode: appliedCouponCode ?? undefined,
       });
@@ -286,20 +313,31 @@ export function CheckoutForm({
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <CheckoutDetailsSections
             labels={labels}
+            locale={locale}
             pending={pending}
-            shippingMethod={shippingMethod}
-            onShippingMethodChange={setShippingMethod}
-            deliveryOptions={deliveryOptions}
-            deliveryRuleId={deliveryRuleId}
-            onDeliveryRuleChange={setDeliveryRuleId}
+            deliverySchedule={deliverySchedule}
+            deliverySlot={deliverySlot}
+            onDeliverySlotChange={setDeliverySlot}
+            cashChangeOptions={cashChangeOptions}
+            cashChangeAmount={cashChangeAmount}
+            onCashChangeAmountChange={setCashChangeAmount}
+            line1={line1}
+            onLine1Change={setLine1}
+            deliveryQuotePending={deliveryQuote.pending}
+            deliveryQuoteError={deliveryQuote.error}
+            deliveryQuoteHint={deliveryQuoteHint}
             paymentMethod={paymentMethod}
-            onPaymentMethodChange={setPaymentMethod}
+            onPaymentMethodChange={(method) => {
+              setPaymentMethod(method);
+              if (method !== "cash_on_delivery") {
+                setCashChangeAmount(null);
+              }
+            }}
             paymentOptions={paymentOptions}
             defaultFirstName={defaultFirstName}
             defaultLastName={defaultLastName}
             defaultEmail={defaultEmail}
             defaultPhone={defaultPhone}
-            defaultLine1={defaultLine1}
           />
 
           <CheckoutOrderSummary

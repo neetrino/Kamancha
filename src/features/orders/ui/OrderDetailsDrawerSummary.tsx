@@ -10,30 +10,34 @@ import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
 } from "@/features/orders/ui/order-drawer-format";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type OrderDetailsDrawerSummaryProps = {
   detail: AdminOrderDetailView;
+  copy: Dictionary["admin"];
 };
 
 export function OrderDetailsDrawerSummary({
   detail,
+  copy,
 }: OrderDetailsDrawerSummaryProps) {
+  const d = copy.orders.drawer;
   return (
     <div className="rounded-2xl border border-gray-200 px-5 py-4">
       <div className="grid gap-8 md:grid-cols-2">
         <section>
-          <h3 className="mb-4 text-base font-semibold text-gray-900">Summary</h3>
+          <h3 className="mb-4 text-base font-semibold text-gray-900">{d.summary}</h3>
           <dl className="space-y-3 text-sm">
-            <DetailRow label="Order #:" value={detail.orderNumber} />
+            <DetailRow label={d.orderNumber} value={detail.orderNumber} />
             <DetailRow
-              label="Total:"
+              label={d.total}
               value={formatOrderDrawerMoney(
                 detail.totalAmount,
                 detail.baseCurrency,
               )}
             />
             <DetailRow
-              label="Status:"
+              label={d.status}
               value={
                 <span
                   className={`${ADMIN_BADGE} ${orderStatusBadgeClass(detail.status)}`}
@@ -43,7 +47,7 @@ export function OrderDetailsDrawerSummary({
               }
             />
             <DetailRow
-              label="Payment:"
+              label={d.payment}
               value={
                 <span
                   className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(detail.paymentStatus)}`}
@@ -57,12 +61,12 @@ export function OrderDetailsDrawerSummary({
 
         <section>
           <h3 className="mb-4 text-base font-semibold text-gray-900">
-            Customer
+            {d.customer}
           </h3>
           <dl className="space-y-3 text-sm">
-            <DetailRow label="Name:" value={detail.contactName} />
-            <DetailRow label="Phone Number:" value={detail.contactPhone} />
-            <DetailRow label="Email:" value={detail.contactEmail} />
+            <DetailRow label={d.name} value={detail.contactName} />
+            <DetailRow label={d.phoneNumber} value={detail.contactPhone} />
+            <DetailRow label={d.email} value={detail.contactEmail} />
           </dl>
         </section>
       </div>

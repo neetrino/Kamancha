@@ -1,11 +1,20 @@
 import { notFound } from "next/navigation";
 
+import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import { HomeAboutTeaser } from "@/features/home/ui/HomeAboutTeaser";
+import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
-import { HomeFeatures } from "@/features/home/ui/HomeFeatures";
+import {
+  HOME_FEATURE_ICONS,
+  HomeFeatures,
+} from "@/features/home/ui/HomeFeatures";
 import { HomeHero } from "@/features/home/ui/HomeHero";
-import { getFeaturedProducts } from "@/features/products/queries";
+import {
+  getFeaturedProducts,
+  getOfferProducts,
+  type CatalogProduct,
+} from "@/features/products/queries";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -19,27 +28,17 @@ type HomePageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function HomePage({ params }: HomePageProps) {
-  const { locale: rawLocale } = await params;
+type DisplayPriceFormatter = Awaited<
+  ReturnType<typeof createDisplayPriceFormatter>
+>;
 
-  if (!isLocale(rawLocale)) {
-    notFound();
-  }
-
-  const locale: Locale = rawLocale;
-  const dictionary = getDictionary(locale);
-  const [heroSlides, featuredProducts, currency, user] = await Promise.all([
-    listActiveHeroSlides(locale),
-    getFeaturedProducts(locale),
-    getSelectedCurrency(),
-    getCurrentUser(),
-  ]);
-  const [wishlistIds, formatPrice] = await Promise.all([
-    getWishlistProductIds(featuredProducts.map((product) => product.id)),
-    createDisplayPriceFormatter(locale, currency),
-  ]);
-
-  const featuredCards = featuredProducts.map((product) => {
+function toProductCards(
+  products: CatalogProduct[],
+  locale: Locale,
+  formatPrice: DisplayPriceFormatter,
+  wishlistIds: Set<string>,
+) {
+  return products.map((product) => {
     const price = formatPrice(product.priceAmount);
     const compareAt =
       product.compareAtAmount != null
@@ -58,6 +57,51 @@ export default async function HomePage({ params }: HomePageProps) {
       inWishlist: wishlistIds.has(product.id),
     };
   });
+}
+
+export default async function HomePage({ params }: HomePageProps) {
+  const { locale: rawLocale } = await params;
+
+  if (!isLocale(rawLocale)) {
+    notFound();
+  }
+
+  const locale: Locale = rawLocale;
+  const dictionary = getDictionary(locale);
+  const [heroSlides, categories, featuredProducts, offerProducts, currency, user] =
+    await Promise.all([
+      listActiveHeroSlides(locale),
+      listStorefrontCategories(locale),
+      getFeaturedProducts(locale),
+      getOfferProducts(locale),
+      getSelectedCurrency(),
+      getCurrentUser(),
+    ]);
+
+  const productIds = [
+    ...new Set([
+      ...featuredProducts.map((product) => product.id),
+      ...offerProducts.map((product) => product.id),
+    ]),
+  ];
+
+  const [wishlistIds, formatPrice] = await Promise.all([
+    getWishlistProductIds(productIds),
+    createDisplayPriceFormatter(locale, currency),
+  ]);
+
+  const featuredCards = toProductCards(
+    featuredProducts,
+    locale,
+    formatPrice,
+    wishlistIds,
+  );
+  const offerCards = toProductCards(
+    offerProducts,
+    locale,
+    formatPrice,
+    wishlistIds,
+  );
 
   return (
     <div className="-mx-4 -my-10 sm:-mx-6 lg:-mx-8">
@@ -69,21 +113,15 @@ export default async function HomePage({ params }: HomePageProps) {
         fallbackCtaHref={`/${locale}/products`}
       />
 
-      <HomeFeatures
-        items={[
-          {
-            title: dictionary.home.features.deliveryTitle,
-            description: dictionary.home.features.deliveryDescription,
-          },
-          {
-            title: dictionary.home.features.qualityTitle,
-            description: dictionary.home.features.qualityDescription,
-          },
-          {
-            title: dictionary.home.features.returnTitle,
-            description: dictionary.home.features.returnDescription,
-          },
-        ]}
+      <HomeCategories
+        title={dictionary.home.categoriesTitle}
+        emptyLabel={dictionary.home.emptyCategories}
+        categories={categories.map((category) => ({
+          id: category.id,
+          title: category.title,
+          href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
+          imageUrl: category.imageUrl,
+        }))}
       />
 
       <HomeFeaturedProducts
@@ -96,6 +134,44 @@ export default async function HomePage({ params }: HomePageProps) {
         addToCartLabel={dictionary.product.addToCart}
         isSignedIn={Boolean(user)}
         products={featuredCards}
+      />
+
+      <HomeFeaturedProducts
+        locale={locale}
+        title={dictionary.home.offersTitle}
+        viewAllLabel={dictionary.home.viewAll}
+        viewAllHref={`/${locale}/products`}
+        emptyLabel={dictionary.home.emptyOffers}
+        wishlistLabel={dictionary.nav.wishlist}
+        addToCartLabel={dictionary.product.addToCart}
+        isSignedIn={Boolean(user)}
+        products={offerCards}
+      />
+
+      <HomeFeatures
+        title={dictionary.home.whyUsTitle}
+        items={[
+          {
+            title: dictionary.home.features.deliveryTitle,
+            description: dictionary.home.features.deliveryDescription,
+            icon: HOME_FEATURE_ICONS.delivery,
+          },
+          {
+            title: dictionary.home.features.qualityTitle,
+            description: dictionary.home.features.qualityDescription,
+            icon: HOME_FEATURE_ICONS.quality,
+          },
+          {
+            title: dictionary.home.features.returnTitle,
+            description: dictionary.home.features.returnDescription,
+            icon: HOME_FEATURE_ICONS.return,
+          },
+          {
+            title: dictionary.home.features.supportTitle,
+            description: dictionary.home.features.supportDescription,
+            icon: HOME_FEATURE_ICONS.support,
+          },
+        ]}
       />
 
       <HomeAboutTeaser

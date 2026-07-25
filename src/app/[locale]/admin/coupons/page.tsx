@@ -5,6 +5,7 @@ import { listAdminPromotions } from "@/features/promotions/application/queries";
 import { adminPromotionsFilterSchema } from "@/features/promotions/schemas/admin-promotions";
 import { AdminCouponsView } from "@/features/promotions/ui/AdminCouponsView";
 import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminCouponsPageProps = {
   params: Promise<{ locale: string }>;
@@ -46,12 +47,23 @@ export default async function AdminCouponsPage({
         active: undefined,
       };
 
-  const { rows, total, pageSize } = await listAdminPromotions(filters);
+  const [{ rows, total, pageSize }, dict] = await Promise.all([
+    listAdminPromotions(filters),
+    getDictionary(locale),
+  ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <>
-      <AdminCouponsView locale={locale} coupons={rows} />
+      <AdminCouponsView
+        locale={locale}
+        coupons={rows}
+        copy={{
+          coupons: dict.admin.coupons,
+          common: dict.admin.common,
+          confirm: dict.admin.confirm,
+        }}
+      />
       {totalPages > 1 ? (
         <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
           {filters.page > 1 ? (
@@ -59,18 +71,20 @@ export default async function AdminCouponsPage({
               href={`/${locale}/admin/coupons?page=${filters.page - 1}`}
               className="font-medium hover:underline"
             >
-              Previous
+              {dict.admin.common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {dict.admin.common.pageOf
+              .replace("{page}", String(filters.page))
+              .replace("{totalPages}", String(totalPages))}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/coupons?page=${filters.page + 1}`}
               className="font-medium hover:underline"
             >
-              Next
+              {dict.admin.common.next}
             </Link>
           ) : null}
         </nav>

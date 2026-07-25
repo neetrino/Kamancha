@@ -94,7 +94,6 @@ export async function upsertTargetDiscountAction(
         .where(
           and(
             eq(promotions.kind, "AUTOMATIC"),
-            eq(promotions.discountType, "PERCENTAGE"),
             target === "product"
               ? eq(promotions.productId, targetId)
               : eq(promotions.categoryId, targetId),

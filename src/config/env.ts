@@ -24,6 +24,8 @@ const envSchema = z.object({
   R2_ENDPOINT: z.string().url().optional(),
   EMAIL_FROM: z.string().email().optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
+  /** Server + browser Google Maps Platform key (Geocoding, Routes, Places, Maps JS). */
+  GOOGLE_MAPS_API_KEY: z.string().min(1).optional(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
@@ -62,6 +64,7 @@ export function getEnv(): AppEnv {
     R2_ENDPOINT: optionalEnv(process.env.R2_ENDPOINT),
     EMAIL_FROM: optionalEnv(process.env.EMAIL_FROM),
     RESEND_API_KEY: optionalEnv(process.env.RESEND_API_KEY),
+    GOOGLE_MAPS_API_KEY: optionalEnv(process.env.GOOGLE_MAPS_API_KEY),
   });
 
   if (!parsed.success) {

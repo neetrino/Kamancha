@@ -7,17 +7,25 @@ import { Percent } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import { setGlobalDiscountAction } from "@/features/promotions/application/manage-discounts";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 const QUICK_PERCENTS = [10, 20, 30, 50] as const;
+
+type GlobalDiscountCardCopy = {
+  global: Dictionary["admin"]["discounts"]["global"];
+  common: Dictionary["admin"]["common"];
+};
 
 type GlobalDiscountCardProps = {
   locale: string;
   initialPercent: number | null;
+  copy: GlobalDiscountCardCopy;
 };
 
 export function GlobalDiscountCard({
   locale,
   initialPercent,
+  copy,
 }: GlobalDiscountCardProps) {
   const router = useRouter();
   const [value, setValue] = useState(
@@ -56,8 +64,11 @@ export function GlobalDiscountCard({
       );
       setMessage(
         result.value.percentage == null
-          ? "Global discount cleared."
-          : `Global discount set to ${result.value.percentage}%.`,
+          ? copy.global.cleared
+          : copy.global.setTo.replace(
+              "{percent}",
+              String(result.value.percentage),
+            ),
       );
       router.refresh();
     });
@@ -71,15 +82,15 @@ export function GlobalDiscountCard({
         </span>
         <div>
           <h2 className="text-base font-semibold text-gray-900">
-            Global Discount
+            {copy.global.title}
           </h2>
-          <p className="text-sm text-gray-500">For All Products</p>
+          <p className="text-sm text-gray-500">{copy.global.forAllProducts}</p>
         </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
         <label className="sr-only" htmlFor="global-discount-input">
-          Global discount percentage
+          {copy.global.percentageAria}
         </label>
         <div className="relative min-w-[8rem] flex-1">
           <input
@@ -88,7 +99,7 @@ export function GlobalDiscountCard({
             min={0}
             max={100}
             inputMode="numeric"
-            placeholder="0"
+            placeholder={copy.global.placeholder}
             value={value}
             disabled={isPending}
             onChange={(event) => setValue(event.target.value)}
@@ -105,20 +116,20 @@ export function GlobalDiscountCard({
           onClick={() => {
             const parsed = parseInput();
             if (parsed === "invalid") {
-              setError("Enter a whole number from 1 to 100, or leave empty.");
+              setError(copy.global.invalidPercent);
               return;
             }
             save(parsed);
           }}
         >
-          {isPending ? "Saving…" : "Save"}
+          {isPending ? copy.common.saving : copy.common.save}
         </Button>
       </div>
 
       <p className="mt-3 text-sm text-gray-500">
         {saved == null
-          ? "No global discount. Enter percentage (0-100) to discount all products."
-          : `Active global discount: ${saved}%.`}
+          ? copy.global.noGlobalDiscount
+          : copy.global.activeGlobalDiscount.replace("{percent}", String(saved))}
       </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -143,7 +154,7 @@ export function GlobalDiscountCard({
           }}
           className="px-2 text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50"
         >
-          Cancel
+          {copy.common.cancel}
         </button>
       </div>
 

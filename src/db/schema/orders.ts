@@ -37,6 +37,20 @@ export type AddressSnapshot = {
   line1: string;
   line2?: string;
   postalCode?: string;
+  /** Floor number for delivery. */
+  floor?: string;
+  /** Intercom / door code for delivery. */
+  intercomCode?: string;
+  /** Scheduled delivery date `YYYY-MM-DD` (Asia/Yerevan). */
+  scheduledDeliveryDate?: string;
+  /** Scheduled slot start `HH:mm`. */
+  scheduledDeliveryStart?: string;
+  /** Scheduled slot end `HH:mm`. */
+  scheduledDeliveryEnd?: string;
+  /** COD banknote amount the customer pays with (for change). */
+  cashChangeAmount?: number;
+  /** Snapshot of banknote image object key when the order was placed. */
+  cashChangeImageKey?: string;
 };
 
 export const orders = pgTable(

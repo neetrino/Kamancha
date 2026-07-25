@@ -8,10 +8,17 @@ import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import type { DiscountBoardProduct } from "@/features/promotions/application/discounts-board";
 import { upsertTargetDiscountAction } from "@/features/promotions/application/manage-discounts";
 import { currencySymbols, isCurrency } from "@/lib/money/currency";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type ProductDiscountsSectionCopy = {
+  products: Dictionary["admin"]["discounts"]["products"];
+  common: Dictionary["admin"]["common"];
+};
 
 type ProductDiscountsSectionProps = {
   locale: string;
   products: DiscountBoardProduct[];
+  copy: ProductDiscountsSectionCopy;
 };
 
 function formatPrice(amount: number, currency = "AMD"): string {
@@ -41,6 +48,7 @@ function draftsFromProducts(
 export function ProductDiscountsSection({
   locale,
   products,
+  copy,
 }: ProductDiscountsSectionProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -70,7 +78,7 @@ export function ProductDiscountsSection({
   function saveOne(productId: string, title: string): void {
     const parsed = parsePercent(drafts[productId] ?? "");
     if (parsed === "invalid") {
-      setError(`Invalid percentage for “${title}”. Use 1–100.`);
+      setError(copy.products.invalidPercent.replace("{title}", title));
       return;
     }
 
@@ -90,8 +98,10 @@ export function ProductDiscountsSection({
       }
       setMessage(
         parsed == null
-          ? `Cleared discount for “${title}”.`
-          : `Saved ${parsed}% for “${title}”.`,
+          ? copy.products.cleared.replace("{title}", title)
+          : copy.products.saved
+              .replace("{percent}", String(parsed))
+              .replace("{title}", title),
       );
       router.refresh();
     });
@@ -101,20 +111,18 @@ export function ProductDiscountsSection({
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4">
         <h2 className="text-base font-semibold text-gray-900">
-          Product Discounts
+          {copy.products.title}
         </h2>
-        <p className="text-sm text-gray-500">
-          Set individual discount percentage for each product
-        </p>
+        <p className="text-sm text-gray-500">{copy.products.subtitle}</p>
       </div>
 
       <label className="sr-only" htmlFor="product-discount-search">
-        Search products
+        {copy.products.searchAria}
       </label>
       <input
         id="product-discount-search"
         type="search"
-        placeholder="Search by title or slug..."
+        placeholder={copy.products.searchPlaceholder}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         className={`${ADMIN_INPUT} mb-4`}
@@ -122,7 +130,7 @@ export function ProductDiscountsSection({
 
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 px-4 py-10 text-center text-sm text-gray-500">
-          No products found
+          {copy.products.empty}
         </div>
       ) : (
         <ul className="space-y-3">
@@ -163,7 +171,10 @@ export function ProductDiscountsSection({
                     className="sr-only"
                     htmlFor={`product-discount-${product.id}`}
                   >
-                    Discount for {product.title}
+                    {copy.products.discountForAria.replace(
+                      "{title}",
+                      product.title,
+                    )}
                   </label>
                   <input
                     id={`product-discount-${product.id}`}
@@ -188,7 +199,7 @@ export function ProductDiscountsSection({
                     disabled={isPending}
                     onClick={() => saveOne(product.id, product.title)}
                   >
-                    {busy ? "Saving…" : "Save"}
+                    {busy ? copy.common.saving : copy.common.save}
                   </Button>
                 </div>
               </li>

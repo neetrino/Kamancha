@@ -1,202 +1,253 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import {
-  ConfirmDialog,
-  deleteConfirmDescription,
-} from "@/components/ui/ConfirmDialog";
-import {
+  ADMIN_INPUT,
+  ADMIN_LABEL,
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
-import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_CARD,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_STATE_INSET,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TD_CENTER,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_TH_CENTER,
-  ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import { deleteDeliveryLocationAction } from "@/features/delivery/application/manage-delivery";
-import type { AdminDeliveryLocation } from "@/features/delivery/application/queries";
-import { DeliveryLocationDrawer } from "@/features/delivery/ui/DeliveryLocationDrawer";
+import { saveDeliverySettingsAction } from "@/features/delivery/application/save-delivery-settings";
+import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
+import type { StoreDeliverySettings } from "@/features/delivery/domain/delivery-settings";
+import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
+import { timeToMinutes } from "@/features/delivery/domain/delivery-schedule";
+import { AdminCashChangeEditor } from "@/features/delivery/ui/AdminCashChangeEditor";
+import { AdminDeliveryScheduleEditor } from "@/features/delivery/ui/AdminDeliveryScheduleEditor";
 import { formatMoneyAmount } from "@/lib/money/format";
+import type { Locale } from "@/lib/i18n/config";
+import { isLocale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type AdminDeliveryViewCopy = {
+  delivery: Dictionary["admin"]["delivery"];
+  common: Dictionary["admin"]["common"];
+};
 
 type AdminDeliveryViewProps = {
   locale: string;
-  locations: AdminDeliveryLocation[];
+  settings: StoreDeliverySettings;
+  initialImageUrls: Record<string, string>;
+  copy: AdminDeliveryViewCopy;
 };
+
+function minutesToTime(total: number): string {
+  const hours = Math.floor(total / 60);
+  const minutes = total % 60;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
+function normalizeScheduleForSave(
+  schedule: DeliveryScheduleSettings,
+): DeliveryScheduleSettings["weekly"] {
+  const weekly = { ...schedule.weekly };
+  for (const day of [1, 2, 3, 4, 5, 6, 7] as const) {
+    const hours = weekly[day];
+    if (!hours.isOpen) continue;
+    const openMinutes = timeToMinutes(hours.openTime);
+    const closeMinutes = timeToMinutes(hours.closeTime);
+    if (closeMinutes > openMinutes) continue;
+    const preferredClose = openMinutes + 60;
+    weekly[day] =
+      preferredClose <= 23 * 60 + 59
+        ? { ...hours, closeTime: minutesToTime(preferredClose) }
+        : {
+            ...hours,
+            openTime: minutesToTime(Math.max(0, closeMinutes - 60)),
+          };
+  }
+  return weekly;
+}
 
 export function AdminDeliveryView({
   locale,
-  locations,
+  settings,
+  initialImageUrls,
+  copy,
 }: AdminDeliveryViewProps) {
-  const router = useRouter();
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editingLocation, setEditingLocation] =
-    useState<AdminDeliveryLocation | null>(null);
+  const [originAddress, setOriginAddress] = useState(settings.originAddress);
+  const [originLat, setOriginLat] = useState(settings.originLat);
+  const [originLng, setOriginLng] = useState(settings.originLng);
+  const [pricePerKmAmount, setPricePerKmAmount] = useState(
+    settings.pricePerKmAmount > 0 ? String(settings.pricePerKmAmount) : "",
+  );
+  const [isActive, setIsActive] = useState(settings.isActive);
+  const [schedule, setSchedule] = useState<DeliveryScheduleSettings>(
+    settings.schedule,
+  );
+  const [cashChangeDenominations, setCashChangeDenominations] = useState<
+    CashChangeDenomination[]
+  >(settings.cashChangeDenominations);
+  const [imageUrls, setImageUrls] = useState(initialImageUrls);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [pendingDelete, setPendingDelete] =
-    useState<AdminDeliveryLocation | null>(null);
+  const languageCode: Locale = isLocale(locale) ? locale : "hy";
 
-  function openCreate(): void {
-    setEditingLocation(null);
-    setDrawerOpen(true);
-  }
+  const sortedDenominations = useMemo(
+    () =>
+      [...cashChangeDenominations].sort(
+        (a, b) => a.sortOrder - b.sortOrder || a.amount - b.amount,
+      ),
+    [cashChangeDenominations],
+  );
 
-  function openEdit(location: AdminDeliveryLocation): void {
-    setEditingLocation(location);
-    setDrawerOpen(true);
-  }
-
-  function closeDrawer(): void {
-    setDrawerOpen(false);
-    setEditingLocation(null);
-  }
-
-  function requestDelete(location: AdminDeliveryLocation): void {
-    setPendingDelete(location);
-  }
-
-  function confirmDelete(): void {
-    if (!pendingDelete) return;
-    const locationId = pendingDelete.id;
-
+  function onSave(): void {
     startTransition(async () => {
       setError(null);
-      const result = await deleteDeliveryLocationAction(locale, locationId);
+      setMessage(null);
+      const weekly = normalizeScheduleForSave(schedule);
+      setSchedule({ ...schedule, weekly });
+      const result = await saveDeliverySettingsAction(locale, {
+        originAddress,
+        pricePerKmAmount: Number(pricePerKmAmount),
+        isActive,
+        schedule: {
+          slotMinutes: schedule.slotMinutes,
+          maxDaysAhead: schedule.maxDaysAhead,
+          weekly,
+          closedDates: schedule.closedDates,
+        },
+        cashChangeDenominations: sortedDenominations.map((item, index) => ({
+          ...item,
+          sortOrder: index,
+        })),
+      });
       if (!result.ok) {
         setError(result.error.message);
         return;
       }
-      setPendingDelete(null);
-      router.refresh();
+      setOriginAddress(result.value.originAddress);
+      setOriginLat(result.value.originLat);
+      setOriginLng(result.value.originLng);
+      setMessage(copy.delivery.saved);
     });
   }
 
   return (
     <section>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className={ADMIN_PAGE_TITLE}>Delivery</h1>
-          <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
-            Set delivery prices by country and city for checkout.
-          </p>
-        </div>
-        <Button
-          type="button"
-          size="sm"
-          onClick={openCreate}
-          className="inline-flex items-center gap-1.5"
-        >
-          <Plus className="h-4 w-4" aria-hidden />
-          Add Location
-        </Button>
+      <div className="mb-6">
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.delivery.title}</h1>
+        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{copy.delivery.subtitle}</p>
       </div>
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
+      {message ? <p className="mb-3 text-sm text-green-700">{message}</p> : null}
 
-      <Card className={ADMIN_TABLE_CARD}>
-        {locations.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            No delivery locations yet. Add a location to offer delivery at
-            checkout.
-          </p>
-        ) : (
-          <div className={ADMIN_TABLE_OUTER_SCROLL}>
-            <table className={ADMIN_TABLE}>
-              <thead className={ADMIN_TABLE_THEAD}>
-                <tr>
-                  <th className={ADMIN_TABLE_TH}>Country</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>City</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Price</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Free from</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>Actions</th>
-                </tr>
-              </thead>
-              <tbody className={ADMIN_TABLE_TBODY}>
-                {locations.map((location) => (
-                  <tr key={location.id} className={ADMIN_TABLE_ROW}>
-                    <td className={ADMIN_TABLE_TD}>{location.country}</td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span className="font-medium text-gray-900">
-                        {location.city}
-                      </span>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {formatMoneyAmount(location.priceAmount, "AMD", locale)}
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      {location.freeThresholdAmount != null
-                        ? formatMoneyAmount(
-                            location.freeThresholdAmount,
-                            "AMD",
-                            locale,
-                          )
-                        : "—"}
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <div className="inline-flex items-center justify-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => openEdit(location)}
-                          disabled={isPending}
-                          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-                          aria-label={`Edit ${location.city}`}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => requestDelete(location)}
-                          disabled={isPending}
-                          className="rounded-lg p-2 text-red-600 hover:bg-red-50 hover:text-red-700"
-                          aria-label={`Delete ${location.city}`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
-
-      <DeliveryLocationDrawer
-        locale={locale}
-        open={drawerOpen}
-        onClose={closeDrawer}
-        location={editingLocation}
-      />
-
-      <ConfirmDialog
-        open={pendingDelete !== null}
-        title="Delete"
-        description={
-          pendingDelete
-            ? deleteConfirmDescription("delivery location", pendingDelete.city)
-            : ""
-        }
-        isPending={isPending}
-        onClose={() => {
-          if (!isPending) setPendingDelete(null);
+      <form
+        className="grid gap-6 xl:grid-cols-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSave();
         }}
-        onConfirm={confirmDelete}
-      />
+      >
+        <Card className="p-6">
+          <div className="flex flex-col gap-4">
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">
+                {copy.delivery.storeAndPricing}
+              </h2>
+              <p className="mt-1 text-sm text-gray-600">
+                {copy.delivery.storeAndPricingHint}
+              </p>
+            </div>
+
+            <label>
+              <span className={ADMIN_LABEL}>{copy.delivery.storeAddress}</span>
+              <AddressAutocomplete
+                value={originAddress}
+                onValueChange={setOriginAddress}
+                placeholder={copy.delivery.storeAddressPlaceholder}
+                required
+                className={ADMIN_INPUT}
+                disabled={isPending}
+                languageCode={languageCode}
+              />
+              <span className="mt-1 block text-xs text-gray-500">
+                {copy.delivery.storeAddressHint}
+              </span>
+              {originLat != null && originLng != null ? (
+                <span className="mt-1 block text-xs text-gray-500">
+                  {copy.delivery.geocoded
+                    .replace("{lat}", originLat.toFixed(5))
+                    .replace("{lng}", originLng.toFixed(5))}
+                </span>
+              ) : null}
+            </label>
+
+            <label>
+              <span className={ADMIN_LABEL}>{copy.delivery.pricePerKm}</span>
+              <input
+                type="number"
+                min={0}
+                step={1}
+                required
+                value={pricePerKmAmount}
+                onChange={(event) => setPricePerKmAmount(event.target.value)}
+                placeholder={copy.delivery.pricePerKmPlaceholder}
+                className={ADMIN_INPUT}
+                disabled={isPending}
+              />
+              {pricePerKmAmount !== "" &&
+              Number.isFinite(Number(pricePerKmAmount)) ? (
+                <span className="mt-1 block text-xs text-gray-500">
+                  {copy.delivery.pricePerKmExample.replace(
+                    "{amount}",
+                    formatMoneyAmount(
+                      Math.round((1101 * Number(pricePerKmAmount)) / 1000),
+                      "AMD",
+                      locale,
+                    ),
+                  )}
+                </span>
+              ) : null}
+            </label>
+
+            <label className="inline-flex items-center gap-2 text-sm text-gray-800">
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={(event) => setIsActive(event.target.checked)}
+                disabled={isPending}
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              {copy.delivery.offerDelivery}
+            </label>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="flex flex-col gap-5">
+            <AdminDeliveryScheduleEditor
+              value={schedule}
+              onChange={setSchedule}
+              disabled={isPending}
+              copy={copy.delivery.schedule}
+            />
+          </div>
+        </Card>
+
+        <Card className="p-6 xl:col-span-2">
+          <AdminCashChangeEditor
+            locale={locale}
+            value={sortedDenominations}
+            imageUrls={imageUrls}
+            onChange={setCashChangeDenominations}
+            onImageUrlsChange={setImageUrls}
+            disabled={isPending}
+            copy={copy.delivery.cashChange}
+          />
+          <div className="mt-5">
+            <Button type="submit" disabled={isPending}>
+              {isPending ? copy.common.saving : copy.common.save}
+            </Button>
+          </div>
+        </Card>
+      </form>
     </section>
   );
 }

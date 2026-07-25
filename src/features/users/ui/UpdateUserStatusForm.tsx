@@ -12,12 +12,14 @@ import {
 } from "@/features/admin/ui/admin-form-classes";
 import { updateUserStatusAction } from "@/features/users/application/update-user";
 import type { UserStatus } from "@/features/users/domain/user-lifecycle";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type UpdateUserStatusFormProps = {
   locale: string;
   userId: string;
   currentStatus: UserStatus;
   eligibleStatuses: UserStatus[];
+  copy: Dictionary["admin"];
 };
 
 export function UpdateUserStatusForm({
@@ -25,6 +27,7 @@ export function UpdateUserStatusForm({
   userId,
   currentStatus,
   eligibleStatuses,
+  copy,
 }: UpdateUserStatusFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,7 @@ export function UpdateUserStatusForm({
   if (eligibleStatuses.length === 0) {
     return (
       <p className="text-sm text-gray-600">
-        Terminal status — no further transitions.
+        {copy.users.statusForm.terminal}
       </p>
     );
   }
@@ -60,15 +63,15 @@ export function UpdateUserStatusForm({
           });
         }}
       >
-        <h3 className={ADMIN_SECTION_TITLE}>Status</h3>
+        <h3 className={ADMIN_SECTION_TITLE}>{copy.users.statusForm.title}</h3>
         <p className="text-sm text-gray-700">
-          Current: <strong className="text-gray-900">{currentStatus}</strong>
+          {copy.common.current.replace("{value}", currentStatus)}
         </p>
         <div>
-          <span className={ADMIN_LABEL}>New status</span>
+          <span className={ADMIN_LABEL}>{copy.users.statusForm.newStatus}</span>
           <SelectDropdown
             name="status"
-            ariaLabel="New status"
+            ariaLabel={copy.users.statusForm.newStatusAria}
             value={status}
             options={eligibleStatuses.map((item) => ({
               label: item,
@@ -82,7 +85,7 @@ export function UpdateUserStatusForm({
         </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? "Updating…" : "Update status"}
+          {isPending ? copy.common.updating : copy.users.statusForm.updateStatus}
         </Button>
       </form>
     </Card>

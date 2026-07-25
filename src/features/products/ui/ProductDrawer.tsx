@@ -13,15 +13,20 @@ import type {
   AdminCategoryOption,
   AdminProductListItem,
 } from "@/features/products/application/list-admin-products";
+import type { ProductModifierOption } from "@/features/products/types/modifiers";
+import type { ProductDiscountDraft } from "@/features/products/types/product-discount";
 import {
   createProductFromDrawerAction,
   updateProductFromDrawerAction,
 } from "@/features/products/application/upsert-product";
 import { ProductDrawerCategories } from "@/features/products/ui/ProductDrawerCategories";
+import { ProductDrawerDiscount } from "@/features/products/ui/ProductDrawerDiscount";
 import {
   ProductDrawerImages,
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
+import { ProductDrawerModifiers } from "@/features/products/ui/ProductDrawerModifiers";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
@@ -31,12 +36,22 @@ type ProductDrawerProduct = Pick<
   | "slug"
   | "description"
   | "priceAmount"
-  | "compareAtAmount"
   | "stockOnHand"
   | "status"
   | "categoryIds"
+  | "modifierIds"
+  | "discount"
   | "images"
 >;
+
+type DrawerCopy = {
+  drawer: Dictionary["admin"]["products"]["drawer"];
+  categories: Dictionary["admin"]["products"]["categories"];
+  images: Dictionary["admin"]["products"]["images"];
+  discount: Dictionary["admin"]["products"]["discount"];
+  modifiers: Dictionary["admin"]["products"]["modifiers"];
+  common: Dictionary["admin"]["common"];
+};
 
 type ProductDrawerProps = {
   locale: string;
@@ -44,6 +59,8 @@ type ProductDrawerProps = {
   onClose: () => void;
   product?: ProductDrawerProduct | null;
   categories: AdminCategoryOption[];
+  modifierLibrary: ProductModifierOption[];
+  copy: DrawerCopy;
 };
 
 function imagesFromProduct(
@@ -64,6 +81,8 @@ export function ProductDrawer({
   onClose,
   product = null,
   categories: initialCategories,
+  modifierLibrary: initialModifierLibrary,
+  copy,
 }: ProductDrawerProps) {
   const router = useRouter();
   const isEdit = product != null;
@@ -75,8 +94,12 @@ export function ProductDrawer({
   const [categories, setCategories] =
     useState<AdminCategoryOption[]>(initialCategories);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [modifierLibrary, setModifierLibrary] = useState<ProductModifierOption[]>(
+    initialModifierLibrary,
+  );
+  const [modifierIds, setModifierIds] = useState<string[]>([]);
+  const [discount, setDiscount] = useState<ProductDiscountDraft | null>(null);
   const [priceAmount, setPriceAmount] = useState("");
-  const [compareAtAmount, setCompareAtAmount] = useState("");
   const [sku, setSku] = useState("");
   const [stockOnHand, setStockOnHand] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +109,7 @@ export function ProductDrawer({
     if (!open) return;
 
     setCategories(initialCategories);
+    setModifierLibrary(initialModifierLibrary);
     if (product) {
       setTitle(product.title);
       setSlug(product.slug);
@@ -93,10 +117,22 @@ export function ProductDrawer({
       setImages(imagesFromProduct(product));
       setRemovedImageIds([]);
       setCategoryIds(product.categoryIds);
-      setPriceAmount(String(product.priceAmount));
-      setCompareAtAmount(
-        product.compareAtAmount != null ? String(product.compareAtAmount) : "",
+      setModifierIds(product.modifierIds);
+      setDiscount(
+        product.discount
+          ? {
+              type: product.discount.type,
+              value: product.discount.value,
+              startsAt: product.discount.startsAt
+                ? new Date(product.discount.startsAt).toISOString()
+                : null,
+              endsAt: product.discount.endsAt
+                ? new Date(product.discount.endsAt).toISOString()
+                : null,
+            }
+          : null,
       );
+      setPriceAmount(String(product.priceAmount));
       setSku(product.sku);
       setStockOnHand(String(product.stockOnHand));
       setError(null);
@@ -107,13 +143,14 @@ export function ProductDrawer({
       setImages([]);
       setRemovedImageIds([]);
       setCategoryIds([]);
+      setModifierIds([]);
+      setDiscount(null);
       setPriceAmount("");
-      setCompareAtAmount("");
       setSku("");
       setStockOnHand("");
       setError(null);
     }
-  }, [open, product, initialCategories]);
+  }, [open, product, initialCategories, initialModifierLibrary]);
 
   function handleImagesChange(next: ProductDraftImage[]): void {
     const nextKeys = new Set(next.map((image) => image.key));
@@ -135,12 +172,12 @@ export function ProductDrawer({
     <SideSheet
       open={open}
       onClose={onClose}
-      ariaLabel={isEdit ? "Edit product" : "Add new product"}
+      ariaLabel={isEdit ? copy.drawer.editAria : copy.drawer.addAria}
       panelClassName="w-[min(100%,42rem)] sm:w-[40%]"
     >
         <div className="border-b border-gray-200 px-5 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {isEdit ? "Edit product" : "Add new product"}
+            {isEdit ? copy.drawer.editTitle : copy.drawer.addTitle}
           </h2>
         </div>
 
@@ -160,11 +197,10 @@ export function ProductDrawer({
               slug: slug.trim(),
               description: description.trim() || undefined,
               priceAmount: Number(priceAmount),
-              compareAtAmount: compareAtAmount.trim()
-                ? Number(compareAtAmount)
-                : null,
               stockOnHand: Number(stockOnHand),
               categoryIds,
+              modifierIds,
+              discount,
               status: (product?.status === "ACTIVE" ||
               product?.status === "ARCHIVED"
                 ? product.status
@@ -185,22 +221,32 @@ export function ProductDrawer({
 
             startTransition(async () => {
               setError(null);
-              const result =
-                isEdit && product
-                  ? await updateProductFromDrawerAction(
-                      locale,
-                      product.id,
-                      formData,
-                    )
-                  : await createProductFromDrawerAction(locale, formData);
+              try {
+                const result =
+                  isEdit && product
+                    ? await updateProductFromDrawerAction(
+                        locale,
+                        product.id,
+                        formData,
+                      )
+                    : await createProductFromDrawerAction(locale, formData);
 
-              if (!result.ok) {
-                setError(result.error.message);
-                return;
+                if (!result.ok) {
+                  setError(result.error.message);
+                  return;
+                }
+
+                onClose();
+                router.refresh();
+              } catch (caught) {
+                const message =
+                  caught instanceof Error ? caught.message : copy.common.saveFailed;
+                if (/body exceeded|413|too large/i.test(message)) {
+                  setError(copy.drawer.imagesTooLarge);
+                  return;
+                }
+                setError(message);
               }
-
-              onClose();
-              router.refresh();
             });
           }}
         >
@@ -208,26 +254,28 @@ export function ProductDrawer({
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  Title <span className="text-red-600">*</span>
+                  {copy.drawer.title}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
-                  placeholder="Product title"
+                  placeholder={copy.drawer.titlePlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
               <label>
                 <span className={ADMIN_LABEL}>
-                  Slug <span className="text-red-600">*</span>
+                  {copy.drawer.slug}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
                   value={slug}
                   onChange={(event) => setSlug(event.target.value)}
-                  placeholder="product-slug"
+                  placeholder={copy.drawer.slugPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
@@ -235,11 +283,11 @@ export function ProductDrawer({
             </div>
 
             <label className="block">
-              <span className={ADMIN_LABEL}>Description</span>
+              <span className={ADMIN_LABEL}>{copy.drawer.description}</span>
               <textarea
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
-                placeholder="Product description"
+                placeholder={copy.drawer.descriptionPlaceholder}
                 className={ADMIN_TEXTAREA}
                 disabled={isPending}
               />
@@ -249,6 +297,7 @@ export function ProductDrawer({
               images={images}
               disabled={isPending}
               onChange={handleImagesChange}
+              copy={copy.images}
             />
 
             <ProductDrawerCategories
@@ -258,12 +307,24 @@ export function ProductDrawer({
               disabled={isPending}
               onCategoriesChange={setCategories}
               onSelectedChange={setCategoryIds}
+              copy={copy.categories}
+            />
+
+            <ProductDrawerModifiers
+              locale={locale}
+              library={modifierLibrary}
+              selectedIds={modifierIds}
+              disabled={isPending}
+              onLibraryChange={setModifierLibrary}
+              onSelectedChange={setModifierIds}
+              copy={copy.modifiers}
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  Price <span className="text-red-600">*</span>
+                  {copy.drawer.price}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
@@ -271,42 +332,38 @@ export function ProductDrawer({
                   type="number"
                   value={priceAmount}
                   onChange={(event) => setPriceAmount(event.target.value)}
-                  placeholder="AMD price"
+                  placeholder={copy.drawer.pricePlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
-              <label>
-                <span className={ADMIN_LABEL}>Compare at price</span>
-                <input
-                  min={0}
-                  type="number"
-                  value={compareAtAmount}
-                  onChange={(event) => setCompareAtAmount(event.target.value)}
-                  placeholder="Optional"
-                  className={ADMIN_INPUT}
-                  disabled={isPending}
-                />
-              </label>
+              <ProductDrawerDiscount
+                value={discount}
+                disabled={isPending}
+                onChange={setDiscount}
+                copy={copy.discount}
+              />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
-                  SKU <span className="text-red-600">*</span>
+                  {copy.drawer.sku}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
                   value={sku}
                   onChange={(event) => setSku(event.target.value)}
-                  placeholder="SKU"
+                  placeholder={copy.drawer.skuPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
               </label>
               <label>
                 <span className={ADMIN_LABEL}>
-                  Quantity <span className="text-red-600">*</span>
+                  {copy.drawer.quantity}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
                 </span>
                 <input
                   required
@@ -314,7 +371,7 @@ export function ProductDrawer({
                   type="number"
                   value={stockOnHand}
                   onChange={(event) => setStockOnHand(event.target.value)}
-                  placeholder="Stock"
+                  placeholder={copy.drawer.quantityPlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
@@ -328,18 +385,18 @@ export function ProductDrawer({
             <Button type="submit" disabled={isPending}>
               {isPending
                 ? isEdit
-                  ? "Saving…"
-                  : "Creating…"
+                  ? copy.common.saving
+                  : copy.common.creating
                 : isEdit
-                  ? "Save"
-                  : "Create"}
+                  ? copy.common.save
+                  : copy.common.create}
             </Button>
             <button
               type="button"
               onClick={onClose}
               className="text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              {copy.common.cancel}
             </button>
           </div>
         </form>

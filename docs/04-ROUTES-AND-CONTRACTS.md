@@ -77,7 +77,7 @@
 | `/[locale]/admin/users` | User/role/status management |
 | `/[locale]/admin/messages` | Contact inbox |
 | `/[locale]/admin/analytics` | Metrics + CSV export |
-| `/[locale]/admin/delivery` | Delivery rules |
+| `/[locale]/admin/delivery` | Store origin + AMD/km delivery settings |
 | `/[locale]/admin/blog` | Blog CMS |
 | `/[locale]/admin/settings` | Typed store settings |
 
@@ -105,7 +105,8 @@
 | `minPrice` | integer display/base policy | non-negative; conversion filtering policy must be deterministic |
 | `maxPrice` | integer | `>= minPrice` |
 | `category` | locale slug or repeated slugs | active category only |
-| `inStock` | boolean | `true`/`false` allowlist |
+| `inStock` | boolean | `true` when set (omit = all) |
+| `onSale` | boolean | `true` when set — `compareAt > price` |
 | `sort` | enum | `newest`, `price_asc`, `price_desc`, `popular` |
 | `page` | positive integer, default 1 | bounded |
 | `pageSize` | allowlist, proposed 12/24/48 | max protected |

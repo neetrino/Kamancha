@@ -1,6 +1,11 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  LinkedInIcon,
+} from "@/components/layout/SocialIcons";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -21,6 +26,40 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               {dictionary.footer.shop}
             </h3>
             <p className="text-sm text-gray-300">{dictionary.footer.description}</p>
+            <div className="mt-5">
+              <p className="mb-3 text-sm font-semibold text-white">
+                {dictionary.footer.followUs}
+              </p>
+              <div className="flex items-center gap-3">
+                <a
+                  href={dictionary.contact.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 transition-colors hover:text-white"
+                  aria-label="Instagram"
+                >
+                  <InstagramIcon className="h-5 w-5" />
+                </a>
+                <a
+                  href={dictionary.contact.social.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 transition-colors hover:text-white"
+                  aria-label="Facebook"
+                >
+                  <FacebookIcon className="h-5 w-5" />
+                </a>
+                <a
+                  href={dictionary.contact.social.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 transition-colors hover:text-white"
+                  aria-label="LinkedIn"
+                >
+                  <LinkedInIcon className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
           </div>
 
           <div>

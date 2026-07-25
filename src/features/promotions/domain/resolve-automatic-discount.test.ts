@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  applyFixedToListPrice,
   applyPercentageToListPrice,
   pickAutomaticDiscountPercent,
   resolveCatalogPrice,
@@ -82,6 +83,33 @@ describe("resolveCatalogPrice", () => {
       unitAmount: 6_000,
       compareAtAmount: 8_000,
       discountPercent: 25,
+      source: "product",
+    });
+  });
+
+  it("applies fixed product discount before category/global percent", () => {
+    expect(
+      resolveCatalogPrice({
+        listAmount: 10_000,
+        productDiscount: { type: "FIXED", value: 1_500 },
+        categoryPercents: [50],
+        globalPercent: 10,
+      }),
+    ).toMatchObject({
+      unitAmount: 8_500,
+      compareAtAmount: 10_000,
+      source: "product",
+    });
+  });
+});
+
+describe("applyFixedToListPrice", () => {
+  it("subtracts a fixed AMD amount", () => {
+    expect(applyFixedToListPrice(5_000, 500, "product")).toEqual({
+      listAmount: 5_000,
+      unitAmount: 4_500,
+      compareAtAmount: 5_000,
+      discountPercent: 10,
       source: "product",
     });
   });

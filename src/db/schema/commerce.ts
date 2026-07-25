@@ -65,14 +65,21 @@ export const cartItems = pgTable(
     productId: uuid("product_id")
       .notNull()
       .references(() => products.id, { onDelete: "restrict" }),
+    /**
+     * Stable key of selected modifier IDs (sorted, comma-joined).
+     * Empty string = no modifiers. Allows the same product with different
+     * selections to coexist as separate cart lines.
+     */
+    selectionKey: text("selection_key").notNull().default(""),
     quantity: integer("quantity").notNull(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    uniqueIndex("cart_items_cart_product_uidx").on(
+    uniqueIndex("cart_items_cart_product_selection_uidx").on(
       table.cartId,
       table.productId,
+      table.selectionKey,
     ),
     check("cart_items_qty_chk", sql`${table.quantity} > 0`),
   ],

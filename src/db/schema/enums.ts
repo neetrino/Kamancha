@@ -109,3 +109,8 @@ export const outboxStatusEnum = pgEnum("outbox_status", [
   "COMPLETED",
   "FAILED",
 ]);
+
+export const productModifierKindEnum = pgEnum("product_modifier_kind", [
+  "ADDITION",
+  "EXCEPTION",
+]);

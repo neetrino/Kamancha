@@ -7,10 +7,17 @@ import { Button } from "@/components/ui/Button";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import type { DiscountBoardCategory } from "@/features/promotions/application/discounts-board";
 import { saveCategoryDiscountsAction } from "@/features/promotions/application/manage-discounts";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+type CategoryDiscountsSectionCopy = {
+  categories: Dictionary["admin"]["discounts"]["categories"];
+  common: Dictionary["admin"]["common"];
+};
 
 type CategoryDiscountsSectionProps = {
   locale: string;
   categories: DiscountBoardCategory[];
+  copy: CategoryDiscountsSectionCopy;
 };
 
 function parsePercent(raw: string): number | null | "invalid" {
@@ -24,6 +31,7 @@ function parsePercent(raw: string): number | null | "invalid" {
 export function CategoryDiscountsSection({
   locale,
   categories,
+  copy,
 }: CategoryDiscountsSectionProps) {
   const router = useRouter();
   const [drafts, setDrafts] = useState<Record<string, string>>(() =>
@@ -69,7 +77,9 @@ export function CategoryDiscountsSection({
     for (const category of categories) {
       const parsed = parsePercent(drafts[category.id] ?? "");
       if (parsed === "invalid") {
-        setError(`Invalid percentage for “${category.title}”. Use 1–100.`);
+        setError(
+          copy.categories.invalidPercent.replace("{title}", category.title),
+        );
         return;
       }
       items.push({ categoryId: category.id, percentage: parsed });
@@ -83,7 +93,9 @@ export function CategoryDiscountsSection({
         setError(result.error.message);
         return;
       }
-      setMessage(`Saved ${result.value.saved} category discount(s).`);
+      setMessage(
+        copy.categories.savedCount.replace("{count}", String(result.value.saved)),
+      );
       router.refresh();
     });
   }
@@ -93,11 +105,9 @@ export function CategoryDiscountsSection({
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-gray-900">
-            Category Discounts
+            {copy.categories.title}
           </h2>
-          <p className="text-sm text-gray-500">
-            Apply discounts to each product within a category
-          </p>
+          <p className="text-sm text-gray-500">{copy.categories.subtitle}</p>
         </div>
         <Button
           type="button"
@@ -105,13 +115,13 @@ export function CategoryDiscountsSection({
           disabled={isPending || !isDirty || categories.length === 0}
           onClick={saveAll}
         >
-          {isPending ? "Saving…" : "Save"}
+          {isPending ? copy.common.saving : copy.common.save}
         </Button>
       </div>
 
       {categories.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 px-4 py-10 text-center text-sm text-gray-500">
-          No categories found
+          {copy.categories.empty}
         </div>
       ) : (
         <ul className="max-h-80 divide-y divide-gray-100 overflow-y-auto rounded-lg border border-gray-200">
@@ -127,8 +137,14 @@ export function CategoryDiscountsSection({
                 <p className="text-xs text-gray-500">{category.parentLabel}</p>
               </div>
               <div className="flex items-center gap-2">
-                <label className="sr-only" htmlFor={`cat-discount-${category.id}`}>
-                  Discount for {category.title}
+                <label
+                  className="sr-only"
+                  htmlFor={`cat-discount-${category.id}`}
+                >
+                  {copy.categories.discountForAria.replace(
+                    "{title}",
+                    category.title,
+                  )}
                 </label>
                 <input
                   id={`cat-discount-${category.id}`}
@@ -155,7 +171,7 @@ export function CategoryDiscountsSection({
                   }
                   className="text-sm font-medium text-gray-600 hover:text-gray-900 disabled:opacity-50"
                 >
-                  Clear
+                  {copy.common.clear}
                 </button>
               </div>
             </li>

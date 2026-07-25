@@ -11,9 +11,9 @@ const seedEnvSchema = z.object({
     .default("development"),
   DATABASE_URL: z.string().min(1),
   SEED_ADMIN_EMAIL: z.string().email(),
-  SEED_ADMIN_PASSWORD: z.string().min(12),
+  SEED_ADMIN_PASSWORD: z.string().min(8),
   SEED_CUSTOMER_EMAIL: z.string().email().optional(),
-  SEED_CUSTOMER_PASSWORD: z.string().min(12).optional(),
+  SEED_CUSTOMER_PASSWORD: z.string().min(8).optional(),
   SEED_ALLOW_PRODUCTION: z
     .enum(["true", "false"])
     .optional()
@@ -30,7 +30,7 @@ export function getSeedEnv(): SeedEnv {
       .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
       .join("; ");
     throw new Error(
-      `Invalid seed environment: ${details}. Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD in .env (min 12 chars).`,
+      `Invalid seed environment: ${details}. Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD in .env (min 8 chars).`,
     );
   }
 

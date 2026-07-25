@@ -15,23 +15,52 @@
     "email": "Էլ․ փոստ",
     "phone": "Հեռախոս",
     "address": "Հասցե",
+    "floor": "Հարկ",
+    "intercomCode": "Դոմոֆոնի կոդ",
     "city": "Քաղաք",
     "deliveryLocation": "Առաքման վայր",
     "selectLocation": "Ընտրեք վայրը"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
-    "address": "Փողոց, բնակարան, գրասենյակ և այլն",
+    "address": "Փողոց, շենք և այլն",
+    "floor": "Օր․ 3",
+    "intercomCode": "Օր․ 24#",
     "city": "Քաղաք"
+  },
+  "map": {
+    "openMap": "Քարտեզ",
+    "title": "Ընտրեք հասցեն քարտեզից",
+    "hint": "Սեղմեք քարտեզին կամ տեղափոխեք նշիչը՝ կոնկրետ կետ ընտրելու համար։",
+    "confirm": "Օգտագործել այս հասցեն",
+    "cancel": "Փակել",
+    "resolving": "Հասցեն որոշվում է…"
+  },
+  "schedule": {
+    "title": "Առաքման օր և ժամ",
+    "pickDate": "Ընտրեք օրը",
+    "pickTime": "Ընտրեք ժամը",
+    "noSlots": "Առայժմ հասանելի առաքման ժամեր չկան։",
+    "prevMonth": "Նախորդ",
+    "nextMonth": "Հաջորդ",
+    "selectSlot": "Ընտրեք առաքման օրը և ժամը"
+  },
+  "cashChange": {
+    "title": "Մանր տալ",
+    "hint": "Ընտրեք թղթադրամը, որով կվճարեք, որպեսզի առաքիչը մանր բերի։",
+    "aria": "Մանրի անվանում",
+    "select": "Ընտրեք թղթադրամը, որով կվճարեք"
   },
   "shipping": {
     "storePickup": "Ինքնաառաքում",
     "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
     "delivery": "Առաքում",
-    "deliveryDescription": "Կառաքենք ձեր հասցեով",
+    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
     "freePickup": "Անվճար (Ինքնաառաքում)",
     "enterCity": "Մուտքագրեք քաղաքը",
-    "selectDeliveryLocation": "Ընտրեք առաքման վայրը"
+    "selectDeliveryLocation": "Ընտրեք առաքման վայրը",
+    "enterDeliveryAddress": "Մուտքագրեք հասցեն՝ առաքման գինը հաշվելու համար",
+    "calculatingDelivery": "Առաքման գինը հաշվվում է…"
   },
   "payment": {
     "cashOnDelivery": "Կանխիկ առաքման պահին",
