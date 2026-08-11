@@ -49,7 +49,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
       >
         {/* Left — food platter (Figma 82:177): 0,98 / 663×828 */}
         <div
-          className="pointer-events-none absolute z-[1]"
+          className="pointer-events-none absolute z-[1] animate-hero-side-in-left"
           data-node-id="82:177"
           style={{
             left: 0,
@@ -72,7 +72,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
 
         {/* Right — kamancha (22:208): 732,141 / 708×757 */}
         <div
-          className="pointer-events-none absolute z-[3]"
+          className="pointer-events-none absolute z-[3] animate-hero-side-in-right"
           data-node-id="22:208"
           style={{
             left: widthPct(732),
@@ -95,7 +95,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
 
         {/* Center wordmark (22:207): 590×283 */}
         <div
-          className="absolute z-[2]"
+          className="absolute z-[2] animate-hero-wordmark-in"
           style={{
             left: widthPct(461),
             top: topPct(258),
@@ -116,7 +116,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
 
         {/* Menu CTA (22:435) */}
         <div
-          className="absolute left-1/2 z-[4] flex -translate-x-1/2 justify-center"
+          className="absolute left-1/2 z-[4] flex justify-center animate-hero-cta-in"
           style={{
             top: topPct(579),
             width: widthPct(280),

@@ -259,6 +259,93 @@ body {
   }
 }
 
+/* Home hero — side images settle into place, wordmark fades in center */
+@keyframes hero-side-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-12%);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes hero-side-in-right {
+  0% {
+    opacity: 0;
+    transform: translateX(12%);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes hero-wordmark-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.78);
+    filter: blur(5px);
+  }
+  35% {
+    opacity: 0.85;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-cta-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 28px);
+  }
+  45% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-hero-side-in-left {
+  animation: 1.7s cubic-bezier(0.16, 1, 0.3, 1) both hero-side-in-left;
+}
+
+.animate-hero-side-in-right {
+  animation: 1.7s cubic-bezier(0.16, 1, 0.3, 1) both hero-side-in-right;
+}
+
+.animate-hero-wordmark-in {
+  animation: 1.65s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both hero-wordmark-in;
+}
+
+.animate-hero-cta-in {
+  animation: 1.35s cubic-bezier(0.2, 0.8, 0.2, 1) 1.25s both hero-cta-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-side-in-left,
+  .animate-hero-side-in-right,
+  .animate-hero-wordmark-in,
+  .animate-hero-cta-in {
+    animation-duration: 0.01ms;
+    animation-delay: 0s;
+    animation-iteration-count: 1;
+  }
+}
+
 /* Kamancha MENU pill (Figma 22:435) — hover: soft green + ornaments slide out */
 .kamancha-pill-button {
   transition: background-color 0.45s ease;
