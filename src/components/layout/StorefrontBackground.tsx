@@ -11,7 +11,7 @@ export function StorefrontBackground() {
       aria-hidden="true"
     >
       <Image
-        src="/assets/brand/home-texture.jpg"
+        src="/assets/brand/home-texture.webp"
         alt=""
         fill
         priority

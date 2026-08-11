@@ -59,7 +59,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
           }}
         >
           <Image
-            src="/assets/brand/hero/hero-left.png?v=7"
+            src="/assets/brand/hero/hero-left.webp"
             alt=""
             width={HERO_SIDE_W}
             height={HERO_SIDE_H}
@@ -82,7 +82,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
           }}
         >
           <Image
-            src="/assets/brand/hero/hero-right.png?v=7"
+            src="/assets/brand/hero/hero-right.webp"
             alt=""
             width={HERO_SIDE_W}
             height={HERO_SIDE_H}
