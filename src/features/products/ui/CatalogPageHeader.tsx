@@ -54,7 +54,7 @@ export function CatalogPageHeader({
 
       <h1
         data-node-id="103:2420"
-        className="pt-4 font-big-fat-boii text-[40px] leading-[1.1] font-normal text-white uppercase sm:text-[48px] md:text-[58px] md:leading-[80px]"
+        className="pt-4 font-big-fat-boii text-[40px] leading-[1.1] font-normal text-white sm:text-[48px] md:text-[58px] md:leading-[80px]"
       >
         {heading}
       </h1>

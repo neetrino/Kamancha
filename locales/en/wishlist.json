@@ -1,4 +1,12 @@
 {
+  "title": "My favorites",
+  "heading": "My favorites",
+  "breadcrumbLabel": "Breadcrumb",
+  "resultsCount": "{count} products in wishlist",
+  "resultsCountOne": "1 product in wishlist",
+  "resultsCountZero": "0 products in wishlist",
   "empty": "Your wishlist is empty.",
+  "emptyDescription": "Save products to your wishlist so you can find them later.",
+  "browseProducts": "Browse products",
   "signInPrompt": "Sign in to save products to your wishlist."
 }
