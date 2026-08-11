@@ -9,6 +9,7 @@ import {
   HomeFeatures,
 } from "@/features/home/ui/HomeFeatures";
 import { HomeHero } from "@/features/home/ui/HomeHero";
+import { HomeOrnamentStrip } from "@/features/home/ui/HomeOrnamentStrip";
 import {
   getFeaturedProducts,
   getOfferProducts,
@@ -108,6 +109,8 @@ export default async function HomePage({ params }: HomePageProps) {
         ctaLabel={dictionary.nav.products}
         ctaHref={`/${locale}/products`}
       />
+
+      <HomeOrnamentStrip />
 
       <HomeCategories
         title={dictionary.home.categoriesTitle}
