@@ -77,14 +77,14 @@ export function HomeCategories({
       </h2>
 
       {categories.length === 0 ? (
-        <p className="px-2 text-center text-white/70 sm:px-3">{emptyLabel}</p>
+        <p className="px-5 text-center text-white/70">{emptyLabel}</p>
       ) : (
         <div
           data-node-id="22:209"
           className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2"
         >
           <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className="flex gap-[19px] px-2 py-4 sm:px-3">
+            <div className="flex gap-[19px] px-5 py-4">
               {categories.map((category) => (
                 <AppLink
                   key={category.id}

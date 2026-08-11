@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { HomeAboutTeaser } from "@/features/home/ui/HomeAboutTeaser";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
+import { HomeFamilyDinnerPromo } from "@/features/home/ui/HomeFamilyDinnerPromo";
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
 import {
   HOME_FEATURE_ICONS,
@@ -142,6 +143,17 @@ export default async function HomePage({ params }: HomePageProps) {
         discountOffLabel={dictionary.home.discountOff}
         isSignedIn={Boolean(user)}
         products={featuredCards}
+      />
+
+      <HomeFamilyDinnerPromo
+        headlineBefore={dictionary.home.familyDinner.headlineBefore}
+        headlineAccent={dictionary.home.familyDinner.headlineAccent}
+        headlineAfter={dictionary.home.familyDinner.headlineAfter}
+        subtitle={dictionary.home.familyDinner.subtitle}
+        subtitleMuted={dictionary.home.familyDinner.subtitleMuted}
+        priceLabel={dictionary.home.familyDinner.price}
+        ctaLabel={dictionary.home.viewAll}
+        ctaHref={`/${locale}/products`}
       />
 
       <HomeFeaturedProducts

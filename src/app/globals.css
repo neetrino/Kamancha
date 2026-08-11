@@ -264,13 +264,17 @@ body {
   transition: background-color 0.45s ease;
 }
 
-.kamancha-pill-button--light {
-  background-color: #ffffff;
+.kamancha-pill-button--dark {
+  background-color: var(--brand-forest);
 }
 
-.kamancha-pill-button--light:hover,
-.kamancha-pill-button--light:focus-visible {
-  background-color: #dcecc6;
+.kamancha-pill-button--dark:hover,
+.kamancha-pill-button--dark:focus-visible {
+  background-color: #1e3f1f;
+}
+
+.kamancha-pill-button--dark .kamancha-pill-ornament {
+  mix-blend-mode: screen;
 }
 
 .kamancha-pill-ornament {

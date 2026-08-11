@@ -11,6 +11,14 @@
   "emptyOffers": "No active offers yet.",
   "viewAll": "View all",
   "emptyFeatured": "No featured products yet.",
+  "familyDinner": {
+    "headlineBefore": "dinner for ",
+    "headlineAccent": "the whole family",
+    "headlineAfter": "",
+    "subtitle": "Family dinner",
+    "subtitleMuted": "For 4 people",
+    "price": "24 900"
+  },
   "whyUsTitle": "Why choose us",
   "aboutEyebrow": "About us",
   "aboutTitle": "We provide high quality products",

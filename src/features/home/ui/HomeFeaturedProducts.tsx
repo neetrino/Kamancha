@@ -54,12 +54,12 @@ export function HomeFeaturedProducts({
       </h2>
 
       {products.length === 0 ? (
-        <p className="px-2 text-center text-white/70 sm:px-3">{emptyLabel}</p>
+        <p className="px-5 text-center text-white/70">{emptyLabel}</p>
       ) : (
         <>
           <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
             <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <div className="flex gap-5 px-2 py-4 sm:px-3">
+              <div className="flex gap-5 px-5 py-4">
                 {products.map((product, index) => (
                   <ProductCard
                     key={product.id}

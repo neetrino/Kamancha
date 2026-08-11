@@ -11,6 +11,14 @@
   "emptyOffers": "Активных акций пока нет.",
   "viewAll": "Смотреть все",
   "emptyFeatured": "Пока нет рекомендуемых товаров.",
+  "familyDinner": {
+    "headlineBefore": "ужин для ",
+    "headlineAccent": "всей семьи",
+    "headlineAfter": "",
+    "subtitle": "Семейный ужин",
+    "subtitleMuted": "На 4 человека",
+    "price": "24 900"
+  },
   "whyUsTitle": "Почему выбирают нас",
   "aboutEyebrow": "О нас",
   "aboutTitle": "Мы предлагаем качественные товары",

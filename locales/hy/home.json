@@ -11,6 +11,14 @@
   "emptyOffers": "Ակտիվ ակցիաներ դեռ չկան։",
   "viewAll": "Տեսնել բոլորը",
   "emptyFeatured": "Ընտրված ապրանքներ դեռ չկան։",
+  "familyDinner": {
+    "headlineBefore": "ընթրիք՝",
+    "headlineAccent": "ամբողջ ընտանիքի ",
+    "headlineAfter": "համար",
+    "subtitle": "Ընտանեկան ընթրիք",
+    "subtitleMuted": "4 հոգու համար",
+    "price": "24 900"
+  },
   "whyUsTitle": "Ինչու ընտրել մեզ",
   "aboutEyebrow": "Մեր մասին",
   "aboutTitle": "Մենք առաջարկում ենք որակյալ ապրանքներ",
