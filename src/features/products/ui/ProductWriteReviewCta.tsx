@@ -40,10 +40,10 @@ type ProductWriteReviewCtaProps = {
 };
 
 const ctaClassName =
-  "inline-flex items-center justify-center rounded-full bg-gray-900 px-10 py-3 text-base font-semibold text-white transition hover:bg-gray-800";
+  "inline-flex items-center justify-center rounded-full bg-white px-10 py-3 text-base font-semibold text-brand-forest transition hover:bg-white/90";
 
 const secondaryCtaClassName =
-  "inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-8 py-2.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-50";
+  "inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-2.5 text-sm font-semibold text-white transition hover:bg-white/15";
 
 export function ProductWriteReviewCta({
   locale,
@@ -93,25 +93,25 @@ export function ProductWriteReviewCta({
     return (
       <div className="mt-2 flex w-full flex-col gap-4">
         {showEmptyPrompt && !isPending ? (
-          <p className="max-w-xl text-base text-gray-700">{labels.emptyPrompt}</p>
+          <p className="max-w-xl text-base text-white/80">{labels.emptyPrompt}</p>
         ) : null}
         {showOwnCard ? (
-          <div className="w-full rounded-lg border border-gray-200 bg-white p-4 sm:p-5">
+          <div className="w-full rounded-2xl border border-white/15 bg-white/10 p-4 sm:p-5">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-white">
                 {viewerReview.authorName}
               </p>
               <RatingStars average={viewerReview.rating} size="sm" />
             </div>
             {viewerReview.comment ? (
-              <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
+              <p className="mt-2 text-sm whitespace-pre-wrap text-white/70">
                 {viewerReview.comment}
               </p>
             ) : null}
             {isPending ? (
-              <p className="mt-3 text-sm text-gray-500">{labels.reviewPending}</p>
+              <p className="mt-3 text-sm text-white/50">{labels.reviewPending}</p>
             ) : (
-              <p className="mt-3 text-sm text-gray-500">
+              <p className="mt-3 text-sm text-white/50">
                 {labels.alreadyReviewed}
               </p>
             )}
@@ -125,7 +125,7 @@ export function ProductWriteReviewCta({
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            <p className="max-w-xl text-sm text-gray-500">
+            <p className="max-w-xl text-sm text-white/50">
               {labels.alreadyReviewed}
             </p>
             <button
@@ -145,11 +145,11 @@ export function ProductWriteReviewCta({
     return (
       <div className="mt-2 flex flex-col items-center gap-4">
         {showEmptyPrompt ? (
-          <p className="max-w-xl text-center text-base text-gray-700">
+          <p className="max-w-xl text-center text-base text-white/80">
             {labels.emptyPrompt}
           </p>
         ) : null}
-        <p className="max-w-xl text-center text-sm text-gray-500">
+        <p className="max-w-xl text-center text-sm text-white/50">
           {labels.alreadyReviewed}
         </p>
       </div>
@@ -182,7 +182,7 @@ export function ProductWriteReviewCta({
     return (
       <div className="mt-2 flex flex-col items-center gap-6">
         {showEmptyPrompt ? (
-          <p className="max-w-xl text-center text-base text-gray-700">
+          <p className="max-w-xl text-center text-base text-white/80">
             {labels.emptyPrompt}
           </p>
         ) : null}
@@ -200,15 +200,15 @@ export function ProductWriteReviewCta({
   return (
     <div className="mt-2 flex flex-col items-center gap-6">
       {showEmptyPrompt ? (
-        <p className="max-w-xl text-center text-base text-gray-700">
+        <p className="max-w-xl text-center text-base text-white/80">
           {labels.emptyPrompt}
         </p>
       ) : null}
       <Link href={loginHref} className={ctaClassName}>
         {labels.writeReview}
       </Link>
-      <p className="text-sm text-gray-500">
-        <span className="font-medium text-gray-800">{labels.signIn}</span>{" "}
+      <p className="text-sm text-white/50">
+        <span className="font-medium text-white">{labels.signIn}</span>{" "}
         {labels.signInToReview}
       </p>
     </div>

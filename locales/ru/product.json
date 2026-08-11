@@ -1,6 +1,7 @@
 {
   "sku": "SKU",
   "inStock": "В наличии",
+  "inStockShort": "В наличии",
   "outOfStock": "Нет в наличии",
   "quantity": "Количество",
   "addToCart": "В корзину",
@@ -12,8 +13,10 @@
   "additionsEmpty": "Выберите добавки",
   "exceptionsEmpty": "Выберите исключения",
   "related": "Похожие товары",
+  "relatedSubtitle": "Вам может понравиться",
   "reviews": "Отзывы",
   "reviewCount": "{count} отзывов",
+  "reviewCountParen": "({count} отзывов)",
   "averageRating": "Средняя {average} / 5 ({count} отзывов)",
   "noReviews": "Одобренных отзывов пока нет.",
   "emptyPrompt": "Пока нет отзывов. Будьте первым, кто оставит отзыв об этом товаре!",
@@ -34,5 +37,8 @@
   "reviewsUnlock": "Отзывы доступны после доставки заказа.",
   "signIn": "Войти",
   "signInToReview": "чтобы оставить отзыв о подтверждённой покупке.",
-  "backToProducts": "Товары"
+  "backToProducts": "Товары",
+  "breadcrumbLabel": "Навигационная цепочка",
+  "zoomImage": "Увеличить изображение",
+  "closeZoom": "Закрыть"
 }

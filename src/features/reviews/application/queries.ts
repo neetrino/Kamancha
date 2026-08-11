@@ -191,3 +191,30 @@ export async function getProductAverageRatings(
 
   return map;
 }
+
+/** Approved-review average + count for PDP header meta. */
+export async function getProductRatingSummary(
+  productId: string,
+): Promise<{ average: number; count: number } | null> {
+  const [row] = await getDb()
+    .select({
+      average: avg(reviews.rating),
+      reviewCount: count(reviews.id),
+    })
+    .from(reviews)
+    .where(
+      and(
+        eq(reviews.productId, productId),
+        eq(reviews.moderationStatus, "APPROVED"),
+      ),
+    );
+
+  if (row?.average == null || Number(row.reviewCount) === 0) {
+    return null;
+  }
+
+  return {
+    average: Math.round(Number(row.average) * 10) / 10,
+    count: Number(row.reviewCount),
+  };
+}

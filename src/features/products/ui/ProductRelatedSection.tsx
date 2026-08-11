@@ -35,9 +35,17 @@ export async function ProductRelatedSection({
   const labels = dictionary.product;
 
   return (
-    <section className="flex flex-col gap-6">
-      <h2 className="text-2xl font-semibold text-gray-900">{labels.related}</h2>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="flex flex-col gap-7 pt-4 md:pt-8">
+      <div className="flex flex-col gap-1">
+        <h2 className="font-big-fat-boii text-[clamp(28px,3.5vw,38px)] leading-[1.15] font-normal tracking-[0.5px] text-white uppercase">
+          {labels.related}
+        </h2>
+        <p className="text-[15px] leading-6 text-white/60">
+          {labels.relatedSubtitle}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:justify-items-start lg:gap-[25px]">
         {related.map((item) => {
           const price = formatPrice(item.priceAmount);
           const compareAt =
@@ -62,7 +70,6 @@ export async function ProductRelatedSection({
               isSignedIn={isSignedIn}
               wishlistLabel={dictionary.nav.wishlist}
               addToCartLabel={labels.addToCart}
-              className="w-full max-w-none"
             />
           );
         })}

@@ -1,24 +1,20 @@
 "use client";
 
-import { Minus, Plus } from "lucide-react";
+import Image from "next/image";
 import { useMemo, useState, useTransition } from "react";
 
-import { MultiSelectDropdown } from "@/components/ui/MultiSelectDropdown";
 import { addToCart } from "@/features/cart/cart";
 import type { ProductModifierChoice } from "@/features/products/types";
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
-import type { Locale } from "@/lib/i18n/config";
+
+const CART_PLUS_SRC = "/assets/brand/product/cart-plus-dark.svg";
 
 type ProductPurchaseControlsProps = {
-  locale: Locale;
   productId: string;
   stockOnHand: number;
-  basePriceAmount: number;
+  priceFormatted: string;
+  compareAtFormatted: string | null;
   additions: ProductModifierChoice[];
   exceptions: ProductModifierChoice[];
-  inWishlist: boolean;
-  isSignedIn: boolean;
-  wishlistLabel: string;
   labels: {
     quantity: string;
     decreaseQuantity: string;
@@ -30,21 +26,88 @@ type ProductPurchaseControlsProps = {
     error: string;
     additions: string;
     exceptions: string;
-    additionsEmpty: string;
-    exceptionsEmpty: string;
   };
 };
 
+function toggleId(ids: string[], id: string): string[] {
+  return ids.includes(id) ? ids.filter((row) => row !== id) : [...ids, id];
+}
+
+type ModifierCheckboxGridProps = {
+  title: string;
+  options: ProductModifierChoice[];
+  selectedIds: string[];
+  disabled: boolean;
+  showPriceHint: boolean;
+  onToggle: (id: string) => void;
+};
+
+function ModifierCheckboxGrid({
+  title,
+  options,
+  selectedIds,
+  disabled,
+  showPriceHint,
+  onToggle,
+}: ModifierCheckboxGridProps) {
+  if (options.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="flex w-full flex-col gap-3">
+      <h2 className="font-big-fat-boii text-lg leading-[22px] font-normal tracking-[0.3px] text-white uppercase">
+        {title}
+      </h2>
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {options.map((option) => {
+          const checked = selectedIds.includes(option.id);
+          return (
+            <button
+              key={option.id}
+              type="button"
+              disabled={disabled}
+              aria-pressed={checked}
+              onClick={() => onToggle(option.id)}
+              className={`flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-left transition disabled:opacity-50 ${
+                checked
+                  ? "bg-white/20 ring-1 ring-white/40"
+                  : "bg-white/10 hover:bg-white/15"
+              }`}
+            >
+              <span
+                aria-hidden
+                className={`flex size-[18px] shrink-0 items-center justify-center rounded border-2 ${
+                  checked
+                    ? "border-white bg-white"
+                    : "border-white/40 bg-transparent"
+                }`}
+              >
+                {checked ? (
+                  <span className="block size-2 rounded-[1px] bg-brand-forest" />
+                ) : null}
+              </span>
+              <span className="min-w-0 text-[13px] leading-5 text-white">
+                {option.name}
+                {showPriceHint && option.priceAmount > 0
+                  ? ` (+${option.priceAmount})`
+                  : null}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function ProductPurchaseControls({
-  locale,
   productId,
   stockOnHand,
-  basePriceAmount,
+  priceFormatted,
+  compareAtFormatted,
   additions = [],
   exceptions = [],
-  inWishlist,
-  isSignedIn,
-  wishlistLabel,
   labels,
 }: ProductPurchaseControlsProps) {
   const maxQty = Math.max(stockOnHand, 0);
@@ -60,8 +123,6 @@ export function ProductPurchaseControls({
     const byId = new Map(additions.map((row) => [row.id, row.priceAmount]));
     return additionIds.reduce((sum, id) => sum + (byId.get(id) ?? 0), 0);
   }, [additionIds, additions]);
-
-  const unitPreview = basePriceAmount + additionExtras;
 
   function changeQuantity(next: number): void {
     if (disabled) return;
@@ -87,110 +148,103 @@ export function ProductPurchaseControls({
   }
 
   return (
-    <div className="mt-auto flex flex-col gap-3 pt-2">
-      {additions.length > 0 ? (
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-gray-700">
-            {labels.additions}
-          </span>
-          <MultiSelectDropdown
-            ariaLabel={labels.additions}
-            emptyLabel={labels.additionsEmpty}
-            values={additionIds}
-            disabled={disabled || pending}
-            onValuesChange={setAdditionIds}
-            options={additions.map((row) => ({
-              value: row.id,
-              label: row.name,
-              hint: `+${row.priceAmount} AMD`,
-            }))}
-          />
-        </label>
-      ) : null}
+    <div className="flex w-full flex-col gap-6">
+      <div
+        data-node-id="106:3285"
+        className="flex h-20 w-full flex-nowrap items-center justify-between gap-6 xl:gap-[102px]"
+      >
+        <div className="flex shrink-0 flex-col items-start gap-px">
+          <p className="whitespace-nowrap text-4xl leading-9 font-bold text-white">
+            {priceFormatted}
+          </p>
+          {compareAtFormatted ? (
+            <p className="whitespace-nowrap text-[19px] leading-4 text-white/45 line-through">
+              {compareAtFormatted}
+            </p>
+          ) : null}
+        </div>
 
-      {exceptions.length > 0 ? (
-        <label className="block space-y-1.5">
-          <span className="text-sm font-medium text-gray-700">
-            {labels.exceptions}
-          </span>
-          <MultiSelectDropdown
-            ariaLabel={labels.exceptions}
-            emptyLabel={labels.exceptionsEmpty}
-            values={exceptionIds}
+        <div className="flex shrink-0 flex-nowrap items-center justify-end gap-6 sm:gap-[43px]">
+          <div className="inline-flex h-[52px] w-[144px] items-center overflow-hidden rounded-[50px] bg-white/10">
+            <button
+              type="button"
+              aria-label={labels.decreaseQuantity}
+              disabled={disabled || quantity <= 1 || pending}
+              onClick={() => changeQuantity(quantity - 1)}
+              className="flex size-[52px] items-center justify-center text-2xl font-light text-white transition hover:bg-white/10 disabled:opacity-40"
+            >
+              −
+            </button>
+            <span
+              className="w-10 text-center text-lg font-semibold text-white"
+              aria-live="polite"
+            >
+              {quantity}
+            </span>
+            <button
+              type="button"
+              aria-label={labels.increaseQuantity}
+              disabled={disabled || quantity >= maxQty || pending}
+              onClick={() => changeQuantity(quantity + 1)}
+              className="flex size-[52px] items-center justify-center text-2xl font-light text-white transition hover:bg-white/10 disabled:opacity-40"
+            >
+              +
+            </button>
+          </div>
+
+          <button
+            type="button"
             disabled={disabled || pending}
-            onValuesChange={setExceptionIds}
-            options={exceptions.map((row) => ({
-              value: row.id,
-              label: row.name,
-            }))}
-          />
-        </label>
-      ) : null}
+            onClick={handleAdd}
+            className="inline-flex h-14 shrink-0 items-center gap-3 rounded-[50px] bg-white px-7 text-base font-semibold whitespace-nowrap text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Image
+              src={CART_PLUS_SRC}
+              alt=""
+              width={26}
+              height={22}
+              aria-hidden
+            />
+            {disabled
+              ? labels.outOfStock
+              : pending
+                ? labels.adding
+                : labels.addToCart}
+          </button>
+        </div>
+      </div>
 
       {additionExtras > 0 ? (
-        <p className="text-sm text-gray-600">
-          {unitPreview} AMD × {Math.max(quantity, 1)}
+        <p className="text-sm text-white/60">
+          +{additionExtras} × {Math.max(quantity, 1)}
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="inline-flex items-center rounded-lg border border-gray-200 bg-white">
-          <button
-            type="button"
-            aria-label={labels.decreaseQuantity}
-            disabled={disabled || quantity <= 1 || pending}
-            onClick={() => changeQuantity(quantity - 1)}
-            className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-50 disabled:opacity-40"
-          >
-            <Minus className="h-4 w-4" aria-hidden />
-          </button>
-          <span
-            className="min-w-10 text-center text-base font-semibold text-gray-900"
-            aria-live="polite"
-          >
-            {quantity}
-          </span>
-          <button
-            type="button"
-            aria-label={labels.increaseQuantity}
-            disabled={disabled || quantity >= maxQty || pending}
-            onClick={() => changeQuantity(quantity + 1)}
-            className="flex h-11 w-11 items-center justify-center text-gray-700 transition hover:bg-gray-50 disabled:opacity-40"
-          >
-            <Plus className="h-4 w-4" aria-hidden />
-          </button>
-        </div>
+      <ModifierCheckboxGrid
+        title={labels.exceptions}
+        options={exceptions}
+        selectedIds={exceptionIds}
+        disabled={disabled || pending}
+        showPriceHint={false}
+        onToggle={(id) => setExceptionIds((prev) => toggleId(prev, id))}
+      />
 
-        <button
-          type="button"
-          disabled={disabled || pending}
-          onClick={handleAdd}
-          className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-gray-900 px-6 text-base font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:min-w-[12rem]"
-        >
-          {disabled
-            ? labels.outOfStock
-            : pending
-              ? labels.adding
-              : labels.addToCart}
-        </button>
-
-        <WishlistButton
-          locale={locale}
-          productId={productId}
-          initialInWishlist={inWishlist}
-          isSignedIn={isSignedIn}
-          label={wishlistLabel}
-          className="h-11 w-11 border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-        />
-      </div>
+      <ModifierCheckboxGrid
+        title={labels.additions}
+        options={additions}
+        selectedIds={additionIds}
+        disabled={disabled || pending}
+        showPriceHint
+        onToggle={(id) => setAdditionIds((prev) => toggleId(prev, id))}
+      />
 
       {message ? (
-        <p className="text-sm text-green-700" role="status">
+        <p className="text-sm text-[#84d086]" role="status">
           {message}
         </p>
       ) : null}
       {error ? (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-sm text-red-300" role="alert">
           {error}
         </p>
       ) : null}

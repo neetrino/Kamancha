@@ -7,6 +7,7 @@ import { getProductDetailBySlug } from "@/features/products/queries";
 import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
 import { ProductRelatedSection } from "@/features/products/ui/ProductRelatedSection";
 import { ProductReviewsIsland } from "@/features/products/ui/ProductReviewsIsland";
+import { getProductRatingSummary } from "@/features/reviews/application/queries";
 import { isProductInWishlist } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -56,7 +57,7 @@ function buildProductJsonLd(input: {
 function SectionFallback() {
   return (
     <div
-      className="h-40 animate-pulse rounded-lg bg-gray-100"
+      className="h-40 animate-pulse rounded-lg bg-white/10"
       aria-hidden="true"
     />
   );
@@ -107,10 +108,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const [user, currency, inWishlist] = await Promise.all([
+  const [user, currency, inWishlist, ratingSummary] = await Promise.all([
     getCurrentUser(),
     getSelectedCurrency(),
     isProductInWishlist(product.id),
+    getProductRatingSummary(product.id),
   ]);
   const formatPrice = await createDisplayPriceFormatter(locale, currency);
   const price = formatPrice(product.priceAmount);
@@ -138,6 +140,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       product={product}
       priceFormatted={price.formatted}
       compareAtFormatted={compareAt?.formatted ?? null}
+      ratingAverage={ratingSummary?.average ?? null}
+      ratingCount={ratingSummary?.count ?? 0}
       isSignedIn={isSignedIn}
       inWishlist={inWishlist}
       dictionary={dictionary}
