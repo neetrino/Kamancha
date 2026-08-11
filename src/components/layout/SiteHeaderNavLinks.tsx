@@ -39,10 +39,7 @@ export function SiteHeaderNavLinks({ locale, items }: SiteHeaderNavLinksProps) {
   const pathname = usePathname() ?? "";
 
   return (
-    <nav
-      aria-label="Primary"
-      className="hidden items-center gap-8 md:flex"
-    >
+    <nav aria-label="Primary" className="flex items-center gap-8">
       {items.map((item) => {
         const active = isNavItemActive(pathname, item.href, locale);
         return (

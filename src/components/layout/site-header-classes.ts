@@ -2,9 +2,17 @@
 export const SITE_HEADER_INNER =
   "mx-auto w-full max-w-[1332px] px-4 md:px-[18px]";
 
-/** Icon rail: cart + wishlist + account (Figma 22:413, gap 9px). */
+/** Icon rail: cart + wishlist + account — nudged slightly below / left of optical center. */
 export const SITE_HEADER_ICON_RAIL =
-  "flex shrink-0 items-center gap-[9px]";
+  "flex h-12 shrink-0 -translate-x-px translate-y-1 items-center gap-3";
+
+/** Cart trigger hit area — centered in the 48px rail. */
+export const SITE_HEADER_CART_TRIGGER =
+  "relative inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-white transition-opacity duration-150 hover:opacity-80";
+
+/** Cart badge — scaled with larger cart glyph. */
+export const SITE_HEADER_CART_BADGE =
+  "absolute -top-1 right-0 flex size-6 min-w-6 items-center justify-center rounded-full border border-solid border-white bg-brand-forest p-px text-center text-[12px] font-bold leading-4 text-white";
 
 /** Desktop search pill (Figma 22:394 — lengthened toward available header space). */
 export const SITE_HEADER_SEARCH_PILL =

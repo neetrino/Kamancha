@@ -2,6 +2,7 @@
 
 import { User } from "lucide-react";
 
+import { BrandHeaderIcon } from "@/components/layout/BrandHeaderIcon";
 import { AppLink } from "@/components/ui/AppLink";
 import { IconDropdown } from "@/components/ui/IconDropdown";
 import { logoutAction } from "@/features/auth/logout-action";
@@ -27,7 +28,7 @@ function iconButtonClassName(
 ): string {
   if (tone === "onDark") {
     const base =
-      "inline-flex size-6 items-center justify-center rounded-md text-white transition-opacity duration-150 hover:opacity-80";
+      "inline-flex size-7 shrink-0 items-center justify-center text-white transition-opacity duration-150 hover:opacity-80";
     return active ? `${base} opacity-100` : base;
   }
 
@@ -36,6 +37,13 @@ function iconButtonClassName(
   return active
     ? `${base} bg-gray-100 text-gray-900 ring-1 ring-gray-200/90`
     : `${base} text-gray-700 hover:text-gray-900`;
+}
+
+function AccountIcon({ tone }: { tone: "default" | "onDark" }) {
+  if (tone === "onDark") {
+    return <BrandHeaderIcon name="profile" size={28} />;
+  }
+  return <User className="h-5 w-5" aria-hidden="true" />;
 }
 
 export function AccountControls({
@@ -48,7 +56,6 @@ export function AccountControls({
   tone = "default",
 }: AccountControlsProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
-  const iconSize = tone === "onDark" ? "h-6 w-6" : "h-5 w-5";
 
   if (!user) {
     return (
@@ -58,7 +65,7 @@ export function AccountControls({
         className={iconButtonClassName(tone)}
         aria-label={loginLabel}
       >
-        <User className={iconSize} aria-hidden="true" />
+        <AccountIcon tone={tone} />
       </AppLink>
     );
   }
@@ -67,7 +74,7 @@ export function AccountControls({
     <IconDropdown
       label={profileLabel}
       triggerClassName={iconButtonClassName(tone)}
-      trigger={<User className={iconSize} aria-hidden="true" />}
+      trigger={<AccountIcon tone={tone} />}
       openOnHover
     >
       {user.role === "ADMIN" ? (

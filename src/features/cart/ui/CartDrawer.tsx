@@ -4,6 +4,12 @@ import Image from "next/image";
 import { useState, useTransition } from "react";
 import { ArrowRight, Minus, Plus, ShoppingCart, X } from "lucide-react";
 
+import { BrandHeaderIcon } from "@/components/layout/BrandHeaderIcon";
+import {
+  SITE_HEADER_CART_BADGE,
+  SITE_HEADER_CART_TRIGGER,
+} from "@/components/layout/site-header-classes";
+
 import { AppLink } from "@/components/ui/AppLink";
 import { SideSheet } from "@/components/ui/SideSheet";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
@@ -297,35 +303,33 @@ export function CartDrawer({
           onFocus={prefetchDrawerView}
           className={
             tone === "onDark"
-              ? "relative inline-flex size-9 items-center justify-center text-white transition-opacity hover:opacity-80"
+              ? SITE_HEADER_CART_TRIGGER
               : "inline-flex h-11 items-center gap-1 rounded-lg px-1 text-gray-700 transition-colors hover:text-gray-900"
           }
           aria-label={dictionary.nav.cart}
           aria-expanded={open}
         >
-          <span
-            className={
-              tone === "onDark"
-                ? "relative inline-flex size-6 items-center justify-center"
-                : "relative inline-flex h-11 w-11 items-center justify-center"
-            }
-          >
-            <ShoppingCart
-              className={tone === "onDark" ? "h-[22px] w-[22px]" : "h-5 w-5"}
-              aria-hidden="true"
-            />
-            {badgeCount > 0 ? (
-              <span
-                className={
-                  tone === "onDark"
-                    ? "absolute -top-2 -right-2 flex size-[23px] min-w-[23px] items-center justify-center rounded-full border border-white bg-brand-forest text-[12px] font-bold leading-4 text-white"
-                    : "absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-900 px-1 text-[10px] font-semibold text-white"
-                }
-              >
-                {badgeCount > 99 ? "99+" : badgeCount}
+          {tone === "onDark" ? (
+            <>
+              <span className="pointer-events-none absolute inset-0 inline-flex items-center justify-center">
+                <BrandHeaderIcon name="cart" size={26} />
               </span>
-            ) : null}
-          </span>
+              {badgeCount > 0 ? (
+                <span className={SITE_HEADER_CART_BADGE}>
+                  {badgeCount > 99 ? "99+" : badgeCount}
+                </span>
+              ) : null}
+            </>
+          ) : (
+            <span className="relative inline-flex h-11 w-11 items-center justify-center">
+              <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+              {badgeCount > 0 ? (
+                <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-900 px-1 text-[10px] font-semibold text-white">
+                  {badgeCount > 99 ? "99+" : badgeCount}
+                </span>
+              ) : null}
+            </span>
+          )}
         </button>
       )}
     </>

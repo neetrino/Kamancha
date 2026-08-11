@@ -163,7 +163,15 @@ export function LocaleCurrencySwitcher({
   return (
     <div
       ref={rootRef}
-      className={open || rendered ? "relative z-[300]" : "relative z-0"}
+      className={
+        tone === "onDark"
+          ? `relative inline-flex h-12 items-center ${
+              open || rendered ? "z-[300]" : "z-0"
+            }`
+          : open || rendered
+            ? "relative z-[300]"
+            : "relative z-0"
+      }
       onMouseEnter={openMenu}
       onMouseLeave={scheduleClose}
     >

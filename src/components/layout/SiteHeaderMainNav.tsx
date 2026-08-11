@@ -52,7 +52,7 @@ function headerSearchLabels(
 
 /**
  * Kamancha storefront header (Figma 22:393):
- * logo 22:433, nav gap 32px, search 262×48, icons gap 9px, switcher 159×48.
+ * logo, nav, search | centered icon rail | language switcher.
  */
 export function SiteHeaderMainNav({
   locale,
@@ -65,76 +65,92 @@ export function SiteHeaderMainNav({
 }: SiteHeaderMainNavProps) {
   const searchLabels = headerSearchLabels(dictionary.header);
 
+  function IconRail() {
+    return (
+      <div className={SITE_HEADER_ICON_RAIL}>
+        <CartDrawer
+          locale={locale}
+          currency={currency}
+          dictionary={dictionary}
+          itemCount={cartItemCount}
+          tone="onDark"
+        />
+        <WishlistHeaderLink
+          locale={locale}
+          label={dictionary.nav.wishlist}
+          count={wishlistCount}
+          tone="onDark"
+        />
+        <AccountControls
+          locale={locale}
+          loginLabel={dictionary.header.login}
+          logoutLabel={dictionary.header.logout}
+          profileLabel={dictionary.header.profile}
+          adminLabel={dictionary.header.admin}
+          user={user}
+          tone="onDark"
+        />
+      </div>
+    );
+  }
+
   return (
     <header className="relative z-40 bg-transparent text-white" data-node-id="22:393">
       <div className={SITE_HEADER_INNER}>
         <div className="relative flex min-h-12 items-center md:min-h-[65px]">
           <BrandLogo locale={locale} brandName={dictionary.brand} />
 
-          {/* Figma: nav starts at x=221 after logo (18+136) → 67px gap */}
-          <div className="ml-4 hidden min-w-0 self-center md:ml-[67px] md:block">
+          {/* Nav centered in the free space between logo and search */}
+          <div className="hidden min-w-0 flex-1 items-center justify-center px-4 md:flex">
             <SiteHeaderNavLinks locale={locale} items={navItems} />
           </div>
 
-          <div className="ml-auto flex items-center gap-3 self-center md:gap-[22px]">
-            <HeaderSearch
-              locale={locale}
-              currency={currency}
-              labels={searchLabels}
-              variant="responsive"
-              tone="onDark"
-            />
+          <div className="ml-auto flex min-w-0 items-center self-center md:ml-0">
+            {/* Desktop: search | icons | language — compact equal gaps */}
+            <div className="hidden h-12 items-center gap-4 md:flex">
+              <HeaderSearch
+                locale={locale}
+                currency={currency}
+                labels={searchLabels}
+                variant="responsive"
+                tone="onDark"
+              />
 
-            <div className="flex items-center gap-3 self-center md:gap-3">
-              <div className={`${SITE_HEADER_ICON_RAIL} hidden sm:flex`}>
-                <CartDrawer
-                  locale={locale}
-                  currency={currency}
-                  dictionary={dictionary}
-                  itemCount={cartItemCount}
-                  tone="onDark"
-                />
-                <WishlistHeaderLink
-                  locale={locale}
-                  label={dictionary.nav.wishlist}
-                  count={wishlistCount}
-                  tone="onDark"
-                />
-                <AccountControls
-                  locale={locale}
-                  loginLabel={dictionary.header.login}
-                  logoutLabel={dictionary.header.logout}
-                  profileLabel={dictionary.header.profile}
-                  adminLabel={dictionary.header.admin}
-                  user={user}
-                  tone="onDark"
-                />
-              </div>
+              <IconRail />
 
-              <div className="hidden self-center md:block">
-                <LocaleCurrencySwitcher
-                  locale={locale}
-                  currency={currency}
-                  currencyLabel={dictionary.header.currency}
-                  languageLabel={dictionary.header.language}
-                  tone="onDark"
-                />
-              </div>
+              <LocaleCurrencySwitcher
+                locale={locale}
+                currency={currency}
+                currencyLabel={dictionary.header.currency}
+                languageLabel={dictionary.header.language}
+                tone="onDark"
+              />
+            </div>
 
-              <div className="flex items-center gap-2 self-center md:hidden">
-                <LocaleCurrencySwitcher
-                  locale={locale}
-                  currency={currency}
-                  currencyLabel={dictionary.header.currency}
-                  languageLabel={dictionary.header.language}
-                  tone="onDark"
-                />
-                <MobileNavDrawer
-                  locale={locale}
-                  dictionary={dictionary}
-                  navItems={navItems}
-                />
+            {/* Below md: compact controls */}
+            <div className="flex items-center gap-3 self-center md:hidden">
+              <HeaderSearch
+                locale={locale}
+                currency={currency}
+                labels={searchLabels}
+                variant="responsive"
+                tone="onDark"
+              />
+              <div className="hidden sm:block">
+                <IconRail />
               </div>
+              <LocaleCurrencySwitcher
+                locale={locale}
+                currency={currency}
+                currencyLabel={dictionary.header.currency}
+                languageLabel={dictionary.header.language}
+                tone="onDark"
+              />
+              <MobileNavDrawer
+                locale={locale}
+                dictionary={dictionary}
+                navItems={navItems}
+              />
             </div>
           </div>
         </div>
