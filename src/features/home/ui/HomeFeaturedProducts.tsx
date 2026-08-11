@@ -30,7 +30,7 @@ type HomeFeaturedProductsProps = {
 };
 
 /**
- * Home featured / offers strip — Figma title 22:204, cards 22:230, CTA 22:200.
+ * Home featured strip — Figma title 22:204, cards 22:230, CTA 22:200.
  */
 export function HomeFeaturedProducts({
   locale,

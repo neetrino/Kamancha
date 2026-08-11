@@ -3,13 +3,9 @@ import "server-only";
 import {
   and,
   asc,
-  desc,
   eq,
-  gt,
   inArray,
-  isNotNull,
   isNull,
-  or,
   sql,
 } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
@@ -21,7 +17,6 @@ import {
   mediaAssets,
   productCategories,
   products,
-  promotions,
 } from "@/db/schema";
 import { enrichCatalogProducts } from "@/features/products/application/catalog-product-enrichment";
 import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
@@ -52,8 +47,6 @@ export type {
 } from "@/features/products/types";
 
 const RELATED_PRODUCTS_LIMIT = 4;
-const HOME_OFFERS_LIMIT = 8;
-const HOME_OFFERS_CANDIDATE_LIMIT = 48;
 export const CATALOG_PAGE_SIZE = DEFAULT_CATALOG_PAGE_SIZE;
 
 const activeCatalogWhere = and(
@@ -140,98 +133,6 @@ export async function getFeaturedProducts(
   return unstable_cache(
     async () => loadFeaturedProducts(locale),
     ["featured-products", locale],
-    {
-      tags: [CACHE_TAGS.products],
-      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
-    },
-  )();
-}
-
-async function loadOfferProducts(locale: Locale): Promise<CatalogProduct[]> {
-  const promoRows = await getDb()
-    .select({
-      productId: promotions.productId,
-      categoryId: promotions.categoryId,
-    })
-    .from(promotions)
-    .where(
-      and(
-        eq(promotions.kind, "AUTOMATIC"),
-        eq(promotions.isActive, true),
-      ),
-    );
-
-  const promoProductIds = promoRows
-    .map((row) => row.productId)
-    .filter((id): id is string => id != null);
-  const promoCategoryIds = promoRows
-    .map((row) => row.categoryId)
-    .filter((id): id is string => id != null);
-
-  const categoryProductIds =
-    promoCategoryIds.length > 0
-      ? (
-          await getDb()
-            .select({ productId: productCategories.productId })
-            .from(productCategories)
-            .where(inArray(productCategories.categoryId, promoCategoryIds))
-        ).map((row) => row.productId)
-      : [];
-
-  const targetedIds = [...new Set([...promoProductIds, ...categoryProductIds])];
-
-  const saleCondition =
-    targetedIds.length > 0
-      ? or(
-          and(
-            isNotNull(products.compareAtAmount),
-            gt(products.compareAtAmount, products.priceAmount),
-          ),
-          inArray(products.id, targetedIds),
-        )
-      : and(
-          isNotNull(products.compareAtAmount),
-          gt(products.compareAtAmount, products.priceAmount),
-        );
-
-  const [saleRows, recentRows] = await Promise.all([
-    getDb()
-      .select()
-      .from(products)
-      .where(and(activeCatalogWhere, saleCondition))
-      .orderBy(desc(products.updatedAt))
-      .limit(HOME_OFFERS_CANDIDATE_LIMIT),
-    getDb()
-      .select()
-      .from(products)
-      .where(activeCatalogWhere)
-      .orderBy(desc(products.updatedAt))
-      .limit(HOME_OFFERS_CANDIDATE_LIMIT),
-  ]);
-
-  const byId = new Map<string, typeof products.$inferSelect>();
-  for (const row of [...saleRows, ...recentRows]) {
-    if (!byId.has(row.id)) {
-      byId.set(row.id, row);
-    }
-  }
-
-  const enriched = await enrichCatalogProducts([...byId.values()], locale);
-  return enriched
-    .filter(
-      (product) =>
-        product.discountPercent != null && product.discountPercent > 0,
-    )
-    .slice(0, HOME_OFFERS_LIMIT);
-}
-
-/** Active products currently on sale for the home offers section. */
-export async function getOfferProducts(
-  locale: Locale,
-): Promise<CatalogProduct[]> {
-  return unstable_cache(
-    async () => loadOfferProducts(locale),
-    ["offer-products", locale],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

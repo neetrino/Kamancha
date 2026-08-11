@@ -1,19 +1,14 @@
 import { notFound } from "next/navigation";
 
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
-import { HomeAboutTeaser } from "@/features/home/ui/HomeAboutTeaser";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeFamilyDinnerPromo } from "@/features/home/ui/HomeFamilyDinnerPromo";
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
-import {
-  HOME_FEATURE_ICONS,
-  HomeFeatures,
-} from "@/features/home/ui/HomeFeatures";
 import { HomeHero } from "@/features/home/ui/HomeHero";
 import { HomeOrnamentStrip } from "@/features/home/ui/HomeOrnamentStrip";
+import { HomeOurStory } from "@/features/home/ui/HomeOurStory";
 import {
   getFeaturedProducts,
-  getOfferProducts,
   type CatalogProduct,
 } from "@/features/products/queries";
 import { getProductAverageRatings } from "@/features/reviews/application/queries";
@@ -72,21 +67,14 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const [categories, featuredProducts, offerProducts, currency, user] =
-    await Promise.all([
-      listStorefrontCategories(locale),
-      getFeaturedProducts(locale),
-      getOfferProducts(locale),
-      getSelectedCurrency(),
-      getCurrentUser(),
-    ]);
+  const [categories, featuredProducts, currency, user] = await Promise.all([
+    listStorefrontCategories(locale),
+    getFeaturedProducts(locale),
+    getSelectedCurrency(),
+    getCurrentUser(),
+  ]);
 
-  const productIds = [
-    ...new Set([
-      ...featuredProducts.map((product) => product.id),
-      ...offerProducts.map((product) => product.id),
-    ]),
-  ];
+  const productIds = featuredProducts.map((product) => product.id);
 
   const [wishlistIds, formatPrice, ratings] = await Promise.all([
     getWishlistProductIds(productIds),
@@ -96,13 +84,6 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const featuredCards = toProductCards(
     featuredProducts,
-    locale,
-    formatPrice,
-    wishlistIds,
-    ratings,
-  );
-  const offerCards = toProductCards(
-    offerProducts,
     locale,
     formatPrice,
     wishlistIds,
@@ -156,51 +137,26 @@ export default async function HomePage({ params }: HomePageProps) {
         ctaHref={`/${locale}/products`}
       />
 
-      <HomeFeaturedProducts
-        locale={locale}
-        title={dictionary.home.offersTitle}
-        viewAllLabel={dictionary.home.viewAll}
-        viewAllHref={`/${locale}/products`}
-        emptyLabel={dictionary.home.emptyOffers}
-        wishlistLabel={dictionary.nav.wishlist}
-        addToCartLabel={dictionary.product.addToCart}
-        discountOffLabel={dictionary.home.discountOff}
-        isSignedIn={Boolean(user)}
-        products={offerCards}
-      />
-
-      <HomeFeatures
-        title={dictionary.home.whyUsTitle}
-        items={[
-          {
-            title: dictionary.home.features.deliveryTitle,
-            description: dictionary.home.features.deliveryDescription,
-            icon: HOME_FEATURE_ICONS.delivery,
-          },
-          {
-            title: dictionary.home.features.qualityTitle,
-            description: dictionary.home.features.qualityDescription,
-            icon: HOME_FEATURE_ICONS.quality,
-          },
-          {
-            title: dictionary.home.features.returnTitle,
-            description: dictionary.home.features.returnDescription,
-            icon: HOME_FEATURE_ICONS.return,
-          },
-          {
-            title: dictionary.home.features.supportTitle,
-            description: dictionary.home.features.supportDescription,
-            icon: HOME_FEATURE_ICONS.support,
-          },
-        ]}
-      />
-
-      <HomeAboutTeaser
-        eyebrow={dictionary.home.aboutEyebrow}
-        title={dictionary.home.aboutTitle}
-        description={dictionary.home.aboutDescription}
-        ctaLabel={dictionary.home.aboutCta}
-        ctaHref={`/${locale}/about`}
+      <HomeOurStory
+        title={dictionary.home.ourStory.title}
+        intro={dictionary.home.ourStory.intro}
+        introSecond={dictionary.home.ourStory.introSecond}
+        cardWhite={{
+          title: dictionary.home.ourStory.cardTitle,
+          body: dictionary.home.ourStory.cardBodyShort,
+        }}
+        cardGreen={{
+          title: dictionary.home.ourStory.cardTitle,
+          body: dictionary.home.ourStory.cardBodyShort,
+        }}
+        cardBlack={{
+          title: dictionary.home.ourStory.cardTitle,
+          body: dictionary.home.ourStory.cardBodyLong,
+        }}
+        cardTall={{
+          title: dictionary.home.ourStory.cardTitle,
+          body: dictionary.home.ourStory.cardBodyLong,
+        }}
       />
     </div>
   );

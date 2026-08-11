@@ -6,9 +6,7 @@
   "categoryProductCount": "({count} products)",
   "emptyCategories": "No categories yet.",
   "featuredTitle": "THE BEST",
-  "offersTitle": "Offers & discounts",
   "discountOff": "{percent}% Off",
-  "emptyOffers": "No active offers yet.",
   "viewAll": "View all",
   "emptyFeatured": "No featured products yet.",
   "familyDinner": {
@@ -18,6 +16,14 @@
     "subtitle": "Family dinner",
     "subtitleMuted": "For 4 people",
     "price": "24 900"
+  },
+  "ourStory": {
+    "title": "OUR STORY",
+    "intro": "Kamancha is more than just a restaurant. It is a harmonious blend of Armenian culture, music, and gastronomy. We take age-old traditions and present them to the modern world, keeping the warmth that belongs only to an Armenian hearth.",
+    "introSecond": "Every dish is prepared with love, using local fresh produce and spices brought from different corners of Armenia.",
+    "cardTitle": "Heading",
+    "cardBodyShort": "Every dish is prepared with love, using local fresh ingredients",
+    "cardBodyLong": "Every dish is prepared with love, using local fresh produce and spices brought from different corners of Armenia."
   },
   "whyUsTitle": "Why choose us",
   "aboutEyebrow": "About us",
