@@ -6,7 +6,7 @@ describe("getDictionary", () => {
   it("merges namespace files into the storefront dictionary shape", () => {
     const dictionary = getDictionary("en");
 
-    expect(dictionary.brand).toBe("White-Shop");
+    expect(dictionary.brand).toBe("Kamancha");
     expect(dictionary.nav.home).toBe("Home");
     expect(dictionary.home.title).toBe("White Shop");
     expect(dictionary.contact.title).toBe("Contact");

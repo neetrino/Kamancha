@@ -6,10 +6,7 @@ import {
   InstagramIcon,
   LinkedInIcon,
 } from "@/components/layout/SocialIcons";
-import {
-  SITE_HEADER_ACTIONS_RAIL,
-  SITE_HEADER_INNER,
-} from "@/components/layout/site-header-classes";
+import { SITE_HEADER_INNER } from "@/components/layout/site-header-classes";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -20,6 +17,10 @@ type SiteHeaderTopBarProps = {
   dictionary: Dictionary;
 };
 
+/**
+ * Legacy contact/social top bar. Kept for optional reuse; Kamancha header
+ * (Figma 22:393) folds locale/currency into the main nav instead.
+ */
 export function SiteHeaderTopBar({
   locale,
   currency,
@@ -65,7 +66,7 @@ export function SiteHeaderTopBar({
             </div>
           </div>
 
-          <div className={`${SITE_HEADER_ACTIONS_RAIL} ml-auto justify-center`}>
+          <div className="ml-auto flex shrink-0 items-center justify-center">
             <LocaleCurrencySwitcher
               locale={locale}
               currency={currency}

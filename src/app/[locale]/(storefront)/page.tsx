@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
-import { listActiveHeroSlides } from "@/features/hero/application/queries";
 import { HomeAboutTeaser } from "@/features/home/ui/HomeAboutTeaser";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
@@ -68,9 +67,8 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const [heroSlides, categories, featuredProducts, offerProducts, currency, user] =
+  const [categories, featuredProducts, offerProducts, currency, user] =
     await Promise.all([
-      listActiveHeroSlides(locale),
       listStorefrontCategories(locale),
       getFeaturedProducts(locale),
       getOfferProducts(locale),
@@ -106,11 +104,9 @@ export default async function HomePage({ params }: HomePageProps) {
   return (
     <div className="-mx-4 -my-10 sm:-mx-6 lg:-mx-8">
       <HomeHero
-        slides={heroSlides}
-        fallbackTitle={dictionary.home.title}
-        fallbackSubtitle={dictionary.home.subtitle}
-        fallbackCtaLabel={dictionary.home.cta}
-        fallbackCtaHref={`/${locale}/products`}
+        brandName={dictionary.brand}
+        ctaLabel={dictionary.nav.products}
+        ctaHref={`/${locale}/products`}
       />
 
       <HomeCategories

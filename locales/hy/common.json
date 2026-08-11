@@ -1,8 +1,8 @@
 {
-  "brand": "White-Shop",
+  "brand": "Kamancha",
   "nav": {
     "home": "Գլխավոր",
-    "products": "Ապրանքներ",
+    "products": "Մենյու",
     "shop": "Խանութ",
     "blog": "Բլոգ",
     "cart": "Զամբյուղ",
@@ -24,7 +24,7 @@
     "createAccount": "Գրանցվել",
     "search": "Որոնում",
     "searchClose": "Փակել որոնումը",
-    "searchPlaceholder": "Որոնել ապրանքներ…",
+    "searchPlaceholder": "Որոնել",
     "searchIdle": "Գրեք ապրանքի անունը",
     "searchEmpty": "Ապրանքներ չեն գտնվել",
     "searchViewAll": "Տեսնել բոլոր արդյունքները"

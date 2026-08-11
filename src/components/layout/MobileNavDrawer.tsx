@@ -169,7 +169,7 @@ export function MobileNavDrawer({
       <button
         type="button"
         onClick={toggleMenu}
-        className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-900 text-white transition-opacity hover:opacity-80 touch-manipulation sm:h-10 sm:w-10"
+        className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/15 text-white transition-opacity hover:opacity-80 touch-manipulation sm:h-10 sm:w-10"
         aria-label={open ? dictionary.nav.closeMenu : dictionary.nav.openMenu}
         aria-expanded={open}
         aria-controls={menuId}
@@ -244,7 +244,7 @@ export function MobileNavDrawer({
                           href={item.href}
                           prefetchPolicy="intent"
                           aria-current={active ? "page" : undefined}
-                          className={`rounded-xl px-1 py-3.5 text-base font-semibold transition-colors ${
+                          className={`rounded-xl px-1 py-3.5 font-big-fat-boii text-lg transition-colors ${
                             active
                               ? "text-gray-900"
                               : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"

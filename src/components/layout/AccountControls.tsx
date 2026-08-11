@@ -15,12 +15,22 @@ type AccountControlsProps = {
   profileLabel: string;
   adminLabel: string;
   user: SessionUser | null;
+  tone?: "default" | "onDark";
 };
 
 const menuItemClassName =
   "block w-full whitespace-nowrap px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900";
 
-function iconButtonClassName(active = false): string {
+function iconButtonClassName(
+  tone: "default" | "onDark",
+  active = false,
+): string {
+  if (tone === "onDark") {
+    const base =
+      "inline-flex size-6 items-center justify-center rounded-md text-white transition-opacity duration-150 hover:opacity-80";
+    return active ? `${base} opacity-100` : base;
+  }
+
   const base =
     "inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-150";
   return active
@@ -35,18 +45,20 @@ export function AccountControls({
   profileLabel,
   adminLabel,
   user,
+  tone = "default",
 }: AccountControlsProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
+  const iconSize = tone === "onDark" ? "h-6 w-6" : "h-5 w-5";
 
   if (!user) {
     return (
       <AppLink
         href={`/${locale}/login`}
         prefetchPolicy="intent"
-        className={iconButtonClassName()}
+        className={iconButtonClassName(tone)}
         aria-label={loginLabel}
       >
-        <User className="h-5 w-5" aria-hidden="true" />
+        <User className={iconSize} aria-hidden="true" />
       </AppLink>
     );
   }
@@ -54,8 +66,8 @@ export function AccountControls({
   return (
     <IconDropdown
       label={profileLabel}
-      triggerClassName={iconButtonClassName()}
-      trigger={<User className="h-5 w-5" aria-hidden="true" />}
+      triggerClassName={iconButtonClassName(tone)}
+      trigger={<User className={iconSize} aria-hidden="true" />}
       openOnHover
     >
       {user.role === "ADMIN" ? (

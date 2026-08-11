@@ -12,6 +12,7 @@ import {
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
 
+import { SITE_HEADER_SEARCH_PILL } from "@/components/layout/site-header-classes";
 import { AppLink } from "@/components/ui/AppLink";
 import { catalogHref } from "@/features/products/application/catalog-search-params";
 import {
@@ -38,12 +39,26 @@ type HeaderSearchProps = {
   locale: Locale;
   currency: Currency;
   labels: HeaderSearchLabels;
+  /**
+   * `pill` — Figma desktop field.
+   * `icon` — compact control.
+   * `responsive` — icon below `lg`, pill from `lg` up.
+   */
+  variant?: "icon" | "pill" | "responsive";
+  /** Icon button color on dark header. */
+  tone?: "default" | "onDark";
 };
 
 /**
- * Header search icon + centered popup with live product name results.
+ * Header search control + centered popup with live product name results.
  */
-export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
+export function HeaderSearch({
+  locale,
+  currency,
+  labels,
+  variant = "icon",
+  tone = "default",
+}: HeaderSearchProps) {
   const titleId = useId();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -170,16 +185,46 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     pageSize: 24,
   });
 
+  const iconToneClass =
+    tone === "onDark"
+      ? "text-white hover:text-white/90"
+      : "text-gray-700 hover:text-gray-900";
+
+  const showPill = variant === "pill" || variant === "responsive";
+  const showIcon = variant === "icon" || variant === "responsive";
+  const pillClass =
+    variant === "responsive"
+      ? `hidden md:flex ${SITE_HEADER_SEARCH_PILL}`
+      : `flex ${SITE_HEADER_SEARCH_PILL}`;
+  const iconClass =
+    variant === "responsive"
+      ? `relative inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-150 md:hidden ${iconToneClass}`
+      : `relative inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-150 ${iconToneClass}`;
+
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={labels.open}
-        className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors duration-150 hover:text-gray-900"
-      >
-        <Search className="h-5 w-5" aria-hidden="true" />
-      </button>
+      {showPill ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={labels.open}
+          className={pillClass}
+        >
+          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="min-w-0 truncate leading-6">{labels.placeholder}</span>
+        </button>
+      ) : null}
+
+      {showIcon ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={labels.open}
+          className={iconClass}
+        >
+          <Search className="h-5 w-5" aria-hidden="true" />
+        </button>
+      ) : null}
 
       {mounted && rendered
         ? createPortal(

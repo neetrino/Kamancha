@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { ChevronDown } from "lucide-react";
@@ -13,9 +14,9 @@ import { currencies } from "@/lib/money/currency";
 
 const HOVER_CLOSE_DELAY_MS = 140;
 
-/** Short codes for the navbar trigger (MaMarie-style `AMD / HY`). */
+/** Compact navbar labels (Figma: `Հայ / AMD`). */
 const localeShortLabels: Record<Locale, string> = {
-  hy: "HY",
+  hy: "Հայ",
   en: "EN",
   ru: "RU",
 };
@@ -25,6 +26,8 @@ type LocaleCurrencySwitcherProps = {
   currency: Currency;
   currencyLabel: string;
   languageLabel: string;
+  /** Dark-header white pill (Figma). */
+  tone?: "default" | "onDark";
 };
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
@@ -43,14 +46,14 @@ function optionClassName(selected: boolean): string {
 }
 
 /**
- * Combined currency + language control matching MaMarie navbar:
- * pill trigger `AMD / HY`, two-column dropdown.
+ * Combined language + currency control (Figma: globe + `Հայ / AMD`).
  */
 export function LocaleCurrencySwitcher({
   locale,
   currency,
   currencyLabel,
   languageLabel,
+  tone = "default",
 }: LocaleCurrencySwitcherProps) {
   const router = useRouter();
   const pathname = usePathname() ?? `/${locale}`;
@@ -152,6 +155,11 @@ export function LocaleCurrencySwitcher({
     router.push(replaceLocaleInPath(pathname, next));
   }
 
+  const triggerClass =
+    tone === "onDark"
+      ? "flex h-12 w-[159px] shrink-0 items-center gap-2 rounded-[70px] bg-white px-4 text-brand-forest transition-colors hover:bg-white/95"
+      : "flex h-9 w-[calc(2.75rem*3+0.5rem*2-0.75rem)] shrink-0 items-center rounded-full border border-gray-200 bg-white py-0 pr-3 pl-3 text-gray-700 transition-colors hover:bg-gray-50";
+
   return (
     <div
       ref={rootRef}
@@ -161,22 +169,38 @@ export function LocaleCurrencySwitcher({
     >
       <button
         type="button"
-        className="flex h-9 w-[calc(2.75rem*3+0.5rem*2-0.75rem)] shrink-0 items-center rounded-full border border-gray-200 bg-white py-0 pr-3 pl-3 text-gray-700 transition-colors hover:bg-gray-50"
+        className={triggerClass}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-controls={menuId}
-        aria-label={`${currency} / ${localeShortLabels[locale]}`}
+        aria-label={`${localeShortLabels[locale]} / ${currency}`}
         onClick={() => (open ? closeMenu() : openMenu())}
       >
-        <span className="flex min-w-0 flex-1 items-center justify-center whitespace-nowrap text-[15px] font-bold leading-none tabular-nums">
-          <span>{currency}</span>
-          <span className="inline-block w-[2px]" aria-hidden />
-          <span>/</span>
-          <span className="inline-block w-[2px]" aria-hidden />
+        {tone === "onDark" ? (
+          <Image
+            src="/assets/brand/globe-icon.svg"
+            alt=""
+            width={20}
+            height={19}
+            className="shrink-0"
+            aria-hidden
+          />
+        ) : null}
+        <span
+          className={
+            tone === "onDark"
+              ? "flex min-w-0 flex-1 items-center justify-center gap-1 whitespace-nowrap text-base font-bold capitalize leading-[18px]"
+              : "flex min-w-0 flex-1 items-center justify-center whitespace-nowrap text-[15px] font-bold leading-none tabular-nums"
+          }
+        >
           <span>{localeShortLabels[locale]}</span>
+          <span aria-hidden>/</span>
+          <span>{currency}</span>
         </span>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-gray-500 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            open ? "rotate-180" : ""
+          } ${tone === "onDark" ? "text-brand-forest" : "text-gray-500"}`}
           aria-hidden
         />
       </button>
@@ -185,7 +209,7 @@ export function LocaleCurrencySwitcher({
         <div
           id={menuId}
           role="dialog"
-          aria-label={`${currencyLabel} / ${languageLabel}`}
+          aria-label={`${languageLabel} / ${currencyLabel}`}
           className={`absolute right-0 top-full z-[310] origin-top pt-2 transition-[opacity,transform] ease-out ${
             entered
               ? "pointer-events-auto translate-y-0 opacity-100"
@@ -193,43 +217,12 @@ export function LocaleCurrencySwitcher({
           }`}
           style={{ transitionDuration: `${DROPDOWN_ANIMATION_MS}ms` }}
         >
-          <div className="flex w-max overflow-hidden rounded-xl border border-gray-100 bg-white py-2">
+          <div className="flex w-max overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-lg">
             <div className="w-max border-r border-gray-100">
-              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
-                {currencyLabel}
-              </p>
-              <ul
-                role="listbox"
-                aria-label={currencyLabel}
-                className="px-1.5"
-              >
-                {currencies.map((code) => {
-                  const selected = code === currency;
-                  return (
-                    <li key={code} role="option" aria-selected={selected}>
-                      <button
-                        type="button"
-                        disabled={pending}
-                        className={optionClassName(selected)}
-                        onClick={() => selectCurrency(code)}
-                      >
-                        {code}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            <div className="w-max">
               <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
                 {languageLabel}
               </p>
-              <ul
-                role="listbox"
-                aria-label={languageLabel}
-                className="px-1.5"
-              >
+              <ul role="listbox" aria-label={languageLabel} className="px-1.5">
                 {locales.map((code) => {
                   const selected = code === locale;
                   return (
@@ -241,6 +234,29 @@ export function LocaleCurrencySwitcher({
                         onClick={() => selectLocale(code)}
                       >
                         {localeLabels[code]}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <div className="w-max">
+              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
+                {currencyLabel}
+              </p>
+              <ul role="listbox" aria-label={currencyLabel} className="px-1.5">
+                {currencies.map((code) => {
+                  const selected = code === currency;
+                  return (
+                    <li key={code} role="option" aria-selected={selected}>
+                      <button
+                        type="button"
+                        disabled={pending}
+                        className={optionClassName(selected)}
+                        onClick={() => selectCurrency(code)}
+                      >
+                        {code}
                       </button>
                     </li>
                   );

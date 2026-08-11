@@ -1,8 +1,8 @@
 {
-  "brand": "White-Shop",
+  "brand": "Kamancha",
   "nav": {
     "home": "Главная",
-    "products": "Товары",
+    "products": "Меню",
     "shop": "Магазин",
     "blog": "Блог",
     "cart": "Корзина",
@@ -24,7 +24,7 @@
     "createAccount": "Создать аккаунт",
     "search": "Поиск",
     "searchClose": "Закрыть поиск",
-    "searchPlaceholder": "Искать товары…",
+    "searchPlaceholder": "Поиск",
     "searchIdle": "Введите название товара",
     "searchEmpty": "Товары не найдены",
     "searchViewAll": "Смотреть все результаты"

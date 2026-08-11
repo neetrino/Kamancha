@@ -28,6 +28,8 @@ type CartDrawerProps = {
   itemCount: number;
   /** Custom trigger (e.g. mobile bottom nav). Defaults to header cart button. */
   renderTrigger?: (args: CartDrawerTriggerArgs) => React.ReactNode;
+  /** Icon color on dark Kamancha header. */
+  tone?: "default" | "onDark";
 };
 
 function formatItemCount(
@@ -46,6 +48,7 @@ export function CartDrawer({
   dictionary,
   itemCount,
   renderTrigger,
+  tone = "default",
 }: CartDrawerProps) {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<CartDrawerView | null>(null);
@@ -292,14 +295,33 @@ export function CartDrawer({
           onClick={openDrawer}
           onPointerEnter={prefetchDrawerView}
           onFocus={prefetchDrawerView}
-          className="inline-flex h-11 items-center gap-1 rounded-lg px-1 text-gray-700 transition-colors hover:text-gray-900"
+          className={
+            tone === "onDark"
+              ? "relative inline-flex size-9 items-center justify-center text-white transition-opacity hover:opacity-80"
+              : "inline-flex h-11 items-center gap-1 rounded-lg px-1 text-gray-700 transition-colors hover:text-gray-900"
+          }
           aria-label={dictionary.nav.cart}
           aria-expanded={open}
         >
-          <span className="relative inline-flex h-11 w-11 items-center justify-center">
-            <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+          <span
+            className={
+              tone === "onDark"
+                ? "relative inline-flex size-6 items-center justify-center"
+                : "relative inline-flex h-11 w-11 items-center justify-center"
+            }
+          >
+            <ShoppingCart
+              className={tone === "onDark" ? "h-[22px] w-[22px]" : "h-5 w-5"}
+              aria-hidden="true"
+            />
             {badgeCount > 0 ? (
-              <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-900 px-1 text-[10px] font-semibold text-white">
+              <span
+                className={
+                  tone === "onDark"
+                    ? "absolute -top-2 -right-2 flex size-[23px] min-w-[23px] items-center justify-center rounded-full border border-white bg-brand-forest text-[12px] font-bold leading-4 text-white"
+                    : "absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-900 px-1 text-[10px] font-semibold text-white"
+                }
+              >
                 {badgeCount > 99 ? "99+" : badgeCount}
               </span>
             ) : null}
