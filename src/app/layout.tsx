@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="hy" className="h-full" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col overflow-x-hidden antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col overflow-x-clip antialiased`}
       >
         {children}
       </body>

@@ -72,8 +72,8 @@ async function SiteHeaderMainNavAsync({
 }
 
 /**
- * Storefront chrome: full navbar shell immediately (background stays visible);
- * cart/account counts hydrate in Suspense without a gray pulse pill.
+ * Storefront chrome: sticky navbar over the forest background.
+ * Cart/account counts hydrate in Suspense without a gray pulse pill.
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
