@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 
-import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
-import { SITE_HEADER_INNER } from "@/components/layout/site-header-classes";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -16,11 +14,36 @@ type SiteHeaderProps = {
   dictionary: Dictionary;
 };
 
-function HeaderControlsFallback() {
+function buildNavItems(locale: Locale, dictionary: Dictionary) {
+  return [
+    { href: `/${locale}`, label: dictionary.nav.home },
+    { href: `/${locale}/products`, label: dictionary.nav.products },
+    { href: `/${locale}/about`, label: dictionary.nav.about },
+    { href: `/${locale}/contact`, label: dictionary.nav.contact },
+  ] as const;
+}
+
+function SiteHeaderShell({
+  locale,
+  currency,
+  dictionary,
+  user = null,
+  cartItemCount = 0,
+  wishlistCount = 0,
+}: SiteHeaderProps & {
+  user?: Awaited<ReturnType<typeof getCurrentUser>>;
+  cartItemCount?: number;
+  wishlistCount?: number;
+}) {
   return (
-    <div
-      className="h-12 w-40 animate-pulse rounded-full bg-white/20"
-      aria-hidden="true"
+    <SiteHeaderMainNav
+      locale={locale}
+      currency={currency}
+      dictionary={dictionary}
+      user={user}
+      navItems={buildNavItems(locale, dictionary)}
+      cartItemCount={cartItemCount}
+      wishlistCount={wishlistCount}
     />
   );
 }
@@ -30,13 +53,6 @@ async function SiteHeaderMainNavAsync({
   currency,
   dictionary,
 }: SiteHeaderProps) {
-  const navItems = [
-    { href: `/${locale}`, label: dictionary.nav.home },
-    { href: `/${locale}/products`, label: dictionary.nav.products },
-    { href: `/${locale}/about`, label: dictionary.nav.about },
-    { href: `/${locale}/contact`, label: dictionary.nav.contact },
-  ] as const;
-
   const [user, cartItemCount, wishlistCount] = await Promise.all([
     getCurrentUser(),
     getCartItemCount(),
@@ -44,12 +60,11 @@ async function SiteHeaderMainNavAsync({
   ]);
 
   return (
-    <SiteHeaderMainNav
+    <SiteHeaderShell
       locale={locale}
       currency={currency}
       dictionary={dictionary}
       user={user}
-      navItems={navItems}
       cartItemCount={cartItemCount}
       wishlistCount={wishlistCount}
     />
@@ -57,8 +72,8 @@ async function SiteHeaderMainNavAsync({
 }
 
 /**
- * Storefront chrome: Kamancha header streams shell immediately; account/cart
- * load in a Suspense island so page content is not blocked.
+ * Storefront chrome: full navbar shell immediately (background stays visible);
+ * cart/account counts hydrate in Suspense without a gray pulse pill.
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
@@ -68,14 +83,11 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
     >
       <Suspense
         fallback={
-          <header className="relative z-10 bg-transparent text-white">
-            <div className={SITE_HEADER_INNER}>
-              <div className="relative flex h-12 items-center justify-between md:min-h-[65px] md:h-auto">
-                <BrandLogo locale={locale} brandName={dictionary.brand} />
-                <HeaderControlsFallback />
-              </div>
-            </div>
-          </header>
+          <SiteHeaderShell
+            locale={locale}
+            currency={currency}
+            dictionary={dictionary}
+          />
         }
       >
         <SiteHeaderMainNavAsync

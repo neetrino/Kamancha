@@ -1,4 +1,9 @@
+"use client";
+
 import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
+
+import { homeEaseOut } from "@/features/home/ui/home-motion";
 
 const ORNAMENT_SRC = "/assets/brand/home/ornament-strip.webp";
 const ORNAMENT_COUNT = 9;
@@ -14,15 +19,21 @@ const ORNAMENT_EDGE_HALF = ORNAMENT_W_EDGE / 2;
  * Left and right edges each show exactly one half-ornament at the viewport junction.
  */
 export function HomeOrnamentStrip() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <section
       aria-hidden="true"
       data-node-id="22:189"
       className="relative left-1/2 z-[1] w-screen max-w-[100vw] -translate-x-1/2 -mt-10 overflow-hidden sm:-mt-16 md:-mt-[88px] lg:-mt-[104px]"
     >
-      <div
+      <motion.div
         className="relative w-full"
         style={{ height: ORNAMENT_H }}
+        initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+        whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ ...homeEaseOut, delay: 0.05 }}
       >
         <div
           className="absolute inset-y-0 flex items-center justify-between"
@@ -34,9 +45,10 @@ export function HomeOrnamentStrip() {
           {Array.from({ length: ORNAMENT_COUNT }, (_, index) => {
             const isEdge = index === 0 || index === ORNAMENT_COUNT - 1;
             const width = isEdge ? ORNAMENT_W_EDGE : ORNAMENT_W_MID;
+            const delay = reduceMotion ? 0 : 0.04 + index * 0.045;
 
             return (
-              <div
+              <motion.div
                 key={index}
                 className="relative shrink-0"
                 style={{ width, height: ORNAMENT_H }}
@@ -47,6 +59,12 @@ export function HomeOrnamentStrip() {
                       ? "22:198"
                       : undefined
                 }
+                initial={reduceMotion ? false : { opacity: 0, scale: 0.92 }}
+                whileInView={
+                  reduceMotion ? undefined : { opacity: 1, scale: 1 }
+                }
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ ...homeEaseOut, delay }}
               >
                 <Image
                   src={ORNAMENT_SRC}
@@ -56,11 +74,11 @@ export function HomeOrnamentStrip() {
                   sizes={`${width}px`}
                   className="h-full w-full object-cover"
                 />
-              </div>
+              </motion.div>
             );
           })}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

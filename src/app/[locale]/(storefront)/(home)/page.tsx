@@ -1,11 +1,11 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeFamilyDinnerPromo } from "@/features/home/ui/HomeFamilyDinnerPromo";
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
-import { HomeHero } from "@/features/home/ui/HomeHero";
-import { HomeOrnamentStrip } from "@/features/home/ui/HomeOrnamentStrip";
+import { HomePageChrome } from "@/features/home/ui/HomePageChrome";
 import { HomeOurStory } from "@/features/home/ui/HomeOurStory";
 import {
   getFeaturedProducts,
@@ -15,7 +15,7 @@ import { getProductAverageRatings } from "@/features/reviews/application/queries
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary, type Dictionary } from "@/lib/i18n/get-dictionary";
 import {
   createDisplayPriceFormatter,
   getSelectedCurrency,
@@ -58,15 +58,13 @@ function toProductCards(
   });
 }
 
-export default async function HomePage({ params }: HomePageProps) {
-  const { locale: rawLocale } = await params;
-
-  if (!isLocale(rawLocale)) {
-    notFound();
-  }
-
-  const locale: Locale = rawLocale;
-  const dictionary = getDictionary(locale);
+async function HomeBelowFold({
+  locale,
+  dictionary,
+}: {
+  locale: Locale;
+  dictionary: Dictionary;
+}) {
   const [categories, featuredProducts, currency, user] = await Promise.all([
     listStorefrontCategories(locale),
     getFeaturedProducts(locale),
@@ -91,15 +89,7 @@ export default async function HomePage({ params }: HomePageProps) {
   );
 
   return (
-    <div className="-mx-4 -my-10 sm:-mx-6 lg:-mx-8">
-      <HomeHero
-        brandName={dictionary.brand}
-        ctaLabel={dictionary.nav.products}
-        ctaHref={`/${locale}/products`}
-      />
-
-      <HomeOrnamentStrip />
-
+    <>
       <HomeCategories
         title={dictionary.home.categoriesTitle}
         productCountLabel={dictionary.home.categoryProductCount}
@@ -158,6 +148,29 @@ export default async function HomePage({ params }: HomePageProps) {
           body: dictionary.home.ourStory.cardBodyLong,
         }}
       />
-    </div>
+    </>
+  );
+}
+
+/**
+ * Home: background + navbar from layout; hero animates immediately;
+ * catalog sections stream in after data.
+ */
+export default async function HomePage({ params }: HomePageProps) {
+  const { locale: rawLocale } = await params;
+
+  if (!isLocale(rawLocale)) {
+    notFound();
+  }
+
+  const locale: Locale = rawLocale;
+  const dictionary = getDictionary(locale);
+
+  return (
+    <HomePageChrome locale={locale} dictionary={dictionary}>
+      <Suspense fallback={null}>
+        <HomeBelowFold locale={locale} dictionary={dictionary} />
+      </Suspense>
+    </HomePageChrome>
   );
 }

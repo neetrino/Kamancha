@@ -57,6 +57,7 @@ const springCta: Transition = {
 /**
  * Kamancha home hero — Figma positions on 1440 artboard:
  * left 82:177 (663×828), wordmark 22:207 (590×283), right 22:208 (708×757), pill 22:435.
+ * Sides slide in; wordmark scales in the center; CTA rises last.
  */
 export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
   const reduceMotion = useReducedMotion();
@@ -80,7 +81,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
       >
         {/* Left — food platter (Figma 82:177): 0,98 / 663×828 */}
         <motion.div
-          className="pointer-events-none absolute z-[1]"
+          className="pointer-events-none absolute z-[1] bg-transparent"
           data-node-id="82:177"
           style={{
             left: 0,
@@ -88,11 +89,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width: widthPct(663),
             height: heightPct(828),
           }}
-          initial={
-            reduceMotion
-              ? false
-              : { opacity: 0, x: "-12%" }
-          }
+          initial={reduceMotion ? false : { opacity: 0, x: "-12%" }}
           animate={{ opacity: 1, x: 0 }}
           transition={sideTransition}
         >
@@ -102,15 +99,16 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width={HERO_SIDE_W}
             height={HERO_SIDE_H}
             priority
+            fetchPriority="high"
             unoptimized
             sizes="(min-width: 1440px) 663px, 46vw"
-            className="h-full w-full max-w-none object-contain object-left-top"
+            className="h-full w-full max-w-none bg-transparent object-contain object-left-top"
           />
         </motion.div>
 
         {/* Right — kamancha (22:208): 732,141 / 708×757 */}
         <motion.div
-          className="pointer-events-none absolute z-[3]"
+          className="pointer-events-none absolute z-[3] bg-transparent"
           data-node-id="22:208"
           style={{
             left: widthPct(732),
@@ -118,11 +116,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width: widthPct(708),
             height: heightPct(757),
           }}
-          initial={
-            reduceMotion
-              ? false
-              : { opacity: 0, x: "12%" }
-          }
+          initial={reduceMotion ? false : { opacity: 0, x: "12%" }}
           animate={{ opacity: 1, x: 0 }}
           transition={sideTransition}
         >
@@ -132,15 +126,16 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width={HERO_SIDE_W}
             height={HERO_SIDE_H}
             priority
+            fetchPriority="high"
             unoptimized
             sizes="(min-width: 1440px) 708px, 49vw"
-            className="h-full w-full max-w-none object-contain object-right-top"
+            className="h-full w-full max-w-none bg-transparent object-contain object-right-top"
           />
         </motion.div>
 
         {/* Center wordmark (22:207): 590×283 */}
         <motion.div
-          className="absolute z-[2]"
+          className="absolute z-[2] bg-transparent"
           style={{
             left: widthPct(461),
             top: topPct(258),
@@ -167,7 +162,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             priority
             unoptimized
             sizes="41vw"
-            className="object-contain object-center"
+            className="bg-transparent object-contain object-center"
           />
         </motion.div>
 
@@ -180,11 +175,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width: widthPct(280),
             x: "-50%",
           }}
-          initial={
-            reduceMotion
-              ? false
-              : { opacity: 0, y: 28 }
-          }
+          initial={reduceMotion ? false : { opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={ctaTransition}
         >
