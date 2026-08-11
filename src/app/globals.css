@@ -264,6 +264,15 @@ body {
   transition: background-color 0.45s ease;
 }
 
+.kamancha-pill-button--light {
+  background-color: #ffffff;
+}
+
+.kamancha-pill-button--light:hover,
+.kamancha-pill-button--light:focus-visible {
+  background-color: #dcecc6;
+}
+
 .kamancha-pill-button--dark {
   background-color: var(--brand-forest);
 }

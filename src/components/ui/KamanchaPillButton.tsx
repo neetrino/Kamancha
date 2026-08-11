@@ -55,7 +55,7 @@ export function KamanchaPillButton({
 }: KamanchaPillButtonProps) {
   const tones =
     variant === "light"
-      ? "kamancha-pill-button--light text-brand-forest"
+      ? "kamancha-pill-button--light bg-white text-brand-forest"
       : "kamancha-pill-button--dark bg-brand-forest text-white";
 
   return (
