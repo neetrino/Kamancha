@@ -6,11 +6,16 @@ import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { DROPDOWN_ANIMATION_MS } from "@/components/ui/SelectDropdown";
+import { skipNextHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { currencies } from "@/lib/money/currency";
+
+function isHomePath(pathname: string, locale: Locale): boolean {
+  return pathname === `/${locale}` || pathname === `/${locale}/`;
+}
 
 const HOVER_CLOSE_DELAY_MS = 140;
 
@@ -152,7 +157,10 @@ export function LocaleCurrencySwitcher({
       return;
     }
     closeMenu();
-    router.push(replaceLocaleInPath(pathname, next));
+    if (isHomePath(pathname, locale)) {
+      skipNextHomeMotion();
+    }
+    router.push(replaceLocaleInPath(pathname, next), { scroll: false });
   }
 
   const triggerClass =

@@ -8,6 +8,8 @@ import {
 } from "motion/react";
 import type { ReactNode } from "react";
 
+import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
+
 /** Soft ease — scroll reveals on the home page. */
 export const homeEaseOut: Transition = {
   duration: 0.7,
@@ -41,10 +43,14 @@ export function HomeReveal({
   amount = 0.2,
   ...rest
 }: HomeRevealProps) {
-  const reduceMotion = useReducedMotion();
+  const playMotion = usePlayHomeMotion();
 
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
+  if (!playMotion) {
+    return (
+      <div className={className} {...rest}>
+        {children}
+      </div>
+    );
   }
 
   return (
@@ -77,9 +83,9 @@ export function HomeStagger({
   stagger = 0.09,
   amount = 0.12,
 }: HomeStaggerProps) {
-  const reduceMotion = useReducedMotion();
+  const playMotion = usePlayHomeMotion();
 
-  if (reduceMotion) {
+  if (!playMotion) {
     return <div className={className}>{children}</div>;
   }
 
@@ -113,9 +119,9 @@ const staggerItem = {
 
 /** Child of `HomeStagger`. */
 export function HomeStaggerItem({ children, className }: HomeStaggerItemProps) {
-  const reduceMotion = useReducedMotion();
+  const playMotion = usePlayHomeMotion();
 
-  if (reduceMotion) {
+  if (!playMotion) {
     return <div className={className}>{children}</div>;
   }
 

@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion, type Transition } from "motion/react";
+import { motion, type Transition } from "motion/react";
 
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 
 type HomeHeroProps = {
   brandName: string;
@@ -58,14 +59,19 @@ const springCta: Transition = {
  * Kamancha home hero — Figma positions on 1440 artboard:
  * left 82:177 (663×828), wordmark 22:207 (590×283), right 22:208 (708×757), pill 22:435.
  * Sides slide in; wordmark scales in the center; CTA rises last.
+ * Locale switches skip the entrance and keep everything in place.
  */
 export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
-  const reduceMotion = useReducedMotion();
+  const playMotion = usePlayHomeMotion();
 
   const instant: Transition = { duration: 0 };
-  const sideTransition = reduceMotion ? instant : springSoft;
-  const logoTransition = reduceMotion ? instant : { ...springLogo, delay: 0.45 };
-  const ctaTransition = reduceMotion ? instant : { ...springCta, delay: 1.15 };
+  const sideTransition = playMotion ? springSoft : instant;
+  const logoTransition = playMotion
+    ? { ...springLogo, delay: 0.45 }
+    : instant;
+  const ctaTransition = playMotion
+    ? { ...springCta, delay: 1.15 }
+    : instant;
 
   return (
     <section
@@ -89,7 +95,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width: widthPct(663),
             height: heightPct(828),
           }}
-          initial={reduceMotion ? false : { opacity: 0, x: "-12%" }}
+          initial={playMotion ? { opacity: 0, x: "-12%" } : false}
           animate={{ opacity: 1, x: 0 }}
           transition={sideTransition}
         >
@@ -116,7 +122,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width: widthPct(708),
             height: heightPct(757),
           }}
-          initial={reduceMotion ? false : { opacity: 0, x: "12%" }}
+          initial={playMotion ? { opacity: 0, x: "12%" } : false}
           animate={{ opacity: 1, x: 0 }}
           transition={sideTransition}
         >
@@ -143,16 +149,16 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             height: heightPct(283),
           }}
           initial={
-            reduceMotion
-              ? false
-              : { opacity: 0, scale: 0.78, filter: "blur(5px)" }
+            playMotion
+              ? { opacity: 0, scale: 0.78, filter: "blur(5px)" }
+              : false
           }
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           transition={{
             ...logoTransition,
-            filter: reduceMotion
-              ? instant
-              : { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.45 },
+            filter: playMotion
+              ? { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.45 }
+              : instant,
           }}
         >
           <Image
@@ -175,7 +181,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
             width: widthPct(280),
             x: "-50%",
           }}
-          initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+          initial={playMotion ? { opacity: 0, y: 28 } : false}
           animate={{ opacity: 1, y: 0 }}
           transition={ctaTransition}
         >
