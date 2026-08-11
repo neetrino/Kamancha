@@ -36,7 +36,7 @@ export default async function StorefrontLayout({
   );
 
   return (
-    <div className="storefront-shell relative flex min-h-dvh flex-1 flex-col overflow-x-clip bg-brand-forest text-white">
+    <div className="storefront-shell relative flex min-h-dvh flex-1 flex-col bg-brand-forest text-white">
       <StorefrontBackground />
       <div className="relative z-10 flex min-h-dvh flex-1 flex-col">
         <SiteHeader

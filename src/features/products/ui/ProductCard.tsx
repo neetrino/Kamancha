@@ -95,7 +95,7 @@ export function ProductCard({
         {discountPercent != null ? (
           <span
             data-node-id="22:250"
-            className="absolute top-3.5 left-2.5 z-10 flex h-[33px] min-w-[96px] items-center justify-center rounded-[30px] bg-brand-forest px-3 text-center text-[14px] leading-none font-bold text-white"
+            className="absolute top-3.5 left-2.5 z-10 flex h-[33px] min-w-[96px] items-center justify-center rounded-[30px] bg-[#84d086] px-3 text-center text-[14px] leading-none font-bold text-[#132814]"
           >
             {formatDiscountOff(discountOffLabel, discountPercent)}
           </span>

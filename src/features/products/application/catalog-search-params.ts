@@ -60,6 +60,7 @@ export function parseCatalogSearchParams(
     category: firstParam(raw.category)?.trim() || undefined,
     inStock: parseOptionalFlag(firstParam(raw.inStock)),
     onSale: parseOptionalFlag(firstParam(raw.onSale)),
+    newArrivals: parseOptionalFlag(firstParam(raw.newArrivals)),
     sort: firstParam(raw.sort) ?? DEFAULT_CATALOG_SORT,
     page: firstParam(raw.page) ?? "1",
     pageSize: firstParam(raw.pageSize) ?? String(DEFAULT_CATALOG_PAGE_SIZE),
@@ -96,6 +97,7 @@ export function buildCatalogQueryString(
   if (merged.category) params.set("category", merged.category);
   if (merged.inStock) params.set("inStock", "true");
   if (merged.onSale) params.set("onSale", "true");
+  if (merged.newArrivals) params.set("newArrivals", "true");
   if (merged.sort !== DEFAULT_CATALOG_SORT) params.set("sort", merged.sort);
   if (merged.pageSize !== DEFAULT_CATALOG_PAGE_SIZE) {
     params.set("pageSize", String(merged.pageSize));
@@ -113,7 +115,8 @@ export function hasActiveCatalogFilters(filters: CatalogFilters): boolean {
       filters.maxPrice != null ||
       filters.category ||
       filters.inStock ||
-      filters.onSale,
+      filters.onSale ||
+      filters.newArrivals,
   );
 }
 

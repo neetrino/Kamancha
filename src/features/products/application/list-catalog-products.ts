@@ -128,6 +128,12 @@ async function buildWhere(
     );
   }
 
+  if (filters.newArrivals) {
+    conditions.push(
+      gte(products.createdAt, sql`now() - interval '30 days'`),
+    );
+  }
+
   if (filters.category) {
     const categoryId = await resolveActiveCategoryIdBySlug(
       locale,

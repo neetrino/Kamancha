@@ -400,33 +400,33 @@ body {
   pointer-events: auto;
   -webkit-appearance: none;
   appearance: none;
-  height: 18px;
-  width: 18px;
+  height: 11px;
+  width: 11px;
   border-radius: 9999px;
   background: #fff;
-  border: 2px solid #3b82f6;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  border: 0;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
   cursor: pointer;
 }
 
 .catalog-price-range::-moz-range-thumb {
   pointer-events: auto;
-  height: 18px;
-  width: 18px;
+  height: 11px;
+  width: 11px;
   border-radius: 9999px;
   background: #fff;
-  border: 2px solid #3b82f6;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  border: 0;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
   cursor: pointer;
 }
 
 .catalog-price-range::-webkit-slider-runnable-track {
   background: transparent;
-  height: 4px;
+  height: 6px;
 }
 
 .catalog-price-range::-moz-range-track {
   background: transparent;
-  height: 4px;
+  height: 6px;
   border: none;
 }

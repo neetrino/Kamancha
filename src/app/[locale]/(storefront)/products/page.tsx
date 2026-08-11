@@ -9,6 +9,7 @@ import {
 } from "@/features/products/application/catalog-search-params";
 import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
 import { CatalogControls } from "@/features/products/ui/CatalogControls";
+import { CatalogPageHeader } from "@/features/products/ui/CatalogPageHeader";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -49,7 +50,13 @@ export default async function ProductsPage({
   const categories = categoryOptions.map((category) => ({
     slug: category.slug,
     title: category.title,
+    productCount: category.productCount,
   }));
+
+  const allProductsCount = categories.reduce(
+    (sum, category) => sum + category.productCount,
+    0,
+  );
 
   let catalog = await listCatalogProducts(rawLocale, filters, currency);
   const totalPages = Math.max(1, Math.ceil(catalog.total / catalog.pageSize));
@@ -82,59 +89,56 @@ export default async function ProductsPage({
   const pageHref = (targetPage: number) =>
     catalogHref(rawLocale, filters, { page: targetPage });
 
+  const resultsLabel =
+    catalog.total === 1
+      ? catalogCopy.resultsCountOne
+      : catalogCopy.resultsCount.replace("{count}", String(catalog.total));
+
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-        {catalogCopy.title}
-      </h1>
+      <CatalogPageHeader
+        locale={rawLocale}
+        breadcrumbLabel={catalogCopy.breadcrumbLabel}
+        homeLabel={dictionary.nav.home}
+        productsLabel={catalogCopy.title}
+        heading={catalogCopy.heading}
+        resultsLabel={resultsLabel}
+      />
 
       <CatalogControls
         locale={rawLocale}
         currency={currency}
         filters={filters}
         categories={categories}
+        allProductsCount={allProductsCount}
         priceBounds={priceBounds}
-        total={catalog.total}
         labels={{
           filters: catalogCopy.filters,
           openFilters: catalogCopy.openFilters,
           clearFilters: catalogCopy.clearFilters,
-          searchLabel: catalogCopy.searchLabel,
-          searchPlaceholder: catalogCopy.searchPlaceholder,
           categoryLabel: catalogCopy.categoryLabel,
           allCategories: catalogCopy.allCategories,
           priceLabel: catalogCopy.priceLabel,
-          availabilityLabel: catalogCopy.availabilityLabel,
-          inStockOnly: catalogCopy.inStockOnly,
           onSaleOnly: catalogCopy.onSaleOnly,
+          newArrivalsOnly: catalogCopy.newArrivalsOnly,
           sortLabel: catalogCopy.sortLabel,
           sortNewest: catalogCopy.sortNewest,
           sortPriceAsc: catalogCopy.sortPriceAsc,
           sortPriceDesc: catalogCopy.sortPriceDesc,
           sortPopular: catalogCopy.sortPopular,
-          removeFilter: catalogCopy.removeFilter,
-          chipSearch: catalogCopy.chipSearch,
-          chipCategory: catalogCopy.chipCategory,
-          chipPrice: catalogCopy.chipPrice,
-          chipPriceMin: catalogCopy.chipPriceMin,
-          chipPriceMax: catalogCopy.chipPriceMax,
-          chipInStock: catalogCopy.chipInStock,
-          chipOnSale: catalogCopy.chipOnSale,
-          resultsCount: catalogCopy.resultsCount,
-          resultsCountOne: catalogCopy.resultsCountOne,
         }}
       >
         {priced.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center">
-            <h2 className="text-lg font-semibold text-gray-900">
+          <div className="rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
+            <h2 className="text-lg font-semibold text-white">
               {catalogCopy.emptyTitle}
             </h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-white/60">
               {catalogCopy.emptyDescription}
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 justify-items-center gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {priced.map(({ product, price, compareAtFormatted }, index) => (
               <ProductCard
                 key={product.id}
@@ -153,7 +157,7 @@ export default async function ProductsPage({
                 isSignedIn={Boolean(user)}
                 wishlistLabel={dictionary.nav.wishlist}
                 addToCartLabel={dictionary.product.addToCart}
-                className="w-full max-w-none"
+                className="w-full max-w-[300px]"
               />
             ))}
           </div>
@@ -169,16 +173,16 @@ export default async function ProductsPage({
                 href={pageHref(filters.page - 1)}
                 prefetchPolicy="intent"
                 scroll={false}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
               >
                 {catalogCopy.previousPage}
               </AppLink>
             ) : (
-              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-gray-300">
+              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
                 {catalogCopy.previousPage}
               </span>
             )}
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-white/60">
               {catalogCopy.pageStatus
                 .replace("{page}", String(filters.page))
                 .replace("{total}", String(totalPages))}
@@ -188,12 +192,12 @@ export default async function ProductsPage({
                 href={pageHref(filters.page + 1)}
                 prefetchPolicy="intent"
                 scroll={false}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
               >
                 {catalogCopy.nextPage}
               </AppLink>
             ) : (
-              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-gray-300">
+              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
                 {catalogCopy.nextPage}
               </span>
             )}

@@ -4,52 +4,35 @@ import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
 import type { CatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
-import {
-  catalogHref,
-  hasActiveCatalogFilters,
-} from "@/features/products/application/catalog-search-params";
+import { catalogHref } from "@/features/products/application/catalog-search-params";
 import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
-import {
-  CATALOG_SORT_VALUES,
-  type CatalogSort,
-} from "@/features/products/schemas/catalog-list";
-import {
-  CatalogActiveChips,
-  type CatalogChipLabels,
-} from "@/features/products/ui/CatalogActiveChips";
+import type { CatalogSort } from "@/features/products/schemas/catalog-list";
 import {
   CatalogFilterForm,
   type CatalogFilterLabels,
+  type CatalogSidebarCategory,
 } from "@/features/products/ui/CatalogFilterForm";
+import { CatalogStickySidebar } from "@/features/products/ui/CatalogStickySidebar";
 import type { Currency } from "@/lib/money/currency";
 
-export type CatalogLabels = CatalogFilterLabels &
-  CatalogChipLabels & {
-    openFilters: string;
-    sortLabel: string;
-    sortNewest: string;
-    sortPriceAsc: string;
-    sortPriceDesc: string;
-    sortPopular: string;
-    resultsCount: string;
-    resultsCountOne: string;
-  };
-
-type CategoryOption = {
-  slug: string;
-  title: string;
+export type CatalogLabels = CatalogFilterLabels & {
+  openFilters: string;
+  sortLabel: string;
+  sortNewest: string;
+  sortPriceAsc: string;
+  sortPriceDesc: string;
+  sortPopular: string;
 };
 
 type CatalogControlsProps = {
   locale: string;
   currency: Currency;
   filters: CatalogFilters;
-  categories: CategoryOption[];
+  categories: CatalogSidebarCategory[];
+  allProductsCount: number;
   priceBounds: CatalogPriceBounds;
-  total: number;
   labels: CatalogLabels;
   children: ReactNode;
 };
@@ -68,30 +51,29 @@ function sortLabelFor(sort: CatalogSort, labels: CatalogLabels): string {
   }
 }
 
+const SORT_ORDER: readonly CatalogSort[] = [
+  "popular",
+  "newest",
+  "price_asc",
+  "price_desc",
+];
+
+/**
+ * Catalog layout — Figma Container 103:1277 (sidebar + sort pills + grid).
+ */
 export function CatalogControls({
   locale,
   currency,
   filters,
   categories,
+  allProductsCount,
   priceBounds,
-  total,
   labels,
   children,
 }: CatalogControlsProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const active = hasActiveCatalogFilters(filters);
-
-  const sortOptions = CATALOG_SORT_VALUES.map((value) => ({
-    value,
-    label: sortLabelFor(value, labels),
-  }));
-
-  const resultsLabel =
-    total === 1
-      ? labels.resultsCountOne
-      : labels.resultsCount.replace("{count}", String(total));
 
   function pushHref(href: string): void {
     startTransition(() => {
@@ -99,62 +81,78 @@ export function CatalogControls({
     });
   }
 
-  function navigateSort(next: string): void {
+  function navigateSort(next: CatalogSort): void {
     pushHref(
       catalogHref(locale, filters, {
-        sort: next as CatalogSort,
+        sort: next,
         page: 1,
       }),
     );
   }
 
+  const sortPills = (
+    <div
+      data-node-id="103:1415"
+      className="flex flex-wrap items-center justify-end gap-2"
+    >
+      <span className="pr-2 text-base leading-[21px] text-white/75">
+        {labels.sortLabel}
+      </span>
+      {SORT_ORDER.map((value) => {
+        const active = filters.sort === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={active}
+            onClick={() => navigateSort(value)}
+            className={`rounded-[50px] px-4 py-2 text-[14px] leading-[21px] transition-colors ${
+              active
+                ? "bg-white font-semibold text-brand-forest"
+                : "bg-white/10 font-normal text-white hover:bg-white/15"
+            }`}
+          >
+            {sortLabelFor(value, labels)}
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const sidebar = (
+    <CatalogFilterForm
+      locale={locale}
+      currency={currency}
+      filters={filters}
+      categories={categories}
+      allProductsCount={allProductsCount}
+      priceBounds={priceBounds}
+      labels={labels}
+    />
+  );
+
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-gray-600">{resultsLabel}</p>
-        <div className="flex flex-wrap items-center gap-2">
+    <div
+      data-node-id="103:1277"
+      data-catalog-layout
+      className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-8"
+    >
+      <CatalogStickySidebar>{sidebar}</CatalogStickySidebar>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 lg:hidden"
+            className="inline-flex items-center gap-2 rounded-[50px] bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15 lg:hidden"
             onClick={() => setMobileOpen(true)}
           >
             <SlidersHorizontal className="size-4" aria-hidden />
             {labels.openFilters}
           </button>
-          <div className="min-w-[12rem] flex-1 sm:flex-none">
-            <SelectDropdown
-              ariaLabel={labels.sortLabel}
-              value={filters.sort}
-              options={sortOptions}
-              onValueChange={navigateSort}
-              deferChange={false}
-            />
-          </div>
+          <div className="ml-auto">{sortPills}</div>
         </div>
-      </div>
 
-      <CatalogActiveChips
-        locale={locale}
-        filters={filters}
-        categories={categories}
-        labels={labels}
-      />
-
-      <div className="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
-        <aside className="hidden lg:block">
-          <div className="sticky top-24">
-            <CatalogFilterForm
-              locale={locale}
-              currency={currency}
-              filters={filters}
-              categories={categories}
-              priceBounds={priceBounds}
-              labels={labels}
-              active={active}
-            />
-          </div>
-        </aside>
-        <div className="min-w-0">{children}</div>
+        <div className="pt-8">{children}</div>
       </div>
 
       <SideSheet
@@ -162,19 +160,9 @@ export function CatalogControls({
         onClose={() => setMobileOpen(false)}
         ariaLabel={labels.filters}
         side="left"
-        panelClassName="w-full max-w-sm"
+        panelClassName="w-full max-w-sm bg-brand-forest"
       >
-        <div className="flex h-full flex-col overflow-y-auto p-4">
-          <CatalogFilterForm
-            locale={locale}
-            currency={currency}
-            filters={filters}
-            categories={categories}
-            priceBounds={priceBounds}
-            labels={labels}
-            active={active}
-          />
-        </div>
+        <div className="flex h-full flex-col overflow-y-auto p-4">{sidebar}</div>
       </SideSheet>
     </div>
   );

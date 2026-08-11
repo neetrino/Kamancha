@@ -9,12 +9,12 @@ export const CATALOG_SORT_VALUES = [
 
 export type CatalogSort = (typeof CATALOG_SORT_VALUES)[number];
 
-export const CATALOG_PAGE_SIZES = [12, 24, 48] as const;
+export const CATALOG_PAGE_SIZES = [15, 30, 45] as const;
 
 export type CatalogPageSize = (typeof CATALOG_PAGE_SIZES)[number];
 
 export const DEFAULT_CATALOG_SORT: CatalogSort = "newest";
-export const DEFAULT_CATALOG_PAGE_SIZE: CatalogPageSize = 24;
+export const DEFAULT_CATALOG_PAGE_SIZE: CatalogPageSize = 15;
 
 /** Inclusive ceiling for catalog price filter inputs (display major units). */
 export const CATALOG_PRICE_FILTER_MAX = 100_000_000;
@@ -46,6 +46,7 @@ export const catalogFiltersSchema = z
     category: z.string().trim().max(120).optional(),
     inStock: z.literal(true).optional(),
     onSale: z.literal(true).optional(),
+    newArrivals: z.literal(true).optional(),
     sort: z.enum(CATALOG_SORT_VALUES).catch(DEFAULT_CATALOG_SORT),
     page: z.coerce.number().int().min(1).max(500).catch(1),
     pageSize: pageSizeSchema.catch(DEFAULT_CATALOG_PAGE_SIZE),
@@ -73,6 +74,7 @@ export const CATALOG_FILTER_PARAM_KEYS = [
   "category",
   "inStock",
   "onSale",
+  "newArrivals",
   "sort",
   "page",
   "pageSize",
