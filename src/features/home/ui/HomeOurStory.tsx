@@ -117,18 +117,22 @@ export function HomeOurStory({
               {/* Green card — 22:334 */}
               <article
                 data-node-id="22:334"
-                className="relative z-[2] h-[182px] overflow-visible rounded-[30px] bg-[#a2d39c]"
+                className="relative z-[2] h-[182px] overflow-visible"
               >
-                <div className="relative z-10 max-w-[178px] pt-6 pr-4 pl-[29px]">
+                <div
+                  className="absolute inset-0 rounded-[30px] bg-[#a2d39c]"
+                  aria-hidden
+                />
+                <div className="relative z-10 max-w-[min(178px,46%)] overflow-hidden pt-6 pr-2 pl-[29px]">
                   <h3
                     data-node-id="41:243"
-                    className="font-big-fat-boii text-[21px] leading-6 font-normal text-[#222] uppercase"
+                    className="truncate font-big-fat-boii text-[21px] leading-6 font-normal text-[#222] uppercase"
                   >
                     {cardGreen.title}
                   </h3>
                   <p
                     data-node-id="41:244"
-                    className="mt-4 text-[14px] leading-6 text-black/59"
+                    className="mt-4 line-clamp-4 text-[14px] leading-6 text-black/59"
                   >
                     {cardGreen.body}
                   </p>
