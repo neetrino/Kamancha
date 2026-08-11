@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { BRAND_ORNAMENT_SRC } from "@/lib/brand/assets";
 
 type KamanchaPillButtonProps = {
   href: string;
@@ -28,7 +29,7 @@ function PillOrnament({
       >
         <span className="relative block h-[62px] w-[49px] overflow-hidden rounded-[20px]">
           <Image
-            src="/assets/brand/hero/pill-ornament.webp"
+            src={BRAND_ORNAMENT_SRC}
             alt=""
             width={49}
             height={62}

@@ -3,6 +3,7 @@
   "subtitle": "Многоязычный магазин уже работает.",
   "cta": "Смотреть товары",
   "categoriesTitle": "Категории",
+  "categoryProductCount": "({count} товаров)",
   "emptyCategories": "Категорий пока нет.",
   "featuredTitle": "Рекомендуемые товары",
   "offersTitle": "Акции и скидки",

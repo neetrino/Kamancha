@@ -114,12 +114,14 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <HomeCategories
         title={dictionary.home.categoriesTitle}
+        productCountLabel={dictionary.home.categoryProductCount}
         emptyLabel={dictionary.home.emptyCategories}
         categories={categories.map((category) => ({
           id: category.id,
           title: category.title,
           href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
           imageUrl: category.imageUrl,
+          productCount: category.productCount,
         }))}
       />
 

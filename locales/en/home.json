@@ -3,6 +3,7 @@
   "subtitle": "Multilingual storefront is live.",
   "cta": "Browse products",
   "categoriesTitle": "Categories",
+  "categoryProductCount": "({count} products)",
   "emptyCategories": "No categories yet.",
   "featuredTitle": "Featured Products",
   "offersTitle": "Offers & discounts",
