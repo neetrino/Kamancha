@@ -259,6 +259,49 @@ body {
   }
 }
 
+/* Kamancha MENU pill (Figma 22:435) — hover: soft green + ornaments slide out */
+.kamancha-pill-button {
+  transition: background-color 0.45s ease;
+}
+
+.kamancha-pill-button--light {
+  background-color: #ffffff;
+}
+
+.kamancha-pill-button--light:hover,
+.kamancha-pill-button--light:focus-visible {
+  background-color: #dcecc6;
+}
+
+.kamancha-pill-ornament {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.kamancha-pill-button:hover .kamancha-pill-ornament--left,
+.kamancha-pill-button:focus-visible .kamancha-pill-ornament--left {
+  transform: translateX(-36px);
+}
+
+.kamancha-pill-button:hover .kamancha-pill-ornament--right,
+.kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
+  transform: translateX(36px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kamancha-pill-button,
+  .kamancha-pill-ornament {
+    transition: none;
+  }
+
+  .kamancha-pill-button:hover .kamancha-pill-ornament--left,
+  .kamancha-pill-button:focus-visible .kamancha-pill-ornament--left,
+  .kamancha-pill-button:hover .kamancha-pill-ornament--right,
+  .kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
+    transform: none;
+  }
+}
+
 /**
  * MaMarie-style profile desktop shell:
  * lock viewport height, hide footer, scroll only the content column.

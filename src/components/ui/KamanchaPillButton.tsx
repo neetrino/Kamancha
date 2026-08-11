@@ -9,27 +9,39 @@ type KamanchaPillButtonProps = {
   className?: string;
 };
 
-function PillOrnament({ mirrored = false }: { mirrored?: boolean }) {
+function PillOrnament({
+  side,
+}: {
+  side: "left" | "right";
+}) {
+  const mirrored = side === "right";
+
   return (
     <span
-      className={`relative flex h-[49px] w-[62px] shrink-0 items-center justify-center overflow-hidden ${
-        mirrored ? "-scale-y-100 rotate-90" : "rotate-90"
-      }`}
+      className={`kamancha-pill-ornament kamancha-pill-ornament--${side} relative flex h-[49px] w-[62px] shrink-0 items-center justify-center`}
       aria-hidden
     >
-      <Image
-        src="/assets/brand/hero/pill-ornament.webp"
-        alt=""
-        width={62}
-        height={49}
-        className="h-[62px] w-[49px] rounded-[20px] object-cover"
-      />
+      <span
+        className={`flex-none ${
+          mirrored ? "-scale-y-100 rotate-90" : "rotate-90"
+        }`}
+      >
+        <span className="relative block h-[62px] w-[49px] overflow-hidden rounded-[20px]">
+          <Image
+            src="/assets/brand/hero/pill-ornament.webp"
+            alt=""
+            width={49}
+            height={62}
+            className="h-full w-full object-cover"
+          />
+        </span>
+      </span>
     </span>
   );
 }
 
 /**
- * Figma BUTTON (22:435) — pill CTA with carved end ornaments.
+ * Figma BUTTON (22:435) — pill CTA; hover slides ornaments outward + soft green fill.
  */
 export function KamanchaPillButton({
   href,
@@ -39,20 +51,21 @@ export function KamanchaPillButton({
 }: KamanchaPillButtonProps) {
   const tones =
     variant === "light"
-      ? "bg-white text-brand-forest"
-      : "bg-brand-forest text-white";
+      ? "kamancha-pill-button--light text-brand-forest"
+      : "kamancha-pill-button--dark bg-brand-forest text-white";
 
   return (
     <AppLink
       href={href}
       prefetchPolicy="intent"
-      className={`inline-flex h-16 w-full max-w-[280px] items-center justify-between overflow-hidden rounded-full pt-2 pb-[7px] text-[20px] leading-6 transition hover:opacity-95 sm:max-w-[316px] ${tones} ${className}`}
+      data-node-id="22:435"
+      className={`kamancha-pill-button inline-flex h-16 w-full max-w-[280px] items-center justify-between gap-5 overflow-hidden rounded-[50px] pt-2 pb-[7px] text-left text-[18px] leading-6 sm:max-w-[316px] ${tones} ${className}`}
     >
-      <PillOrnament />
-      <span className="min-w-0 flex-1 text-center font-big-fat-boii font-normal tracking-wide">
+      <PillOrnament side="left" />
+      <span className="relative z-[1] min-w-0 shrink-0 text-center font-big-fat-boii font-normal whitespace-nowrap">
         {label}
       </span>
-      <PillOrnament mirrored />
+      <PillOrnament side="right" />
     </AppLink>
   );
 }
