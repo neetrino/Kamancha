@@ -30,14 +30,28 @@
     "searchViewAll": "View all results"
   },
   "footer": {
-    "shop": "Shop",
-    "description": "Professional e-commerce storefront for everyday shopping.",
-    "quickLinks": "Quick Links",
-    "legal": "Legal",
-    "privacyPolicy": "Privacy Policy",
-    "terms": "Terms",
-    "contactInfo": "Contact Information",
-    "followUs": "Follow us",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "tagline": "“Armenian cuisine, music and hospitality — with a new sound.”",
+    "navigationTitle": "Navigation",
+    "menu": "Menu",
+    "about": "About us",
+    "specialOffers": "Special offers",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "supportTitle": "Support",
+    "shippingReturns": "Shipping & returns",
+    "terms": "Terms & conditions",
+    "privacyPolicy": "Privacy policy",
+    "faq": "FAQ",
+    "contactTitle": "Contact",
+    "address": "Abovyan 23, Yerevan, Armenia",
+    "phone": "+374 10 123 456",
+    "email": "info@kamancha.am",
+    "hours": "Mon–Sun: 12:00 – 00:00",
+    "copyrightBefore": "Copyright © {year} | All rights reserved | Created by",
+    "copyrightCompany": "Neetrino IT Company",
+    "copyrightAfter": "",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok"
   }
 }

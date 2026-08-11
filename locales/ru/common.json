@@ -30,14 +30,28 @@
     "searchViewAll": "Смотреть все результаты"
   },
   "footer": {
-    "shop": "Магазин",
-    "description": "Профессиональный интернет-магазин для повседневных покупок.",
-    "quickLinks": "Быстрые ссылки",
-    "legal": "Правовая информация",
+    "tagline": "«Армянская кухня, музыка и гостеприимство — в новом звучании».",
+    "navigationTitle": "Навигация",
+    "menu": "Меню",
+    "about": "О нас",
+    "specialOffers": "Специальные предложения",
+    "gallery": "Галерея",
+    "contact": "Контакты",
+    "supportTitle": "Поддержка",
+    "shippingReturns": "Доставка и возврат",
+    "terms": "Условия использования",
     "privacyPolicy": "Политика конфиденциальности",
-    "terms": "Условия",
-    "contactInfo": "Контактная информация",
-    "followUs": "Мы в соцсетях",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "faq": "Частые вопросы",
+    "contactTitle": "Контакты",
+    "address": "Абовян 23, Ереван, Армения",
+    "phone": "+374 10 123 456",
+    "email": "info@kamancha.am",
+    "hours": "Пн–Вс: 12:00 – 00:00",
+    "copyrightBefore": "Copyright © {year} | Все права защищены | Создано",
+    "copyrightCompany": "Neetrino IT Company",
+    "copyrightAfter": "",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok"
   }
 }

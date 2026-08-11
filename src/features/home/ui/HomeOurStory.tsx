@@ -36,13 +36,13 @@ export function HomeOurStory({
   return (
     <section
       data-node-id="98:20"
-      className="relative z-[1] overflow-visible pt-14 pb-16 sm:pt-16 md:pt-20 md:pb-20"
+      className="relative z-[1] overflow-visible pt-14 pb-10 sm:pt-16 md:pt-20 md:pb-8"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible px-5">
         {/* Angled rug — Figma 22:186, diagonal behind mosaic (~65° CW) */}
         <div
           data-node-id="22:186"
-          className="pointer-events-none absolute top-[6%] left-[28%] z-0 hidden w-[min(70vw,980px)] md:block lg:left-[32%] lg:w-[min(62vw,1100px)]"
+          className="pointer-events-none absolute top-[-12%] right-[-8%] left-auto z-0 hidden w-[min(70vw,980px)] md:block lg:top-[-16%] lg:right-[-4%] lg:w-[min(62vw,1100px)]"
           aria-hidden
         >
           <div className="relative aspect-[768/1024] w-full origin-center rotate-[65deg]">

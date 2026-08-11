@@ -30,14 +30,28 @@
     "searchViewAll": "Տեսնել բոլոր արդյունքները"
   },
   "footer": {
-    "shop": "Խանութ",
-    "description": "Պրոֆեսիոնալ առցանց խանութ ամենօրյա գնումների համար։",
-    "quickLinks": "Արագ հղումներ",
-    "legal": "Իրավական",
+    "tagline": "«Հայկական խոհանոց, երաժշտություն եւ հյուրընկալություն՝ նոր հնչողությամբ»։",
+    "navigationTitle": "Նավիգացիա",
+    "menu": "Մենյու",
+    "about": "Մեր մասին",
+    "specialOffers": "Հատուկ առաջարկներ",
+    "gallery": "Պատկերասրահ",
+    "contact": "Կապ",
+    "supportTitle": "Աջակցություն",
+    "shippingReturns": "Առաքում և Վերադարձ",
+    "terms": "Պայմաններ և դրույթներ",
     "privacyPolicy": "Գաղտնիության քաղաքականություն",
-    "terms": "Պայմաններ",
-    "contactInfo": "Կապի տվյալներ",
-    "followUs": "Հետևեք մեզ",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "faq": "Հաճախ տրվող հարցեր",
+    "contactTitle": "Կոնտակտ",
+    "address": "Աբովյան 23, Երևան, Հայաստան",
+    "phone": "+374 10 123 456",
+    "email": "info@kamancha.am",
+    "hours": "Երկ–Կիր: 12:00 – 00:00",
+    "copyrightBefore": "Copyright © {year} | Բոլոր իրավունքները պաշտպանված են | Ստեղծվել է",
+    "copyrightCompany": "Neetrino IT Company",
+    "copyrightAfter": "կողմից",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok"
   }
 }
