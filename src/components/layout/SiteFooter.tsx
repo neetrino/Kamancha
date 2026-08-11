@@ -190,23 +190,25 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
         </div>
 
-        {/* Copyright bar — Figma 22:388; split like design mock */}
+        {/* Copyright bar — Figma 22:388 */}
         <div
           data-node-id="22:388"
-          className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-8 sm:flex-row sm:items-center sm:justify-between"
+          className="mx-auto flex w-full max-w-[1280px] items-center justify-center pt-8 pb-4"
         >
-          <p className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/40 uppercase">
-            {footer.copyrightLeft.replace("{year}", String(year))}
-          </p>
           <p
             data-node-id="22:390"
-            className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/40 uppercase"
+            className="max-w-full text-center font-big-fat-boii text-[14px] leading-5 font-normal text-white/40 sm:whitespace-nowrap"
           >
-            {footer.copyrightRightBefore}{" "}
-            <span className="text-white">{footer.copyrightCompany}</span>
-            {footer.copyrightRightAfter
-              ? ` ${footer.copyrightRightAfter}`
-              : null}
+            {footer.copyrightBefore.replace("{year}", String(year))}{" "}
+            <a
+              href="https://neetrino.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white transition-colors hover:text-white/80"
+            >
+              {footer.copyrightCompany}
+            </a>
+            {footer.copyrightAfter ? ` ${footer.copyrightAfter}` : null}
           </p>
         </div>
       </div>
