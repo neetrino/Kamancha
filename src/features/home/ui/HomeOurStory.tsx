@@ -36,21 +36,21 @@ export function HomeOurStory({
   return (
     <section
       data-node-id="98:20"
-      className="relative z-[1] overflow-visible pt-14 pb-10 sm:pt-16 md:pt-20 md:pb-8"
+      className="relative z-[1] overflow-visible pt-14 pb-36 sm:pt-16 sm:pb-44 md:pt-20 md:pb-56"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible px-5">
-        {/* Angled rug — Figma 22:186, diagonal behind mosaic (~65° CW) */}
+        {/* Angled rug — Figma 22:186 (~1768×1589 AABB, ~70° CW) */}
         <div
           data-node-id="22:186"
-          className="pointer-events-none absolute top-[-12%] right-[-8%] left-auto z-0 hidden w-[min(70vw,980px)] md:block lg:top-[-16%] lg:right-[-4%] lg:w-[min(62vw,1100px)]"
+          className="pointer-events-none absolute top-[-8%] right-[-10%] left-auto z-0 hidden w-[min(78vw,1180px)] -translate-x-10 md:block lg:top-[-12%] lg:right-[-6%] lg:w-[min(70vw,1320px)]"
           aria-hidden
         >
-          <div className="relative aspect-[768/1024] w-full origin-center rotate-[65deg]">
+          <div className="relative aspect-[768/1024] w-full origin-center rotate-[70deg]">
             <Image
               src={RUG_SRC}
               alt=""
               fill
-              sizes="(max-width: 1280px) 70vw, 1100px"
+              sizes="(max-width: 1280px) 78vw, 1320px"
               className="object-contain drop-shadow-[0_28px_56px_rgba(0,0,0,0.4)]"
             />
           </div>

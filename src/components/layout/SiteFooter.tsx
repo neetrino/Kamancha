@@ -41,13 +41,15 @@ function SocialCircle({
 function FooterColumn({
   title,
   links,
+  figmaNodeId,
 }: {
   title: string;
   links: readonly FooterLink[];
+  figmaNodeId?: string;
 }) {
   return (
-    <div>
-      <h4 className="font-big-fat-boii text-[18px] leading-[15px] font-normal text-white uppercase">
+    <div data-node-id={figmaNodeId}>
+      <h4 className="font-big-fat-boii text-[18px] leading-[15px] font-normal tracking-wide text-white uppercase">
         {title}
       </h4>
       <ul className="mt-6 flex flex-col gap-4">
@@ -92,29 +94,26 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   return (
     <footer
       data-node-id="22:337"
-      className="storefront-footer relative z-[2] mt-auto hidden bg-transparent md:block"
+      className="storefront-footer relative z-[2] mt-auto hidden bg-transparent pt-20 md:block md:pt-28 lg:pt-36"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 px-5">
         <div
           data-node-id="22:338"
-          className="mx-auto flex w-full max-w-[1375px] flex-wrap content-start items-start gap-x-6 gap-y-12 border-b border-white/12 pb-16 pt-10 lg:gap-x-[10px]"
+          className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-x-8 gap-y-12 border-b border-white/12 pb-[65px] sm:grid-cols-2 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,0.95fr)] lg:gap-x-[40px]"
         >
-          {/* Brand column */}
+          {/* Brand column — 22:339 */}
           <div
             data-node-id="22:339"
-            className="flex w-full max-w-[469px] flex-col items-start sm:w-[469px]"
+            className="flex max-w-[469px] flex-col items-start"
           >
             <BrandLogo locale={locale} brandName={dictionary.brand} />
             <p
               data-node-id="22:341"
-              className="mt-4 max-w-[320px] text-[14px] leading-[22.75px] text-white/45"
+              className="mt-5 max-w-[320px] text-[14px] leading-[22.75px] text-white/45"
             >
               {footer.tagline}
             </p>
-            <div
-              data-node-id="22:342"
-              className="mt-8 flex items-start gap-3"
-            >
+            <div data-node-id="22:342" className="mt-8 flex items-start gap-3">
               <SocialCircle
                 href={contact.social.instagram}
                 label={footer.instagram}
@@ -147,24 +146,22 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             </div>
           </div>
 
-          <div data-node-id="22:354" className="min-w-[180px] flex-1 basis-[200px]">
-            <FooterColumn
-              title={footer.navigationTitle}
-              links={navigationLinks}
-            />
-          </div>
+          <FooterColumn
+            figmaNodeId="22:354"
+            title={footer.navigationTitle}
+            links={navigationLinks}
+          />
 
-          <div data-node-id="22:368" className="min-w-[200px] flex-1 basis-[240px]">
-            <FooterColumn title={footer.supportTitle} links={supportLinks} />
-          </div>
+          <FooterColumn
+            figmaNodeId="22:368"
+            title={footer.supportTitle}
+            links={supportLinks}
+          />
 
-          <div
-            data-node-id="22:375"
-            className="min-w-[200px] flex-1 basis-[240px]"
-          >
+          <div data-node-id="22:375">
             <h4
               data-node-id="22:377"
-              className="font-big-fat-boii text-[18px] leading-[15px] font-normal text-white uppercase"
+              className="font-big-fat-boii text-[18px] leading-[15px] font-normal tracking-wide text-white uppercase"
             >
               {footer.contactTitle}
             </h4>
@@ -180,7 +177,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               </a>
               <a
                 href={`mailto:${footer.email}`}
-                className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/50 transition-colors hover:text-white"
+                className="font-big-fat-boii text-[14px] leading-5 font-normal uppercase text-white/50 transition-colors hover:text-white"
               >
                 {footer.email}
               </a>
@@ -193,17 +190,23 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
         </div>
 
+        {/* Copyright bar — Figma 22:388; split like design mock */}
         <div
           data-node-id="22:388"
-          className="mx-auto flex w-full max-w-[1375px] justify-center py-8"
+          className="mx-auto flex w-full max-w-[1280px] flex-col gap-3 py-8 sm:flex-row sm:items-center sm:justify-between"
         >
+          <p className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/40 uppercase">
+            {footer.copyrightLeft.replace("{year}", String(year))}
+          </p>
           <p
             data-node-id="22:390"
-            className="text-center font-big-fat-boii text-[14px] leading-5 font-normal text-white/40"
+            className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/40 uppercase"
           >
-            {footer.copyrightBefore.replace("{year}", String(year))}{" "}
+            {footer.copyrightRightBefore}{" "}
             <span className="text-white">{footer.copyrightCompany}</span>
-            {footer.copyrightAfter ? ` ${footer.copyrightAfter}` : null}
+            {footer.copyrightRightAfter
+              ? ` ${footer.copyrightRightAfter}`
+              : null}
           </p>
         </div>
       </div>

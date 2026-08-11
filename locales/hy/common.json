@@ -47,9 +47,10 @@
     "phone": "+374 10 123 456",
     "email": "info@kamancha.am",
     "hours": "Երկ–Կիր: 12:00 – 00:00",
-    "copyrightBefore": "Copyright © {year} | Բոլոր իրավունքները պաշտպանված են | Ստեղծվել է",
+    "copyrightLeft": "Copyright © {year} | Բոլոր իրավունքները պաշտպանված են",
+    "copyrightRightBefore": "Ստեղծվել է",
     "copyrightCompany": "Neetrino IT Company",
-    "copyrightAfter": "կողմից",
+    "copyrightRightAfter": "կողմից",
     "instagram": "Instagram",
     "facebook": "Facebook",
     "tiktok": "TikTok"
