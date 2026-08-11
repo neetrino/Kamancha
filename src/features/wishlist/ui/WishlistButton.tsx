@@ -15,7 +15,7 @@ type WishlistButtonProps = {
   isSignedIn: boolean;
   label: string;
   className?: string;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg" | "xl";
 };
 
 export function WishlistButton({
@@ -30,7 +30,14 @@ export function WishlistButton({
   const router = useRouter();
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
   const [pending, startTransition] = useTransition();
-  const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const iconClass =
+    size === "sm"
+      ? "h-4 w-4"
+      : size === "lg"
+        ? "h-6 w-6"
+        : size === "xl"
+          ? "h-7 w-7"
+          : "h-5 w-5";
 
   function handleClick(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
@@ -73,7 +80,7 @@ export function WishlistButton({
         className={`${iconClass} ${
           inWishlist
             ? "fill-red-500 text-red-500"
-            : "fill-transparent text-gray-700"
+            : "fill-transparent text-current"
         }`}
         aria-hidden
       />

@@ -180,7 +180,7 @@ export function ProductPurchaseControls({
           initialInWishlist={inWishlist}
           isSignedIn={isSignedIn}
           label={wishlistLabel}
-          className="h-11 w-11 border border-gray-200 bg-white hover:bg-gray-50"
+          className="h-11 w-11 border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
         />
       </div>
 

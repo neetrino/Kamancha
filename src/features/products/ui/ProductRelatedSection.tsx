@@ -53,6 +53,7 @@ export async function ProductRelatedSection({
               priceFormatted={price.formatted}
               compareAtFormatted={compareAt?.formatted ?? null}
               discountPercent={item.discountPercent}
+              discountOffLabel={dictionary.home.discountOff}
               imageUrl={item.imageUrl}
               inStock={item.stockOnHand > 0}
               locale={locale}
@@ -61,6 +62,7 @@ export async function ProductRelatedSection({
               isSignedIn={isSignedIn}
               wishlistLabel={dictionary.nav.wishlist}
               addToCartLabel={labels.addToCart}
+              className="w-full max-w-none"
             />
           );
         })}

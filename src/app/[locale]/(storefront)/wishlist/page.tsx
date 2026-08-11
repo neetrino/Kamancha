@@ -82,6 +82,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                 priceFormatted={priceFormatted}
                 compareAtFormatted={compareAtFormatted}
                 discountPercent={product.discountPercent}
+                discountOffLabel={dictionary.home.discountOff}
                 imageUrl={product.imageUrl}
                 inStock={product.stockOnHand > 0}
                 priority={index < 4}
@@ -91,6 +92,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                 isSignedIn
                 wishlistLabel={dictionary.nav.wishlist}
                 addToCartLabel={dictionary.product.addToCart}
+                className="w-full max-w-none"
               />
             ),
           )}

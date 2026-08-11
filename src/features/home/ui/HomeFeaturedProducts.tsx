@@ -1,4 +1,3 @@
-import { AppLink } from "@/components/ui/AppLink";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -9,6 +8,8 @@ type FeaturedItem = {
   priceFormatted: string;
   compareAtFormatted?: string | null;
   discountPercent?: number | null;
+  categoryLabel?: string | null;
+  rating?: number | null;
   imageUrl: string | null;
   inStock: boolean;
   inWishlist?: boolean;
@@ -17,68 +18,68 @@ type FeaturedItem = {
 type HomeFeaturedProductsProps = {
   locale: Locale;
   title: string;
-  viewAllLabel: string;
-  viewAllHref: string;
   emptyLabel: string;
   wishlistLabel: string;
   addToCartLabel: string;
+  discountOffLabel: string;
   isSignedIn: boolean;
   products: readonly FeaturedItem[];
 };
 
+/**
+ * Home featured / offers strip — Figma title 22:204 + product cards 22:230.
+ */
 export function HomeFeaturedProducts({
   locale,
   title,
-  viewAllLabel,
-  viewAllHref,
   emptyLabel,
   wishlistLabel,
   addToCartLabel,
+  discountOffLabel,
   isSignedIn,
   products,
 }: HomeFeaturedProductsProps) {
   return (
-    <section className="bg-gray-50 py-14">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">
-            {title}
-          </h2>
-          <AppLink
-            href={viewAllHref}
-            prefetchPolicy="intent"
-            className="text-sm font-semibold text-gray-700 underline-offset-2 hover:underline"
-          >
-            {viewAllLabel}
-          </AppLink>
-        </div>
+    <section className="relative z-[1] pt-10 pb-6 sm:pt-12 md:pt-14">
+      <h2
+        data-node-id="22:204"
+        className="mb-10 text-center font-big-fat-boii text-[40px] leading-[1.05] font-normal text-white sm:mb-11 sm:text-[48px] md:mb-[42px] md:text-[58px] md:leading-[60px]"
+      >
+        {title}
+      </h2>
 
-        {products.length === 0 ? (
-          <p className="text-gray-600">{emptyLabel}</p>
-        ) : (
-          <div className="grid grid-cols-2 gap-6 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                href={product.href}
-                title={product.title}
-                priceFormatted={product.priceFormatted}
-                compareAtFormatted={product.compareAtFormatted}
-                discountPercent={product.discountPercent}
-                imageUrl={product.imageUrl}
-                inStock={product.inStock}
-                priority={index < 4}
-                locale={locale}
-                productId={product.id}
-                inWishlist={product.inWishlist ?? false}
-                isSignedIn={isSignedIn}
-                wishlistLabel={wishlistLabel}
-                addToCartLabel={addToCartLabel}
-              />
-            ))}
+      {products.length === 0 ? (
+        <p className="px-2 text-center text-white/70 sm:px-3">{emptyLabel}</p>
+      ) : (
+        <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
+          <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-5 px-2 py-4 sm:px-3">
+              {products.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  href={product.href}
+                  title={product.title}
+                  priceFormatted={product.priceFormatted}
+                  compareAtFormatted={product.compareAtFormatted}
+                  discountPercent={product.discountPercent}
+                  categoryLabel={product.categoryLabel}
+                  rating={product.rating}
+                  discountOffLabel={discountOffLabel}
+                  imageUrl={product.imageUrl}
+                  inStock={product.inStock}
+                  priority={index < 4}
+                  locale={locale}
+                  productId={product.id}
+                  inWishlist={product.inWishlist ?? false}
+                  isSignedIn={isSignedIn}
+                  wishlistLabel={wishlistLabel}
+                  addToCartLabel={addToCartLabel}
+                />
+              ))}
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

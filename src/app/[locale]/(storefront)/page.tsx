@@ -15,6 +15,7 @@ import {
   getOfferProducts,
   type CatalogProduct,
 } from "@/features/products/queries";
+import { getProductAverageRatings } from "@/features/reviews/application/queries";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -37,6 +38,7 @@ function toProductCards(
   locale: Locale,
   formatPrice: DisplayPriceFormatter,
   wishlistIds: Set<string>,
+  ratings: Map<string, number>,
 ) {
   return products.map((product) => {
     const price = formatPrice(product.priceAmount);
@@ -52,6 +54,7 @@ function toProductCards(
       priceFormatted: price.formatted,
       compareAtFormatted: compareAt?.formatted ?? null,
       discountPercent: product.discountPercent,
+      rating: ratings.get(product.id) ?? null,
       imageUrl: product.imageUrl,
       inStock: product.stockOnHand > 0,
       inWishlist: wishlistIds.has(product.id),
@@ -84,9 +87,10 @@ export default async function HomePage({ params }: HomePageProps) {
     ]),
   ];
 
-  const [wishlistIds, formatPrice] = await Promise.all([
+  const [wishlistIds, formatPrice, ratings] = await Promise.all([
     getWishlistProductIds(productIds),
     createDisplayPriceFormatter(locale, currency),
+    getProductAverageRatings(productIds),
   ]);
 
   const featuredCards = toProductCards(
@@ -94,12 +98,14 @@ export default async function HomePage({ params }: HomePageProps) {
     locale,
     formatPrice,
     wishlistIds,
+    ratings,
   );
   const offerCards = toProductCards(
     offerProducts,
     locale,
     formatPrice,
     wishlistIds,
+    ratings,
   );
 
   return (
@@ -128,11 +134,10 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeFeaturedProducts
         locale={locale}
         title={dictionary.home.featuredTitle}
-        viewAllLabel={dictionary.home.viewAll}
-        viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyFeatured}
         wishlistLabel={dictionary.nav.wishlist}
         addToCartLabel={dictionary.product.addToCart}
+        discountOffLabel={dictionary.home.discountOff}
         isSignedIn={Boolean(user)}
         products={featuredCards}
       />
@@ -140,11 +145,10 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeFeaturedProducts
         locale={locale}
         title={dictionary.home.offersTitle}
-        viewAllLabel={dictionary.home.viewAll}
-        viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyOffers}
         wishlistLabel={dictionary.nav.wishlist}
         addToCartLabel={dictionary.product.addToCart}
+        discountOffLabel={dictionary.home.discountOff}
         isSignedIn={Boolean(user)}
         products={offerCards}
       />

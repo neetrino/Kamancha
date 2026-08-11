@@ -143,6 +143,7 @@ export default async function ProductsPage({
                 priceFormatted={price.formatted}
                 compareAtFormatted={compareAtFormatted}
                 discountPercent={product.discountPercent}
+                discountOffLabel={dictionary.home.discountOff}
                 imageUrl={product.imageUrl}
                 inStock={product.stockOnHand > 0}
                 priority={index < 4}
@@ -152,6 +153,7 @@ export default async function ProductsPage({
                 isSignedIn={Boolean(user)}
                 wishlistLabel={dictionary.nav.wishlist}
                 addToCartLabel={dictionary.product.addToCart}
+                className="w-full max-w-none"
               />
             ))}
           </div>
