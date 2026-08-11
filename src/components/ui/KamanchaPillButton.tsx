@@ -8,6 +8,8 @@ type KamanchaPillButtonProps = {
   label: string;
   variant?: "light" | "dark";
   className?: string;
+  /** Figma node id — hero CTA 22:435, view-all 22:200. */
+  figmaNodeId?: string;
 };
 
 function PillOrnament({
@@ -49,6 +51,7 @@ export function KamanchaPillButton({
   label,
   variant = "light",
   className = "",
+  figmaNodeId = "22:435",
 }: KamanchaPillButtonProps) {
   const tones =
     variant === "light"
@@ -59,7 +62,7 @@ export function KamanchaPillButton({
     <AppLink
       href={href}
       prefetchPolicy="intent"
-      data-node-id="22:435"
+      data-node-id={figmaNodeId}
       className={`kamancha-pill-button inline-flex h-16 w-full max-w-[280px] items-center justify-between gap-5 overflow-hidden rounded-[50px] pt-2 pb-[7px] text-left text-[18px] leading-6 sm:max-w-[316px] ${tones} ${className}`}
     >
       <PillOrnament side="left" />

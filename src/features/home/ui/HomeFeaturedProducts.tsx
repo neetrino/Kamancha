@@ -1,3 +1,4 @@
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -18,6 +19,8 @@ type FeaturedItem = {
 type HomeFeaturedProductsProps = {
   locale: Locale;
   title: string;
+  viewAllLabel: string;
+  viewAllHref: string;
   emptyLabel: string;
   wishlistLabel: string;
   addToCartLabel: string;
@@ -27,11 +30,13 @@ type HomeFeaturedProductsProps = {
 };
 
 /**
- * Home featured / offers strip — Figma title 22:204 + product cards 22:230.
+ * Home featured / offers strip — Figma title 22:204, cards 22:230, CTA 22:200.
  */
 export function HomeFeaturedProducts({
   locale,
   title,
+  viewAllLabel,
+  viewAllHref,
   emptyLabel,
   wishlistLabel,
   addToCartLabel,
@@ -51,34 +56,46 @@ export function HomeFeaturedProducts({
       {products.length === 0 ? (
         <p className="px-2 text-center text-white/70 sm:px-3">{emptyLabel}</p>
       ) : (
-        <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
-          <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className="flex gap-5 px-2 py-4 sm:px-3">
-              {products.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  href={product.href}
-                  title={product.title}
-                  priceFormatted={product.priceFormatted}
-                  compareAtFormatted={product.compareAtFormatted}
-                  discountPercent={product.discountPercent}
-                  categoryLabel={product.categoryLabel}
-                  rating={product.rating}
-                  discountOffLabel={discountOffLabel}
-                  imageUrl={product.imageUrl}
-                  inStock={product.inStock}
-                  priority={index < 4}
-                  locale={locale}
-                  productId={product.id}
-                  inWishlist={product.inWishlist ?? false}
-                  isSignedIn={isSignedIn}
-                  wishlistLabel={wishlistLabel}
-                  addToCartLabel={addToCartLabel}
-                />
-              ))}
+        <>
+          <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
+            <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex gap-5 px-2 py-4 sm:px-3">
+                {products.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    href={product.href}
+                    title={product.title}
+                    priceFormatted={product.priceFormatted}
+                    compareAtFormatted={product.compareAtFormatted}
+                    discountPercent={product.discountPercent}
+                    categoryLabel={product.categoryLabel}
+                    rating={product.rating}
+                    discountOffLabel={discountOffLabel}
+                    imageUrl={product.imageUrl}
+                    inStock={product.inStock}
+                    priority={index < 4}
+                    locale={locale}
+                    productId={product.id}
+                    inWishlist={product.inWishlist ?? false}
+                    isSignedIn={isSignedIn}
+                    wishlistLabel={wishlistLabel}
+                    addToCartLabel={addToCartLabel}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+
+          <div className="mt-8 flex justify-center sm:mt-10">
+            <KamanchaPillButton
+              href={viewAllHref}
+              label={viewAllLabel}
+              variant="light"
+              figmaNodeId="22:200"
+              className="max-w-[316px]"
+            />
+          </div>
+        </>
       )}
     </section>
   );

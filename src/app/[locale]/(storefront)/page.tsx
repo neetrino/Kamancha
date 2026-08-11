@@ -134,6 +134,8 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeFeaturedProducts
         locale={locale}
         title={dictionary.home.featuredTitle}
+        viewAllLabel={dictionary.home.viewAll}
+        viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyFeatured}
         wishlistLabel={dictionary.nav.wishlist}
         addToCartLabel={dictionary.product.addToCart}
@@ -145,6 +147,8 @@ export default async function HomePage({ params }: HomePageProps) {
       <HomeFeaturedProducts
         locale={locale}
         title={dictionary.home.offersTitle}
+        viewAllLabel={dictionary.home.viewAll}
+        viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyOffers}
         wishlistLabel={dictionary.nav.wishlist}
         addToCartLabel={dictionary.product.addToCart}
