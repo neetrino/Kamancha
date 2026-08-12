@@ -173,7 +173,12 @@ export function CartDrawer({
                   className="rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm"
                 >
                   <div className="flex gap-3">
-                    <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
+                    <AppLink
+                      href={item.href}
+                      prefetchPolicy="intent"
+                      onClick={closeDrawer}
+                      className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50"
+                    >
                       <Image
                         src={STOREFRONT_PRODUCT_PHOTO}
                         alt={item.title}
@@ -181,14 +186,19 @@ export function CartDrawer({
                         sizes="96px"
                         className="object-cover"
                       />
-                    </div>
+                    </AppLink>
 
                     <div className="flex min-w-0 flex-1 flex-col">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="line-clamp-2 text-sm font-medium text-gray-900">
+                          <AppLink
+                            href={item.href}
+                            prefetchPolicy="intent"
+                            onClick={closeDrawer}
+                            className="line-clamp-2 text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
+                          >
                             {item.title}
-                          </p>
+                          </AppLink>
                           {item.modifierSummary ? (
                             <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
                               {item.modifierSummary}
