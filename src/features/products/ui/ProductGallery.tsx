@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { createPortal } from "react-dom";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import type { ProductGalleryImage } from "@/features/products/types";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
@@ -57,6 +58,7 @@ export function ProductGallery({
   );
   const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
   const [zoomed, setZoomed] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
   const selectedIndex = Math.max(
     0,
     galleryImages.findIndex((image) => image.id === selectedId),
@@ -78,7 +80,14 @@ export function ProductGallery({
   }
 
   useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
+  useEffect(() => {
     if (!zoomed) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     function onKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
@@ -112,8 +121,74 @@ export function ProductGallery({
     }
 
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [zoomed, canCycle, galleryImages]);
+
+  const lightbox =
+    zoomed && selected && portalReady
+      ? createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={zoomLabel}
+            className="fixed inset-0 z-[300] flex h-dvh w-screen items-center justify-center"
+          >
+            <button
+              type="button"
+              aria-label={closeZoomLabel}
+              className="absolute inset-0 cursor-pointer bg-black/80"
+              onClick={() => setZoomed(false)}
+            />
+
+            <button
+              type="button"
+              aria-label={closeZoomLabel}
+              className="absolute top-5 right-5 z-20 flex size-11 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:top-8 sm:right-8"
+              onClick={() => setZoomed(false)}
+            >
+              <X className="size-6" strokeWidth={2.25} aria-hidden />
+            </button>
+
+            {canCycle ? (
+              <>
+                <button
+                  type="button"
+                  aria-label={previousImageLabel}
+                  onClick={() => goToOffset(-1)}
+                  className="absolute top-1/2 left-3 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 sm:left-8 sm:size-12"
+                >
+                  <ChevronLeft className="size-7" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  aria-label={nextImageLabel}
+                  onClick={() => goToOffset(1)}
+                  className="absolute top-1/2 right-3 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 sm:right-8 sm:size-12"
+                >
+                  <ChevronRight className="size-7" aria-hidden />
+                </button>
+              </>
+            ) : null}
+
+            <div className="relative z-10 mx-auto flex h-[min(86dvh,880px)] w-[min(92vw,920px)] items-center justify-center p-2">
+              <div className="relative h-full w-full">
+                <Image
+                  src={selected.url}
+                  alt={selected.alt || title}
+                  fill
+                  sizes="(max-width: 920px) 92vw, 920px"
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <div className="flex w-full flex-col gap-4 lg:w-[min(100%,640px)] lg:shrink-0">
@@ -212,61 +287,7 @@ export function ProductGallery({
         </ul>
       ) : null}
 
-      {zoomed && selected ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={zoomLabel}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
-          onClick={() => setZoomed(false)}
-        >
-          <button
-            type="button"
-            className="absolute top-4 right-4 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20"
-            onClick={() => setZoomed(false)}
-          >
-            {closeZoomLabel}
-          </button>
-          {canCycle ? (
-            <>
-              <button
-                type="button"
-                aria-label={previousImageLabel}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  goToOffset(-1);
-                }}
-                className="absolute top-1/2 left-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
-              >
-                <ChevronLeft className="size-7" aria-hidden />
-              </button>
-              <button
-                type="button"
-                aria-label={nextImageLabel}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  goToOffset(1);
-                }}
-                className="absolute top-1/2 right-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
-              >
-                <ChevronRight className="size-7" aria-hidden />
-              </button>
-            </>
-          ) : null}
-          <div
-            className="relative h-[min(80vh,720px)] w-full max-w-4xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <Image
-              src={selected.url}
-              alt={selected.alt || title}
-              fill
-              sizes="100vw"
-              className="object-contain"
-            />
-          </div>
-        </div>
-      ) : null}
+      {lightbox}
     </div>
   );
 }
