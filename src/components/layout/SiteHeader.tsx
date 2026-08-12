@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
+import { SiteHeaderScrollShell } from "@/components/layout/SiteHeaderScrollShell";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -73,14 +74,12 @@ async function SiteHeaderMainNavAsync({
 
 /**
  * Storefront chrome: sticky navbar over the forest background.
+ * On scroll, reveals the frosted green bar (Figma 173:143).
  * Cart/account counts hydrate in Suspense without a gray pulse pill.
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
-    <div
-      className="site-header sticky top-0 z-[80] shrink-0 bg-transparent pt-8 pb-4 md:pt-10 md:pb-6"
-      data-site-header
-    >
+    <SiteHeaderScrollShell>
       <Suspense
         fallback={
           <SiteHeaderShell
@@ -96,6 +95,6 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
           dictionary={dictionary}
         />
       </Suspense>
-    </div>
+    </SiteHeaderScrollShell>
   );
 }
