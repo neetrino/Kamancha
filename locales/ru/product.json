@@ -40,5 +40,7 @@
   "backToProducts": "Товары",
   "breadcrumbLabel": "Навигационная цепочка",
   "zoomImage": "Увеличить изображение",
-  "closeZoom": "Закрыть"
+  "closeZoom": "Закрыть",
+  "previousImage": "Предыдущее фото",
+  "nextImage": "Следующее фото"
 }

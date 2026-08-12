@@ -57,6 +57,8 @@ export function ProductDetailView({
           outOfStockLabel={labels.outOfStock}
           zoomLabel={labels.zoomImage}
           closeZoomLabel={labels.closeZoom}
+          previousImageLabel={labels.previousImage}
+          nextImageLabel={labels.nextImage}
         />
 
         <div className="flex min-w-0 flex-1 flex-col gap-[22px]">

@@ -40,5 +40,7 @@
   "backToProducts": "Products",
   "breadcrumbLabel": "Breadcrumb",
   "zoomImage": "Zoom image",
-  "closeZoom": "Close"
+  "closeZoom": "Close",
+  "previousImage": "Previous image",
+  "nextImage": "Next image"
 }

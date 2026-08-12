@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import type { ProductGalleryImage } from "@/features/products/types";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
@@ -17,6 +18,8 @@ type ProductGalleryProps = {
   outOfStockLabel: string;
   zoomLabel: string;
   closeZoomLabel: string;
+  previousImageLabel: string;
+  nextImageLabel: string;
 };
 
 function formatDiscountOff(template: string, percent: number): string {
@@ -32,42 +35,89 @@ export function ProductGallery({
   outOfStockLabel,
   zoomLabel,
   closeZoomLabel,
+  previousImageLabel,
+  nextImageLabel,
 }: ProductGalleryProps) {
-  const galleryImages: ProductGalleryImage[] =
-    images.length > 0
-      ? images.map((image) => ({
-          ...image,
-          url: STOREFRONT_PRODUCT_PHOTO,
-        }))
-      : [
-          {
-            id: "placeholder",
+  const galleryImages = useMemo<ProductGalleryImage[]>(
+    () =>
+      images.length > 0
+        ? images.map((image) => ({
+            ...image,
             url: STOREFRONT_PRODUCT_PHOTO,
-            alt: title,
-            isPrimary: true,
-          },
-        ];
+          }))
+        : [
+            {
+              id: "placeholder",
+              url: STOREFRONT_PRODUCT_PHOTO,
+              alt: title,
+              isPrimary: true,
+            },
+          ],
+    [images, title],
+  );
   const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
   const [zoomed, setZoomed] = useState(false);
-  const selected =
-    galleryImages.find((image) => image.id === selectedId) ??
-    galleryImages[0] ??
-    null;
+  const selectedIndex = Math.max(
+    0,
+    galleryImages.findIndex((image) => image.id === selectedId),
+  );
+  const selected = galleryImages[selectedIndex] ?? galleryImages[0] ?? null;
+  const canCycle = galleryImages.length > 1;
+
+  function goToOffset(offset: number): void {
+    if (!canCycle) return;
+    setSelectedId((currentId) => {
+      const currentIndex = Math.max(
+        0,
+        galleryImages.findIndex((image) => image.id === currentId),
+      );
+      const nextIndex =
+        (currentIndex + offset + galleryImages.length) % galleryImages.length;
+      return galleryImages[nextIndex]?.id ?? currentId;
+    });
+  }
 
   useEffect(() => {
     if (!zoomed) return;
+
     function onKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
         setZoomed(false);
+        return;
+      }
+      if (!canCycle) return;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setSelectedId((currentId) => {
+          const currentIndex = Math.max(
+            0,
+            galleryImages.findIndex((image) => image.id === currentId),
+          );
+          const nextIndex =
+            (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+          return galleryImages[nextIndex]?.id ?? currentId;
+        });
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setSelectedId((currentId) => {
+          const currentIndex = Math.max(
+            0,
+            galleryImages.findIndex((image) => image.id === currentId),
+          );
+          const nextIndex = (currentIndex + 1) % galleryImages.length;
+          return galleryImages[nextIndex]?.id ?? currentId;
+        });
       }
     }
+
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [zoomed]);
+  }, [zoomed, canCycle, galleryImages]);
 
   return (
     <div className="flex w-full flex-col gap-4 lg:w-[min(100%,640px)] lg:shrink-0">
-      <div className="relative aspect-[520/420] w-full overflow-hidden rounded-[30px] border-[3px] border-white bg-white">
+      <div className="group relative aspect-[520/420] w-full overflow-hidden rounded-[30px] border-[3px] border-white bg-white">
         {selected ? (
           <Image
             src={selected.url}
@@ -95,6 +145,27 @@ export function ProductGallery({
           </span>
         ) : null}
 
+        {canCycle ? (
+          <>
+            <button
+              type="button"
+              aria-label={previousImageLabel}
+              onClick={() => goToOffset(-1)}
+              className="absolute top-1/2 left-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-100 shadow-md transition hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:opacity-0 md:group-hover:opacity-100"
+            >
+              <ChevronLeft className="size-6" aria-hidden />
+            </button>
+            <button
+              type="button"
+              aria-label={nextImageLabel}
+              onClick={() => goToOffset(1)}
+              className="absolute top-1/2 right-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-100 shadow-md transition hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:opacity-0 md:group-hover:opacity-100"
+            >
+              <ChevronRight className="size-6" aria-hidden />
+            </button>
+          </>
+        ) : null}
+
         {selected ? (
           <button
             type="button"
@@ -112,7 +183,10 @@ export function ProductGallery({
           {galleryImages.map((image) => {
             const isActive = image.id === selected?.id;
             return (
-              <li key={image.id} className="size-[72px] shrink-0 sm:size-[90px]">
+              <li
+                key={image.id}
+                className="size-[72px] shrink-0 sm:size-[90px]"
+              >
                 <button
                   type="button"
                   onClick={() => setSelectedId(image.id)}
@@ -153,6 +227,32 @@ export function ProductGallery({
           >
             {closeZoomLabel}
           </button>
+          {canCycle ? (
+            <>
+              <button
+                type="button"
+                aria-label={previousImageLabel}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  goToOffset(-1);
+                }}
+                className="absolute top-1/2 left-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
+              >
+                <ChevronLeft className="size-7" aria-hidden />
+              </button>
+              <button
+                type="button"
+                aria-label={nextImageLabel}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  goToOffset(1);
+                }}
+                className="absolute top-1/2 right-4 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25"
+              >
+                <ChevronRight className="size-7" aria-hidden />
+              </button>
+            </>
+          ) : null}
           <div
             className="relative h-[min(80vh,720px)] w-full max-w-4xl"
             onClick={(event) => event.stopPropagation()}

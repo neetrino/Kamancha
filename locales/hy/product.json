@@ -40,5 +40,7 @@
   "backToProducts": "Ապրանքներ",
   "breadcrumbLabel": "Նավիգացիայի ուղի",
   "zoomImage": "Մեծացնել նկարը",
-  "closeZoom": "Փակել"
+  "closeZoom": "Փակել",
+  "previousImage": "Նախորդ նկար",
+  "nextImage": "Հաջորդ նկար"
 }
