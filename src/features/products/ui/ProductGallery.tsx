@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import type { ProductGalleryImage } from "@/features/products/types";
+import { clearActiveFocus } from "@/lib/dom/clear-active-focus";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const ZOOM_SRC = "/assets/brand/product/zoom-in.svg";
@@ -79,6 +80,11 @@ export function ProductGallery({
     });
   }
 
+  function closeZoom(): void {
+    setZoomed(false);
+    clearActiveFocus();
+  }
+
   useEffect(() => {
     setPortalReady(true);
   }, []);
@@ -91,7 +97,8 @@ export function ProductGallery({
 
     function onKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
-        setZoomed(false);
+        event.preventDefault();
+        closeZoom();
         return;
       }
       if (!canCycle) return;
@@ -140,14 +147,14 @@ export function ProductGallery({
               type="button"
               aria-label={closeZoomLabel}
               className="absolute inset-0 cursor-pointer bg-black/80"
-              onClick={() => setZoomed(false)}
+              onClick={closeZoom}
             />
 
             <button
               type="button"
               aria-label={closeZoomLabel}
-              className="absolute top-5 right-5 z-20 flex size-11 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:top-8 sm:right-8"
-              onClick={() => setZoomed(false)}
+              className="absolute top-5 right-5 z-20 flex size-11 items-center justify-center rounded-full bg-white/15 text-white outline-none transition hover:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:top-8 sm:right-8"
+              onClick={closeZoom}
             >
               <X className="size-6" strokeWidth={2.25} aria-hidden />
             </button>
@@ -246,7 +253,7 @@ export function ProductGallery({
             type="button"
             onClick={() => setZoomed(true)}
             aria-label={zoomLabel}
-            className="absolute right-4 bottom-4 z-10 inline-flex items-center justify-center rounded-full bg-black/50 px-2.5 py-1.5 transition hover:bg-black/70"
+            className="absolute right-4 bottom-4 z-10 inline-flex items-center justify-center rounded-full bg-black/50 px-2.5 py-1.5 outline-none transition hover:bg-black/70 focus-visible:ring-2 focus-visible:ring-white/70"
           >
             <Image src={ZOOM_SRC} alt="" width={24} height={24} aria-hidden />
           </button>

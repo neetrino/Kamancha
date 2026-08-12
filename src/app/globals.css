@@ -67,6 +67,32 @@ body {
   [aria-disabled="true"] {
     cursor: not-allowed;
   }
+
+  /* Suppress default blue UA focus ring; keep a11y ring only for keyboard. */
+  :where(
+    a,
+    button,
+    summary,
+    [role="button"],
+    input,
+    select,
+    textarea
+  ):focus {
+    outline: none;
+  }
+
+  :where(
+    a,
+    button,
+    summary,
+    [role="button"],
+    input,
+    select,
+    textarea
+  ):focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--brand-forest) 70%, white);
+    outline-offset: 2px;
+  }
 }
 
 /* Confirm / modal dismiss — same motion as Mobee storefront dialog */
