@@ -59,27 +59,6 @@ export function ProductReviewsSection({
         <RatingDistribution aggregate={aggregate} />
       </div>
 
-      {reviews.length > 0 ? (
-        <ul className="flex w-full flex-col gap-3">
-          {reviews.map((review) => (
-            <li
-              key={review.id}
-              className="w-full rounded-2xl border border-white/15 bg-white/10 p-4"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-medium text-white">
-                  {review.authorName}
-                </p>
-                <RatingStars average={review.rating} size="sm" />
-              </div>
-              {review.comment ? (
-                <p className="mt-2 text-sm text-white/70">{review.comment}</p>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
       <ProductWriteReviewCta
         locale={locale}
         productId={productId}
@@ -88,6 +67,7 @@ export function ProductReviewsSection({
         isSignedIn={isSignedIn}
         existingReviewId={reviewsView.existingReviewId}
         viewerReview={reviewsView.viewerReview}
+        reviews={reviews}
         showEmptyPrompt={isEmpty}
         labels={{
           writeReview: labels.writeReview,

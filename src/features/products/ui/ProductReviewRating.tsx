@@ -23,7 +23,7 @@ export function RatingStars({ average, size = "md" }: RatingStarsProps) {
             className={`${iconClass} ${
               isFilled
                 ? "fill-amber-400 text-amber-400"
-                : "fill-white/20 text-white/20"
+                : "fill-white/25 text-white/25"
             }`}
           />
         );

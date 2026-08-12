@@ -21,7 +21,7 @@ export function StarRatingInput({
 
   return (
     <fieldset className="flex flex-col gap-2" disabled={disabled}>
-      <legend className="text-sm font-medium text-gray-900">{label}</legend>
+      <legend className="text-sm font-medium text-white">{label}</legend>
       <div
         className="flex items-center gap-1"
         onMouseLeave={() => setHovered(null)}
@@ -48,7 +48,7 @@ export function StarRatingInput({
                 className={`h-8 w-8 ${
                   isFilled
                     ? "fill-amber-400 text-amber-400"
-                    : "fill-gray-200 text-gray-200"
+                    : "fill-white text-white"
                 }`}
                 aria-hidden
               />
