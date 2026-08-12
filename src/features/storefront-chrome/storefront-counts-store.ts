@@ -1,70 +1,62 @@
 "use client";
 
-import { useLayoutEffect, useSyncExternalStore } from "react";
-
-type StorefrontCounts = {
-  cartItemCount: number;
-  wishlistCount: number;
-};
+import { useCallback, useLayoutEffect, useSyncExternalStore } from "react";
 
 type Listener = () => void;
 
-let counts: StorefrontCounts = {
-  cartItemCount: 0,
-  wishlistCount: 0,
-};
+let cartItemCount = 0;
+let wishlistCount = 0;
 
 /** In-flight optimistic updates — ignore stale server hydrates meanwhile. */
 let cartInFlight = 0;
 let wishlistInFlight = 0;
 
-const listeners = new Set<Listener>();
+const cartListeners = new Set<Listener>();
+const wishlistListeners = new Set<Listener>();
 
-function emit(): void {
+function emit(listeners: Set<Listener>): void {
   for (const listener of listeners) {
     listener();
   }
 }
 
-function subscribe(listener: Listener): () => void {
-  listeners.add(listener);
+function subscribeCart(listener: Listener): () => void {
+  cartListeners.add(listener);
   return () => {
-    listeners.delete(listener);
+    cartListeners.delete(listener);
   };
 }
 
-function getSnapshot(): StorefrontCounts {
-  return counts;
-}
-
-function setCounts(partial: Partial<StorefrontCounts>): void {
-  const nextCart = partial.cartItemCount ?? counts.cartItemCount;
-  const nextWishlist = partial.wishlistCount ?? counts.wishlistCount;
-  if (
-    nextCart === counts.cartItemCount &&
-    nextWishlist === counts.wishlistCount
-  ) {
-    return;
-  }
-  counts = {
-    cartItemCount: Math.max(0, nextCart),
-    wishlistCount: Math.max(0, nextWishlist),
+function subscribeWishlist(listener: Listener): () => void {
+  wishlistListeners.add(listener);
+  return () => {
+    wishlistListeners.delete(listener);
   };
-  emit();
 }
 
-export function setCartItemCount(cartItemCount: number): void {
-  setCounts({ cartItemCount });
+function getCartSnapshot(): number {
+  return cartItemCount;
+}
+
+function getWishlistSnapshot(): number {
+  return wishlistCount;
+}
+
+export function setCartItemCount(next: number): void {
+  const value = Math.max(0, next);
+  if (value === cartItemCount) return;
+  cartItemCount = value;
+  emit(cartListeners);
 }
 
 export function adjustCartItemCount(delta: number): void {
   cartInFlight += 1;
-  setCounts({ cartItemCount: counts.cartItemCount + delta });
+  setCartItemCount(cartItemCount + delta);
 }
 
 /** Undo an optimistic cart bump and clear its in-flight mark. */
 export function revertCartItemCountAdjust(delta: number): void {
-  setCounts({ cartItemCount: counts.cartItemCount + delta });
+  setCartItemCount(cartItemCount + delta);
   settleCartItemCountAdjust();
 }
 
@@ -73,18 +65,21 @@ export function settleCartItemCountAdjust(): void {
   cartInFlight = Math.max(0, cartInFlight - 1);
 }
 
-export function setWishlistCount(wishlistCount: number): void {
-  setCounts({ wishlistCount });
+export function setWishlistCount(next: number): void {
+  const value = Math.max(0, next);
+  if (value === wishlistCount) return;
+  wishlistCount = value;
+  emit(wishlistListeners);
 }
 
 export function adjustWishlistCount(delta: number): void {
   wishlistInFlight += 1;
-  setCounts({ wishlistCount: counts.wishlistCount + delta });
+  setWishlistCount(wishlistCount + delta);
 }
 
 /** Undo an optimistic wishlist bump and clear its in-flight mark. */
 export function revertWishlistCountAdjust(delta: number): void {
-  setCounts({ wishlistCount: counts.wishlistCount + delta });
+  setWishlistCount(wishlistCount + delta);
   settleWishlistCountAdjust();
 }
 
@@ -97,10 +92,11 @@ export function settleWishlistCountAdjust(): void {
  * Cart badge count — hydrated from server, then updated locally on add/remove.
  */
 export function useCartItemCount(serverCount: number): number {
-  const snapshot = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    () => ({ cartItemCount: serverCount, wishlistCount: 0 }),
+  const getServerSnapshot = useCallback(() => serverCount, [serverCount]);
+  const count = useSyncExternalStore(
+    subscribeCart,
+    getCartSnapshot,
+    getServerSnapshot,
   );
 
   useLayoutEffect(() => {
@@ -108,17 +104,18 @@ export function useCartItemCount(serverCount: number): number {
     setCartItemCount(serverCount);
   }, [serverCount]);
 
-  return snapshot.cartItemCount;
+  return count;
 }
 
 /**
  * Wishlist badge count — hydrated from server, then updated locally on like.
  */
 export function useWishlistCount(serverCount: number): number {
-  const snapshot = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    () => ({ cartItemCount: 0, wishlistCount: serverCount }),
+  const getServerSnapshot = useCallback(() => serverCount, [serverCount]);
+  const count = useSyncExternalStore(
+    subscribeWishlist,
+    getWishlistSnapshot,
+    getServerSnapshot,
   );
 
   useLayoutEffect(() => {
@@ -126,5 +123,5 @@ export function useWishlistCount(serverCount: number): number {
     setWishlistCount(serverCount);
   }, [serverCount]);
 
-  return snapshot.wishlistCount;
+  return count;
 }

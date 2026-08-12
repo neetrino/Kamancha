@@ -264,7 +264,10 @@ export function CatalogFilterForm({
                   }}
                 >
                   <span className="flex min-w-0 items-center gap-1.5">
-                    <CategoryIcon src={icon} className="size-8" />
+                    <CategoryIcon
+                      src={icon}
+                      className="h-8 w-9 shrink-0"
+                    />
                     <span
                       className={`truncate text-[15px] leading-[22.5px] ${
                         active ? "font-semibold" : "font-normal"
