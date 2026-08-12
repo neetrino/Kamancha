@@ -79,14 +79,12 @@ export function CartDrawer({
 
   function openDrawer(): void {
     setOpen(true);
-    if (!view) {
-      setLoadingView(true);
-      startTransition(async () => {
-        const next = await loadCartDrawerViewAction(locale, currency);
-        setView(next);
-        setLoadingView(false);
-      });
-    }
+    setLoadingView(true);
+    startTransition(async () => {
+      const next = await loadCartDrawerViewAction(locale, currency);
+      setView(next);
+      setLoadingView(false);
+    });
   }
 
   function closeDrawer(): void {
@@ -167,38 +165,62 @@ export function CartDrawer({
             </div>
           ) : (
             <ul className="space-y-3">
-              {view.items.map((item) => (
+              {view.items.map((item) => {
+                const productHref =
+                  typeof item.href === "string" && item.href.length > 0
+                    ? item.href
+                    : null;
+
+                return (
                 <li
                   key={item.id}
                   className="rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm"
                 >
                   <div className="flex gap-3">
-                    <AppLink
-                      href={item.href}
-                      prefetchPolicy="intent"
-                      onClick={closeDrawer}
-                      className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50"
-                    >
-                      <Image
-                        src={STOREFRONT_PRODUCT_PHOTO}
-                        alt={item.title}
-                        fill
-                        sizes="96px"
-                        className="object-cover"
-                      />
-                    </AppLink>
+                    {productHref ? (
+                      <AppLink
+                        href={productHref}
+                        prefetchPolicy="intent"
+                        onClick={closeDrawer}
+                        className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50"
+                      >
+                        <Image
+                          src={STOREFRONT_PRODUCT_PHOTO}
+                          alt={item.title}
+                          fill
+                          sizes="96px"
+                          className="object-cover"
+                        />
+                      </AppLink>
+                    ) : (
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
+                        <Image
+                          src={STOREFRONT_PRODUCT_PHOTO}
+                          alt={item.title}
+                          fill
+                          sizes="96px"
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
 
                     <div className="flex min-w-0 flex-1 flex-col">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <AppLink
-                            href={item.href}
-                            prefetchPolicy="intent"
-                            onClick={closeDrawer}
-                            className="line-clamp-2 text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                          >
-                            {item.title}
-                          </AppLink>
+                          {productHref ? (
+                            <AppLink
+                              href={productHref}
+                              prefetchPolicy="intent"
+                              onClick={closeDrawer}
+                              className="line-clamp-2 text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
+                            >
+                              {item.title}
+                            </AppLink>
+                          ) : (
+                            <p className="line-clamp-2 text-sm font-medium text-gray-900">
+                              {item.title}
+                            </p>
+                          )}
                           {item.modifierSummary ? (
                             <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
                               {item.modifierSummary}
@@ -254,7 +276,8 @@ export function CartDrawer({
                     </div>
                   </div>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           )}
         </div>

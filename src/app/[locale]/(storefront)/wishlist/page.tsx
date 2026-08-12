@@ -34,10 +34,6 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
 
   const header = (
     <CatalogPageHeader
-      locale={rawLocale}
-      breadcrumbLabel={wishlistCopy.breadcrumbLabel}
-      homeLabel={dictionary.nav.home}
-      productsLabel={wishlistCopy.title}
       heading={wishlistCopy.heading}
       resultsLabel={
         !user || products.length === 0

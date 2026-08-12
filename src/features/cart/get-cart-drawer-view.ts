@@ -106,6 +106,12 @@ export async function getCartDrawerView(
   for (const { item, product, modifiers } of rows) {
     const translation =
       product.translations[locale] ?? product.translations.hy;
+    const slug =
+      translation?.slug ??
+      product.translations.hy?.slug ??
+      product.translations.en?.slug ??
+      product.translations.ru?.slug ??
+      product.id;
     const baseUnit =
       prices.get(product.id)?.unitAmount ?? product.priceAmount;
     const unitAmount = baseUnit + sumAdditionPrices(modifiers);
@@ -122,7 +128,7 @@ export async function getCartDrawerView(
     items.push({
       id: item.id,
       title: translation?.title ?? product.sku,
-      href: `/${locale}/products/${translation?.slug ?? product.id}`,
+      href: `/${locale}/products/${slug}`,
       quantity: item.quantity,
       imageUrl: images.get(product.id) ?? null,
       unitPriceFormatted: formatConvertedAmount(

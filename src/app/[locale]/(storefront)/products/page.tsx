@@ -97,10 +97,6 @@ export default async function ProductsPage({
   return (
     <section className="flex flex-col gap-6">
       <CatalogPageHeader
-        locale={rawLocale}
-        breadcrumbLabel={catalogCopy.breadcrumbLabel}
-        homeLabel={dictionary.nav.home}
-        productsLabel={catalogCopy.title}
         heading={catalogCopy.heading}
         resultsLabel={resultsLabel}
       />
