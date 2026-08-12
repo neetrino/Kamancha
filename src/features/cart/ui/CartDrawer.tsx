@@ -15,6 +15,12 @@ import { SideSheet } from "@/components/ui/SideSheet";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
 import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
 import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
+import {
+  adjustCartItemCount,
+  setCartItemCount,
+  settleCartItemCountAdjust,
+  useCartItemCount,
+} from "@/features/storefront-chrome/storefront-counts-store";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -62,8 +68,11 @@ export function CartDrawer({
   const [loadingView, setLoadingView] = useState(false);
   const [pending, startTransition] = useTransition();
   const labels = dictionary.cartDrawer;
-  const badgeCount = view?.itemCount ?? itemCount;
-  const hasItems = Boolean(view && view.items.length > 0);
+  const liveItemCount = useCartItemCount(itemCount);
+  const badgeCount = liveItemCount;
+  const hasItems = Boolean(
+    view ? view.items.length > 0 : liveItemCount > 0,
+  );
 
   function prefetchDrawerView(): void {
     if (view || loadingView || open) {
@@ -73,6 +82,7 @@ export function CartDrawer({
     startTransition(async () => {
       const next = await loadCartDrawerViewAction(locale, currency);
       setView(next);
+      setCartItemCount(next.itemCount);
       setLoadingView(false);
     });
   }
@@ -83,6 +93,7 @@ export function CartDrawer({
     startTransition(async () => {
       const next = await loadCartDrawerViewAction(locale, currency);
       setView(next);
+      setCartItemCount(next.itemCount);
       setLoadingView(false);
     });
   }
@@ -92,18 +103,30 @@ export function CartDrawer({
   }
 
   function changeQuantity(itemId: string, quantity: number): void {
+    const current = view?.items.find((item) => item.id === itemId);
+    const previousQty = current?.quantity ?? 0;
+    const nextQty = Math.max(0, quantity);
+    adjustCartItemCount(nextQty - previousQty);
+
     startTransition(async () => {
       await updateQuantity(itemId, quantity);
       const next = await loadCartDrawerViewAction(locale, currency);
       setView(next);
+      setCartItemCount(next.itemCount);
+      settleCartItemCountAdjust();
     });
   }
 
   function removeCartItem(itemId: string): void {
+    const current = view?.items.find((item) => item.id === itemId);
+    adjustCartItemCount(-(current?.quantity ?? 0));
+
     startTransition(async () => {
       await removeItem(itemId);
       const next = await loadCartDrawerViewAction(locale, currency);
       setView(next);
+      setCartItemCount(next.itemCount);
+      settleCartItemCountAdjust();
     });
   }
 
@@ -326,6 +349,7 @@ export function CartDrawer({
       ) : (
         <button
           type="button"
+          data-cart-fly-target
           onClick={openDrawer}
           onPointerEnter={prefetchDrawerView}
           onFocus={prefetchDrawerView}

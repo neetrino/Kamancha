@@ -12,6 +12,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
+import { useWishlistCount } from "@/features/storefront-chrome/storefront-counts-store";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -99,6 +100,7 @@ export function MobileBottomNav({
   isSignedIn,
 }: MobileBottomNavProps) {
   const pathname = usePathname() ?? `/${locale}`;
+  const liveWishlistCount = useWishlistCount(wishlistCount);
   const profileHref = isSignedIn
     ? `/${locale}/profile`
     : `/${locale}/login`;
@@ -125,7 +127,7 @@ export function MobileBottomNav({
     label: dictionary.nav.wishlist,
     icon: Heart,
     match: (path) => startsWithPath(path, `/${locale}/wishlist`),
-    badge: wishlistCount,
+    badge: liveWishlistCount,
   };
 
   const profileTab: NavTab = {
@@ -161,6 +163,7 @@ export function MobileBottomNav({
           }) => (
             <button
               type="button"
+              data-cart-fly-target
               onClick={openDrawer}
               onPointerEnter={prefetchDrawerView}
               onFocus={prefetchDrawerView}

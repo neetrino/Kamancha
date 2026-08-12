@@ -127,6 +127,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                 isSignedIn
                 wishlistLabel={dictionary.nav.wishlist}
                 addToCartLabel={dictionary.product.addToCart}
+                requiresCustomization={product.hasCustomizationOptions}
                 layout="fluid"
               />
             ),

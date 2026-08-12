@@ -19,6 +19,7 @@ type FeaturedItem = {
   imageUrl: string | null;
   inStock: boolean;
   inWishlist?: boolean;
+  requiresCustomization?: boolean;
 };
 
 type HomeFeaturedProductsProps = {
@@ -87,6 +88,9 @@ export function HomeFeaturedProducts({
                       isSignedIn={isSignedIn}
                       wishlistLabel={wishlistLabel}
                       addToCartLabel={addToCartLabel}
+                      requiresCustomization={
+                        product.requiresCustomization ?? false
+                      }
                     />
                   </HomeStaggerItem>
                 ))}

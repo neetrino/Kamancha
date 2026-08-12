@@ -354,6 +354,28 @@ body {
   }
 }
 
+@keyframes cart-fly-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cart-fly-pulse {
+  animation: cart-fly-pulse 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-fly-pulse {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .kamancha-pill-button,
   .kamancha-pill-ornament {

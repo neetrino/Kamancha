@@ -17,9 +17,9 @@ export const SITE_HEADER_ICON_RAIL =
 export const SITE_HEADER_CART_TRIGGER =
   "relative inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-white transition-opacity duration-150 hover:opacity-80";
 
-/** Cart badge — scaled with larger cart glyph. */
+/** Count badge on cart / wishlist header icons. */
 export const SITE_HEADER_CART_BADGE =
-  "absolute -top-1 right-0 flex size-6 min-w-6 items-center justify-center rounded-full border border-solid border-white bg-brand-forest p-px text-center text-[12px] font-bold leading-4 text-white";
+  "absolute -top-0.5 -right-0.5 flex size-5 min-w-5 items-center justify-center rounded-full border border-solid border-white bg-brand-forest p-px text-center text-[10px] font-bold leading-none text-white";
 
 /** Desktop search pill (Figma 22:394 — lengthened toward available header space). */
 export const SITE_HEADER_SEARCH_PILL =

@@ -29,6 +29,8 @@ type ProductCardProps = {
   isSignedIn?: boolean;
   wishlistLabel?: string;
   addToCartLabel?: string;
+  /** When true, cart control opens the PDP so the shopper can configure the dish. */
+  requiresCustomization?: boolean;
   className?: string;
   /**
    * `fixed` — Figma 300×419 (catalog / home).
@@ -62,6 +64,7 @@ export function ProductCard({
   isSignedIn = false,
   wishlistLabel,
   addToCartLabel,
+  requiresCustomization = false,
   className = "",
   layout = "fixed",
 }: ProductCardProps) {
@@ -246,6 +249,8 @@ export function ProductCard({
               disabled={!inStock}
               size="md"
               icon="cart-plus"
+              productHref={href}
+              requiresCustomization={requiresCustomization}
               className={`mt-auto rounded-[40px] bg-brand-forest hover:bg-[#1e3f1f] ${
                 fluid ? "size-11 [&_img]:h-5 [&_img]:w-6" : "size-[50px]"
               }`}

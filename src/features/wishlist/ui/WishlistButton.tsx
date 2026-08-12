@@ -6,6 +6,11 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { toggleWishlistAction } from "@/features/wishlist/actions";
+import {
+  adjustWishlistCount,
+  revertWishlistCountAdjust,
+  settleWishlistCountAdjust,
+} from "@/features/storefront-chrome/storefront-counts-store";
 import type { Locale } from "@/lib/i18n/config";
 
 type WishlistButtonProps = {
@@ -53,16 +58,24 @@ export function WishlistButton({
 
     startTransition(async () => {
       const previous = inWishlist;
-      setInWishlist(!previous);
+      const next = !previous;
+      setInWishlist(next);
+      adjustWishlistCount(next ? 1 : -1);
       const result = await toggleWishlistAction(productId);
       if (!result.ok) {
         setInWishlist(previous);
+        revertWishlistCountAdjust(previous ? 1 : -1);
         if (result.error.code === "UNAUTHENTICATED") {
           router.push(`/${locale}/login`);
         }
         return;
       }
       setInWishlist(result.value.inWishlist);
+      if (result.value.inWishlist !== next) {
+        revertWishlistCountAdjust(result.value.inWishlist ? 1 : -1);
+      } else {
+        settleWishlistCountAdjust();
+      }
       router.refresh();
     });
   }

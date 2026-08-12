@@ -153,6 +153,7 @@ export default async function ProductsPage({
                 isSignedIn={Boolean(user)}
                 wishlistLabel={dictionary.nav.wishlist}
                 addToCartLabel={dictionary.product.addToCart}
+                requiresCustomization={product.hasCustomizationOptions}
                 className="w-full max-w-[300px]"
               />
             ))}

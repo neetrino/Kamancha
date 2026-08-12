@@ -1,10 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { addToCart } from "@/features/cart/cart";
+import { flyToCart } from "@/features/cart/ui/fly-to-cart";
 import type { ProductModifierChoice } from "@/features/products/types";
+import {
+  adjustCartItemCount,
+  revertCartItemCountAdjust,
+  settleCartItemCountAdjust,
+} from "@/features/storefront-chrome/storefront-counts-store";
 
 const CART_PLUS_SRC = "/assets/brand/product/cart-plus-dark.svg";
 
@@ -114,9 +120,8 @@ export function ProductPurchaseControls({
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
   const [additionIds, setAdditionIds] = useState<string[]>([]);
   const [exceptionIds, setExceptionIds] = useState<string[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const addButtonRef = useRef<HTMLButtonElement>(null);
   const disabled = maxQty < 1;
 
   const additionExtras = useMemo(() => {
@@ -127,24 +132,28 @@ export function ProductPurchaseControls({
   function changeQuantity(next: number): void {
     if (disabled) return;
     setQuantity(Math.min(Math.max(1, next), maxQty));
-    setMessage(null);
     setError(null);
   }
 
   function handleAdd(): void {
     if (disabled || quantity < 1) return;
-    setMessage(null);
     setError(null);
-    startTransition(async () => {
-      try {
-        await addToCart(productId, quantity, {
-          modifierIds: [...additionIds, ...exceptionIds],
-        });
-        setMessage(labels.added);
-      } catch {
+    if (addButtonRef.current) {
+      flyToCart(addButtonRef.current);
+    }
+    adjustCartItemCount(quantity);
+
+    const selectedModifiers = [...additionIds, ...exceptionIds];
+    void addToCart(productId, quantity, {
+      modifierIds: selectedModifiers,
+    })
+      .then(() => {
+        settleCartItemCountAdjust();
+      })
+      .catch(() => {
+        revertCartItemCountAdjust(-quantity);
         setError(labels.error);
-      }
-    });
+      });
   }
 
   return (
@@ -169,7 +178,7 @@ export function ProductPurchaseControls({
             <button
               type="button"
               aria-label={labels.decreaseQuantity}
-              disabled={disabled || quantity <= 1 || pending}
+              disabled={disabled || quantity <= 1}
               onClick={() => changeQuantity(quantity - 1)}
               className="flex size-[52px] items-center justify-center text-2xl font-light text-white transition hover:bg-white/10 disabled:opacity-40"
             >
@@ -184,7 +193,7 @@ export function ProductPurchaseControls({
             <button
               type="button"
               aria-label={labels.increaseQuantity}
-              disabled={disabled || quantity >= maxQty || pending}
+              disabled={disabled || quantity >= maxQty}
               onClick={() => changeQuantity(quantity + 1)}
               className="flex size-[52px] items-center justify-center text-2xl font-light text-white transition hover:bg-white/10 disabled:opacity-40"
             >
@@ -193,8 +202,9 @@ export function ProductPurchaseControls({
           </div>
 
           <button
+            ref={addButtonRef}
             type="button"
-            disabled={disabled || pending}
+            disabled={disabled}
             onClick={handleAdd}
             className="inline-flex h-14 min-w-0 max-w-full items-center gap-2.5 rounded-[50px] bg-white px-5 text-base font-semibold text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50 sm:gap-3 sm:px-7"
           >
@@ -207,11 +217,7 @@ export function ProductPurchaseControls({
               aria-hidden
             />
             <span className="truncate">
-              {disabled
-                ? labels.outOfStock
-                : pending
-                  ? labels.adding
-                  : labels.addToCart}
+              {disabled ? labels.outOfStock : labels.addToCart}
             </span>
           </button>
         </div>
@@ -227,7 +233,7 @@ export function ProductPurchaseControls({
         title={labels.exceptions}
         options={exceptions}
         selectedIds={exceptionIds}
-        disabled={disabled || pending}
+        disabled={disabled}
         showPriceHint={false}
         onToggle={(id) => setExceptionIds((prev) => toggleId(prev, id))}
       />
@@ -236,16 +242,11 @@ export function ProductPurchaseControls({
         title={labels.additions}
         options={additions}
         selectedIds={additionIds}
-        disabled={disabled || pending}
+        disabled={disabled}
         showPriceHint
         onToggle={(id) => setAdditionIds((prev) => toggleId(prev, id))}
       />
 
-      {message ? (
-        <p className="text-sm text-[#84d086]" role="status">
-          {message}
-        </p>
-      ) : null}
       {error ? (
         <p className="text-sm text-red-300" role="alert">
           {error}

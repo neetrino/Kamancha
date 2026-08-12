@@ -54,6 +54,7 @@ function toProductCards(
       imageUrl: product.imageUrl,
       inStock: product.stockOnHand > 0,
       inWishlist: wishlistIds.has(product.id),
+      requiresCustomization: product.hasCustomizationOptions,
     };
   });
 }

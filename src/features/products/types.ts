@@ -18,6 +18,8 @@ export type CatalogProduct = {
   stockOnHand: number;
   translation: LocaleTranslation;
   imageUrl: string | null;
+  /** True when the dish has additions/exceptions to choose on the PDP. */
+  hasCustomizationOptions: boolean;
 };
 
 export type ProductGalleryImage = {
