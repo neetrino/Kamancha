@@ -13,10 +13,14 @@ import {
 import { AppLink } from "@/components/ui/AppLink";
 import { SideSheet } from "@/components/ui/SideSheet";
 import { removeItem, updateQuantity } from "@/features/cart/cart";
-import type { CartDrawerView } from "@/features/cart/get-cart-drawer-view";
+import type {
+  CartDrawerItemView,
+  CartDrawerView,
+} from "@/features/cart/get-cart-drawer-view";
 import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
 import {
   adjustCartItemCount,
+  revertCartItemCountAdjust,
   setCartItemCount,
   settleCartItemCountAdjust,
   useCartItemCount,
@@ -55,6 +59,23 @@ function formatItemCount(
   return labels.itemsMany.replace("{count}", String(count));
 }
 
+function withUpdatedQuantity(
+  items: CartDrawerItemView[],
+  itemId: string,
+  quantity: number,
+): CartDrawerItemView[] {
+  if (quantity < 1) {
+    return items.filter((item) => item.id !== itemId);
+  }
+  return items.map((item) =>
+    item.id === itemId ? { ...item, quantity } : item,
+  );
+}
+
+function recountItems(items: CartDrawerItemView[]): number {
+  return items.reduce((sum, item) => sum + item.quantity, 0);
+}
+
 export function CartDrawer({
   locale,
   currency,
@@ -66,13 +87,27 @@ export function CartDrawer({
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<CartDrawerView | null>(null);
   const [loadingView, setLoadingView] = useState(false);
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const labels = dictionary.cartDrawer;
   const liveItemCount = useCartItemCount(itemCount);
   const badgeCount = liveItemCount;
-  const hasItems = Boolean(
-    view ? view.items.length > 0 : liveItemCount > 0,
-  );
+  const hasItems = Boolean(view ? view.items.length > 0 : liveItemCount > 0);
+
+  function applyView(next: CartDrawerView): void {
+    setView(next);
+    setCartItemCount(next.itemCount);
+  }
+
+  function syncViewInBackground(): void {
+    void loadCartDrawerViewAction(locale, currency)
+      .then((next) => {
+        applyView(next);
+        settleCartItemCountAdjust();
+      })
+      .catch(() => {
+        settleCartItemCountAdjust();
+      });
+  }
 
   function prefetchDrawerView(): void {
     if (view || loadingView || open) {
@@ -81,8 +116,7 @@ export function CartDrawer({
     setLoadingView(true);
     startTransition(async () => {
       const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      setCartItemCount(next.itemCount);
+      applyView(next);
       setLoadingView(false);
     });
   }
@@ -92,8 +126,7 @@ export function CartDrawer({
     setLoadingView(true);
     startTransition(async () => {
       const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      setCartItemCount(next.itemCount);
+      applyView(next);
       setLoadingView(false);
     });
   }
@@ -103,31 +136,56 @@ export function CartDrawer({
   }
 
   function changeQuantity(itemId: string, quantity: number): void {
-    const current = view?.items.find((item) => item.id === itemId);
-    const previousQty = current?.quantity ?? 0;
-    const nextQty = Math.max(0, quantity);
-    adjustCartItemCount(nextQty - previousQty);
+    if (!view) return;
+    const current = view.items.find((item) => item.id === itemId);
+    if (!current) return;
 
-    startTransition(async () => {
-      await updateQuantity(itemId, quantity);
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      setCartItemCount(next.itemCount);
-      settleCartItemCountAdjust();
+    const nextQty = Math.max(0, quantity);
+    const delta = nextQty - current.quantity;
+    if (delta === 0) return;
+
+    const nextItems = withUpdatedQuantity(view.items, itemId, nextQty);
+    const nextCount = recountItems(nextItems);
+    setView({
+      ...view,
+      items: nextItems,
+      itemCount: nextCount,
     });
+    adjustCartItemCount(delta);
+
+    void updateQuantity(itemId, nextQty)
+      .then(() => {
+        syncViewInBackground();
+      })
+      .catch(() => {
+        setView(view);
+        revertCartItemCountAdjust(-delta);
+      });
   }
 
   function removeCartItem(itemId: string): void {
-    const current = view?.items.find((item) => item.id === itemId);
-    adjustCartItemCount(-(current?.quantity ?? 0));
+    if (!view) return;
+    const current = view.items.find((item) => item.id === itemId);
+    if (!current) return;
 
-    startTransition(async () => {
-      await removeItem(itemId);
-      const next = await loadCartDrawerViewAction(locale, currency);
-      setView(next);
-      setCartItemCount(next.itemCount);
-      settleCartItemCountAdjust();
+    const previous = view;
+    const nextItems = view.items.filter((item) => item.id !== itemId);
+    const nextCount = recountItems(nextItems);
+    setView({
+      ...view,
+      items: nextItems,
+      itemCount: nextCount,
     });
+    adjustCartItemCount(-current.quantity);
+
+    void removeItem(itemId)
+      .then(() => {
+        syncViewInBackground();
+      })
+      .catch(() => {
+        setView(previous);
+        revertCartItemCountAdjust(current.quantity);
+      });
   }
 
   return (
@@ -151,11 +209,7 @@ export function CartDrawer({
           ) : null}
         </div>
 
-        <div
-          className={`min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 ${
-            pending || loadingView ? "opacity-70" : ""
-          }`}
-        >
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
           {loadingView && !view ? (
             <div className="space-y-3">
               <div className="h-24 animate-pulse rounded-[20px] bg-gray-100" />
@@ -195,110 +249,107 @@ export function CartDrawer({
                     : null;
 
                 return (
-                <li
-                  key={item.id}
-                  className="rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm"
-                >
-                  <div className="flex gap-3">
-                    {productHref ? (
-                      <AppLink
-                        href={productHref}
-                        prefetchPolicy="intent"
-                        onClick={closeDrawer}
-                        className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50"
-                      >
-                        <Image
-                          src={STOREFRONT_PRODUCT_PHOTO}
-                          alt={item.title}
-                          fill
-                          sizes="96px"
-                          className="object-cover"
-                        />
-                      </AppLink>
-                    ) : (
-                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
-                        <Image
-                          src={STOREFRONT_PRODUCT_PHOTO}
-                          alt={item.title}
-                          fill
-                          sizes="96px"
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex min-w-0 flex-1 flex-col">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          {productHref ? (
-                            <AppLink
-                              href={productHref}
-                              prefetchPolicy="intent"
-                              onClick={closeDrawer}
-                              className="line-clamp-2 text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
-                            >
-                              {item.title}
-                            </AppLink>
-                          ) : (
-                            <p className="line-clamp-2 text-sm font-medium text-gray-900">
-                              {item.title}
-                            </p>
-                          )}
-                          {item.modifierSummary ? (
-                            <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
-                              {item.modifierSummary}
-                            </p>
-                          ) : null}
-                          <p className="mt-1 text-sm font-semibold text-gray-900">
-                            {item.lineTotalFormatted}
-                          </p>
-                          <p className="mt-0.5 text-xs text-gray-500">
-                            {item.unitPriceFormatted} × {item.quantity}
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeCartItem(item.id)}
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-                          aria-label={labels.removeItem}
-                          disabled={pending}
+                  <li
+                    key={item.id}
+                    className="rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm"
+                  >
+                    <div className="flex gap-3">
+                      {productHref ? (
+                        <AppLink
+                          href={productHref}
+                          prefetchPolicy="intent"
+                          onClick={closeDrawer}
+                          className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50"
                         >
-                          <X className="h-4 w-4" aria-hidden />
-                        </button>
-                      </div>
+                          <Image
+                            src={STOREFRONT_PRODUCT_PHOTO}
+                            alt={item.title}
+                            fill
+                            sizes="96px"
+                            className="object-cover"
+                          />
+                        </AppLink>
+                      ) : (
+                        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
+                          <Image
+                            src={STOREFRONT_PRODUCT_PHOTO}
+                            alt={item.title}
+                            fill
+                            sizes="96px"
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
 
-                      <div className="mt-auto flex justify-end pt-3">
-                        <div className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-sky-50/70 px-1 py-0.5">
+                      <div className="flex min-w-0 flex-1 flex-col">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            {productHref ? (
+                              <AppLink
+                                href={productHref}
+                                prefetchPolicy="intent"
+                                onClick={closeDrawer}
+                                className="line-clamp-2 text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
+                              >
+                                {item.title}
+                              </AppLink>
+                            ) : (
+                              <p className="line-clamp-2 text-sm font-medium text-gray-900">
+                                {item.title}
+                              </p>
+                            )}
+                            {item.modifierSummary ? (
+                              <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
+                                {item.modifierSummary}
+                              </p>
+                            ) : null}
+                            <p className="mt-1 text-sm font-semibold text-gray-900">
+                              {item.lineTotalFormatted}
+                            </p>
+                            <p className="mt-0.5 text-xs text-gray-500">
+                              {item.unitPriceFormatted} × {item.quantity}
+                            </p>
+                          </div>
                           <button
                             type="button"
-                            onClick={() =>
-                              changeQuantity(item.id, item.quantity - 1)
-                            }
-                            className="flex h-7 w-7 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-white"
-                            aria-label={labels.decreaseQuantity}
-                            disabled={pending}
+                            onClick={() => removeCartItem(item.id)}
+                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                            aria-label={labels.removeItem}
                           >
-                            <Minus className="h-3.5 w-3.5" aria-hidden />
+                            <X className="h-4 w-4" aria-hidden />
                           </button>
-                          <span className="min-w-5 text-center text-sm font-medium tabular-nums text-gray-900">
-                            {item.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              changeQuantity(item.id, item.quantity + 1)
-                            }
-                            className="flex h-7 w-7 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-white"
-                            aria-label={labels.increaseQuantity}
-                            disabled={pending}
-                          >
-                            <Plus className="h-3.5 w-3.5" aria-hidden />
-                          </button>
+                        </div>
+
+                        <div className="mt-auto flex justify-end pt-3">
+                          <div className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-sky-50/70 px-1 py-0.5">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                changeQuantity(item.id, item.quantity - 1)
+                              }
+                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-white"
+                              aria-label={labels.decreaseQuantity}
+                            >
+                              <Minus className="h-3.5 w-3.5" aria-hidden />
+                            </button>
+                            <span className="min-w-5 text-center text-sm font-medium tabular-nums text-gray-900">
+                              {item.quantity}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                changeQuantity(item.id, item.quantity + 1)
+                              }
+                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-white"
+                              aria-label={labels.increaseQuantity}
+                            >
+                              <Plus className="h-3.5 w-3.5" aria-hidden />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </li>
+                  </li>
                 );
               })}
             </ul>

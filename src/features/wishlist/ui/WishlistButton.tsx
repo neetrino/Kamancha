@@ -2,8 +2,8 @@
 
 import type { MouseEvent } from "react";
 import { Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { toggleWishlistAction } from "@/features/wishlist/actions";
 import {
@@ -33,8 +33,15 @@ export function WishlistButton({
   size = "md",
 }: WishlistButtonProps) {
   const router = useRouter();
+  const pathname = usePathname() ?? `/${locale}`;
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
-  const [pending, startTransition] = useTransition();
+  const [prevInitial, setPrevInitial] = useState(initialInWishlist);
+
+  if (initialInWishlist !== prevInitial) {
+    setPrevInitial(initialInWishlist);
+    setInWishlist(initialInWishlist);
+  }
+
   const iconClass =
     size === "sm"
       ? "h-4 w-4"
@@ -56,12 +63,12 @@ export function WishlistButton({
       return;
     }
 
-    startTransition(async () => {
-      const previous = inWishlist;
-      const next = !previous;
-      setInWishlist(next);
-      adjustWishlistCount(next ? 1 : -1);
-      const result = await toggleWishlistAction(productId);
+    const previous = inWishlist;
+    const next = !previous;
+    setInWishlist(next);
+    adjustWishlistCount(next ? 1 : -1);
+
+    void toggleWishlistAction(productId).then((result) => {
       if (!result.ok) {
         setInWishlist(previous);
         revertWishlistCountAdjust(previous ? 1 : -1);
@@ -70,13 +77,18 @@ export function WishlistButton({
         }
         return;
       }
+
       setInWishlist(result.value.inWishlist);
       if (result.value.inWishlist !== next) {
         revertWishlistCountAdjust(result.value.inWishlist ? 1 : -1);
       } else {
         settleWishlistCountAdjust();
       }
-      router.refresh();
+
+      // Wishlist grid needs a soft refresh after unlike; elsewhere badge is enough.
+      if (pathname.includes("/wishlist")) {
+        router.refresh();
+      }
     });
   }
 
@@ -84,10 +96,9 @@ export function WishlistButton({
     <button
       type="button"
       onClick={handleClick}
-      disabled={pending}
       aria-label={label}
       aria-pressed={inWishlist}
-      className={`inline-flex items-center justify-center rounded-full transition disabled:opacity-60 ${className}`}
+      className={`inline-flex items-center justify-center rounded-full transition ${className}`}
     >
       <Heart
         className={`${iconClass} ${

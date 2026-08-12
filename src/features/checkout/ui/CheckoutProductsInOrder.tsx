@@ -2,11 +2,16 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
 
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { removeItem } from "@/features/cart/cart";
+import {
+  adjustCartItemCount,
+  revertCartItemCountAdjust,
+  settleCartItemCountAdjust,
+} from "@/features/storefront-chrome/storefront-counts-store";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 type CheckoutProductsInOrderProps = {
@@ -39,11 +44,12 @@ export function CheckoutProductsInOrder({
 }: CheckoutProductsInOrderProps) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
-  const [pending, startTransition] = useTransition();
+  const [prevInitialProducts, setPrevInitialProducts] = useState(initialProducts);
 
-  useEffect(() => {
+  if (initialProducts !== prevInitialProducts) {
+    setPrevInitialProducts(initialProducts);
     setProducts(initialProducts);
-  }, [initialProducts]);
+  }
 
   const itemCount = products.reduce((sum, product) => sum + product.quantity, 0);
 
@@ -52,13 +58,23 @@ export function CheckoutProductsInOrder({
   }
 
   function onRemove(itemId: string): void {
-    setProducts((current) => current.filter((product) => product.id !== itemId));
+    const current = products.find((product) => product.id === itemId);
+    if (!current) return;
+
+    const previous = products;
+    setProducts((list) => list.filter((product) => product.id !== itemId));
+    adjustCartItemCount(-current.quantity);
     onCartChanged?.();
 
-    startTransition(async () => {
-      await removeItem(itemId);
-      router.refresh();
-    });
+    void removeItem(itemId)
+      .then(() => {
+        settleCartItemCountAdjust();
+        router.refresh();
+      })
+      .catch(() => {
+        setProducts(previous);
+        revertCartItemCountAdjust(current.quantity);
+      });
   }
 
   return (
@@ -91,8 +107,7 @@ export function CheckoutProductsInOrder({
               <button
                 type="button"
                 onClick={() => onRemove(product.id)}
-                disabled={pending}
-                className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white text-gray-700 shadow-sm transition-colors hover:text-gray-900 disabled:opacity-60"
+                className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white text-gray-700 shadow-sm transition-colors hover:text-gray-900"
                 aria-label={removeItemLabel}
               >
                 <X className="h-3.5 w-3.5" aria-hidden="true" />
