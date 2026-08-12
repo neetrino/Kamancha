@@ -21,6 +21,7 @@ import {
 } from "@/features/products/application/search-header-products-action";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const SEARCH_EXIT_MS = 320;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -315,15 +316,13 @@ export function HeaderSearch({
                             className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
                           >
                             <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                              {product.imageUrl ? (
-                                <Image
-                                  src={product.imageUrl}
-                                  alt=""
-                                  fill
-                                  sizes="56px"
-                                  className="object-cover"
-                                />
-                              ) : null}
+                              <Image
+                                src={STOREFRONT_PRODUCT_PHOTO}
+                                alt=""
+                                fill
+                                sizes="56px"
+                                className="object-cover"
+                              />
                             </div>
                             <div className="min-w-0 flex-1">
                               <p className="truncate text-sm font-medium text-gray-900">

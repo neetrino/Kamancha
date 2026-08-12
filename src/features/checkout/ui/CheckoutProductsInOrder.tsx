@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { removeItem } from "@/features/cart/cart";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 type CheckoutProductsInOrderProps = {
   products: CheckoutOrderProduct[];
@@ -79,19 +80,13 @@ export function CheckoutProductsInOrder({
           <li key={product.id} className="w-24 sm:w-28">
             <div className="relative">
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-white">
-                {product.imageUrl ? (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.title}
-                    fill
-                    sizes="112px"
-                    className="object-contain p-2"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
-                    —
-                  </div>
-                )}
+                <Image
+                  src={STOREFRONT_PRODUCT_PHOTO}
+                  alt={product.title}
+                  fill
+                  sizes="112px"
+                  className="object-cover"
+                />
               </div>
               <button
                 type="button"

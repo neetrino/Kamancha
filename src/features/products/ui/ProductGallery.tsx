@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import type { ProductGalleryImage } from "@/features/products/types";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const ZOOM_SRC = "/assets/brand/product/zoom-in.svg";
 
@@ -32,10 +33,26 @@ export function ProductGallery({
   zoomLabel,
   closeZoomLabel,
 }: ProductGalleryProps) {
-  const [selectedId, setSelectedId] = useState(images[0]?.id ?? null);
+  const galleryImages: ProductGalleryImage[] =
+    images.length > 0
+      ? images.map((image) => ({
+          ...image,
+          url: STOREFRONT_PRODUCT_PHOTO,
+        }))
+      : [
+          {
+            id: "placeholder",
+            url: STOREFRONT_PRODUCT_PHOTO,
+            alt: title,
+            isPrimary: true,
+          },
+        ];
+  const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
   const [zoomed, setZoomed] = useState(false);
   const selected =
-    images.find((image) => image.id === selectedId) ?? images[0] ?? null;
+    galleryImages.find((image) => image.id === selectedId) ??
+    galleryImages[0] ??
+    null;
 
   useEffect(() => {
     if (!zoomed) return;
@@ -49,14 +66,14 @@ export function ProductGallery({
   }, [zoomed]);
 
   return (
-    <div className="flex w-full max-w-[520px] flex-col gap-4">
+    <div className="flex w-full flex-col gap-4 lg:w-[min(100%,640px)] lg:shrink-0">
       <div className="relative aspect-[520/420] w-full overflow-hidden rounded-[30px] border-[3px] border-white bg-white">
         {selected ? (
           <Image
             src={selected.url}
             alt={selected.alt || title}
             fill
-            sizes="(max-width: 1024px) 100vw, 520px"
+            sizes="(max-width: 1024px) 100vw, 640px"
             className="object-cover"
             priority
           />
@@ -90,18 +107,18 @@ export function ProductGallery({
         ) : null}
       </div>
 
-      {images.length > 1 ? (
-        <ul className="flex gap-2.5" role="list">
-          {images.map((image) => {
+      {galleryImages.length > 1 ? (
+        <ul className="flex flex-wrap gap-2.5" role="list">
+          {galleryImages.map((image) => {
             const isActive = image.id === selected?.id;
             return (
-              <li key={image.id} className="min-w-0 flex-1">
+              <li key={image.id} className="size-[72px] shrink-0 sm:size-[90px]">
                 <button
                   type="button"
                   onClick={() => setSelectedId(image.id)}
                   aria-label={image.alt || title}
                   aria-pressed={isActive}
-                  className={`relative h-[72px] w-full overflow-hidden rounded-2xl transition sm:h-[90px] ${
+                  className={`relative size-full overflow-hidden rounded-2xl transition ${
                     isActive
                       ? "border-2 border-[#84d086] opacity-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)]"
                       : "border-2 border-transparent opacity-60 hover:opacity-90"
@@ -111,7 +128,7 @@ export function ProductGallery({
                     src={image.url}
                     alt=""
                     fill
-                    sizes="120px"
+                    sizes="90px"
                     className="object-cover"
                   />
                 </button>

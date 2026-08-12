@@ -4,6 +4,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import { AddToCartButton } from "@/features/cart/ui/AddToCartButton";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const DIVIDER_SRC = "/assets/brand/home/product-card-divider.svg";
 const STAR_SRC = "/assets/brand/home/star.svg";
@@ -52,7 +53,7 @@ export function ProductCard({
   categoryLabel = null,
   rating = null,
   discountOffLabel = "{percent}% Off",
-  imageUrl,
+  imageUrl: _imageUrl,
   inStock,
   priority = false,
   locale,
@@ -93,24 +94,18 @@ export function ProductCard({
           prefetchPolicy={priority ? "intent" : "auto"}
           className="absolute inset-0 block"
         >
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={title}
-              fill
-              sizes={
-                fluid
-                  ? "(min-width:1280px) 220px, (min-width:1024px) 20vw, (min-width:640px) 40vw, 50vw"
-                  : "287px"
-              }
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-              priority={priority}
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm text-neutral-400">
-              No image
-            </div>
-          )}
+          <Image
+            src={STOREFRONT_PRODUCT_PHOTO}
+            alt={title}
+            fill
+            sizes={
+              fluid
+                ? "(min-width:1280px) 220px, (min-width:1024px) 20vw, (min-width:640px) 40vw, 50vw"
+                : "287px"
+            }
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            priority={priority}
+          />
         </AppLink>
 
         {discountPercent != null ? (

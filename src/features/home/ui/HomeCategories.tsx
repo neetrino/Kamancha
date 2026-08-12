@@ -7,6 +7,7 @@ import {
   HomeStaggerItem,
 } from "@/features/home/ui/home-motion";
 import { BRAND_ORNAMENT_SRC } from "@/lib/brand/assets";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 type CategoryItem = {
   id: string;
@@ -103,17 +104,13 @@ export function HomeCategories({
                     <CategoryLeafOrnaments />
 
                     <div className="relative ml-1.5 h-[124px] w-[178px] shrink-0 overflow-hidden rounded-[20px]">
-                      {category.imageUrl ? (
-                        <Image
-                          src={category.imageUrl}
-                          alt=""
-                          fill
-                          sizes="178px"
-                          className="object-cover object-center"
-                        />
-                      ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-neutral-100 to-neutral-200" />
-                      )}
+                      <Image
+                        src={STOREFRONT_PRODUCT_PHOTO}
+                        alt=""
+                        fill
+                        sizes="178px"
+                        className="object-cover object-center"
+                      />
                     </div>
 
                     <div className="relative z-[1] flex min-w-0 flex-1 flex-col justify-center pr-16 pl-3">

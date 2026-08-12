@@ -148,10 +148,10 @@ export function ProductPurchaseControls({
   }
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="flex w-full min-w-0 flex-col gap-6">
       <div
         data-node-id="106:3285"
-        className="flex h-20 w-full flex-nowrap items-center justify-between gap-6 xl:gap-[102px]"
+        className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:gap-y-3"
       >
         <div className="flex shrink-0 flex-col items-start gap-px">
           <p className="whitespace-nowrap text-4xl leading-9 font-bold text-white">
@@ -164,8 +164,8 @@ export function ProductPurchaseControls({
           ) : null}
         </div>
 
-        <div className="flex shrink-0 flex-nowrap items-center justify-end gap-6 sm:gap-[43px]">
-          <div className="inline-flex h-[52px] w-[144px] items-center overflow-hidden rounded-[50px] bg-white/10">
+        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-3">
+          <div className="inline-flex h-[52px] w-[144px] shrink-0 items-center overflow-hidden rounded-[50px] bg-white/10">
             <button
               type="button"
               aria-label={labels.decreaseQuantity}
@@ -196,20 +196,23 @@ export function ProductPurchaseControls({
             type="button"
             disabled={disabled || pending}
             onClick={handleAdd}
-            className="inline-flex h-14 shrink-0 items-center gap-3 rounded-[50px] bg-white px-7 text-base font-semibold whitespace-nowrap text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-14 min-w-0 max-w-full items-center gap-2.5 rounded-[50px] bg-white px-5 text-base font-semibold text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50 sm:gap-3 sm:px-7"
           >
             <Image
               src={CART_PLUS_SRC}
               alt=""
               width={26}
               height={22}
+              className="shrink-0"
               aria-hidden
             />
-            {disabled
-              ? labels.outOfStock
-              : pending
-                ? labels.adding
-                : labels.addToCart}
+            <span className="truncate">
+              {disabled
+                ? labels.outOfStock
+                : pending
+                  ? labels.adding
+                  : labels.addToCart}
+            </span>
           </button>
         </div>
       </div>

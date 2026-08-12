@@ -18,6 +18,7 @@ import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 type CartDrawerTriggerArgs = {
   open: boolean;
@@ -173,19 +174,13 @@ export function CartDrawer({
                 >
                   <div className="flex gap-3">
                     <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
-                      {item.imageUrl ? (
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.title}
-                          fill
-                          sizes="96px"
-                          className="object-contain p-1"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
-                          —
-                        </div>
-                      )}
+                      <Image
+                        src={STOREFRONT_PRODUCT_PHOTO}
+                        alt={item.title}
+                        fill
+                        sizes="96px"
+                        className="object-cover"
+                      />
                     </div>
 
                     <div className="flex min-w-0 flex-1 flex-col">
