@@ -3,12 +3,19 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const SIDEBAR_WIDTH_PX = 280;
-/** Matches `top-28` under the sticky site header. */
-const TOP_OFFSET_PX = 112;
+/** Space between sticky header bottom and the category sidebar. */
+const HEADER_GAP_PX = 28;
+const FALLBACK_TOP_OFFSET_PX = 140;
 
 type CatalogStickySidebarProps = {
   children: ReactNode;
 };
+
+function readHeaderBottom(): number {
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  if (!header) return FALLBACK_TOP_OFFSET_PX - HEADER_GAP_PX;
+  return header.getBoundingClientRect().bottom;
+}
 
 /**
  * Catalog filter sidebar that stays pinned while the product grid scrolls.
@@ -22,11 +29,13 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
     top: number;
     left: number;
     width: number;
+    maxHeight: number;
   }>({
     position: "relative",
     top: 0,
     left: 0,
     width: SIDEBAR_WIDTH_PX,
+    maxHeight: 0,
   });
   const [spacerHeight, setSpacerHeight] = useState(0);
 
@@ -43,22 +52,29 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
 
       const left = anchorRect.left;
       const width = anchorRect.width || SIDEBAR_WIDTH_PX;
+      const topOffset = readHeaderBottom() + HEADER_GAP_PX;
+      const viewportBottomPad = 24;
+      const maxHeight = Math.max(
+        160,
+        window.innerHeight - topOffset - viewportBottomPad,
+      );
 
-      if (anchorRect.top > TOP_OFFSET_PX) {
+      if (anchorRect.top > topOffset) {
         setStyle({
           position: "relative",
           top: 0,
           left: 0,
           width,
+          maxHeight,
         });
         return;
       }
 
-      let top = TOP_OFFSET_PX;
+      let top = topOffset;
       if (layout) {
         const layoutBottom = layout.getBoundingClientRect().bottom;
-        const maxTop = layoutBottom - panelHeight;
-        top = Math.min(TOP_OFFSET_PX, maxTop);
+        const maxTop = layoutBottom - Math.min(panelHeight, maxHeight);
+        top = Math.min(topOffset, maxTop);
       }
 
       setStyle({
@@ -66,6 +82,7 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
         top,
         left,
         width,
+        maxHeight,
       });
     }
 
@@ -78,6 +95,9 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
     const observer = new ResizeObserver(update);
     if (panel) observer.observe(panel);
     if (anchor) observer.observe(anchor);
+
+    const header = document.querySelector("[data-site-header]");
+    if (header) observer.observe(header);
 
     return () => {
       window.removeEventListener("scroll", update);
@@ -94,12 +114,13 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
     >
       <div
         ref={panelRef}
-        className="z-20 max-h-[calc(100dvh-8rem)] overflow-y-auto overscroll-contain pr-1 [scrollbar-gutter:stable] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/30 [&::-webkit-scrollbar-track]:bg-transparent"
+        className="z-20 overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         style={{
           position: style.position,
           top: style.position === "fixed" ? style.top : undefined,
           left: style.position === "fixed" ? style.left : undefined,
           width: style.width,
+          maxHeight: style.maxHeight || undefined,
         }}
       >
         {children}

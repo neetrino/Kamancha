@@ -190,7 +190,7 @@ export function CatalogFilterForm({
   return (
     <aside
       data-node-id="103:1278"
-      className={`flex w-full max-w-[280px] flex-col items-start ${className}`}
+      className={`flex w-full max-w-[280px] flex-col items-start pb-8 ${className}`}
     >
       <div className="w-full">
         <h2 className="font-big-fat-boii text-[18px] leading-[27px] font-normal tracking-[0.45px] text-white uppercase">
@@ -198,7 +198,7 @@ export function CatalogFilterForm({
         </h2>
 
         <div
-          className="flex flex-col pt-4"
+          className="flex flex-col pt-4 pb-6"
           role="listbox"
           aria-label={labels.categoryLabel}
         >
@@ -286,6 +286,10 @@ export function CatalogFilterForm({
               </div>
             );
           })}
+          <div
+            aria-hidden="true"
+            className="mt-4 h-px w-full bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          />
         </div>
       </div>
 
