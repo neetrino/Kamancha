@@ -1,23 +1,20 @@
-import Image from "next/image";
-
 /**
- * Figma `background 1` (103:2122) over Home page `#265127`:
- * absolute cover image + `mix-blend-mode: overlay`.
+ * Storefront paint texture (Figma `background 1`).
+ *
+ * Plain CSS background — no Next image optimizer, no blend mode, so the
+ * texture matches the source photo brightness.
  */
 export function StorefrontBackground() {
   return (
     <div
       className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       aria-hidden="true"
-    >
-      <Image
-        src="/assets/brand/home-texture.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover object-top mix-blend-overlay"
-      />
-    </div>
+      style={{
+        backgroundImage: "url(/assets/brand/storefront-texture.webp)",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "top center",
+        backgroundSize: "cover",
+      }}
+    />
   );
 }
