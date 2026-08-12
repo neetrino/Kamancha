@@ -7,26 +7,33 @@ import {
   SITE_HEADER_SCROLLED_SURFACE,
 } from "@/components/layout/site-header-classes";
 
-/** Start showing the scrolled chrome after a short scroll (Figma 173:143). */
-const SCROLL_THRESHOLD_PX = 12;
+/** Scroll distance over which the chrome eases fully in. */
+const SCROLL_FADE_RANGE_PX = 88;
 
 type SiteHeaderScrollShellProps = {
   children: ReactNode;
 };
+
+function easeOutCubic(t: number): number {
+  return 1 - (1 - t) ** 3;
+}
 
 /**
  * Sticky storefront header shell. On scroll, reveals the frosted green bar
  * with rounded bottom corners and pale gradient edge stroke (Figma 173:143).
  */
 export function SiteHeaderScrollShell({ children }: SiteHeaderScrollShellProps) {
-  const [scrolled, setScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     let frame = 0;
 
     function readScroll(): void {
       frame = 0;
-      setScrolled(window.scrollY > SCROLL_THRESHOLD_PX);
+      const next = easeOutCubic(
+        Math.min(1, Math.max(0, window.scrollY / SCROLL_FADE_RANGE_PX)),
+      );
+      setProgress((prev) => (Math.abs(prev - next) < 0.003 ? prev : next));
     }
 
     function onScroll(): void {
@@ -44,9 +51,9 @@ export function SiteHeaderScrollShell({ children }: SiteHeaderScrollShellProps) 
     };
   }, []);
 
-  const chromeVisibility = `pointer-events-none absolute inset-0 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
-    scrolled ? "opacity-100" : "opacity-0"
-  }`;
+  const scrolled = progress > 0.02;
+  const chromeClassName =
+    "pointer-events-none absolute inset-0 will-change-[opacity]";
 
   return (
     <div
@@ -57,11 +64,13 @@ export function SiteHeaderScrollShell({ children }: SiteHeaderScrollShellProps) 
       <div
         aria-hidden="true"
         data-node-id="173:143"
-        className={`${chromeVisibility} ${SITE_HEADER_SCROLLED_SURFACE}`}
+        className={`${chromeClassName} ${SITE_HEADER_SCROLLED_SURFACE}`}
+        style={{ opacity: progress }}
       />
       <div
         aria-hidden="true"
-        className={`${chromeVisibility} ${SITE_HEADER_SCROLLED_STROKE}`}
+        className={`${chromeClassName} ${SITE_HEADER_SCROLLED_STROKE}`}
+        style={{ opacity: progress }}
       />
       <div className="relative z-10">{children}</div>
     </div>
