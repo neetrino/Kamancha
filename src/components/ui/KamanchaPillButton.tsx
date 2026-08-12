@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { MouseEventHandler } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { BRAND_ORNAMENT_SRC } from "@/lib/brand/assets";
@@ -8,6 +9,7 @@ type KamanchaPillButtonProps = {
   label: string;
   variant?: "light" | "dark";
   className?: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
   /** Figma node id — hero CTA 22:435, view-all 22:200. */
   figmaNodeId?: string;
 };
@@ -51,6 +53,7 @@ export function KamanchaPillButton({
   label,
   variant = "light",
   className = "",
+  onClick,
   figmaNodeId = "22:435",
 }: KamanchaPillButtonProps) {
   const tones =
@@ -62,6 +65,7 @@ export function KamanchaPillButton({
     <AppLink
       href={href}
       prefetchPolicy="intent"
+      onClick={onClick}
       data-node-id={figmaNodeId}
       className={`kamancha-pill-button inline-flex h-16 w-full max-w-[280px] items-center justify-between gap-5 overflow-hidden rounded-[50px] pt-2 pb-[7px] text-left text-[18px] leading-6 sm:max-w-[316px] ${tones} ${className}`}
     >
