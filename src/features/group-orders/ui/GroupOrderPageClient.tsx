@@ -11,7 +11,6 @@ import {
   X,
 } from "lucide-react";
 
-import { AppLink } from "@/components/ui/AppLink";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
@@ -195,7 +194,7 @@ export function GroupOrderPageClient({
     <div
       className={`mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 ${pending ? "opacity-70" : ""}`}
     >
-      <div className="mb-6 flex items-start justify-between gap-3">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px]">
             {labels.manageTitle}
@@ -204,13 +203,12 @@ export function GroupOrderPageClient({
             {labels.status}: {view.status}
           </p>
         </div>
-        <AppLink
-          href={`/${locale}/products`}
-          prefetchPolicy="intent"
-          className="text-sm font-medium text-white/80 underline-offset-2 hover:underline"
-        >
-          {labels.browseMenu}
-        </AppLink>
+        <div className="w-full max-w-[280px] shrink-0 sm:max-w-[316px]">
+          <KamanchaPillButton
+            href={`/${locale}/products`}
+            label={labels.browseMenu}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
