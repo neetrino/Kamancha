@@ -1,6 +1,41 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/Button";
+
+const SUMMARY_HEADER_GAP_PX = 16;
+const SUMMARY_FALLBACK_TOP_PX = 140;
+
+function useSummaryStickyTop(): number {
+  const [top, setTop] = useState(SUMMARY_FALLBACK_TOP_PX);
+
+  useEffect(() => {
+    function update(): void {
+      const header = document.querySelector<HTMLElement>("[data-site-header]");
+      if (!header) {
+        setTop(SUMMARY_FALLBACK_TOP_PX);
+        return;
+      }
+      setTop(
+        Math.round(header.getBoundingClientRect().bottom + SUMMARY_HEADER_GAP_PX),
+      );
+    }
+
+    update();
+    window.addEventListener("resize", update);
+    const header = document.querySelector("[data-site-header]");
+    const observer = header ? new ResizeObserver(update) : null;
+    if (header && observer) observer.observe(header);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      observer?.disconnect();
+    };
+  }, []);
+
+  return top;
+}
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -11,11 +46,9 @@ type CheckoutOrderSummaryProps = {
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
-  taxLabel: string;
   totalLabel: string;
   subtotalFormatted: string;
   shippingFormatted: string;
-  taxFormatted: string;
   discountFormatted: string | null;
   totalFormatted: string;
   couponDraft: string;
@@ -38,11 +71,9 @@ export function CheckoutOrderSummary({
   discountLabel,
   subtotalLabel,
   shippingLabel,
-  taxLabel,
   totalLabel,
   subtotalFormatted,
   shippingFormatted,
-  taxFormatted,
   discountFormatted,
   totalFormatted,
   couponDraft,
@@ -55,9 +86,11 @@ export function CheckoutOrderSummary({
   placeOrderLabel,
   processingLabel,
 }: CheckoutOrderSummaryProps) {
+  const stickyTop = useSummaryStickyTop();
+
   return (
-    <div>
-      <section className="sticky top-4 rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7">
+    <div className="lg:sticky lg:self-start" style={{ top: stickyTop }}>
+      <section className="rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7">
         <h2 className="mb-6 text-lg font-bold tracking-tight text-gray-900">
           {title}
         </h2>
@@ -113,10 +146,6 @@ export function CheckoutOrderSummary({
           <div className="flex justify-between text-gray-600">
             <span>{shippingLabel}</span>
             <span className="text-right">{shippingFormatted}</span>
-          </div>
-          <div className="flex justify-between text-gray-600">
-            <span>{taxLabel}</span>
-            <span>{taxFormatted}</span>
           </div>
           <div className="border-t border-gray-200 pt-4">
             <div className="flex justify-between text-lg font-bold text-gray-900">
