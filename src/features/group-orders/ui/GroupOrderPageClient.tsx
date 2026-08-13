@@ -27,9 +27,13 @@ import {
   setJoinsClosedAction,
   updateSpendLimitAction,
 } from "@/features/group-orders/actions";
-import type { GroupOrderDetailView } from "@/features/group-orders/application/queries";
+import type {
+  GroupOrderDetailView,
+  GroupOrderItemView,
+} from "@/features/group-orders/application/queries";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const GLASS_PILL_BUTTON =
   "liquid-glass isolate inline-flex items-center justify-center overflow-hidden rounded-full px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
@@ -38,6 +42,12 @@ const PILL_FULL = "max-w-none sm:max-w-none";
 
 const BLOCK_TITLE =
   "font-big-fat-boii text-base font-normal tracking-wide text-black uppercase";
+
+const PRODUCT_THUMB_PX = 96;
+const PRODUCT_THUMB_RADIUS_PX = 16;
+const PRODUCT_CARD_MIN_PX = 200;
+const PRODUCT_CARD_MAX_PX = 320;
+const PRODUCT_TITLE_MAX_PX = 180;
 
 type GroupOrderPageClientProps = {
   locale: Locale;
@@ -231,7 +241,11 @@ export function GroupOrderPageClient({
 
       <section className="mb-6 space-y-2 liquid-glass isolate overflow-hidden rounded-3xl p-4 text-sm">
         <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 shrink-0 text-black" aria-hidden />
+          <Users
+            className="h-5 w-5 shrink-0 text-black"
+            strokeWidth={2.75}
+            aria-hidden
+          />
           <p className={BLOCK_TITLE}>
             {view.paymentMode === "ORGANIZER_PAYS_ALL"
               ? labels.payingOrganizer.replace(
@@ -427,7 +441,7 @@ export function GroupOrderPageClient({
                       </span>
                     ) : null}
                   </p>
-                  <p className="mt-0.5 text-sm text-gray-600">
+                  <p className="mt-0.5 text-sm text-white">
                     {participant.subtotalFormatted} ·{" "}
                     {paymentLabel(participant.paymentStatus, labels, {
                       paysAtCheckout:
@@ -449,10 +463,10 @@ export function GroupOrderPageClient({
                 </div>
                 <div className="flex shrink-0 items-start gap-1">
                   <p
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    className={`inline-flex rounded-full bg-white px-3.5 py-1 text-xs font-medium ${
                       participant.itemsReady
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "bg-amber-50 text-amber-800"
+                        ? "text-brand-forest"
+                        : "text-amber-500"
                     }`}
                   >
                     {participant.itemsReady ? labels.ready : labels.notReady}
@@ -480,52 +494,28 @@ export function GroupOrderPageClient({
               </div>
 
               {participant.items.length === 0 ? (
-                <p className="mt-3 text-sm text-gray-400">{labels.emptyItems}</p>
+                <p className="mt-3 text-sm text-white/70">{labels.emptyItems}</p>
               ) : (
-                <ul className="mt-3 space-y-2">
+                <ul className="relative z-[2] mt-3 flex gap-3 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {participant.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className="flex items-center gap-3 rounded-xl bg-gray-50 p-2"
-                    >
-                      <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-white">
-                        {item.imageUrl ? (
-                          <Image
-                            src={item.imageUrl}
-                            alt={item.title}
-                            fill
-                            className="object-contain p-0.5"
-                            sizes="48px"
-                          />
-                        ) : null}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900">
-                          {item.title} × {item.quantity}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {item.lineTotalFormatted}
-                        </p>
-                      </div>
-                      {(isOrganizer ||
-                        participant.id === view.currentParticipantId) &&
-                      canEdit ? (
-                        <button
-                          type="button"
-                          className="rounded-full p-1.5 text-gray-400 hover:bg-white hover:text-gray-700"
-                          aria-label={labels.removeItem}
-                          onClick={() =>
-                            run(async () =>
-                              removeGroupOrderItemAction({
-                                inviteToken,
-                                itemId: item.id,
-                              }),
-                            )
-                          }
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      ) : null}
+                    <li key={item.id}>
+                      <GroupOrderProductCard
+                        item={item}
+                        removeItemLabel={labels.removeItem}
+                        canRemove={
+                          (isOrganizer ||
+                            participant.id === view.currentParticipantId) &&
+                          canEdit
+                        }
+                        onRemove={(itemId) =>
+                          run(async () =>
+                            removeGroupOrderItemAction({
+                              inviteToken,
+                              itemId,
+                            }),
+                          )
+                        }
+                      />
                     </li>
                   ))}
                 </ul>
@@ -545,13 +535,13 @@ export function GroupOrderPageClient({
         {canEdit && view.currentParticipantId ? (
           iAmReady ? (
             <div
-              className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center"
+              className="rounded-[21px] bg-white px-5 py-4 text-center"
               role="status"
             >
-              <p className="text-sm font-semibold text-emerald-800">
+              <p className="font-big-fat-boii text-base font-normal tracking-wide text-brand-forest uppercase">
                 {labels.itemsReadyDone}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-emerald-700/90">
+              <p className="mt-1.5 text-sm leading-relaxed text-brand-forest">
                 {labels.itemsReadyDoneHint}
               </p>
             </div>
@@ -643,13 +633,13 @@ export function GroupOrderPageClient({
         currentParticipant &&
         (currentParticipant.paymentStatus === "PAID" ||
           currentParticipant.paymentStatus === "MARKED_RECEIVED") ? (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm text-emerald-900">
+          <p className="rounded-3xl border border-brand-forest bg-white px-5 py-4 text-center text-sm text-brand-forest">
             {labels.payYouPaid}
           </p>
         ) : null}
 
         {isOrganizer && view.status === "AWAITING_PAYMENTS" ? (
-          <p className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-950">
+          <p className="rounded-3xl border border-brand-forest bg-white px-5 py-4 text-center text-sm text-brand-forest">
             {labels.statusAwaitingCardPayments}
           </p>
         ) : null}
@@ -744,5 +734,88 @@ function JoinPanel({
         />
       </div>
     </div>
+  );
+}
+
+function GroupOrderProductCard({
+  item,
+  removeItemLabel,
+  canRemove,
+  onRemove,
+}: {
+  item: GroupOrderItemView;
+  removeItemLabel: string;
+  canRemove: boolean;
+  onRemove: (itemId: string) => void;
+}) {
+  const imageSrc = item.imageUrl ?? STOREFRONT_PRODUCT_PHOTO;
+
+  return (
+    <article
+      className="liquid-glass isolate w-max shrink-0 overflow-hidden rounded-[20px] p-3"
+      style={{
+        minWidth: PRODUCT_CARD_MIN_PX,
+        maxWidth: PRODUCT_CARD_MAX_PX,
+      }}
+    >
+      <div className="relative z-[2] flex items-stretch gap-3">
+        <div
+          className="relative block shrink-0 self-stretch overflow-hidden"
+          style={{
+            width: PRODUCT_THUMB_PX,
+            minHeight: PRODUCT_THUMB_PX,
+            borderRadius: PRODUCT_THUMB_RADIUS_PX,
+          }}
+        >
+          <Image
+            src={imageSrc}
+            alt={item.title}
+            fill
+            className="object-cover"
+            sizes={`${PRODUCT_THUMB_PX}px`}
+          />
+        </div>
+
+        <div className="flex w-max min-w-0 max-w-full flex-1 flex-col justify-between gap-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="w-max min-w-0 max-w-full">
+              <p
+                className="line-clamp-2 w-max text-sm font-medium text-gray-900"
+                style={{ maxWidth: PRODUCT_TITLE_MAX_PX }}
+              >
+                {item.title}
+              </p>
+              {item.modifierSummary ? (
+                <p
+                  className="mt-0.5 line-clamp-2 text-xs text-gray-500"
+                  title={item.modifierSummary}
+                >
+                  {item.modifierSummary}
+                </p>
+              ) : null}
+              <p className="mt-1 text-sm font-semibold text-gray-900">
+                {item.lineTotalFormatted}
+              </p>
+            </div>
+            {canRemove ? (
+              <button
+                type="button"
+                onClick={() => onRemove(item.id)}
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                aria-label={removeItemLabel}
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            ) : null}
+          </div>
+
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="inline-flex h-6 min-w-[24px] shrink-0 items-center justify-center rounded-full border border-gray-200 bg-sky-50/70 px-2 text-[11px] font-semibold text-gray-900">
+              ×{item.quantity}
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }
