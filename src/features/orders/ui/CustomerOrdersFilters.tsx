@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { Search } from "lucide-react";
 
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
@@ -73,13 +74,18 @@ export function CustomerOrdersFilters({
           className="w-full lg:w-[200px] lg:shrink-0"
           onValueChange={applyPayment}
         />
-        <input
-          name="q"
-          defaultValue={q ?? ""}
-          placeholder="Search by order #"
-          className={`${PROFILE_FIELD} min-w-0 text-sm lg:flex-1 lg:shrink`}
-          aria-label="Search orders"
-        />
+        <div
+          className={`${PROFILE_FIELD} flex min-w-0 items-center gap-2.5 lg:flex-1 lg:shrink`}
+        >
+          <Search className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
+          <input
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder="Search by order #"
+            className="h-full min-w-0 flex-1 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-500"
+            aria-label="Search orders"
+          />
+        </div>
       </form>
       <div className="relative z-[2] mt-4 border-t border-white/35 pt-3">
         <p className="text-sm text-gray-700">Total orders: {total}</p>
