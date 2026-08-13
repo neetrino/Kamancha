@@ -1,3 +1,6 @@
+import type { ReactNode } from "react";
+import { Mail, Phone } from "lucide-react";
+
 import { ProfileSidebarNav } from "@/features/profile/ui/ProfileSidebarNav";
 import { logoutAction } from "@/features/auth/logout-action";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -9,6 +12,23 @@ type ProfileSidebarProps = {
   user: SessionUser;
   dictionary: Dictionary["profile"];
 };
+
+function ProfileContactRow({
+  icon,
+  value,
+}: {
+  icon: ReactNode;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl border border-white/50 bg-white/55 px-3.5 py-2.5 text-left shadow-sm">
+      <span className="shrink-0 text-brand-forest">{icon}</span>
+      <p className="min-w-0 break-all text-xs font-medium text-gray-800 sm:text-sm">
+        {value}
+      </p>
+    </div>
+  );
+}
 
 export function ProfileSidebar({
   locale,
@@ -39,9 +59,16 @@ export function ProfileSidebar({
         </div>
 
         <div className="mt-5 flex flex-col gap-2">
-          <div className="rounded-2xl border border-white/50 bg-white/55 px-3.5 py-2.5 text-left text-xs font-medium break-words text-gray-800 shadow-sm sm:text-sm">
-            {user.email}
-          </div>
+          <ProfileContactRow
+            icon={<Mail className="h-4 w-4" aria-hidden />}
+            value={user.email}
+          />
+          {user.phone ? (
+            <ProfileContactRow
+              icon={<Phone className="h-4 w-4" aria-hidden />}
+              value={user.phone}
+            />
+          ) : null}
         </div>
       </div>
 

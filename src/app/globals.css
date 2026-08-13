@@ -575,6 +575,29 @@ body {
   }
 }
 
+.profile-nav-indicator {
+  transition-property: top, height;
+  transition-duration: var(--profile-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.profile-nav-indicator-instant {
+  transition-duration: 0ms;
+}
+
+.profile-nav-label {
+  transition-property: color;
+  transition-duration: var(--profile-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-nav-indicator,
+  .profile-nav-label {
+    transition: none;
+  }
+}
+
 /* Catalog dual price-range thumbs (pointer-events on thumbs only). */
 .catalog-price-range {
   pointer-events: none;

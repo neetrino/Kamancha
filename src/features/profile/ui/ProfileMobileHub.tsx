@@ -7,8 +7,10 @@ import {
   LayoutDashboard,
   Lock,
   LogOut,
+  Mail,
   MapPin,
   Package,
+  Phone,
   Trash2,
   User,
 } from "lucide-react";
@@ -179,9 +181,16 @@ export function ProfileMobileHub({
             <p className="truncate font-big-fat-boii text-xl font-normal leading-tight tracking-wide text-gray-900 uppercase">
               {displayName}
             </p>
-            <p className="truncate text-sm leading-snug text-gray-700">
-              {user.email}
+            <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
+              <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              <span className="truncate">{user.email}</span>
             </p>
+            {user.phone ? (
+              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
+                <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span className="truncate">{user.phone}</span>
+              </p>
+            ) : null}
           </div>
         </div>
       </section>

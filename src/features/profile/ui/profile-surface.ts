@@ -47,3 +47,6 @@ export const PROFILE_INNER_CARD =
 
 export const PROFILE_STATUS_BADGE =
   "inline-flex rounded-full bg-white/70 px-3 py-1 text-xs font-medium capitalize text-gray-800";
+
+/** Sliding sidebar pill — same duration as Grill.am profile nav. */
+export const PROFILE_NAV_TRANSITION_MS = 380;
