@@ -152,11 +152,13 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             links={navigationLinks}
           />
 
-          <FooterColumn
-            figmaNodeId="22:368"
-            title={footer.supportTitle}
-            links={supportLinks}
-          />
+          <div className="translate-x-10">
+            <FooterColumn
+              figmaNodeId="22:368"
+              title={footer.supportTitle}
+              links={supportLinks}
+            />
+          </div>
 
           <div data-node-id="22:375" className="w-fit justify-self-end">
             <h4
