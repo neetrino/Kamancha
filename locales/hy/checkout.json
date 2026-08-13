@@ -46,10 +46,11 @@
     "selectSlot": "Ընտրեք առաքման օրը և ժամը"
   },
   "cashChange": {
-    "title": "Մանր տալ",
-    "hint": "Ընտրեք թղթադրամը, որով կվճարեք, որպեսզի առաքիչը մանր բերի։",
+    "title": "ՄԱՆՐ",
+    "hint": "Սեղմեք այն թղթադրամին, որը կվճարեք, որպեսզի պատրաստենք մանրը։",
     "aria": "Մանրի անվանում",
-    "select": "Ընտրեք թղթադրամը, որով կվճարեք"
+    "select": "Ընտրեք թղթադրամը, որով կվճարեք",
+    "none": "Մանր պետք չէ"
   },
   "shipping": {
     "storePickup": "Ինքնաառաքում",
@@ -64,9 +65,12 @@
   },
   "payment": {
     "cashOnDelivery": "Կանխիկ առաքման պահին",
+    "cashShort": "Կանխիկ",
     "cashOnDeliveryDescription": "Վճարեք կանխիկ՝ պատվերը ստանալիս",
     "idram": "Idram",
     "idramDescription": "Վճարեք Idram դրամապանակով կամ քարտով",
+    "card": "Քարտով",
+    "cardDescription": "Վճարեք Visa, Mastercard կամ ArCa քարտով",
     "arca": "ArCa",
     "arcaDescription": "Վճարեք ArCa քարտով"
   },

@@ -15,6 +15,10 @@ import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProducts
 import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
 import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
+import {
+  CASH_CHANGE_NONE,
+  type CashChangeSelection,
+} from "@/features/checkout/ui/checkout-cash-change-assets";
 import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
@@ -58,16 +62,16 @@ type CheckoutLabels = {
   schedulePrevMonth: string;
   scheduleNextMonth: string;
   selectDeliverySlot: string;
-  selectCashChange: string;
   cashChangeTitle: string;
   cashChangeHint: string;
-  cashChangeAria: string;
+  cashChangeNone: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
+  cashShort: string;
   idram: string;
   idramDescription: string;
-  arca: string;
-  arcaDescription: string;
+  card: string;
+  cardDescription: string;
   couponTitle: string;
   couponPlaceholder: string;
   couponApply: string;
@@ -120,7 +124,8 @@ export function CheckoutForm({
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
     null,
   );
-  const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);
+  const [cashChangeAmount, setCashChangeAmount] =
+    useState<CashChangeSelection>(CASH_CHANGE_NONE);
   const deliveryQuote = useDistanceDeliveryQuote(line1);
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
@@ -139,27 +144,28 @@ export function CheckoutForm({
       {
         id: "cash_on_delivery" as const,
         name: labels.cashOnDelivery,
+        shortName: labels.cashShort,
         description: labels.cashOnDeliveryDescription,
-        logoSrc: null,
       },
       {
         id: "idram" as const,
         name: labels.idram,
+        shortName: labels.idram,
         description: labels.idramDescription,
-        logoSrc: "/assets/payments/idram.svg",
       },
       {
         id: "arca" as const,
-        name: labels.arca,
-        description: labels.arcaDescription,
-        logoSrc: "/assets/payments/arca.svg",
+        name: labels.card,
+        shortName: labels.card,
+        description: labels.cardDescription,
       },
     ],
     [
-      labels.arca,
-      labels.arcaDescription,
+      labels.card,
+      labels.cardDescription,
       labels.cashOnDelivery,
       labels.cashOnDeliveryDescription,
+      labels.cashShort,
       labels.idram,
       labels.idramDescription,
     ],
@@ -257,15 +263,6 @@ export function CheckoutForm({
       return;
     }
 
-    if (
-      paymentMethod === "cash_on_delivery" &&
-      cashChangeOptions.length > 0 &&
-      cashChangeAmount == null
-    ) {
-      setError(labels.selectCashChange);
-      return;
-    }
-
     startTransition(async () => {
       const result = await createOrderAction({
         locale,
@@ -283,8 +280,9 @@ export function CheckoutForm({
         scheduledDeliveryStart: deliverySlot.startTime,
         scheduledDeliveryEnd: deliverySlot.endTime,
         cashChangeAmount:
-          paymentMethod === "cash_on_delivery"
-            ? (cashChangeAmount ?? undefined)
+          paymentMethod === "cash_on_delivery" &&
+          cashChangeAmount !== CASH_CHANGE_NONE
+            ? cashChangeAmount
             : undefined,
         couponCode: appliedCouponCode ?? undefined,
       });
@@ -332,8 +330,8 @@ export function CheckoutForm({
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
               setPaymentMethod(method);
-              if (method !== "cash_on_delivery") {
-                setCashChangeAmount(null);
+              if (method === "cash_on_delivery") {
+                setCashChangeAmount(CASH_CHANGE_NONE);
               }
             }}
             paymentOptions={paymentOptions}

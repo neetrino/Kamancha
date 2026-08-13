@@ -16,7 +16,14 @@ export type CashChangeDenominationView = {
   imageUrl: string | null;
 };
 
-const DEFAULT_AMOUNTS = [10_000, 20_000, 50_000, 100_000] as const;
+const DEFAULT_AMOUNTS = [
+  2000, 5000, 10_000, 20_000, 50_000, 100_000,
+] as const;
+
+/** Bundled checkout notes (always offered, even if store JSON is older). */
+export function isDefaultCashChangeAmount(amount: number): boolean {
+  return (DEFAULT_AMOUNTS as readonly number[]).includes(amount);
+}
 
 /** Default cash-change options offered at checkout for COD. */
 export function createDefaultCashChangeDenominations(): CashChangeDenomination[] {

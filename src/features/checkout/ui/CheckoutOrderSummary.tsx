@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -58,8 +57,10 @@ export function CheckoutOrderSummary({
 }: CheckoutOrderSummaryProps) {
   return (
     <div>
-      <Card className="sticky top-4 rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">{title}</h2>
+      <section className="sticky top-4 rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7">
+        <h2 className="mb-6 text-lg font-bold tracking-tight text-gray-900">
+          {title}
+        </h2>
 
         <div className="mb-6 rounded-xl border border-gray-200 p-4">
           <p className="mb-3 text-sm text-gray-700">{couponTitle}</p>
@@ -140,7 +141,7 @@ export function CheckoutOrderSummary({
         >
           {isSubmitting ? processingLabel : placeOrderLabel}
         </Button>
-      </Card>
+      </section>
     </div>
   );
 }

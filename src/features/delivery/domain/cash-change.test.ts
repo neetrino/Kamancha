@@ -3,14 +3,15 @@ import { describe, expect, it } from "vitest";
 import {
   createDefaultCashChangeDenominations,
   findActiveCashChangeByAmount,
+  isDefaultCashChangeAmount,
   listActiveCashChangeDenominations,
   parseCashChangeDenominations,
 } from "@/features/delivery/domain/cash-change";
 
 describe("cash-change denominations", () => {
-  it("defaults to 10k / 20k / 50k / 100k", () => {
+  it("defaults to 2k / 5k / 10k / 20k / 50k / 100k", () => {
     expect(createDefaultCashChangeDenominations().map((item) => item.amount)).toEqual([
-      10_000, 20_000, 50_000, 100_000,
+      2000, 5000, 10_000, 20_000, 50_000, 100_000,
     ]);
   });
 
@@ -49,5 +50,10 @@ describe("cash-change denominations", () => {
     const list = createDefaultCashChangeDenominations();
     expect(findActiveCashChangeByAmount(list, 50_000)?.amount).toBe(50_000);
     expect(findActiveCashChangeByAmount(list, 999)).toBeNull();
+  });
+
+  it("recognizes bundled checkout note amounts", () => {
+    expect(isDefaultCashChangeAmount(2000)).toBe(true);
+    expect(isDefaultCashChangeAmount(999)).toBe(false);
   });
 });

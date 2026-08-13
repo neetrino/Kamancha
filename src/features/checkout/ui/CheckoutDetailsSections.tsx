@@ -1,11 +1,11 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
-import { CashChangePicker } from "@/features/checkout/ui/CashChangePicker";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
+import type { CheckoutPaymentOption } from "@/features/checkout/ui/CheckoutPaymentMethodOption";
+import type { CashChangeSelection } from "@/features/checkout/ui/checkout-cash-change-assets";
 import { DeliverySlotPicker } from "@/features/checkout/ui/DeliverySlotPicker";
 import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
@@ -14,6 +14,12 @@ import type { Locale } from "@/lib/i18n/config";
 
 const FIELD_CLASS =
   "h-11 w-full rounded-2xl border border-gray-200 px-4 text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300 disabled:bg-gray-50";
+
+const SECTION_CLASS =
+  "rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7";
+
+const SECTION_TITLE_CLASS =
+  "mb-6 text-lg font-bold tracking-tight text-gray-900";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -45,14 +51,7 @@ type CheckoutDetailsLabels = {
   scheduleNextMonth: string;
   cashChangeTitle: string;
   cashChangeHint: string;
-  cashChangeAria: string;
-};
-
-type PaymentOption = {
-  id: CheckoutPaymentMethod;
-  name: string;
-  description: string;
-  logoSrc: string | null;
+  cashChangeNone: string;
 };
 
 type CheckoutDetailsSectionsProps = {
@@ -63,8 +62,8 @@ type CheckoutDetailsSectionsProps = {
   deliverySlot: SelectedDeliverySlot | null;
   onDeliverySlotChange: (value: SelectedDeliverySlot | null) => void;
   cashChangeOptions: CashChangeDenominationView[];
-  cashChangeAmount: number | null;
-  onCashChangeAmountChange: (amount: number) => void;
+  cashChangeAmount: CashChangeSelection;
+  onCashChangeAmountChange: (value: CashChangeSelection) => void;
   line1: string;
   onLine1Change: (value: string) => void;
   deliveryQuotePending: boolean;
@@ -72,7 +71,7 @@ type CheckoutDetailsSectionsProps = {
   deliveryQuoteHint: string | null;
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
-  paymentOptions: PaymentOption[];
+  paymentOptions: CheckoutPaymentOption[];
   defaultFirstName: string;
   defaultLastName: string;
   defaultEmail: string;
@@ -104,8 +103,8 @@ export function CheckoutDetailsSections({
 }: CheckoutDetailsSectionsProps) {
   return (
     <div className="space-y-6 lg:col-span-2">
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
+      <section className={SECTION_CLASS}>
+        <h2 className={SECTION_TITLE_CLASS}>
           {labels.contactInformation}
         </h2>
         <div className="space-y-4">
@@ -160,10 +159,10 @@ export function CheckoutDetailsSections({
             </label>
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
+      <section className={SECTION_CLASS}>
+        <h2 className={SECTION_TITLE_CLASS}>
           {labels.shippingAddress}
         </h2>
         <div className="space-y-4">
@@ -234,20 +233,6 @@ export function CheckoutDetailsSections({
               nextMonth: labels.scheduleNextMonth,
             }}
           />
-          {paymentMethod === "cash_on_delivery" ? (
-            <CashChangePicker
-              options={cashChangeOptions}
-              value={cashChangeAmount}
-              onChange={onCashChangeAmountChange}
-              disabled={pending}
-              locale={locale}
-              labels={{
-                title: labels.cashChangeTitle,
-                hint: labels.cashChangeHint,
-                ariaLabel: labels.cashChangeAria,
-              }}
-            />
-          ) : null}
         </div>
         {deliveryQuotePending ? (
           <p className="mt-2 text-sm text-gray-500">
@@ -260,7 +245,7 @@ export function CheckoutDetailsSections({
         {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
           <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
         ) : null}
-      </Card>
+      </section>
 
       <CheckoutPaymentMethods
         title={labels.paymentMethod}
@@ -268,6 +253,14 @@ export function CheckoutDetailsSections({
         value={paymentMethod}
         onChange={onPaymentMethodChange}
         disabled={pending}
+        cashChangeOptions={cashChangeOptions}
+        cashChangeValue={cashChangeAmount}
+        onCashChangeChange={onCashChangeAmountChange}
+        cashChangeLabels={{
+          title: labels.cashChangeTitle,
+          hint: labels.cashChangeHint,
+          noneLabel: labels.cashChangeNone,
+        }}
       />
     </div>
   );
