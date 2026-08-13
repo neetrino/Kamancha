@@ -156,7 +156,7 @@ export function ProfileSidebarNav({
     <div className="flex h-full min-h-0 flex-col p-2 sm:p-3">
       <nav
         ref={navRef}
-        className="relative flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain"
+        className="relative flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         aria-label={dictionary.title}
         style={
           {
