@@ -26,6 +26,9 @@ type CustomerOrdersTableProps = {
   onOpenOrder: (orderNumber: string) => void;
 };
 
+const ROW_RULE =
+  "rounded-bl-[20px] border-l border-b border-white/55 pl-4";
+
 export function CustomerOrdersTable({
   orders,
   onOpenOrder,
@@ -42,9 +45,9 @@ export function CustomerOrdersTable({
 
   return (
     <section className={PROFILE_SECTION}>
-      <ul className="relative z-[2] divide-y divide-white/35">
+      <ul className="relative z-[2]">
         {orders.map((order) => (
-          <li key={order.id}>
+          <li key={order.id} className={ROW_RULE}>
             <button
               type="button"
               onClick={() => onOpenOrder(order.orderNumber)}
@@ -82,7 +85,7 @@ export function CustomerOrdersTable({
           </li>
         ))}
       </ul>
-      <p className="relative z-[2] border-t border-white/35 pt-3 text-sm text-gray-700">
+      <p className="relative z-[2] pt-3 pl-4 text-sm text-gray-700">
         {orders.length} order{orders.length === 1 ? "" : "s"} on this page
       </p>
     </section>
