@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
   Copy,
-  Lock,
   Share2,
   Trash2,
   Users,
@@ -15,7 +14,7 @@ import {
 import { AppLink } from "@/components/ui/AppLink";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
-import { Button } from "@/components/ui/Button";
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import {
   cancelGroupOrderAction,
   joinGroupOrderAction,
@@ -35,8 +34,7 @@ import type { Locale } from "@/lib/i18n/config";
 const GLASS_PILL_BUTTON =
   "liquid-glass isolate inline-flex items-center justify-center overflow-hidden rounded-full px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
 
-const GLASS_PILL_BUTTON_FULL =
-  "liquid-glass isolate flex w-full items-center justify-center gap-2 overflow-hidden rounded-full px-5 py-3.5 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
+const PILL_FULL = "max-w-none sm:max-w-none";
 
 type GroupOrderPageClientProps = {
   locale: Locale;
@@ -525,7 +523,7 @@ export function GroupOrderPageClient({
         </p>
       ) : null}
 
-      <div className="sticky bottom-4 space-y-2">
+      <div className="sticky bottom-4 space-y-3">
         {canEdit && view.currentParticipantId ? (
           iAmReady ? (
             <div
@@ -540,9 +538,11 @@ export function GroupOrderPageClient({
               </p>
             </div>
           ) : (
-            <Button
+            <KamanchaPillButton
               type="button"
-              className="w-full rounded-full"
+              variant="light"
+              label={labels.itemsReady}
+              className={PILL_FULL}
               disabled={pending}
               onClick={() => {
                 setError(null);
@@ -552,44 +552,32 @@ export function GroupOrderPageClient({
                     setError(result.error ?? labels.errorGeneric);
                     return;
                   }
-                  setView((prev) => {
-                    if (!prev?.currentParticipantId) return prev;
-                    return {
-                      ...prev,
-                      participants: prev.participants.map((participant) =>
-                        participant.id === prev.currentParticipantId
-                          ? { ...participant, itemsReady: true }
-                          : participant,
-                      ),
-                    };
-                  });
                   router.refresh();
                 });
               }}
-            >
-              {labels.itemsReady}
-            </Button>
+            />
           )
         ) : null}
 
         {isOrganizer && canEdit ? (
-          <Button
+          <KamanchaPillButton
             type="button"
-            className="w-full rounded-full"
+            variant="light"
+            label={labels.lockAndContinue}
+            className={PILL_FULL}
             disabled={pending}
             onClick={() =>
               run(async () => lockGroupOrderAction({ inviteToken }))
             }
-          >
-            <Lock className="mr-2 h-4 w-4" />
-            {labels.lockAndContinue}
-          </Button>
+          />
         ) : null}
 
         {isOrganizer && view.status === "CHECKOUT" ? (
-          <Button
+          <KamanchaPillButton
             type="button"
-            className="w-full rounded-full"
+            variant="light"
+            label={labels.goToCheckout}
+            className={PILL_FULL}
             disabled={pending}
             onClick={() => {
               setError(null);
@@ -604,9 +592,7 @@ export function GroupOrderPageClient({
                 router.push(`/${locale}/checkout`);
               });
             }}
-          >
-            {labels.goToCheckout}
-          </Button>
+          />
         ) : null}
 
         {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
@@ -617,19 +603,19 @@ export function GroupOrderPageClient({
         currentParticipant.finalAmount > 0 &&
         currentParticipant.paymentStatus !== "PAID" &&
         currentParticipant.paymentStatus !== "MARKED_RECEIVED" ? (
-          <Button
+          <KamanchaPillButton
             type="button"
-            className="w-full rounded-full"
+            variant="light"
+            label={labels.payWithCard.replace(
+              "{amount}",
+              currentParticipant.finalAmountFormatted,
+            )}
+            className={PILL_FULL}
             disabled={pending}
             onClick={() =>
               router.push(`/${locale}/group-orders/${inviteToken}/pay`)
             }
-          >
-            {labels.payWithCard.replace(
-              "{amount}",
-              currentParticipant.finalAmountFormatted,
-            )}
-          </Button>
+          />
         ) : null}
 
         {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
@@ -655,16 +641,15 @@ export function GroupOrderPageClient({
         view.status !== "COMPLETED" &&
         view.status !== "PAID" &&
         view.status !== "PREPARING" ? (
-          <Button
+          <KamanchaPillButton
             type="button"
-            variant="danger"
-            className="w-full rounded-full"
+            variant="light"
+            label={labels.cancelOrder}
+            className={`${PILL_FULL} !text-red-700`}
             onClick={() =>
               run(async () => cancelGroupOrderAction({ inviteToken }))
             }
-          >
-            {labels.cancelOrder}
-          </Button>
+          />
         ) : null}
       </div>
     </div>
@@ -731,15 +716,14 @@ function JoinPanel({
           </p>
         ) : null}
 
-        <Button
+        <KamanchaPillButton
           type="button"
-          className="mt-5 w-full rounded-full"
-          size="lg"
+          variant="light"
+          label={labels.join}
+          className={`${PILL_FULL} mt-5`}
           disabled={pending || !joinName.trim()}
           onClick={onJoin}
-        >
-          {labels.join}
-        </Button>
+        />
       </div>
     </div>
   );
