@@ -198,10 +198,10 @@ export function CartDrawer({
         panelClassName="w-[87%] max-w-[420px]"
         zIndexClassName="z-[200]"
         backdropBlur
-        closeButtonClassName="border border-white bg-brand-forest text-white hover:bg-[#1e3f1f]"
+        closeButtonClassName="side-sheet-close-stroke bg-[#335329] text-white hover:bg-[#2c4823]"
       >
         <div className="border-b border-gray-100 px-6 py-5">
-          <h2 className="text-xl font-bold tracking-tight text-gray-900">
+          <h2 className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
             {labels.title}
           </h2>
           {hasItems ? (
@@ -218,7 +218,7 @@ export function CartDrawer({
               <div className="h-24 animate-pulse rounded-[20px] bg-gray-100" />
             </div>
           ) : !view || view.items.length === 0 ? (
-            <div className="flex h-full min-h-[280px] flex-col items-center justify-center px-2 text-center">
+            <div className="flex h-full min-h-[280px] w-full flex-col items-center justify-center text-center">
               <div className="flex h-28 w-28 items-center justify-center rounded-full bg-gray-100 text-gray-400">
                 <ShoppingCart className="h-12 w-12" aria-hidden />
               </div>
@@ -232,7 +232,7 @@ export function CartDrawer({
                 href={`/${locale}/products`}
                 label={labels.emptyCta}
                 variant="dark"
-                className="mt-6 max-w-sm"
+                className="mt-6"
                 onClick={closeDrawer}
               />
             </div>

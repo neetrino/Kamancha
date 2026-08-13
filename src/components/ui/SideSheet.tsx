@@ -122,6 +122,15 @@ export function SideSheet({
     : "rounded-r-[var(--radius)]";
   const closePosition = isRight ? "right-full" : "left-full";
   const CloseChevron = isRight ? ChevronLeft : ChevronRight;
+  const closeRadius = isRight
+    ? "rounded-l-full rounded-r-none"
+    : "rounded-r-full rounded-l-none";
+  /** Peek under the panel; hover slides the tab fully out (BOS sheet). */
+  const closeTuckClass = isRight
+    ? "translate-x-1.5 hover:translate-x-0 focus-visible:translate-x-0"
+    : "-translate-x-1.5 hover:translate-x-0 focus-visible:translate-x-0";
+  const closeMotionClass =
+    "z-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
 
   const backdropClass = exiting
     ? "animate-sheet-backdrop-out"
@@ -157,14 +166,9 @@ export function SideSheet({
           <button
             type="button"
             onClick={onClose}
-            className={`absolute top-1/2 ${closePosition} z-10 flex h-[38px] w-10 -translate-y-1/2 items-center justify-center transition-transform hover:scale-105 ${
-              closeButtonClassName ??
-              "bg-gray-900 text-white"
-            } ${
-              isRight
-                ? "rounded-l-full rounded-r-none"
-                : "rounded-r-full rounded-l-none"
-            }`}
+            className={`absolute top-1/2 ${closePosition} flex h-[38px] w-10 -translate-y-1/2 items-center justify-center ${closeMotionClass} ${closeTuckClass} ${
+              closeButtonClassName ?? "bg-gray-900 text-white"
+            } ${closeRadius}`}
             aria-label="Close"
           >
             <CloseChevron className="h-4 w-4" strokeWidth={2.5} />
@@ -173,21 +177,17 @@ export function SideSheet({
           <button
             type="button"
             onClick={onClose}
-            className={`absolute top-5 ${closePosition} z-10 flex h-10 w-10 shrink-0 items-center justify-center transition-colors ${
+            className={`absolute top-5 ${closePosition} flex h-10 w-10 shrink-0 items-center justify-center ${closeMotionClass} ${closeTuckClass} ${
               closeButtonClassName ??
               "bg-gray-900 text-white hover:bg-black"
-            } ${
-              isRight
-                ? "rounded-l-full rounded-r-none"
-                : "rounded-r-full rounded-l-none"
-            }`}
+            } ${closeRadius}`}
             aria-label="Close"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
           </button>
         )}
         <div
-          className={`flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${panelRadius}`}
+          className={`relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${panelRadius}`}
           onClick={(event) => event.stopPropagation()}
         >
           {displayChildren}

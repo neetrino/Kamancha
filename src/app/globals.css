@@ -17,6 +17,13 @@
   --accent-foreground: #f9fafb;
   --brand-forest: #265127;
   --radius: 15px;
+  --brand-pale-edge-stroke: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.04) 55%,
+    rgba(255, 255, 255, 0.12) 82%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
 }
 
 @theme inline {
@@ -313,18 +320,35 @@ body {
 }
 
 .kamancha-pill-ornament {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  height: 49px;
+  width: 62px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
+.kamancha-pill-ornament--left {
+  left: 0;
+}
+
+.kamancha-pill-ornament--right {
+  right: 0;
+}
+
 .kamancha-pill-button:hover .kamancha-pill-ornament--left,
 .kamancha-pill-button:focus-visible .kamancha-pill-ornament--left {
-  transform: translateX(-36px);
+  transform: translate(-36px, -50%);
 }
 
 .kamancha-pill-button:hover .kamancha-pill-ornament--right,
 .kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
-  transform: translateX(36px);
+  transform: translate(36px, -50%);
 }
 
 /**
@@ -334,13 +358,22 @@ body {
 .site-header-scrolled-stroke {
   border-radius: 0 0 28px 28px;
   padding: 1px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.04) 55%,
-    rgba(255, 255, 255, 0.12) 82%,
-    rgba(255, 255, 255, 0.22) 100%
-  );
+  background: var(--brand-pale-edge-stroke);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.side-sheet-close-stroke::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--brand-pale-edge-stroke);
+  pointer-events: none;
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -386,7 +419,7 @@ body {
   .kamancha-pill-button:focus-visible .kamancha-pill-ornament--left,
   .kamancha-pill-button:hover .kamancha-pill-ornament--right,
   .kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
-    transform: none;
+    transform: translateY(-50%);
   }
 }
 

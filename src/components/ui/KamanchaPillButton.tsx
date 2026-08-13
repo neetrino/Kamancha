@@ -23,7 +23,7 @@ function PillOrnament({
 
   return (
     <span
-      className={`kamancha-pill-ornament kamancha-pill-ornament--${side} relative flex h-[49px] w-[62px] shrink-0 items-center justify-center`}
+      className={`kamancha-pill-ornament kamancha-pill-ornament--${side}`}
       aria-hidden
     >
       <span
@@ -67,10 +67,10 @@ export function KamanchaPillButton({
       prefetchPolicy="intent"
       onClick={onClick}
       data-node-id={figmaNodeId}
-      className={`kamancha-pill-button inline-flex h-16 w-full max-w-[280px] items-center justify-between gap-5 overflow-hidden rounded-[50px] pt-2 pb-[7px] text-left text-[18px] leading-6 sm:max-w-[316px] ${tones} ${className}`}
+      className={`kamancha-pill-button relative inline-flex min-h-16 w-full max-w-[280px] items-center justify-center overflow-hidden rounded-[50px] px-12 pt-2 pb-[7px] text-center text-[18px] leading-5 sm:max-w-[316px] ${tones} ${className}`}
     >
       <PillOrnament side="left" />
-      <span className="relative z-[1] min-w-0 shrink-0 text-center font-big-fat-boii font-normal whitespace-nowrap">
+      <span className="relative z-[1] min-w-0 font-big-fat-boii font-normal">
         {label}
       </span>
       <PillOrnament side="right" />
