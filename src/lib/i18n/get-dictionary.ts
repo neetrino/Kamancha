@@ -9,6 +9,7 @@ import enCatalog from "@/locales/en/catalog.json";
 import enCheckout from "@/locales/en/checkout.json";
 import enCommon from "@/locales/en/common.json";
 import enContact from "@/locales/en/contact.json";
+import enGroupOrder from "@/locales/en/group-order.json";
 import enHome from "@/locales/en/home.json";
 import enProduct from "@/locales/en/product.json";
 import enProfile from "@/locales/en/profile.json";
@@ -23,6 +24,7 @@ import hyCatalog from "@/locales/hy/catalog.json";
 import hyCheckout from "@/locales/hy/checkout.json";
 import hyCommon from "@/locales/hy/common.json";
 import hyContact from "@/locales/hy/contact.json";
+import hyGroupOrder from "@/locales/hy/group-order.json";
 import hyHome from "@/locales/hy/home.json";
 import hyProduct from "@/locales/hy/product.json";
 import hyProfile from "@/locales/hy/profile.json";
@@ -37,6 +39,7 @@ import ruCatalog from "@/locales/ru/catalog.json";
 import ruCheckout from "@/locales/ru/checkout.json";
 import ruCommon from "@/locales/ru/common.json";
 import ruContact from "@/locales/ru/contact.json";
+import ruGroupOrder from "@/locales/ru/group-order.json";
 import ruHome from "@/locales/ru/home.json";
 import ruProduct from "@/locales/ru/product.json";
 import ruProfile from "@/locales/ru/profile.json";
@@ -51,6 +54,7 @@ type LocaleNamespaces = {
   auth: typeof hyAuth;
   profile: typeof hyProfile;
   checkout: typeof hyCheckout;
+  groupOrder: typeof hyGroupOrder;
   cart: typeof hyCart;
   product: typeof hyProduct;
   blog: typeof hyBlog;
@@ -71,6 +75,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     auth: namespaces.auth,
     profile: namespaces.profile,
     checkout: namespaces.checkout,
+    groupOrder: namespaces.groupOrder,
     cartDrawer: namespaces.cart,
     product: namespaces.product,
     blog: namespaces.blog,
@@ -89,6 +94,7 @@ const dictionaries = {
     auth: hyAuth,
     profile: hyProfile,
     checkout: hyCheckout,
+    groupOrder: hyGroupOrder,
     cart: hyCart,
     product: hyProduct,
     blog: hyBlog,
@@ -104,6 +110,7 @@ const dictionaries = {
     auth: enAuth,
     profile: enProfile,
     checkout: enCheckout,
+    groupOrder: enGroupOrder,
     cart: enCart,
     product: enProduct,
     blog: enBlog,
@@ -119,6 +126,7 @@ const dictionaries = {
     auth: ruAuth,
     profile: ruProfile,
     checkout: ruCheckout,
+    groupOrder: ruGroupOrder,
     cart: ruCart,
     product: ruProduct,
     blog: ruBlog,

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { getCartWithItems } from "@/features/cart/cart";
 import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
+import { getGroupOrderCheckoutUiFlags } from "@/features/checkout/application/group-order-checkout-context";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
 import { listActiveCashChangeDenominations } from "@/features/delivery/domain/cash-change";
@@ -25,11 +26,13 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliverySettings] = await Promise.all([
-    getCurrentUser(),
-    getCartWithItems(),
-    getDeliverySettings(),
-  ]);
+  const [user, { items }, deliverySettings, groupCheckoutFlags] =
+    await Promise.all([
+      getCurrentUser(),
+      getCartWithItems(),
+      getDeliverySettings(),
+      getGroupOrderCheckoutUiFlags(),
+    ]);
   const [defaultAddress, prices] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(
@@ -74,10 +77,17 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       }
       defaultEmail={user?.email ?? ""}
       defaultPhone={defaultAddress?.phone ?? user?.phone ?? ""}
-      defaultLine1={defaultAddress?.line1 ?? ""}
+      defaultLine1={
+        groupCheckoutFlags.defaultDeliveryAddress ??
+        defaultAddress?.line1 ??
+        ""
+      }
       subtotalAmount={subtotal}
       deliverySchedule={deliverySettings.schedule}
       cashChangeOptions={cashChangeOptions}
+      splitOthersPrepaid={groupCheckoutFlags.splitOthersPrepaid}
+      othersPrepaidAmount={groupCheckoutFlags.othersPrepaidAmount}
+      lockedDeliveryAmount={groupCheckoutFlags.lockedDeliveryAmount}
       labels={{
         title: copy.title,
         productsInOrder: copy.productsInOrder,
@@ -137,6 +147,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         processing: copy.buttons.processing,
         continueShopping: copy.buttons.continueShopping,
         cartEmpty: copy.errors.cartEmpty,
+        groupPrepaidTitle: copy.groupPrepaid.title,
+        groupPrepaidHint: copy.groupPrepaid.hint,
+        groupPrepaidOthersPaid: copy.groupPrepaid.othersPaid,
+        groupPrepaidYouPay: copy.groupPrepaid.youPay,
       }}
     />
   );

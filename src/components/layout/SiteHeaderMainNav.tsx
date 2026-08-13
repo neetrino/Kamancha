@@ -128,8 +128,14 @@ export function SiteHeaderMainNav({
               />
 
               <GroupOrderHeaderButton
-                href={`/${locale}/contact`}
+                locale={locale}
                 label={dictionary.nav.groupOrder}
+                labels={dictionary.groupOrder}
+                defaultName={
+                  user
+                    ? [user.firstName, user.lastName].filter(Boolean).join(" ")
+                    : ""
+                }
               />
             </div>
 

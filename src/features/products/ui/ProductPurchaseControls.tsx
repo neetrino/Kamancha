@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
 
-import { addToCart } from "@/features/cart/cart";
 import { flyToCart } from "@/features/cart/ui/fly-to-cart";
+import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 import type { ProductModifierChoice } from "@/features/products/types";
 import {
   adjustCartItemCount,
@@ -116,6 +117,7 @@ export function ProductPurchaseControls({
   exceptions = [],
   labels,
 }: ProductPurchaseControlsProps) {
+  const router = useRouter();
   const maxQty = Math.max(stockOnHand, 0);
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
   const [additionIds, setAdditionIds] = useState<string[]>([]);
@@ -141,13 +143,21 @@ export function ProductPurchaseControls({
     if (addButtonRef.current) {
       flyToCart(addButtonRef.current);
     }
-    adjustCartItemCount(quantity);
 
     const selectedModifiers = [...additionIds, ...exceptionIds];
-    void addToCart(productId, quantity, {
+    void addProductToActiveCart(productId, quantity, {
       modifierIds: selectedModifiers,
     })
-      .then(() => {
+      .then((result) => {
+        if (!result.ok) {
+          setError(result.error);
+          return;
+        }
+        if (result.target !== "cart") {
+          router.refresh();
+          return;
+        }
+        adjustCartItemCount(quantity);
         settleCartItemCountAdjust();
       })
       .catch(() => {

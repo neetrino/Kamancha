@@ -5,11 +5,10 @@ import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { addToCart } from "@/features/cart/cart";
 import { flyToCart } from "@/features/cart/ui/fly-to-cart";
+import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 import {
   adjustCartItemCount,
-  revertCartItemCountAdjust,
   settleCartItemCountAdjust,
 } from "@/features/storefront-chrome/storefront-counts-store";
 
@@ -56,17 +55,20 @@ export function AddToCartButton({
     }
 
     flyToCart(event.currentTarget);
-    adjustCartItemCount(1);
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1200);
 
-    void addToCart(productId, 1)
-      .then(() => {
+    void addProductToActiveCart(productId, 1).then((result) => {
+      if (!result.ok) {
+        return;
+      }
+      if (result.target === "cart") {
+        adjustCartItemCount(1);
         settleCartItemCountAdjust();
-      })
-      .catch(() => {
-        revertCartItemCountAdjust(-1);
-      });
+        return;
+      }
+      router.refresh();
+    });
   }
 
   return (

@@ -100,6 +100,8 @@ export const orders = pgTable(
     idempotencyKeyHash: text("idempotency_key_hash").notNull(),
     requestFingerprint: text("request_fingerprint").notNull(),
     locale: text("locale").notNull(),
+    /** Linked group order when this checkout finishes a խմբային պատվեր. */
+    groupOrderId: uuid("group_order_id"),
     correlationId: text("correlation_id"),
     placedAt: timestamp("placed_at", {
       withTimezone: true,
@@ -128,6 +130,7 @@ export const orders = pgTable(
       table.userId,
       table.status,
     ),
+    index("orders_group_order_idx").on(table.groupOrderId),
     check("orders_money_nonneg_chk", sql`${table.totalAmount} >= 0`),
   ],
 );
@@ -153,11 +156,15 @@ export const orderItems = pgTable(
     taxAmount: integer("tax_amount").notNull().default(0),
     lineTotalAmount: integer("line_total_amount").notNull(),
     currency: text("currency").notNull().default("AMD"),
+    /** Group-order participant who selected this line (nullable for solo orders). */
+    groupOrderParticipantId: uuid("group_order_participant_id"),
+    participantNameSnapshot: text("participant_name_snapshot"),
     createdAt: createdAtColumn(),
   },
   (table) => [
     index("order_items_order_idx").on(table.orderId),
     index("order_items_product_idx").on(table.productId),
+    index("order_items_group_participant_idx").on(table.groupOrderParticipantId),
     check("order_items_qty_chk", sql`${table.quantity} > 0`),
   ],
 );
@@ -205,6 +212,7 @@ export const payments = pgTable(
     status: paymentStatusEnum("status").notNull().default("PENDING"),
     attemptNumber: integer("attempt_number").notNull().default(1),
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    groupOrderParticipantId: uuid("group_order_participant_id"),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -214,6 +222,7 @@ export const payments = pgTable(
       table.providerReference,
       table.status,
     ),
+    index("payments_group_participant_idx").on(table.groupOrderParticipantId),
     check("payments_amount_chk", sql`${table.amount} >= 0`),
     check("payments_attempt_chk", sql`${table.attemptNumber} > 0`),
   ],

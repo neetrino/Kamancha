@@ -87,6 +87,10 @@ type CheckoutLabels = {
   processing: string;
   continueShopping: string;
   cartEmpty: string;
+  groupPrepaidTitle: string;
+  groupPrepaidHint: string;
+  groupPrepaidOthersPaid: string;
+  groupPrepaidYouPay: string;
 };
 
 type CheckoutFormProps = {
@@ -103,6 +107,9 @@ type CheckoutFormProps = {
   deliverySchedule: DeliveryScheduleSettings;
   cashChangeOptions: CashChangeDenominationView[];
   hasItems: boolean;
+  splitOthersPrepaid?: boolean;
+  othersPrepaidAmount?: number;
+  lockedDeliveryAmount?: number | null;
 };
 
 export function CheckoutForm({
@@ -119,6 +126,9 @@ export function CheckoutForm({
   deliverySchedule,
   cashChangeOptions,
   hasItems,
+  splitOthersPrepaid = false,
+  othersPrepaidAmount = 0,
+  lockedDeliveryAmount = null,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
@@ -128,7 +138,9 @@ export function CheckoutForm({
   );
   const [cashChangeAmount, setCashChangeAmount] =
     useState<CashChangeSelection>(CASH_CHANGE_NONE);
-  const deliveryQuote = useDistanceDeliveryQuote(line1);
+  const deliveryQuote = useDistanceDeliveryQuote(
+    lockedDeliveryAmount != null ? "" : line1,
+  );
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
@@ -177,9 +189,12 @@ export function CheckoutForm({
     return formatMoneyAmount(amount, "AMD", locale);
   }
 
-  const shippingAmount = deliveryQuote.deliveryAmount;
-  const totalAmount =
+  const shippingAmount =
+    lockedDeliveryAmount ?? deliveryQuote.deliveryAmount;
+  const merchandiseTotal =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
+  const prepaidApplied = splitOthersPrepaid ? othersPrepaidAmount : 0;
+  const totalAmount = Math.max(0, merchandiseTotal - prepaidApplied);
   const selectedCashChange: CashChangeSelection =
     cashChangeAmount !== CASH_CHANGE_NONE &&
     computeCashChangeDue(cashChangeAmount, totalAmount) != null
@@ -193,18 +208,23 @@ export function CheckoutForm({
   const cashChangeDueFormatted =
     cashChangeDue != null ? formatMoney(cashChangeDue) : null;
 
-  const shippingFormatted = deliveryQuote.pending
-    ? labels.calculatingDelivery
-    : deliveryQuote.error
-      ? labels.enterDeliveryAddress
-      : deliveryQuote.distanceLabel
-        ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
-        : labels.enterDeliveryAddress;
+  const shippingFormatted =
+    lockedDeliveryAmount != null
+      ? formatMoney(lockedDeliveryAmount)
+      : deliveryQuote.pending
+        ? labels.calculatingDelivery
+        : deliveryQuote.error
+          ? labels.enterDeliveryAddress
+          : deliveryQuote.distanceLabel
+            ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
+            : labels.enterDeliveryAddress;
 
   const deliveryQuoteHint =
-    deliveryQuote.distanceLabel && !deliveryQuote.error
-      ? `${deliveryQuote.distanceLabel} · ${formatMoney(shippingAmount)}`
-      : null;
+    lockedDeliveryAmount != null
+      ? formatMoney(lockedDeliveryAmount)
+      : deliveryQuote.distanceLabel && !deliveryQuote.error
+        ? `${deliveryQuote.distanceLabel} · ${formatMoney(shippingAmount)}`
+        : null;
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -264,9 +284,10 @@ export function CheckoutForm({
     setError(null);
 
     if (
-      deliveryQuote.pending ||
-      deliveryQuote.error ||
-      !deliveryQuote.distanceLabel
+      lockedDeliveryAmount == null &&
+      (deliveryQuote.pending ||
+        deliveryQuote.error ||
+        !deliveryQuote.distanceLabel)
     ) {
       setError(labels.enterDeliveryAddress);
       return;
@@ -341,9 +362,22 @@ export function CheckoutForm({
             cashChangeDueFormatted={cashChangeDueFormatted}
             line1={line1}
             onLine1Change={setLine1}
-            deliveryQuotePending={deliveryQuote.pending}
-            deliveryQuoteError={deliveryQuote.error}
+            deliveryQuotePending={
+              lockedDeliveryAmount != null ? false : deliveryQuote.pending
+            }
+            deliveryQuoteError={
+              lockedDeliveryAmount != null ? null : deliveryQuote.error
+            }
             deliveryQuoteHint={deliveryQuoteHint}
+            addressLocked={lockedDeliveryAmount != null}
+            prepaidNotice={
+              splitOthersPrepaid
+                ? {
+                    title: labels.groupPrepaidTitle,
+                    hint: `${labels.groupPrepaidHint} ${labels.groupPrepaidOthersPaid}: ${formatMoney(prepaidApplied)}. ${labels.groupPrepaidYouPay}: ${formatMoney(totalAmount)}.`,
+                  }
+                : null
+            }
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
               setPaymentMethod(method);

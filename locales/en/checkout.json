@@ -75,6 +75,12 @@
     "arca": "ArCa",
     "arcaDescription": "Pay with ArCa card"
   },
+  "groupPrepaid": {
+    "title": "Group order payments",
+    "hint": "Other participants already paid their share.",
+    "othersPaid": "Already paid",
+    "youPay": "You pay"
+  },
   "coupon": {
     "title": "Have a coupon?",
     "placeholder": "Enter your coupon code",

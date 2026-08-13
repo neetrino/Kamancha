@@ -78,6 +78,8 @@ type CheckoutDetailsSectionsProps = {
   defaultLastName: string;
   defaultEmail: string;
   defaultPhone: string;
+  addressLocked?: boolean;
+  prepaidNotice?: { title: string; hint: string } | null;
 };
 
 export function CheckoutDetailsSections({
@@ -104,6 +106,8 @@ export function CheckoutDetailsSections({
   defaultLastName,
   defaultEmail,
   defaultPhone,
+  addressLocked = false,
+  prepaidNotice = null,
 }: CheckoutDetailsSectionsProps) {
   return (
     <div className="space-y-6 lg:col-span-2">
@@ -182,11 +186,12 @@ export function CheckoutDetailsSections({
                   value={line1}
                   onValueChange={onLine1Change}
                   placeholder={labels.addressPlaceholder}
-                  disabled={pending}
+                  disabled={pending || addressLocked}
                   className={FIELD_CLASS}
                   languageCode={locale}
                 />
               </div>
+              {addressLocked ? null : (
               <AddressMapPicker
                 addressValue={line1}
                 disabled={pending}
@@ -200,6 +205,7 @@ export function CheckoutDetailsSections({
                   resolving: labels.mapResolving,
                 }}
               />
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -253,6 +259,15 @@ export function CheckoutDetailsSections({
           </p>
         ) : null}
       </section>
+
+      {prepaidNotice ? (
+        <section className={SECTION_CLASS}>
+          <h2 className={SECTION_TITLE_CLASS}>{prepaidNotice.title}</h2>
+          <p className="relative z-[2] text-sm text-gray-700">
+            {prepaidNotice.hint}
+          </p>
+        </section>
+      ) : null}
 
       <CheckoutPaymentMethods
         title={labels.paymentMethod}

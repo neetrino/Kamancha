@@ -30,6 +30,14 @@ import {
 } from "@/features/checkout/schemas";
 import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
 import {
+  completeGroupOrderAfterStandardCheckout,
+} from "@/features/group-orders/application/complete-after-checkout";
+import { clearGroupOrderSession } from "@/features/group-orders/session";
+import {
+  resolveGroupOrderCheckoutContext,
+  type GroupOrderCheckoutContext,
+} from "@/features/checkout/application/group-order-checkout-context";
+import {
   quoteDistanceDelivery,
   type DistanceDeliveryQuote,
 } from "@/features/delivery/application/quote-distance-delivery";
@@ -66,6 +74,31 @@ import {
 
 function hashValue(value: string): string {
   return createHash("sha256").update(value).digest("hex");
+}
+
+function lockedGroupDeliveryQuote(
+  address: string,
+  deliveryAmount: number,
+): DistanceDeliveryQuote {
+  return {
+    distanceMeters: 0,
+    distanceLabel: "",
+    pricePerKmAmount: 0,
+    deliveryAmount,
+    destinationFormattedAddress: address,
+    city: null,
+    countryCode: "AM",
+  };
+}
+
+function organizerPayableAmount(
+  totalAmount: number,
+  groupCheckout: GroupOrderCheckoutContext,
+): number {
+  if (!groupCheckout.active || !groupCheckout.splitOthersPrepaid) {
+    return totalAmount;
+  }
+  return Math.max(0, totalAmount - groupCheckout.othersPrepaidAmount);
 }
 
 export type CreateOrderResult =
@@ -105,13 +138,21 @@ export async function createOrderAction(
   let cashChangeAmount: number | undefined;
   let cashChangeImageKey: string | undefined;
   const deliverySettings = await getDeliverySettings();
+  const groupCheckout = await resolveGroupOrderCheckoutContext();
 
   if (input.shippingMethod === "delivery") {
-    const quoted = await quoteDistanceDelivery(input.line1 ?? "");
-    if (!quoted.ok) {
-      return { ok: false, error: quoted.error };
+    if (groupCheckout.active && groupCheckout.deliveryAddress) {
+      deliveryQuote = lockedGroupDeliveryQuote(
+        groupCheckout.deliveryAddress,
+        groupCheckout.deliveryAmount,
+      );
+    } else {
+      const quoted = await quoteDistanceDelivery(input.line1 ?? "");
+      if (!quoted.ok) {
+        return { ok: false, error: quoted.error };
+      }
+      deliveryQuote = quoted.quote;
     }
-    deliveryQuote = quoted.quote;
 
     const selectedSlot = {
       date: input.scheduledDeliveryDate ?? "",
@@ -176,13 +217,14 @@ export async function createOrderAction(
           ? input.scheduledDeliveryStart
           : null,
       cashChangeAmount: cashChangeAmount ?? null,
+      groupOrderId: groupCheckout.active ? groupCheckout.groupOrderId : null,
     }),
   );
 
   try {
     const orderNumber = await withTransaction(async (tx) => {
       const [existing] = await tx
-        .select({ orderNumber: orders.orderNumber })
+        .select({ id: orders.id, orderNumber: orders.orderNumber })
         .from(orders)
         .where(
           and(
@@ -194,6 +236,13 @@ export async function createOrderAction(
         .limit(1);
 
       if (existing) {
+        if (groupCheckout.active) {
+          await completeGroupOrderAfterStandardCheckout({
+            orderId: existing.id,
+            orderNumber: existing.orderNumber,
+            tx,
+          });
+        }
         return existing.orderNumber;
       }
 
@@ -205,17 +254,11 @@ export async function createOrderAction(
           deliveryQuote?.countryCode?.trim().toUpperCase().slice(0, 2) || "AM",
         region: input.region,
         city:
-          input.shippingMethod === "pickup"
-            ? (input.city?.trim() || "Yerevan")
-            : (deliveryQuote?.city?.trim() ||
-              input.city?.trim() ||
-              "Yerevan"),
+          deliveryQuote?.city?.trim() || input.city?.trim() || "Yerevan",
         line1:
-          input.shippingMethod === "pickup"
-            ? (input.line1?.trim() || "Store pickup")
-            : (deliveryQuote?.destinationFormattedAddress ||
-              input.line1?.trim() ||
-              ""),
+          deliveryQuote?.destinationFormattedAddress ||
+          input.line1?.trim() ||
+          "",
         line2: input.line2,
         postalCode: input.postalCode,
         ...(input.shippingMethod === "delivery"
@@ -349,10 +392,7 @@ export async function createOrderAction(
 
       const stockAfterOrder = remainingStock;
 
-      const deliveryAmount =
-        input.shippingMethod === "pickup"
-          ? 0
-          : (deliveryQuote?.deliveryAmount ?? 0);
+      const deliveryAmount = deliveryQuote?.deliveryAmount ?? 0;
 
       let discountAmount = 0;
       let appliedPromotion: typeof promotions.$inferSelect | null = null;
@@ -390,9 +430,10 @@ export async function createOrderAction(
       }
 
       const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
+      const chargeAmount = organizerPayableAmount(totalAmount, groupCheckout);
       if (
         cashChangeAmount != null &&
-        computeCashChangeDue(cashChangeAmount, totalAmount) == null
+        computeCashChangeDue(cashChangeAmount, chargeAmount) == null
       ) {
         throw new Error("Selected banknote is less than the order total.");
       }
@@ -436,27 +477,23 @@ export async function createOrderAction(
         promotionValueSnapshot: appliedPromotion?.discountValue ?? null,
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
         deliveryRuleId: null,
-        deliveryLabelSnapshot:
-          input.shippingMethod === "pickup"
-            ? "Store pickup"
-            : deliveryQuote
-              ? `Distance delivery (${deliveryQuote.distanceLabel})`
-              : "Delivery",
+        deliveryLabelSnapshot: deliveryQuote
+          ? `Distance delivery (${deliveryQuote.distanceLabel})`
+          : "Delivery",
         deliveryEstimateSnapshot:
-          input.shippingMethod === "pickup"
-            ? null
-            : [
-                deliveryQuote
-                  ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
-                  : null,
-                deliverySlotSnapshot,
-              ]
-                .filter(Boolean)
-                .join(" · ") || null,
+          [
+            deliveryQuote
+              ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
+              : null,
+            deliverySlotSnapshot,
+          ]
+            .filter(Boolean)
+            .join(" · ") || null,
         idempotencyScopeHash: scopeHash,
         idempotencyKeyHash: keyHash,
         requestFingerprint: fingerprint,
         locale: input.locale,
+        groupOrderId: groupCheckout.active ? groupCheckout.groupOrderId : null,
         placedAt: now,
       });
 
@@ -516,7 +553,7 @@ export async function createOrderAction(
 
       const payment = await getProviders().payment.createPayment({
         orderId,
-        amount: BigInt(totalAmount),
+        amount: BigInt(chargeAmount),
         currency: defaultCurrency,
         idempotencyKey: input.idempotencyKey,
       });
@@ -528,11 +565,25 @@ export async function createOrderAction(
         provider: paymentRecord.provider,
         method: paymentRecord.method,
         providerReference: payment.providerReference,
-        amount: totalAmount,
+        amount: chargeAmount,
         currency: defaultCurrency,
         status: "PENDING",
         attemptNumber: 1,
+        metadata: groupCheckout.active
+          ? {
+              groupOrderId: groupCheckout.groupOrderId,
+              othersPrepaidAmount: groupCheckout.othersPrepaidAmount,
+            }
+          : undefined,
       });
+
+      if (groupCheckout.active) {
+        await completeGroupOrderAfterStandardCheckout({
+          orderId,
+          orderNumber: number,
+          tx,
+        });
+      }
 
       await tx.insert(orderEvents).values({
         id: createId(),
@@ -555,6 +606,9 @@ export async function createOrderAction(
     });
 
     await revalidateCartPaths();
+    if (groupCheckout.active) {
+      await clearGroupOrderSession();
+    }
     return { ok: true, orderNumber };
   } catch (error) {
     const message =

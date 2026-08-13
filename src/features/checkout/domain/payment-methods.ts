@@ -6,6 +6,12 @@ export const CHECKOUT_PAYMENT_METHODS = [
 
 export type CheckoutPaymentMethod = (typeof CHECKOUT_PAYMENT_METHODS)[number];
 
+/** Card/wallet providers used for split group-order participant pay. */
+export type CheckoutOnlineProvider = Extract<
+  CheckoutPaymentMethod,
+  "idram" | "arca"
+>;
+
 export function isCheckoutPaymentMethod(
   value: string,
 ): value is CheckoutPaymentMethod {

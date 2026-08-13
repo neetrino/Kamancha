@@ -260,8 +260,9 @@ export function MobileNavDrawer({
 
                   <div className="mt-1 flex flex-col gap-2 border-t border-gray-100 py-4">
                     <GroupOrderHeaderButton
-                      href={`/${locale}/contact`}
+                      locale={locale}
                       label={dictionary.nav.groupOrder}
+                      labels={dictionary.groupOrder}
                       tone="onLight"
                       onClick={() => setOpen(false)}
                     />

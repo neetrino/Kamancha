@@ -75,6 +75,12 @@
     "arca": "ArCa",
     "arcaDescription": "Оплата картой ArCa"
   },
+  "groupPrepaid": {
+    "title": "Оплаты группового заказа",
+    "hint": "Остальные участники уже оплатили свою долю.",
+    "othersPaid": "Уже оплачено",
+    "youPay": "Вы платите"
+  },
   "coupon": {
     "title": "Есть промокод?",
     "placeholder": "Введите промокод",

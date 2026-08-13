@@ -14,6 +14,9 @@ type TransactionCallback = Parameters<
 >[0];
 type Transaction = Parameters<TransactionCallback>[0];
 
+/** Drizzle transaction client used by checkout and group-order writes. */
+export type DbTransaction = Transaction;
+
 /** Executes a critical commerce mutation in a PostgreSQL transaction. */
 export async function withTransaction<T>(
   operation: (tx: Transaction) => Promise<T>,
