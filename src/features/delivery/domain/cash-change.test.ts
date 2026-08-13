@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  computeCashChangeDue,
   createDefaultCashChangeDenominations,
   findActiveCashChangeByAmount,
   isDefaultCashChangeAmount,
@@ -55,5 +56,11 @@ describe("cash-change denominations", () => {
   it("recognizes bundled checkout note amounts", () => {
     expect(isDefaultCashChangeAmount(2000)).toBe(true);
     expect(isDefaultCashChangeAmount(999)).toBe(false);
+  });
+
+  it("computes courier change from the selected note", () => {
+    expect(computeCashChangeDue(10_000, 7500)).toBe(2500);
+    expect(computeCashChangeDue(10_000, 10_000)).toBe(0);
+    expect(computeCashChangeDue(5000, 7500)).toBeNull();
   });
 });

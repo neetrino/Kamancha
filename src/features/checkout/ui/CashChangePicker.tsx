@@ -18,12 +18,16 @@ import {
   resolveCashChangeImageUrl,
   type CashChangeSelection,
 } from "@/features/checkout/ui/checkout-cash-change-assets";
-import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
+import {
+  computeCashChangeDue,
+  type CashChangeDenominationView,
+} from "@/features/delivery/domain/cash-change";
 
 type CashChangePickerLabels = {
   title: string;
   hint: string;
   noneLabel: string;
+  dueLabel: string;
 };
 
 type CashChangePickerProps = {
@@ -31,6 +35,8 @@ type CashChangePickerProps = {
   value: CashChangeSelection;
   onChange: (value: CashChangeSelection) => void;
   disabled?: boolean;
+  payableTotal: number;
+  dueFormatted: string | null;
   labels: CashChangePickerLabels;
 };
 
@@ -47,6 +53,8 @@ export function CashChangePicker({
   value,
   onChange,
   disabled = false,
+  payableTotal,
+  dueFormatted,
   labels,
 }: CashChangePickerProps) {
   const imageByAmount = new Map(
@@ -72,7 +80,9 @@ export function CashChangePicker({
         >
           {labels.noneLabel}
         </button>
-        {CASH_CHANGE_DENOMINATIONS_AMD.map((amount) => {
+        {CASH_CHANGE_DENOMINATIONS_AMD.filter(
+          (amount) => computeCashChangeDue(amount, payableTotal) != null,
+        ).map((amount) => {
           const selected = value === amount;
           const src = resolveCashChangeImageUrl(
             amount,
@@ -102,6 +112,11 @@ export function CashChangePicker({
           );
         })}
       </div>
+      {dueFormatted ? (
+        <p className="mt-4 text-sm font-semibold text-brand-forest">
+          {labels.dueLabel.replace("{amount}", dueFormatted)}
+        </p>
+      ) : null}
     </div>
   );
 }

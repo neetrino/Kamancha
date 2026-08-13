@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 
 const SUMMARY_HEADER_GAP_PX = 16;
 const SUMMARY_FALLBACK_TOP_PX = 140;
@@ -46,10 +47,12 @@ type CheckoutOrderSummaryProps = {
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
+  changeLabel: string;
   totalLabel: string;
   subtotalFormatted: string;
   shippingFormatted: string;
   discountFormatted: string | null;
+  changeFormatted: string | null;
   totalFormatted: string;
   couponDraft: string;
   onCouponDraftChange: (value: string) => void;
@@ -71,10 +74,12 @@ export function CheckoutOrderSummary({
   discountLabel,
   subtotalLabel,
   shippingLabel,
+  changeLabel,
   totalLabel,
   subtotalFormatted,
   shippingFormatted,
   discountFormatted,
+  changeFormatted,
   totalFormatted,
   couponDraft,
   onCouponDraftChange,
@@ -91,7 +96,7 @@ export function CheckoutOrderSummary({
   return (
     <div className="lg:sticky lg:self-start" style={{ top: stickyTop }}>
       <section className="rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7">
-        <h2 className="mb-6 text-lg font-bold tracking-tight text-gray-900">
+        <h2 className="mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
           {title}
         </h2>
 
@@ -147,6 +152,12 @@ export function CheckoutOrderSummary({
             <span>{shippingLabel}</span>
             <span className="text-right">{shippingFormatted}</span>
           </div>
+          {changeFormatted ? (
+            <div className="flex justify-between text-gray-600">
+              <span>{changeLabel}</span>
+              <span>{changeFormatted}</span>
+            </div>
+          ) : null}
           <div className="border-t border-gray-200 pt-4">
             <div className="flex justify-between text-lg font-bold text-gray-900">
               <span>{totalLabel}</span>
@@ -161,15 +172,13 @@ export function CheckoutOrderSummary({
           </div>
         ) : null}
 
-        <Button
+        <KamanchaPillButton
           type="submit"
-          variant="primary"
-          size="lg"
-          className="h-12 w-full"
+          variant="dark"
+          label={isSubmitting ? processingLabel : placeOrderLabel}
           disabled={isSubmitting}
-        >
-          {isSubmitting ? processingLabel : placeOrderLabel}
-        </Button>
+          className="max-w-none sm:max-w-none"
+        />
       </section>
     </div>
   );

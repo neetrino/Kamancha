@@ -50,7 +50,8 @@
     "hint": "Tap the banknote you will pay with so we can prepare the change.",
     "aria": "Cash change denomination",
     "select": "Please select the banknote you will pay with",
-    "none": "No change needed"
+    "none": "No change needed",
+    "due": "Your change is {amount}"
   },
   "shipping": {
     "storePickup": "Store Pickup",
@@ -85,6 +86,7 @@
     "discount": "Discount",
     "shipping": "Shipping",
     "tax": "Tax",
+    "change": "Change",
     "total": "Total"
   },
   "buttons": {

@@ -35,6 +35,7 @@ import {
 } from "@/features/delivery/application/quote-distance-delivery";
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
 import {
+  computeCashChangeDue,
   findActiveCashChangeByAmount,
   isDefaultCashChangeAmount,
 } from "@/features/delivery/domain/cash-change";
@@ -389,6 +390,12 @@ export async function createOrderAction(
       }
 
       const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
+      if (
+        cashChangeAmount != null &&
+        computeCashChangeDue(cashChangeAmount, totalAmount) == null
+      ) {
+        throw new Error("Selected banknote is less than the order total.");
+      }
       const orderId = createId();
       await tx.execute(
         sql`select pg_advisory_xact_lock(${ORDER_NUMBER_LOCK_KEY})`,

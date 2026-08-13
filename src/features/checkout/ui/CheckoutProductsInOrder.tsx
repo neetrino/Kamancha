@@ -176,7 +176,7 @@ export function CheckoutProductsInOrder({
       <div className="flex items-start justify-between gap-4">
         <h2
           id="checkout-order-items-title"
-          className="text-sm font-bold tracking-wide text-gray-900"
+          className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase"
         >
           {title}
         </h2>

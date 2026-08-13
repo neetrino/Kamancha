@@ -25,6 +25,26 @@ export function isDefaultCashChangeAmount(amount: number): boolean {
   return (DEFAULT_AMOUNTS as readonly number[]).includes(amount);
 }
 
+/**
+ * Change the courier returns (Grill.am): note minus payable total.
+ * `null` when the note cannot cover the total.
+ */
+export function computeCashChangeDue(
+  noteAmount: number,
+  payableTotal: number,
+): number | null {
+  if (!Number.isInteger(noteAmount) || noteAmount < 1) {
+    return null;
+  }
+  if (!Number.isInteger(payableTotal) || payableTotal < 0) {
+    return null;
+  }
+  if (noteAmount < payableTotal) {
+    return null;
+  }
+  return noteAmount - payableTotal;
+}
+
 /** Default cash-change options offered at checkout for COD. */
 export function createDefaultCashChangeDenominations(): CashChangeDenomination[] {
   return DEFAULT_AMOUNTS.map((amount, index) => ({

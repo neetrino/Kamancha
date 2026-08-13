@@ -19,7 +19,10 @@ import {
   CASH_CHANGE_NONE,
   type CashChangeSelection,
 } from "@/features/checkout/ui/checkout-cash-change-assets";
-import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
+import {
+  computeCashChangeDue,
+  type CashChangeDenominationView,
+} from "@/features/delivery/domain/cash-change";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -64,6 +67,7 @@ type CheckoutLabels = {
   cashChangeTitle: string;
   cashChangeHint: string;
   cashChangeNone: string;
+  cashChangeDue: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
   cashShort: string;
@@ -78,6 +82,7 @@ type CheckoutLabels = {
   discount: string;
   subtotal: string;
   shipping: string;
+  change: string;
   total: string;
   placeOrder: string;
   processing: string;
@@ -176,6 +181,18 @@ export function CheckoutForm({
   const shippingAmount = deliveryQuote.deliveryAmount;
   const totalAmount =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
+  const selectedCashChange: CashChangeSelection =
+    cashChangeAmount !== CASH_CHANGE_NONE &&
+    computeCashChangeDue(cashChangeAmount, totalAmount) != null
+      ? cashChangeAmount
+      : CASH_CHANGE_NONE;
+  const cashChangeDue =
+    paymentMethod === "cash_on_delivery" &&
+    selectedCashChange !== CASH_CHANGE_NONE
+      ? computeCashChangeDue(selectedCashChange, totalAmount)
+      : null;
+  const cashChangeDueFormatted =
+    cashChangeDue != null ? formatMoney(cashChangeDue) : null;
 
   const shippingFormatted = deliveryQuote.pending
     ? labels.calculatingDelivery
@@ -279,8 +296,8 @@ export function CheckoutForm({
         scheduledDeliveryEnd: deliverySlot.endTime,
         cashChangeAmount:
           paymentMethod === "cash_on_delivery" &&
-          cashChangeAmount !== CASH_CHANGE_NONE
-            ? cashChangeAmount
+          selectedCashChange !== CASH_CHANGE_NONE
+            ? selectedCashChange
             : undefined,
         couponCode: appliedCouponCode ?? undefined,
       });
@@ -319,8 +336,10 @@ export function CheckoutForm({
             deliverySlot={deliverySlot}
             onDeliverySlotChange={setDeliverySlot}
             cashChangeOptions={cashChangeOptions}
-            cashChangeAmount={cashChangeAmount}
+            cashChangeAmount={selectedCashChange}
             onCashChangeAmountChange={setCashChangeAmount}
+            payableTotal={totalAmount}
+            cashChangeDueFormatted={cashChangeDueFormatted}
             line1={line1}
             onLine1Change={setLine1}
             deliveryQuotePending={deliveryQuote.pending}
@@ -349,12 +368,14 @@ export function CheckoutForm({
             discountLabel={labels.discount}
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}
+            changeLabel={labels.change}
             totalLabel={labels.total}
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
             discountFormatted={
               discountAmount > 0 ? formatMoney(discountAmount) : null
             }
+            changeFormatted={cashChangeDueFormatted}
             totalFormatted={formatMoney(totalAmount)}
             couponDraft={couponDraft}
             onCouponDraftChange={onCouponDraftChange}

@@ -35,7 +35,7 @@ export const CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS =
 export const CHECKOUT_CASH_CHANGE_OPTION_DEFAULT_CLASS =
   "border-gray-200 bg-white hover:border-gray-300";
 export const CHECKOUT_CASH_CHANGE_NONE_CLASS =
-  "aspect-[2/1] px-2 text-center text-xs font-semibold leading-snug text-gray-900 sm:text-sm";
+  "aspect-[2/1] px-2 text-center text-base font-semibold leading-snug text-brand-forest sm:text-lg";
 export const CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS = "relative aspect-[2/1] p-0";
 export const CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS = "object-cover object-center";
 

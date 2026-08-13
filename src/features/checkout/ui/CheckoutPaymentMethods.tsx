@@ -13,6 +13,7 @@ type CashChangeLabels = {
   title: string;
   hint: string;
   noneLabel: string;
+  dueLabel: string;
 };
 
 type CheckoutPaymentMethodsProps = {
@@ -25,6 +26,8 @@ type CheckoutPaymentMethodsProps = {
   cashChangeValue: CashChangeSelection;
   onCashChangeChange: (value: CashChangeSelection) => void;
   cashChangeLabels: CashChangeLabels;
+  payableTotal: number;
+  cashChangeDueFormatted: string | null;
 };
 
 export function CheckoutPaymentMethods({
@@ -37,10 +40,12 @@ export function CheckoutPaymentMethods({
   cashChangeValue,
   onCashChangeChange,
   cashChangeLabels,
+  payableTotal,
+  cashChangeDueFormatted,
 }: CheckoutPaymentMethodsProps) {
   return (
     <section className="rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7">
-      <h2 className="mb-6 text-lg font-bold tracking-tight text-gray-900">
+      <h2 className="mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
         {title}
       </h2>
       <div className="space-y-3">
@@ -59,6 +64,8 @@ export function CheckoutPaymentMethods({
                 value={cashChangeValue}
                 onChange={onCashChangeChange}
                 disabled={disabled}
+                payableTotal={payableTotal}
+                dueFormatted={cashChangeDueFormatted}
                 labels={cashChangeLabels}
               />
             ) : null}

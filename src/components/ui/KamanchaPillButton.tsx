@@ -1,18 +1,30 @@
 import Image from "next/image";
-import type { MouseEventHandler } from "react";
+import type { MouseEventHandler, ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { BRAND_ORNAMENT_SRC } from "@/lib/brand/assets";
 
-type KamanchaPillButtonProps = {
-  href: string;
+type KamanchaPillShared = {
   label: string;
   variant?: "light" | "dark";
   className?: string;
-  onClick?: MouseEventHandler<HTMLAnchorElement>;
   /** Figma node id — hero CTA 22:435, view-all 22:200. */
   figmaNodeId?: string;
 };
+
+export type KamanchaPillButtonProps =
+  | (KamanchaPillShared & {
+      href: string;
+      type?: never;
+      disabled?: never;
+      onClick?: MouseEventHandler<HTMLAnchorElement>;
+    })
+  | (KamanchaPillShared & {
+      href?: undefined;
+      type?: "button" | "submit";
+      disabled?: boolean;
+      onClick?: MouseEventHandler<HTMLButtonElement>;
+    });
 
 function PillOrnament({
   side,
@@ -45,35 +57,65 @@ function PillOrnament({
   );
 }
 
-/**
- * Figma BUTTON (22:435) — pill CTA; hover slides ornaments outward + soft green fill.
- */
-export function KamanchaPillButton({
-  href,
-  label,
-  variant = "light",
-  className = "",
-  onClick,
-  figmaNodeId = "22:435",
-}: KamanchaPillButtonProps) {
+function pillClassName(
+  variant: "light" | "dark",
+  className: string,
+): string {
   const tones =
     variant === "light"
       ? "kamancha-pill-button--light bg-white text-brand-forest"
       : "kamancha-pill-button--dark bg-brand-forest text-white";
 
+  return `kamancha-pill-button relative inline-flex min-h-16 w-full max-w-[280px] items-center justify-center overflow-hidden rounded-[50px] px-12 pt-2 pb-[7px] text-center text-[18px] leading-5 sm:max-w-[316px] ${tones} ${className}`;
+}
+
+function PillLabel({ children }: { children: ReactNode }) {
   return (
-    <AppLink
-      href={href}
-      prefetchPolicy="intent"
-      onClick={onClick}
-      data-node-id={figmaNodeId}
-      className={`kamancha-pill-button relative inline-flex min-h-16 w-full max-w-[280px] items-center justify-center overflow-hidden rounded-[50px] px-12 pt-2 pb-[7px] text-center text-[18px] leading-5 sm:max-w-[316px] ${tones} ${className}`}
-    >
+    <>
       <PillOrnament side="left" />
       <span className="relative z-[1] min-w-0 font-big-fat-boii font-normal">
-        {label}
+        {children}
       </span>
       <PillOrnament side="right" />
-    </AppLink>
+    </>
+  );
+}
+
+/**
+ * Figma BUTTON (22:435) — pill CTA; hover slides ornaments outward + soft green fill.
+ */
+export function KamanchaPillButton({
+  label,
+  variant = "light",
+  className = "",
+  figmaNodeId = "22:435",
+  ...props
+}: KamanchaPillButtonProps) {
+  const classNames = pillClassName(variant, className);
+
+  if ("href" in props && props.href) {
+    return (
+      <AppLink
+        href={props.href}
+        prefetchPolicy="intent"
+        onClick={props.onClick}
+        data-node-id={figmaNodeId}
+        className={classNames}
+      >
+        <PillLabel>{label}</PillLabel>
+      </AppLink>
+    );
+  }
+
+  return (
+    <button
+      type={props.type ?? "button"}
+      disabled={props.disabled}
+      onClick={props.onClick}
+      data-node-id={figmaNodeId}
+      className={`${classNames} disabled:cursor-not-allowed disabled:opacity-50`}
+    >
+      <PillLabel>{label}</PillLabel>
+    </button>
   );
 }

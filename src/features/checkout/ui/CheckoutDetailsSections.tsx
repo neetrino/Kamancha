@@ -19,7 +19,7 @@ const SECTION_CLASS =
   "rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7";
 
 const SECTION_TITLE_CLASS =
-  "mb-6 text-lg font-bold tracking-tight text-gray-900";
+  "mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -51,6 +51,7 @@ type CheckoutDetailsLabels = {
   cashChangeTitle: string;
   cashChangeHint: string;
   cashChangeNone: string;
+  cashChangeDue: string;
 };
 
 type CheckoutDetailsSectionsProps = {
@@ -63,6 +64,8 @@ type CheckoutDetailsSectionsProps = {
   cashChangeOptions: CashChangeDenominationView[];
   cashChangeAmount: CashChangeSelection;
   onCashChangeAmountChange: (value: CashChangeSelection) => void;
+  payableTotal: number;
+  cashChangeDueFormatted: string | null;
   line1: string;
   onLine1Change: (value: string) => void;
   deliveryQuotePending: boolean;
@@ -87,6 +90,8 @@ export function CheckoutDetailsSections({
   cashChangeOptions,
   cashChangeAmount,
   onCashChangeAmountChange,
+  payableTotal,
+  cashChangeDueFormatted,
   line1,
   onLine1Change,
   deliveryQuotePending,
@@ -258,7 +263,10 @@ export function CheckoutDetailsSections({
           title: labels.cashChangeTitle,
           hint: labels.cashChangeHint,
           noneLabel: labels.cashChangeNone,
+          dueLabel: labels.cashChangeDue,
         }}
+        payableTotal={payableTotal}
+        cashChangeDueFormatted={cashChangeDueFormatted}
       />
     </div>
   );
