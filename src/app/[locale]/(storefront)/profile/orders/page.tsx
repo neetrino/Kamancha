@@ -6,6 +6,9 @@ import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
 import { CustomerOrdersFilters } from "@/features/orders/ui/CustomerOrdersFilters";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
+import {
+  PROFILE_PAGE_TITLE,
+} from "@/features/profile/ui/profile-surface";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -79,9 +82,7 @@ export default async function OrdersPage({
 
   return (
     <section className="profile-sheet-keep-frame space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-        {dictionary.profile.orders}
-      </h1>
+      <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.orders}</h1>
 
       <CustomerOrdersFilters
         total={total}
@@ -93,11 +94,11 @@ export default async function OrdersPage({
       <CustomerOrdersView locale={locale} orders={rows} copy={dictionary.admin} />
 
       {totalPages > 1 ? (
-        <nav className="flex items-center gap-3 text-sm text-gray-700">
+        <nav className="flex items-center gap-3 font-big-fat-boii text-sm font-normal tracking-wide text-gray-800 uppercase lg:text-white/80">
           {filters.page > 1 ? (
             <Link
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
-              className="font-medium hover:underline"
+              className="transition-opacity hover:opacity-80"
             >
               Previous
             </Link>
@@ -108,7 +109,7 @@ export default async function OrdersPage({
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
-              className="font-medium hover:underline"
+              className="transition-opacity hover:opacity-80"
             >
               Next
             </Link>

@@ -31,10 +31,10 @@ type NavItem = {
 
 function navClassName(active: boolean): string {
   const base =
-    "flex w-full items-center gap-3 rounded-md border-l-[3px] px-3 py-2 text-left text-sm font-medium transition-colors";
+    "flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left font-big-fat-boii text-sm font-normal tracking-wide uppercase transition-colors";
   return active
-    ? `${base} border-gray-900 bg-white/85 text-gray-900 shadow-sm`
-    : `${base} border-transparent text-gray-600 hover:bg-white/50 hover:text-gray-900`;
+    ? `${base} bg-white/70 text-brand-forest shadow-sm`
+    : `${base} text-gray-700 hover:bg-white/40 hover:text-gray-900`;
 }
 
 export function ProfileSidebarNav({
@@ -79,8 +79,11 @@ export function ProfileSidebarNav({
   ];
 
   return (
-    <div className="p-2 sm:p-3">
-      <nav className="flex flex-col gap-0.5" aria-label={dictionary.title}>
+    <div className="flex h-full min-h-0 flex-col p-2 sm:p-3">
+      <nav
+        className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain"
+        aria-label={dictionary.title}
+      >
         {items.map((item) => {
           const active = item.exact
             ? pathname === item.href
@@ -97,8 +100,8 @@ export function ProfileSidebarNav({
               <span
                 className={
                   active
-                    ? "flex h-8 w-8 items-center justify-center rounded-md bg-gray-100 text-gray-900 shadow-sm"
-                    : "flex h-8 w-8 items-center justify-center rounded-md bg-gray-100/80 text-gray-500"
+                    ? "flex h-8 w-8 items-center justify-center rounded-xl bg-white text-brand-forest"
+                    : "flex h-8 w-8 items-center justify-center rounded-xl bg-white/40 text-gray-600"
                 }
               >
                 {item.icon}
@@ -109,13 +112,13 @@ export function ProfileSidebarNav({
         })}
       </nav>
 
-      <div className="mt-2 border-t border-gray-200/70 pt-2">
+      <div className="mt-auto shrink-0 border-t border-white/35 pt-2">
         <form action={logoutAction}>
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-md border-l-[3px] border-transparent px-3 py-2 text-left text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+            className="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left font-big-fat-boii text-sm font-normal tracking-wide text-red-700 uppercase transition-colors hover:bg-red-50/70"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-red-50 text-red-500">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50/80 text-red-600">
               <LogOut className="h-4 w-4" />
             </span>
             {dictionary.logout}

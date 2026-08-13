@@ -17,6 +17,9 @@
   --accent-foreground: #f9fafb;
   --brand-forest: #265127;
   --radius: 15px;
+  /* SiteHeader md+: pt-10 + min-h-[65px] + pb-2.5 */
+  --storefront-header-offset: calc(2.5rem + 65px + 0.625rem);
+  --profile-sticky-gap: 1.75rem;
   --brand-pale-edge-stroke: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0) 0%,
@@ -465,37 +468,64 @@ body {
 }
 
 /**
- * MaMarie-style profile desktop shell:
- * lock viewport height, hide footer, scroll only the content column.
+ * Storefront profile desktop (Grill.am): sticky band under the header.
+ * Equal top/bottom gaps; content column scrolls internally; footer stays
+ * below the fold and is reached by page scroll.
  */
 @media (min-width: 1024px) {
-  .storefront-shell:has(.profile-desktop-page) {
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    overflow: hidden;
-  }
-
   .storefront-shell:has(.profile-desktop-page) .storefront-main {
     display: flex;
-    flex: 1 1 0%;
+    flex: 1 1 auto;
     flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-    padding-top: 24px;
-    padding-bottom: 20px;
+    padding-top: var(--profile-sticky-gap);
+    padding-bottom: var(--profile-sticky-gap);
   }
 
-  .storefront-shell:has(.profile-desktop-page) .storefront-footer {
+  .profile-desktop-page {
+    flex: 1 1 auto;
+    min-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-items: flex-start;
+  }
+
+  .profile-sticky-band {
+    position: sticky;
+    top: calc(var(--storefront-header-offset) + var(--profile-sticky-gap));
+    z-index: 10;
+    height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    max-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-self: flex-start;
+  }
+
+  .profile-desktop-content {
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .profile-desktop-content::-webkit-scrollbar {
     display: none;
+  }
+
+  .profile-desktop-content > * {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+  }
+
+  .profile-desktop-content > * > .liquid-glass:last-of-type {
+    flex: 1 1 auto;
   }
 }
 
-/**
- * MaMarie-style mobile profile page: slightly cooler canvas behind hub cards.
- * Hide the storefront top header — profile hub is the chrome on mobile.
- * Hide the storefront bottom tab bar — profile has its own hub chrome.
- */
 @media (max-width: 1023px) {
   .storefront-shell:has(.profile-mobile-page) .site-header {
     display: none;
@@ -522,21 +552,26 @@ body {
   }
 
   /**
-   * Form sheets: flush outer cards + compact horizontal inset.
-   * Dashboard + orders (`.profile-sheet-keep-frame`) keep their own padding/frames.
+   * Form sheets: flatten nested glass cards onto the sheet surface.
+   * Dashboard + orders (`.profile-sheet-keep-frame`) keep their own frames.
    */
   .profile-mobile-tab-sheet-scroll
     > div
     > *:not(.profile-sheet-keep-frame)
-    > .rounded-2xl,
+    > .liquid-glass {
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
   .profile-mobile-tab-sheet-scroll
     > div
     > *:not(.profile-sheet-keep-frame)
-    > .rounded-lg {
-    border-width: 0;
-    box-shadow: none;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    > .liquid-glass::before {
+    display: none;
   }
 }
 

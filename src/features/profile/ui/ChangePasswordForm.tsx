@@ -2,15 +2,17 @@
 
 import { useActionState, useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import {
   changePasswordAction,
   type ChangePasswordActionState,
 } from "@/features/auth/change-password-action";
-
-const FIELD_CLASS =
-  "h-11 w-full rounded-lg border border-gray-200 px-3 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
+import {
+  PROFILE_FIELD,
+  PROFILE_LABEL,
+  PROFILE_PILL_LIGHT,
+  PROFILE_SECTION,
+  PROFILE_SECTION_TITLE,
+} from "@/features/profile/ui/profile-surface";
 
 type ChangePasswordFormProps = {
   locale: string;
@@ -47,18 +49,16 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
   }, [state.success]);
 
   return (
-    <Card className="rounded-2xl border border-gray-200/80 p-5 shadow-none sm:p-7 lg:p-8">
-      <div className="mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6">
-        <h1 className="text-lg font-bold tracking-tight text-gray-900 sm:text-xl">
-          {labels.title}
-        </h1>
+    <section className={PROFILE_SECTION}>
+      <div className="relative z-[2] mb-8 border-b border-white/35 pb-5 sm:mb-10 sm:pb-6">
+        <h1 className={PROFILE_SECTION_TITLE}>{labels.title}</h1>
       </div>
 
       <form
         action={formAction}
-        className="mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
+        className="relative z-[2] mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
       >
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+        <label className={PROFILE_LABEL}>
           {labels.currentPassword}
           <input
             name="currentPassword"
@@ -72,12 +72,12 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
               }))
             }
             placeholder={labels.currentPasswordPlaceholder}
-            className={FIELD_CLASS}
+            className={PROFILE_FIELD}
             autoComplete="current-password"
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+        <label className={PROFILE_LABEL}>
           {labels.newPassword}
           <input
             name="newPassword"
@@ -91,12 +91,12 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
               }))
             }
             placeholder={labels.newPasswordPlaceholder}
-            className={FIELD_CLASS}
+            className={PROFILE_FIELD}
             autoComplete="new-password"
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+        <label className={PROFILE_LABEL}>
           {labels.confirmPassword}
           <input
             name="confirmPassword"
@@ -110,7 +110,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
               }))
             }
             placeholder={labels.confirmPasswordPlaceholder}
-            className={FIELD_CLASS}
+            className={PROFILE_FIELD}
             autoComplete="new-password"
           />
         </label>
@@ -121,22 +121,21 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
           </p>
         ) : null}
         {state.success ? (
-          <p className="text-sm text-green-700" role="status">
+          <p className="text-sm text-brand-forest" role="status">
             {state.success}
           </p>
         ) : null}
 
         <div className="pt-2 sm:pt-4">
-          <Button
+          <button
             type="submit"
-            variant="primary"
-            className="h-11 w-full sm:w-auto"
+            className={`${PROFILE_PILL_LIGHT} w-full sm:w-auto`}
             disabled={isPending}
           >
             {isPending ? labels.changing : labels.change}
-          </Button>
+          </button>
         </div>
       </form>
-    </Card>
+    </section>
   );
 }

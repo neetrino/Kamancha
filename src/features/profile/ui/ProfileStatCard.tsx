@@ -5,11 +5,11 @@ type ProfileStatCardProps = {
 
 export function ProfileStatCard({ label, value }: ProfileStatCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-6">
-      <p className="text-[11px] font-semibold tracking-wider text-gray-500 uppercase sm:text-xs">
+    <div className="liquid-glass isolate overflow-hidden rounded-3xl p-5 sm:p-6">
+      <p className="relative z-[2] font-big-fat-boii text-[11px] font-normal tracking-wide text-gray-700 uppercase sm:text-xs">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900 sm:mt-3 sm:text-3xl">
+      <p className="relative z-[2] mt-2 font-big-fat-boii text-2xl font-normal tracking-wide text-gray-900 sm:mt-3 sm:text-3xl">
         {value}
       </p>
     </div>

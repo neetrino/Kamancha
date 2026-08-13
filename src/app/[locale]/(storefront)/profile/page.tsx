@@ -3,6 +3,13 @@ import { notFound } from "next/navigation";
 import { AppLink } from "@/components/ui/AppLink";
 import { getProfileDashboard } from "@/features/profile/application/dashboard-queries";
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
+import {
+  PROFILE_LINK,
+  PROFILE_PAGE_SUBTITLE,
+  PROFILE_PAGE_TITLE,
+  PROFILE_SECTION,
+  PROFILE_SECTION_TITLE,
+} from "@/features/profile/ui/profile-surface";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -25,10 +32,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   return (
     <section className="profile-sheet-keep-frame space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          {dictionary.profile.dashboard}
-        </h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.dashboard}</h1>
+        <p className={PROFILE_PAGE_SUBTITLE}>
           {dictionary.profile.welcome}, {user.firstName}.
         </p>
       </div>
@@ -52,24 +57,26 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         />
       </div>
 
-      <div className="rounded-2xl border border-gray-200/80 bg-white p-5 sm:p-7">
-        <div className="mb-5 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-gray-900">
+      <div className={PROFILE_SECTION}>
+        <div className="relative z-[2] mb-5 flex items-center justify-between gap-3">
+          <h2 className={PROFILE_SECTION_TITLE}>
             {dictionary.profile.recentOrders}
           </h2>
           <AppLink
             href={`/${locale}/profile/orders`}
             prefetchPolicy="intent"
-            className="text-sm font-semibold text-gray-700 underline-offset-2 hover:underline"
+            className={PROFILE_LINK}
           >
             {dictionary.profile.viewAllOrders}
           </AppLink>
         </div>
 
         {recentOrders.length === 0 ? (
-          <p className="text-sm text-gray-600">{dictionary.profile.noOrders}</p>
+          <p className="relative z-[2] text-sm text-gray-700">
+            {dictionary.profile.noOrders}
+          </p>
         ) : (
-          <ul className="divide-y divide-gray-100">
+          <ul className="relative z-[2] divide-y divide-white/35">
             {recentOrders.map((order) => (
               <li
                 key={order.id}
@@ -79,7 +86,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                   <p className="font-medium text-gray-900">
                     {dictionary.profile.orderNumber} {order.orderNumber}
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-600">
                     {dictionary.profile.status}: {order.status}
                   </p>
                 </div>

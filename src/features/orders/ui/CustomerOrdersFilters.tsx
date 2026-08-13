@@ -3,13 +3,10 @@
 import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
-import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
-
-const FILTER_SEARCH =
-  "h-11 w-full min-w-0 shrink-0 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300 lg:flex-1 lg:shrink";
+import { PROFILE_FIELD } from "@/features/profile/ui/profile-surface";
 
 const ORDER_STATUS_FILTERS = [
   { label: "Pending", value: "PENDING" },
@@ -52,11 +49,11 @@ export function CustomerOrdersFilters({
   }
 
   return (
-    <Card className="mb-6 overflow-visible">
+    <section className="liquid-glass isolate overflow-visible rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
       <form
         ref={formRef}
         method="get"
-        className="flex flex-col gap-3 p-4 lg:flex-row lg:flex-nowrap lg:items-center"
+        className="relative z-[2] flex flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center"
       >
         <SelectDropdown
           name="status"
@@ -80,13 +77,13 @@ export function CustomerOrdersFilters({
           name="q"
           defaultValue={q ?? ""}
           placeholder="Search by order #"
-          className={FILTER_SEARCH}
+          className={`${PROFILE_FIELD} min-w-0 text-sm lg:flex-1 lg:shrink`}
           aria-label="Search orders"
         />
       </form>
-      <div className="border-t border-gray-200 px-4 py-3">
-        <p className="text-sm text-gray-600">Total orders: {total}</p>
+      <div className="relative z-[2] mt-4 border-t border-white/35 pt-3">
+        <p className="text-sm text-gray-700">Total orders: {total}</p>
       </div>
-    </Card>
+    </section>
   );
 }

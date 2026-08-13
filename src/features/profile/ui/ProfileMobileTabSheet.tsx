@@ -30,7 +30,7 @@ type ProfileMobileTabSheetProps = {
 };
 
 /**
- * MaMarie-style mobile profile tab sheet: ~72dvh bottom panel with drag handle.
+ * Storefront mobile profile tab sheet: ~72dvh bottom panel with drag handle.
  * Open/close share 300ms motion; swipe-down dismisses without a mid-close jump.
  */
 export function ProfileMobileTabSheet({
@@ -259,7 +259,7 @@ export function ProfileMobileTabSheet({
       />
       <div
         ref={panelRef}
-        className={`relative z-[1] flex w-full flex-col overflow-hidden bg-white shadow-2xl ${panelClass}`}
+        className={`liquid-glass isolate relative z-[1] flex w-full flex-col overflow-hidden shadow-2xl ${panelClass}`}
         style={{
           height: `${SHEET_HEIGHT_VH}dvh`,
           borderTopLeftRadius: "var(--radius)",
@@ -271,18 +271,18 @@ export function ProfileMobileTabSheet({
         {...panelPointerHandlers}
       >
         <div
-          className="flex h-12 shrink-0 cursor-grab touch-none select-none items-center justify-center active:cursor-grabbing"
+          className="relative z-[2] flex h-12 shrink-0 cursor-grab touch-none select-none items-center justify-center active:cursor-grabbing"
           {...headerPointerHandlers}
         >
           <div
-            className="rounded-full bg-gray-300"
+            className="rounded-full bg-white/55"
             style={{ height: 6, width: 56 }}
             aria-hidden
           />
         </div>
         <div
           ref={scrollAreaRef}
-          className={`profile-mobile-tab-sheet-scroll min-h-0 flex-1 overscroll-contain px-3 pt-1 ${
+          className={`profile-mobile-tab-sheet-scroll relative z-[2] min-h-0 flex-1 overscroll-contain px-3 pt-1 ${
             isDragging || phase === "exit-drag"
               ? "touch-none overflow-hidden"
               : "overflow-y-auto"

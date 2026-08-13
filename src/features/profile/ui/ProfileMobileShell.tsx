@@ -27,7 +27,7 @@ function isProfileHubPath(pathname: string, locale: Locale): boolean {
 }
 
 /**
- * Mobile profile shell (MaMarie): hub always visible; section content in a bottom sheet.
+ * Mobile profile shell: hub always visible; section content in a bottom sheet.
  * Desktop content column is unchanged (`lg+`). Renders `children` once (matchMedia).
  */
 export function ProfileMobileShell({
@@ -92,7 +92,7 @@ export function ProfileMobileShell({
   );
 
   const desktopColumn = (
-    <div className="min-w-0 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain">
+    <div className="profile-desktop-content profile-sticky-band min-w-0 flex-1">
       {children}
     </div>
   );
@@ -102,7 +102,7 @@ export function ProfileMobileShell({
     return (
       <>
         <div className="profile-mobile-page w-full lg:hidden">{hub}</div>
-        <div className="hidden lg:block lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain">
+        <div className="profile-desktop-content profile-sticky-band hidden min-w-0 flex-1 lg:block">
           {children}
         </div>
       </>

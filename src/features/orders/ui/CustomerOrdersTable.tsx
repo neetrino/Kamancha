@@ -1,27 +1,15 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
 import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_CARD,
-  ADMIN_TABLE_FOOTER_ROUNDED_B,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_STATE_INSET,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
 } from "@/features/orders/ui/order-drawer-format";
+import { PROFILE_SECTION } from "@/features/profile/ui/profile-surface";
 
 type CustomerOrderRow = {
   id: string;
@@ -42,78 +30,61 @@ export function CustomerOrdersTable({
   orders,
   onOpenOrder,
 }: CustomerOrdersTableProps) {
-  return (
-    <Card className={ADMIN_TABLE_CARD}>
-      <div className={ADMIN_TABLE_OUTER_SCROLL}>
-        <table className={ADMIN_TABLE}>
-          <thead className={ADMIN_TABLE_THEAD}>
-            <tr>
-              <th className={ADMIN_TABLE_TH}>Order</th>
-              <th className={ADMIN_TABLE_TH}>Status</th>
-              <th className={ADMIN_TABLE_TH}>Payment</th>
-              <th className={ADMIN_TABLE_TH}>Total</th>
-              <th className={ADMIN_TABLE_TH}>Placed</th>
-            </tr>
-          </thead>
-          <tbody className={ADMIN_TABLE_TBODY}>
-            {orders.map((order) => (
-              <tr key={order.id} className={ADMIN_TABLE_ROW}>
-                <td className={ADMIN_TABLE_TD}>
-                  <button
-                    type="button"
-                    onClick={() => onOpenOrder(order.orderNumber)}
-                    className="font-medium text-gray-900 hover:underline"
-                  >
-                    {order.orderNumber}
-                  </button>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span
-                    className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                  >
-                    {formatOrderStatusLabel(order.status)}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span
-                    className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                  >
-                    {formatOrderStatusLabel(order.paymentStatus)}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="font-medium text-gray-900">
-                    {formatOrderDrawerMoney(
-                      order.totalAmount,
-                      order.baseCurrency,
-                    )}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="text-xs text-gray-500">
-                    {new Date(order.placedAt)
-                      .toISOString()
-                      .slice(0, 16)
-                      .replace("T", " ")}{" "}
-                    UTC
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {orders.length === 0 ? (
-        <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
+  if (orders.length === 0) {
+    return (
+      <section className={PROFILE_SECTION}>
+        <p className="relative z-[2] text-sm text-gray-700">
           No orders match these filters.
         </p>
-      ) : (
-        <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
-          <p className="text-sm text-gray-600">
-            {orders.length} order{orders.length === 1 ? "" : "s"} on this page
-          </p>
-        </div>
-      )}
-    </Card>
+      </section>
+    );
+  }
+
+  return (
+    <section className={PROFILE_SECTION}>
+      <ul className="relative z-[2] divide-y divide-white/35">
+        {orders.map((order) => (
+          <li key={order.id}>
+            <button
+              type="button"
+              onClick={() => onOpenOrder(order.orderNumber)}
+              className="flex w-full flex-col gap-2 py-4 text-left transition-colors hover:opacity-90 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+            >
+              <div className="min-w-0">
+                <p className="font-medium text-gray-900">{order.orderNumber}</p>
+                <p className="mt-1 text-xs text-gray-600">
+                  {new Date(order.placedAt)
+                    .toISOString()
+                    .slice(0, 16)
+                    .replace("T", " ")}{" "}
+                  UTC
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
+                >
+                  {formatOrderStatusLabel(order.status)}
+                </span>
+                <span
+                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
+                >
+                  {formatOrderStatusLabel(order.paymentStatus)}
+                </span>
+                <span className="text-sm font-semibold text-gray-900">
+                  {formatOrderDrawerMoney(
+                    order.totalAmount,
+                    order.baseCurrency,
+                  )}
+                </span>
+              </div>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="relative z-[2] border-t border-white/35 pt-3 text-sm text-gray-700">
+        {orders.length} order{orders.length === 1 ? "" : "s"} on this page
+      </p>
+    </section>
   );
 }
