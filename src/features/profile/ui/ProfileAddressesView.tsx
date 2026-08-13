@@ -24,7 +24,6 @@ import {
 type AddressFormState = {
   line1: string;
   city: string;
-  phone: string;
   isDefault: boolean;
 };
 
@@ -44,8 +43,6 @@ type ProfileAddressesViewProps = {
     formEditTitle: string;
     line1: string;
     city: string;
-    phone: string;
-    phonePlaceholder: string;
     isDefault: string;
     cancel: string;
     add: string;
@@ -57,7 +54,6 @@ type ProfileAddressesViewProps = {
 const emptyForm: AddressFormState = {
   line1: "",
   city: "",
-  phone: "",
   isDefault: false,
 };
 
@@ -95,7 +91,6 @@ export function ProfileAddressesView({
     setForm({
       line1: address.line1,
       city: address.city,
-      phone: address.phone,
       isDefault: address.isDefaultShipping,
     });
     setShowForm(true);
@@ -213,20 +208,6 @@ export function ProfileAddressesView({
                   autoComplete="address-level2"
                 />
               </label>
-              <label className={`${PROFILE_LABEL} sm:col-span-2`}>
-                {labels.phone}
-                <input
-                  required
-                  type="tel"
-                  value={form.phone}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, phone: event.target.value }))
-                  }
-                  placeholder={labels.phonePlaceholder}
-                  className={PROFILE_FIELD}
-                  autoComplete="tel"
-                />
-              </label>
             </div>
             <label className="flex cursor-pointer items-center gap-3">
               <input
@@ -280,7 +261,7 @@ export function ProfileAddressesView({
           </p>
         ) : null}
 
-        <div className="relative z-[2] space-y-4 sm:space-y-5">
+        <div className="relative z-[2] grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
           {addresses.length > 0 ? (
             addresses.map((address) => (
               <ProfileAddressCard
@@ -299,7 +280,7 @@ export function ProfileAddressesView({
               />
             ))
           ) : (
-            <p className="py-12 text-center text-sm text-gray-700 sm:py-16">
+            <p className="col-span-full py-12 text-center text-sm text-gray-700 sm:py-16">
               {labels.noAddresses}
             </p>
           )}
