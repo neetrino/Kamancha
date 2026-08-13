@@ -21,7 +21,7 @@ export const CASH_CHANGE_BANKNOTE_SRC: Record<
 };
 
 export const CHECKOUT_CASH_CHANGE_SECTION_CLASS =
-  "rounded-[18px] border border-white/40 bg-white/25 p-4 sm:p-5";
+  "liquid-glass isolate overflow-hidden rounded-[18px] p-4 sm:p-5";
 export const CHECKOUT_CASH_CHANGE_TITLE_CLASS =
   "text-base font-bold tracking-wide text-gray-900";
 export const CHECKOUT_CASH_CHANGE_HINT_CLASS =
@@ -29,11 +29,11 @@ export const CHECKOUT_CASH_CHANGE_HINT_CLASS =
 export const CHECKOUT_CASH_CHANGE_GRID_CLASS =
   "mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3";
 export const CHECKOUT_CASH_CHANGE_OPTION_BASE_CLASS =
-  "flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-[18px] border-2 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-forest disabled:cursor-not-allowed disabled:opacity-50";
+  "liquid-glass isolate flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-[18px] outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-forest disabled:cursor-not-allowed disabled:opacity-50";
 export const CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS =
-  "border-brand-forest bg-brand-forest/10";
+  "ring-2 ring-inset ring-brand-forest";
 export const CHECKOUT_CASH_CHANGE_OPTION_DEFAULT_CLASS =
-  "border-white/45 bg-white/40 hover:border-white/70";
+  "hover:brightness-[1.04]";
 export const CHECKOUT_CASH_CHANGE_NONE_CLASS =
   "aspect-[2/1] px-2 text-center text-base font-semibold leading-snug text-brand-forest sm:text-lg";
 export const CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS = "relative aspect-[2/1] p-0";

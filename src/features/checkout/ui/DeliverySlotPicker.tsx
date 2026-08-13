@@ -175,16 +175,16 @@ export function DeliverySlotPicker({
   const canNext = viewMonthYmd < maxMonth;
 
   return (
-    <div className="space-y-4 rounded-2xl border border-white/40 bg-white/20 p-4">
-      <h3 className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+    <div className="liquid-glass isolate relative z-[2] space-y-4 overflow-hidden rounded-2xl p-4">
+      <h3 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
         {labels.title}
       </h3>
 
       {availableDays.length === 0 ? (
-        <p className="text-sm text-red-700">{labels.noSlots}</p>
+        <p className="relative z-[2] text-sm text-red-700">{labels.noSlots}</p>
       ) : (
         <>
-          <div>
+          <div className="relative z-[2]">
             <div className="mb-3 flex items-center justify-between gap-2">
               <button
                 type="button"
@@ -241,7 +241,7 @@ export function DeliverySlotPicker({
           </div>
 
           {selectedDay ? (
-            <div>
+            <div className="relative z-[2]">
               <p className="mb-2 text-xs font-medium uppercase tracking-wide text-white">
                 {labels.pickTime}
               </p>

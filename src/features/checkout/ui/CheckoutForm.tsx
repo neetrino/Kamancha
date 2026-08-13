@@ -245,7 +245,7 @@ export function CheckoutForm({
     return (
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
-        <div className="liquid-glass rounded-2xl p-6 text-center">
+        <div className="liquid-glass isolate overflow-hidden rounded-2xl p-6 text-center">
           <p className="relative z-[2] mb-4 text-gray-700">{labels.cartEmpty}</p>
           <Link
             href={productsHref}

@@ -58,13 +58,13 @@ export function CheckoutPaymentMethodOption({
           checked={selected}
           onChange={() => onSelect(option.id)}
           disabled={disabled}
-          className="self-center"
+          className="relative z-[2] self-center"
         />
-        <div className="flex w-full min-w-0 flex-1 flex-col items-start gap-1.5 lg:hidden">
+        <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-1.5 lg:hidden">
           <span className="font-medium text-gray-900">{option.shortName}</span>
           {icons}
         </div>
-        <div className="hidden min-w-0 flex-1 items-center gap-3 lg:flex lg:gap-4">
+        <div className="relative z-[2] hidden min-w-0 flex-1 items-center gap-3 lg:flex lg:gap-4">
           <div className="flex shrink-0 items-center">{icons}</div>
           <div className="min-w-0">
             <div className="font-medium text-gray-900">{option.name}</div>
@@ -83,8 +83,9 @@ export function CheckoutPaymentMethodOption({
         checked={selected}
         onChange={() => onSelect(option.id)}
         disabled={disabled}
+        className="relative z-[2]"
       />
-      <div className="flex min-w-0 flex-1 items-center gap-3 lg:gap-4">
+      <div className="relative z-[2] flex min-w-0 flex-1 items-center gap-3 lg:gap-4">
         <div className="flex shrink-0 items-center">{icons}</div>
         <div className="min-w-0">
           {option.id === "cash_on_delivery" ? (

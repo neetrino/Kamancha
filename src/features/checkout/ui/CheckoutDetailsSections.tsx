@@ -16,7 +16,7 @@ const FIELD_CLASS =
   "h-11 w-full rounded-2xl border border-white/50 bg-white/55 px-4 text-gray-900 shadow-sm outline-none backdrop-blur-sm transition-colors placeholder:text-gray-500 hover:border-white/70 focus:border-white/80 disabled:bg-white/30";
 
 const SECTION_CLASS =
-  "liquid-glass rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
+  "liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
 
 const SECTION_TITLE_CLASS =
   "relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";

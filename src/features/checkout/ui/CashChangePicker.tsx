@@ -63,10 +63,14 @@ export function CashChangePicker({
 
   return (
     <div className={CHECKOUT_CASH_CHANGE_SECTION_CLASS}>
-      <h3 className={CHECKOUT_CASH_CHANGE_TITLE_CLASS}>{labels.title}</h3>
-      <p className={CHECKOUT_CASH_CHANGE_HINT_CLASS}>{labels.hint}</p>
+      <h3 className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_TITLE_CLASS}`}>
+        {labels.title}
+      </h3>
+      <p className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_HINT_CLASS}`}>
+        {labels.hint}
+      </p>
       <div
-        className={CHECKOUT_CASH_CHANGE_GRID_CLASS}
+        className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_GRID_CLASS}`}
         role="radiogroup"
         aria-label={labels.title}
       >
@@ -78,7 +82,7 @@ export function CashChangePicker({
           className={`${optionClass(value === CASH_CHANGE_NONE)} ${CHECKOUT_CASH_CHANGE_NONE_CLASS}`}
           onClick={() => onChange(CASH_CHANGE_NONE)}
         >
-          {labels.noneLabel}
+          <span className="relative z-[2]">{labels.noneLabel}</span>
         </button>
         {CASH_CHANGE_DENOMINATIONS_AMD.filter(
           (amount) => computeCashChangeDue(amount, payableTotal) != null,
@@ -104,7 +108,7 @@ export function CashChangePicker({
                   src={src}
                   alt={`${amount} AMD`}
                   fill
-                  className={CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS}
+                  className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS}`}
                   sizes="(max-width: 640px) 33vw, 180px"
                 />
               ) : null}
@@ -113,7 +117,7 @@ export function CashChangePicker({
         })}
       </div>
       {dueFormatted ? (
-        <p className="mt-4 text-sm font-semibold text-brand-forest">
+        <p className="relative z-[2] mt-4 text-sm font-semibold text-brand-forest">
           {labels.dueLabel.replace("{amount}", dueFormatted)}
         </p>
       ) : null}

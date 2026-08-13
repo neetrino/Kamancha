@@ -170,7 +170,7 @@ export function CheckoutProductsInOrder({
 
   return (
     <section
-      className="liquid-glass mb-6 rounded-[15px] px-5 py-4 sm:px-6 sm:py-5"
+      className="liquid-glass isolate overflow-hidden mb-6 rounded-[15px] px-5 py-4 sm:px-6 sm:py-5"
       aria-labelledby="checkout-order-items-title"
     >
       <div className="relative z-[2] flex items-start justify-between gap-4">

@@ -95,14 +95,14 @@ export function CheckoutOrderSummary({
 
   return (
     <div className="lg:sticky lg:self-start" style={{ top: stickyTop }}>
-      <section className="liquid-glass rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
+      <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
         <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
           {title}
         </h2>
 
-        <div className="relative z-[2] mb-6 rounded-xl border border-white/40 bg-white/25 p-4">
-          <p className="mb-3 text-sm text-gray-700">{couponTitle}</p>
-          <div className="flex gap-2">
+        <div className="relative z-[2] mb-6 liquid-glass isolate overflow-hidden rounded-xl p-4">
+          <p className="relative z-[2] mb-3 text-sm text-gray-700">{couponTitle}</p>
+          <div className="relative z-[2] flex gap-2">
             <input
               type="text"
               name="couponCodeDraft"
@@ -131,7 +131,7 @@ export function CheckoutOrderSummary({
             </Button>
           </div>
           {couponError ? (
-            <p className="mt-2 text-sm text-red-600" role="alert">
+            <p className="relative z-[2] mt-2 text-sm text-red-600" role="alert">
               {couponError}
             </p>
           ) : null}

@@ -7,11 +7,11 @@ export const CHECKOUT_PAYMENT_ARCA_SRC = "/assets/payments/checkout/arca.webp";
 export const CHECKOUT_PAYMENT_IDRAM_SRC = "/assets/payments/checkout/idram.webp";
 
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =
-  "border-brand-forest bg-brand-forest/15";
+  "ring-2 ring-inset ring-brand-forest";
 export const CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS =
-  "border-white/45 bg-white/25 hover:bg-white/40";
+  "hover:brightness-[1.04]";
 export const CHECKOUT_PAYMENT_OPTION_BASE_CLASS =
-  "flex cursor-pointer items-center rounded-[15px] border-2 p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
+  "liquid-glass isolate flex cursor-pointer items-center overflow-hidden rounded-[15px] p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
 
 export const CHECKOUT_PAYMENT_ICON_BOX_HEIGHT_PX = 40;
 export const CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX = 8;
