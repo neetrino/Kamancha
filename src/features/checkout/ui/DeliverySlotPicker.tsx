@@ -11,7 +11,6 @@ import {
 
 type DeliverySlotPickerLabels = {
   title: string;
-  pickDate: string;
   pickTime: string;
   noSlots: string;
   prevMonth: string;
@@ -206,9 +205,6 @@ export function DeliverySlotPicker({
               </button>
             </div>
 
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-              {labels.pickDate}
-            </p>
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
               {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
                 <div key={label} className="py-1 font-medium">
@@ -229,7 +225,7 @@ export function DeliverySlotPicker({
                     onClick={() => selectDate(date)}
                     className={`h-10 rounded-xl text-sm font-medium transition-colors ${
                       isSelected
-                        ? "bg-gray-900 text-white"
+                        ? "bg-brand-forest text-white"
                         : bookable
                           ? "bg-gray-50 text-gray-900 hover:bg-gray-100"
                           : "cursor-not-allowed text-gray-300"
@@ -242,11 +238,11 @@ export function DeliverySlotPicker({
             </div>
           </div>
 
-          <div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-              {labels.pickTime}
-            </p>
-            {selectedDay ? (
+          {selectedDay ? (
+            <div>
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+                {labels.pickTime}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {selectedDay.slots.map((slot) => {
                   const isSelected =
@@ -266,7 +262,7 @@ export function DeliverySlotPicker({
                       }
                       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                         isSelected
-                          ? "border-gray-900 bg-gray-900 text-white"
+                          ? "border-brand-forest bg-brand-forest text-white"
                           : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
                       }`}
                     >
@@ -275,10 +271,8 @@ export function DeliverySlotPicker({
                   );
                 })}
               </div>
-            ) : (
-              <p className="text-sm text-gray-500">{labels.pickDate}</p>
-            )}
-          </div>
+            </div>
+          ) : null}
         </>
       )}
     </div>

@@ -56,7 +56,6 @@ type CheckoutLabels = {
   enterDeliveryAddress: string;
   calculatingDelivery: string;
   scheduleTitle: string;
-  schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
@@ -307,6 +306,7 @@ export function CheckoutForm({
         itemsOneLabel={labels.itemsOne}
         itemsManyLabel={labels.itemsMany}
         removeItemLabel={labels.removeItem}
+        locale={locale}
         onCartChanged={clearAppliedCoupon}
       />
 

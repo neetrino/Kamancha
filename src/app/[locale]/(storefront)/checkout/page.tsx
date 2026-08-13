@@ -30,7 +30,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     getCartWithItems(),
     getDeliverySettings(),
   ]);
-  const [defaultAddress, prices, orderProducts] = await Promise.all([
+  const [defaultAddress, prices] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(
       items.map(({ product }) => ({
@@ -39,8 +39,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         compareAtAmount: product.compareAtAmount,
       })),
     ),
-    getCheckoutOrderProducts(rawLocale, items),
   ]);
+  const orderProducts = await getCheckoutOrderProducts(
+    rawLocale,
+    items,
+    prices,
+  );
   const subtotal = items.reduce((sum, { item, product, modifiers }) => {
     const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
     return sum + item.quantity * cartLineUnitAmount(base, modifiers);
@@ -104,7 +108,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
         calculatingDelivery: copy.shipping.calculatingDelivery,
         scheduleTitle: copy.schedule.title,
-        schedulePickDate: copy.schedule.pickDate,
         schedulePickTime: copy.schedule.pickTime,
         scheduleNoSlots: copy.schedule.noSlots,
         schedulePrevMonth: copy.schedule.prevMonth,
