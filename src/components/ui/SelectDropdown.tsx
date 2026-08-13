@@ -11,7 +11,7 @@ import {
 import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 
-export const DROPDOWN_ANIMATION_MS = 280;
+export const DROPDOWN_ANIMATION_MS = 360;
 
 export type SelectDropdownOption = {
   label: string;
@@ -69,13 +69,18 @@ export function SelectDropdown({
     allLabel ??
     value;
 
-  const closeMenu = useCallback(() => setOpen(false), []);
+  const wantOpenRef = useRef(false);
+
+  const closeMenu = useCallback(() => {
+    wantOpenRef.current = false;
+    setOpen(false);
+  }, []);
 
   function openMenu(): void {
     const trigger = rootRef.current;
     if (trigger) setPosition(measureMenuPosition(trigger));
+    wantOpenRef.current = true;
     setMounted(true);
-    setOpen(true);
   }
 
   useEffect(() => {
@@ -87,7 +92,21 @@ export function SelectDropdown({
   }, []);
 
   useEffect(() => {
-    if (open || !mounted) return;
+    if (!mounted || !wantOpenRef.current) return;
+    let innerFrame = 0;
+    const outerFrame = requestAnimationFrame(() => {
+      innerFrame = requestAnimationFrame(() => {
+        if (wantOpenRef.current) setOpen(true);
+      });
+    });
+    return () => {
+      cancelAnimationFrame(outerFrame);
+      cancelAnimationFrame(innerFrame);
+    };
+  }, [mounted]);
+
+  useEffect(() => {
+    if (open || !mounted || wantOpenRef.current) return;
     const timer = setTimeout(() => {
       setMounted(false);
       setPosition(null);
@@ -161,7 +180,7 @@ export function SelectDropdown({
       >
         <span className="min-w-0 truncate">{selectedLabel}</span>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-[360ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "rotate-180" : ""}`}
           aria-hidden
         />
       </button>
@@ -211,10 +230,10 @@ function SelectDropdownMenu({
   return (
     <div
       ref={menuRef}
-      className={`fixed z-[200] grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+      className={`fixed z-[200] origin-top grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
         open
           ? "translate-y-0 grid-rows-[1fr] opacity-100"
-          : "pointer-events-none -translate-y-1 grid-rows-[0fr] opacity-0"
+          : "pointer-events-none -translate-y-2 grid-rows-[0fr] opacity-0"
       }`}
       style={{
         top: position.top,
