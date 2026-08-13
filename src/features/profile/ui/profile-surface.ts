@@ -41,3 +41,9 @@ export const PROFILE_PILL_SM =
 
 export const PROFILE_PILL_SM_DANGER =
   "inline-flex h-9 items-center justify-center rounded-full border border-red-300/70 bg-red-50/50 px-4 font-big-fat-boii text-xs font-normal tracking-wide text-red-700 uppercase transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50";
+
+export const PROFILE_INNER_CARD =
+  "rounded-2xl border border-white/50 bg-white/55 shadow-sm";
+
+export const PROFILE_STATUS_BADGE =
+  "inline-flex rounded-full bg-white/70 px-3 py-1 text-xs font-medium capitalize text-gray-800";
