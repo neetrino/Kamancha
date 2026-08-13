@@ -60,14 +60,14 @@ function CheckoutOrderItemCard({
 
   return (
     <article
-      className="w-max shrink-0 rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm"
+      className="liquid-glass isolate w-max shrink-0 overflow-hidden rounded-[20px] p-3"
       style={{
         minWidth: CARD_MIN_WIDTH_PX,
         maxWidth: CARD_MAX_WIDTH_PX,
         ["--checkout-order-item-title-max-width" as string]: `${TITLE_MAX_WIDTH_PX}px`,
       }}
     >
-      <div className="flex items-stretch gap-3">
+      <div className="relative z-[2] flex items-stretch gap-3">
         <div
           className="relative block shrink-0 self-stretch overflow-hidden"
           style={{
@@ -170,22 +170,22 @@ export function CheckoutProductsInOrder({
 
   return (
     <section
-      className="mb-6 rounded-[15px] border border-gray-200 bg-white px-5 py-4 sm:px-6 sm:py-5"
+      className="liquid-glass mb-6 rounded-[15px] px-5 py-4 sm:px-6 sm:py-5"
       aria-labelledby="checkout-order-items-title"
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="relative z-[2] flex items-start justify-between gap-4">
         <h2
           id="checkout-order-items-title"
           className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase"
         >
           {title}
         </h2>
-        <p className="shrink-0 text-sm text-gray-500">
+        <p className="shrink-0 text-sm text-white">
           {formatItemCount(itemCount, itemsOneLabel, itemsManyLabel)}
         </p>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto overscroll-x-contain pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="relative z-[2] flex gap-3 overflow-x-auto overscroll-x-contain pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {products.map((product) => (
           <CheckoutOrderItemCard
             key={product.id}

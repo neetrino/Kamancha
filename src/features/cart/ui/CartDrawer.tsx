@@ -256,7 +256,7 @@ export function CartDrawer({
                 return (
                   <li
                     key={item.id}
-                    className="cart-item-glass rounded-[20px] p-3"
+                    className="liquid-glass isolate overflow-hidden rounded-[20px] p-3"
                   >
                     <div className="flex items-stretch gap-3">
                       {productHref ? (

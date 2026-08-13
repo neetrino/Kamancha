@@ -95,12 +95,12 @@ export function CheckoutOrderSummary({
 
   return (
     <div className="lg:sticky lg:self-start" style={{ top: stickyTop }}>
-      <section className="rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7">
-        <h2 className="mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+      <section className="liquid-glass rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
+        <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
           {title}
         </h2>
 
-        <div className="mb-6 rounded-xl border border-gray-200 p-4">
+        <div className="relative z-[2] mb-6 rounded-xl border border-white/40 bg-white/25 p-4">
           <p className="mb-3 text-sm text-gray-700">{couponTitle}</p>
           <div className="flex gap-2">
             <input
@@ -117,7 +117,7 @@ export function CheckoutOrderSummary({
               placeholder={couponPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingCoupon}
-              className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className="h-11 min-w-0 flex-1 rounded-lg border border-white/50 bg-white/55 px-3 text-sm text-gray-900 backdrop-blur-sm placeholder:text-gray-500 focus:border-white/80 focus:outline-none focus:ring-2 focus:ring-white/40"
             />
             <Button
               type="button"
@@ -137,28 +137,28 @@ export function CheckoutOrderSummary({
           ) : null}
         </div>
 
-        <div className="mb-6 space-y-4">
-          <div className="flex justify-between text-gray-600">
+        <div className="relative z-[2] mb-6 space-y-4">
+          <div className="flex justify-between text-white">
             <span>{subtotalLabel}</span>
             <span>{subtotalFormatted}</span>
           </div>
           {discountFormatted ? (
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-white">
               <span>{discountLabel}</span>
-              <span className="text-emerald-700">-{discountFormatted}</span>
+              <span className="text-emerald-200">-{discountFormatted}</span>
             </div>
           ) : null}
-          <div className="flex justify-between text-gray-600">
+          <div className="flex justify-between text-white">
             <span>{shippingLabel}</span>
             <span className="text-right">{shippingFormatted}</span>
           </div>
           {changeFormatted ? (
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-white">
               <span>{changeLabel}</span>
               <span>{changeFormatted}</span>
             </div>
           ) : null}
-          <div className="border-t border-gray-200 pt-4">
+          <div className="border-t border-white/40 pt-4">
             <div className="flex justify-between text-lg font-bold text-gray-900">
               <span>{totalLabel}</span>
               <span>{totalFormatted}</span>
@@ -166,19 +166,21 @@ export function CheckoutOrderSummary({
           </div>
         </div>
 
-        {error ? (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        ) : null}
+        <div className="relative z-[2]">
+          {error ? (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50/90 p-3">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          ) : null}
 
-        <KamanchaPillButton
-          type="submit"
-          variant="dark"
-          label={isSubmitting ? processingLabel : placeOrderLabel}
-          disabled={isSubmitting}
-          className="max-w-none sm:max-w-none"
-        />
+          <KamanchaPillButton
+            type="submit"
+            variant="light"
+            label={isSubmitting ? processingLabel : placeOrderLabel}
+            disabled={isSubmitting}
+            className="max-w-none sm:max-w-none"
+          />
+        </div>
       </section>
     </div>
   );

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 
-import { Card } from "@/components/ui/Card";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
 import { createOrderAction } from "@/features/checkout/create-order";
@@ -246,15 +245,15 @@ export function CheckoutForm({
     return (
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
-        <Card className="rounded-2xl border border-gray-200/80 p-6 text-center shadow-none">
-          <p className="mb-4 text-gray-600">{labels.cartEmpty}</p>
+        <div className="liquid-glass rounded-2xl p-6 text-center">
+          <p className="relative z-[2] mb-4 text-gray-700">{labels.cartEmpty}</p>
           <Link
             href={productsHref}
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-gray-900 px-4 text-sm font-medium text-white hover:bg-gray-800"
+            className="relative z-[2] inline-flex h-11 items-center justify-center rounded-xl bg-gray-900 px-4 text-sm font-medium text-white hover:bg-gray-800"
           >
             {labels.continueShopping}
           </Link>
-        </Card>
+        </div>
       </div>
     );
   }

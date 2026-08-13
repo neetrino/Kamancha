@@ -13,13 +13,13 @@ import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-s
 import type { Locale } from "@/lib/i18n/config";
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-2xl border border-gray-200 px-4 text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300 disabled:bg-gray-50";
+  "h-11 w-full rounded-2xl border border-white/50 bg-white/55 px-4 text-gray-900 shadow-sm outline-none backdrop-blur-sm transition-colors placeholder:text-gray-500 hover:border-white/70 focus:border-white/80 disabled:bg-white/30";
 
 const SECTION_CLASS =
-  "rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7";
+  "liquid-glass rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
 
 const SECTION_TITLE_CLASS =
-  "mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";
+  "relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -111,7 +111,7 @@ export function CheckoutDetailsSections({
         <h2 className={SECTION_TITLE_CLASS}>
           {labels.contactInformation}
         </h2>
-        <div className="space-y-4">
+        <div className="relative z-[2] space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
               {labels.firstName}
@@ -169,7 +169,7 @@ export function CheckoutDetailsSections({
         <h2 className={SECTION_TITLE_CLASS}>
           {labels.shippingAddress}
         </h2>
-        <div className="space-y-4">
+        <div className="relative z-[2] space-y-4">
           <div className="space-y-1.5">
             <span className="text-sm font-medium text-gray-700">
               {labels.address}
@@ -238,15 +238,19 @@ export function CheckoutDetailsSections({
           />
         </div>
         {deliveryQuotePending ? (
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="relative z-[2] mt-2 text-sm text-gray-500">
             {labels.calculatingDelivery}
           </p>
         ) : null}
         {deliveryQuoteError ? (
-          <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
+          <p className="relative z-[2] mt-2 text-sm text-red-700">
+            {deliveryQuoteError}
+          </p>
         ) : null}
         {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
-          <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
+          <p className="relative z-[2] mt-2 text-sm text-gray-600">
+            {deliveryQuoteHint}
+          </p>
         ) : null}
       </section>
 

@@ -44,11 +44,11 @@ export function CheckoutPaymentMethods({
   cashChangeDueFormatted,
 }: CheckoutPaymentMethodsProps) {
   return (
-    <section className="rounded-3xl bg-white px-5 py-6 shadow-sm ring-1 ring-gray-200/80 sm:px-6 sm:py-7">
-      <h2 className="mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+    <section className="liquid-glass rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
+      <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
         {title}
       </h2>
-      <div className="space-y-3">
+      <div className="relative z-[2] space-y-3">
         {options.map((option) => (
           <div key={option.id} className="space-y-3">
             <CheckoutPaymentMethodOption

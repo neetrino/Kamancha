@@ -7,9 +7,9 @@ export const CHECKOUT_PAYMENT_ARCA_SRC = "/assets/payments/checkout/arca.webp";
 export const CHECKOUT_PAYMENT_IDRAM_SRC = "/assets/payments/checkout/idram.webp";
 
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =
-  "border-brand-forest bg-brand-forest/10";
+  "border-brand-forest bg-brand-forest/15";
 export const CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS =
-  "border-gray-200 hover:bg-gray-50/80";
+  "border-white/45 bg-white/25 hover:bg-white/40";
 export const CHECKOUT_PAYMENT_OPTION_BASE_CLASS =
   "flex cursor-pointer items-center rounded-[15px] border-2 p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
 

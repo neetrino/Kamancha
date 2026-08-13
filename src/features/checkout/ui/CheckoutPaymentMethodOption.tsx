@@ -31,6 +31,10 @@ function optionClass(selected: boolean): string {
   }`;
 }
 
+function descriptionClass(selected: boolean): string {
+  return selected ? "text-sm text-gray-800" : "text-sm text-gray-600";
+}
+
 export function CheckoutPaymentMethodOption({
   option,
   selected,
@@ -64,7 +68,7 @@ export function CheckoutPaymentMethodOption({
           <div className="flex shrink-0 items-center">{icons}</div>
           <div className="min-w-0">
             <div className="font-medium text-gray-900">{option.name}</div>
-            <div className="text-sm text-gray-600">{option.description}</div>
+            <div className={descriptionClass(selected)}>{option.description}</div>
           </div>
         </div>
       </label>
@@ -86,7 +90,9 @@ export function CheckoutPaymentMethodOption({
           {option.id === "cash_on_delivery" ? (
             <>
               <div className="font-medium text-gray-900">{option.name}</div>
-              <div className="text-sm text-gray-600">{option.description}</div>
+              <div className={descriptionClass(selected)}>
+                {option.description}
+              </div>
             </>
           ) : (
             <>
@@ -95,7 +101,9 @@ export function CheckoutPaymentMethodOption({
               </span>
               <div className="hidden lg:block">
                 <div className="font-medium text-gray-900">{option.name}</div>
-                <div className="text-sm text-gray-600">{option.description}</div>
+                <div className={descriptionClass(selected)}>
+                  {option.description}
+                </div>
               </div>
             </>
           )}

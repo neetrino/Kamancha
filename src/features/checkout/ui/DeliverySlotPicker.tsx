@@ -64,32 +64,32 @@ const MONTH_NAMES: Record<string, readonly string[]> = {
     "December",
   ],
   hy: [
-    "հունվար",
-    "փետրվար",
-    "մարտ",
-    "ապրիլ",
-    "մայիս",
-    "հունիս",
-    "հուլիս",
-    "օգոստոս",
-    "սեպտեմբեր",
-    "հոկտեմբեր",
-    "նոյեմբեր",
-    "դեկտեմբեր",
+    "Հունվար",
+    "Փետրվար",
+    "Մարտ",
+    "Ապրիլ",
+    "Մայիս",
+    "Հունիս",
+    "Հուլիս",
+    "Օգոստոս",
+    "Սեպտեմբեր",
+    "Հոկտեմբեր",
+    "Նոյեմբեր",
+    "Դեկտեմբեր",
   ],
   ru: [
-    "январь",
-    "февраль",
-    "март",
-    "апрель",
-    "май",
-    "июнь",
-    "июль",
-    "август",
-    "сентябрь",
-    "октябрь",
-    "ноябрь",
-    "декабрь",
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
   ],
 };
 
@@ -175,8 +175,10 @@ export function DeliverySlotPicker({
   const canNext = viewMonthYmd < maxMonth;
 
   return (
-    <div className="space-y-4 rounded-2xl border border-gray-200 p-4">
-      <h3 className="text-base font-semibold text-gray-900">{labels.title}</h3>
+    <div className="space-y-4 rounded-2xl border border-white/40 bg-white/20 p-4">
+      <h3 className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+        {labels.title}
+      </h3>
 
       {availableDays.length === 0 ? (
         <p className="text-sm text-red-700">{labels.noSlots}</p>
@@ -188,24 +190,24 @@ export function DeliverySlotPicker({
                 type="button"
                 disabled={disabled || !canPrev}
                 onClick={() => shiftMonth(-1)}
-                className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
+                className="rounded-xl border border-white/45 bg-white/40 px-3 py-1.5 text-sm text-gray-800 hover:bg-white/60 disabled:opacity-40"
               >
                 {labels.prevMonth}
               </button>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-base font-medium text-gray-900">
                 {monthLabel(viewYear, viewMonth, locale)}
               </p>
               <button
                 type="button"
                 disabled={disabled || !canNext}
                 onClick={() => shiftMonth(1)}
-                className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
+                className="rounded-xl border border-white/45 bg-white/40 px-3 py-1.5 text-sm text-gray-800 hover:bg-white/60 disabled:opacity-40"
               >
                 {labels.nextMonth}
               </button>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
+            <div className="grid grid-cols-7 gap-1 text-center text-xs text-white">
               {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
                 <div key={label} className="py-1 font-medium">
                   {label}
@@ -227,7 +229,7 @@ export function DeliverySlotPicker({
                       isSelected
                         ? "bg-brand-forest text-white"
                         : bookable
-                          ? "bg-gray-50 text-gray-900 hover:bg-gray-100"
+                          ? "bg-white/40 text-gray-900 hover:bg-white/60"
                           : "cursor-not-allowed text-gray-300"
                     }`}
                   >
@@ -240,7 +242,7 @@ export function DeliverySlotPicker({
 
           {selectedDay ? (
             <div>
-              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-white">
                 {labels.pickTime}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -263,7 +265,7 @@ export function DeliverySlotPicker({
                       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                         isSelected
                           ? "border-brand-forest bg-brand-forest text-white"
-                          : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+                          : "border-white/45 bg-white/40 text-gray-800 hover:bg-white/60"
                       }`}
                     >
                       {slot.label}

@@ -21,7 +21,7 @@ export const CASH_CHANGE_BANKNOTE_SRC: Record<
 };
 
 export const CHECKOUT_CASH_CHANGE_SECTION_CLASS =
-  "rounded-[18px] border border-gray-200 bg-white p-4 sm:p-5";
+  "rounded-[18px] border border-white/40 bg-white/25 p-4 sm:p-5";
 export const CHECKOUT_CASH_CHANGE_TITLE_CLASS =
   "text-base font-bold tracking-wide text-gray-900";
 export const CHECKOUT_CASH_CHANGE_HINT_CLASS =
@@ -33,7 +33,7 @@ export const CHECKOUT_CASH_CHANGE_OPTION_BASE_CLASS =
 export const CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS =
   "border-brand-forest bg-brand-forest/10";
 export const CHECKOUT_CASH_CHANGE_OPTION_DEFAULT_CLASS =
-  "border-gray-200 bg-white hover:border-gray-300";
+  "border-white/45 bg-white/40 hover:border-white/70";
 export const CHECKOUT_CASH_CHANGE_NONE_CLASS =
   "aspect-[2/1] px-2 text-center text-base font-semibold leading-snug text-brand-forest sm:text-lg";
 export const CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS = "relative aspect-[2/1] p-0";
