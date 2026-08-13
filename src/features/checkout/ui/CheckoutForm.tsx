@@ -19,6 +19,9 @@ import type { CashChangeDenominationView } from "@/features/delivery/domain/cash
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
 
+const CHECKOUT_PAGE_TITLE =
+  "mb-8 font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px] md:leading-[1.1]";
+
 type CheckoutLabels = {
   title: string;
   productsInOrder: string;
@@ -221,7 +224,7 @@ export function CheckoutForm({
   if (!hasItems) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
+        <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
         <Card className="rounded-2xl border border-gray-200/80 p-6 text-center shadow-none">
           <p className="mb-4 text-gray-600">{labels.cartEmpty}</p>
           <Link
@@ -298,7 +301,7 @@ export function CheckoutForm({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
+      <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
 
       <CheckoutProductsInOrder
         products={orderProducts}
