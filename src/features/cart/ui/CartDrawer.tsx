@@ -31,6 +31,8 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
+const CART_PLUS_SRC = "/assets/brand/home/cart-plus.svg";
+
 type CartDrawerTriggerArgs = {
   open: boolean;
   badgeCount: number;
@@ -219,8 +221,15 @@ export function CartDrawer({
             </div>
           ) : !view || view.items.length === 0 ? (
             <div className="flex h-full min-h-[280px] w-full flex-col items-center justify-center text-center">
-              <div className="flex h-28 w-28 items-center justify-center rounded-full bg-gray-100 text-gray-400">
-                <ShoppingCart className="h-12 w-12" aria-hidden />
+              <div className="flex size-20 items-center justify-center rounded-full bg-brand-forest">
+                <Image
+                  src={CART_PLUS_SRC}
+                  alt=""
+                  width={48}
+                  height={42}
+                  className="h-[42px] w-[48px] translate-y-[2px]"
+                  aria-hidden
+                />
               </div>
               <p className="mt-5 text-xl font-bold text-gray-900">
                 {labels.empty}
