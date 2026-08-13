@@ -347,7 +347,7 @@ export function CheckoutForm({
       />
 
       <form onSubmit={onSubmit}>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]">
           <CheckoutDetailsSections
             labels={labels}
             locale={locale}

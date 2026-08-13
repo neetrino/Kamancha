@@ -110,7 +110,7 @@ export function CheckoutDetailsSections({
   prepaidNotice = null,
 }: CheckoutDetailsSectionsProps) {
   return (
-    <div className="space-y-6 lg:col-span-2">
+    <div className="space-y-6">
       <section className={SECTION_CLASS}>
         <h2 className={SECTION_TITLE_CLASS}>
           {labels.contactInformation}
