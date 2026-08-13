@@ -424,7 +424,7 @@ export function GroupOrderPageClient({
                     </p>
                   ) : null}
                 </div>
-                <div className="flex shrink-0 items-start gap-1">
+                <div className="flex shrink-0 items-center gap-1">
                   <p
                     className={`inline-flex rounded-full bg-white px-3.5 py-1 text-xs font-medium ${
                       participant.itemsReady
@@ -439,7 +439,7 @@ export function GroupOrderPageClient({
                   canEdit ? (
                     <button
                       type="button"
-                      className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-red-600"
                       aria-label={labels.removeParticipant}
                       onClick={() =>
                         run(async () =>
