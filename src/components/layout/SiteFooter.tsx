@@ -158,7 +158,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
             links={supportLinks}
           />
 
-          <div data-node-id="22:375">
+          <div data-node-id="22:375" className="w-fit justify-self-end">
             <h4
               data-node-id="22:377"
               className="font-big-fat-boii text-[18px] leading-[15px] font-normal tracking-wide text-white uppercase"
@@ -166,7 +166,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               {footer.contactTitle}
             </h4>
             <div className="mt-6 flex flex-col gap-3">
-              <p className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/50">
+              <p className="font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/50">
                 {footer.address}
               </p>
               <a
