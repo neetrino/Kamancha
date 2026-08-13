@@ -29,6 +29,7 @@ import {
   type CheckoutInput,
 } from "@/features/checkout/schemas";
 import { toPaymentRecord } from "@/features/checkout/domain/payment-methods";
+import { plannedOrderPaymentSplit } from "@/features/checkout/domain/payment-split";
 import {
   completeGroupOrderAfterStandardCheckout,
 } from "@/features/group-orders/application/complete-after-checkout";
@@ -71,6 +72,7 @@ import {
   CURRENCY_COOKIE_NAME,
   parseCurrencyCookie,
 } from "@/lib/money/currency-cookie";
+import { logger } from "@/lib/observability/logger";
 
 function hashValue(value: string): string {
   return createHash("sha256").update(value).digest("hex");
@@ -431,6 +433,11 @@ export async function createOrderAction(
 
       const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
       const chargeAmount = organizerPayableAmount(totalAmount, groupCheckout);
+      const { onlineAmount, cashAmount } = plannedOrderPaymentSplit({
+        totalAmount,
+        chargeAmount,
+        paymentMethod: input.paymentMethod,
+      });
       if (
         cashChangeAmount != null &&
         computeCashChangeDue(cashChangeAmount, chargeAmount) == null
@@ -469,6 +476,8 @@ export async function createOrderAction(
         taxAmount: 0,
         deliveryAmount,
         totalAmount,
+        onlineAmount,
+        cashAmount,
         shippingAddress: address,
         billingAddress: address,
         promotionId: appliedPromotion?.id,
@@ -613,6 +622,10 @@ export async function createOrderAction(
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to place order.";
+    if (message.startsWith("Failed query:")) {
+      logger.error("create_order_failed");
+      return { ok: false, error: "Unable to place order." };
+    }
     return { ok: false, error: message };
   }
 }

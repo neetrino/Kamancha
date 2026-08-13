@@ -82,6 +82,16 @@ export const orders = pgTable(
     taxAmount: integer("tax_amount").notNull().default(0),
     deliveryAmount: integer("delivery_amount").notNull().default(0),
     totalAmount: integer("total_amount").notNull(),
+    /**
+     * Planned online portion of `totalAmount` (AMD).
+     * Full cash → 0; full online → total; group prepaid others count as online.
+     */
+    onlineAmount: integer("online_amount").notNull().default(0),
+    /**
+     * Planned cash-on-delivery portion of `totalAmount` (AMD).
+     * Must satisfy onlineAmount + cashAmount = totalAmount.
+     */
+    cashAmount: integer("cash_amount").notNull().default(0),
     shippingAddress: jsonb("shipping_address").$type<AddressSnapshot>().notNull(),
     billingAddress: jsonb("billing_address").$type<AddressSnapshot>().notNull(),
     promotionId: uuid("promotion_id").references(() => promotions.id, {
@@ -132,6 +142,12 @@ export const orders = pgTable(
     ),
     index("orders_group_order_idx").on(table.groupOrderId),
     check("orders_money_nonneg_chk", sql`${table.totalAmount} >= 0`),
+    check("orders_online_amount_nonneg_chk", sql`${table.onlineAmount} >= 0`),
+    check("orders_cash_amount_nonneg_chk", sql`${table.cashAmount} >= 0`),
+    check(
+      "orders_payment_split_sum_chk",
+      sql`${table.onlineAmount} + ${table.cashAmount} = ${table.totalAmount}`,
+    ),
   ],
 );
 
