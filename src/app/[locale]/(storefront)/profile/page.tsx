@@ -35,7 +35,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 overflow-visible sm:gap-4 lg:grid-cols-4">
         <ProfileStatCard
           label={dictionary.profile.totalOrders}
           value={String(stats.totalOrders)}
