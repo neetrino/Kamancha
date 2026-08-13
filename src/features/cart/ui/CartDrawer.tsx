@@ -256,37 +256,37 @@ export function CartDrawer({
                 return (
                   <li
                     key={item.id}
-                    className="rounded-[20px] border border-gray-200 bg-white p-3 shadow-sm"
+                    className="cart-item-glass rounded-[20px] p-3"
                   >
-                    <div className="flex gap-3">
+                    <div className="flex items-stretch gap-3">
                       {productHref ? (
                         <AppLink
                           href={productHref}
                           prefetchPolicy="intent"
                           onClick={closeDrawer}
-                          className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50"
+                          className="relative z-[2] w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl"
                         >
                           <Image
                             src={STOREFRONT_PRODUCT_PHOTO}
                             alt={item.title}
                             fill
-                            sizes="96px"
+                            sizes="112px"
                             className="object-cover"
                           />
                         </AppLink>
                       ) : (
-                        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
+                        <div className="relative z-[2] w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl">
                           <Image
                             src={STOREFRONT_PRODUCT_PHOTO}
                             alt={item.title}
                             fill
-                            sizes="96px"
+                            sizes="112px"
                             className="object-cover"
                           />
                         </div>
                       )}
 
-                      <div className="flex min-w-0 flex-1 flex-col">
+                      <div className="relative z-[2] flex min-w-0 flex-1 flex-col">
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             {productHref ? (
@@ -294,31 +294,31 @@ export function CartDrawer({
                                 href={productHref}
                                 prefetchPolicy="intent"
                                 onClick={closeDrawer}
-                                className="line-clamp-2 text-sm font-medium text-gray-900 transition-colors hover:text-gray-700"
+                                className="line-clamp-2 text-sm font-medium text-black transition-colors hover:text-black/70"
                               >
                                 {item.title}
                               </AppLink>
                             ) : (
-                              <p className="line-clamp-2 text-sm font-medium text-gray-900">
+                              <p className="line-clamp-2 text-sm font-medium text-black">
                                 {item.title}
                               </p>
                             )}
                             {item.modifierSummary ? (
-                              <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
+                              <p className="mt-0.5 line-clamp-2 text-xs text-black/55">
                                 {item.modifierSummary}
                               </p>
                             ) : null}
-                            <p className="mt-1 text-sm font-semibold text-gray-900">
+                            <p className="mt-1 text-sm font-semibold text-black">
                               {item.lineTotalFormatted}
                             </p>
-                            <p className="mt-0.5 text-xs text-gray-500">
+                            <p className="mt-0.5 text-xs text-black/50">
                               {item.unitPriceFormatted} × {item.quantity}
                             </p>
                           </div>
                           <button
                             type="button"
                             onClick={() => removeCartItem(item.id)}
-                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-black/40 transition-colors hover:bg-white/40 hover:text-black"
                             aria-label={labels.removeItem}
                           >
                             <X className="h-4 w-4" aria-hidden />
@@ -326,18 +326,18 @@ export function CartDrawer({
                         </div>
 
                         <div className="mt-auto flex justify-end pt-3">
-                          <div className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-sky-50/70 px-1 py-0.5">
+                          <div className="inline-flex items-center gap-1 rounded-full bg-white/70 px-1 py-0.5 ring-1 ring-white/80 backdrop-blur-sm">
                             <button
                               type="button"
                               onClick={() =>
                                 changeQuantity(item.id, item.quantity - 1)
                               }
-                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-white"
+                              className="flex h-7 w-7 items-center justify-center rounded-full text-black transition-colors hover:bg-black/5"
                               aria-label={labels.decreaseQuantity}
                             >
                               <Minus className="h-3.5 w-3.5" aria-hidden />
                             </button>
-                            <span className="min-w-5 text-center text-sm font-medium tabular-nums text-gray-900">
+                            <span className="min-w-5 text-center text-sm font-medium tabular-nums text-black">
                               {item.quantity}
                             </span>
                             <button
@@ -345,7 +345,7 @@ export function CartDrawer({
                               onClick={() =>
                                 changeQuantity(item.id, item.quantity + 1)
                               }
-                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-white"
+                              className="flex h-7 w-7 items-center justify-center rounded-full text-black transition-colors hover:bg-black/5"
                               aria-label={labels.increaseQuantity}
                             >
                               <Plus className="h-3.5 w-3.5" aria-hidden />
