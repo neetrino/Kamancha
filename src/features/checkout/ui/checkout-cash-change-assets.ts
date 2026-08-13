@@ -27,15 +27,15 @@ export const CHECKOUT_CASH_CHANGE_TITLE_CLASS =
 export const CHECKOUT_CASH_CHANGE_HINT_CLASS =
   "mt-2 text-sm leading-snug text-gray-600";
 export const CHECKOUT_CASH_CHANGE_GRID_CLASS =
-  "mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3";
+  "mt-4 grid grid-cols-4 gap-2 sm:gap-2.5";
 export const CHECKOUT_CASH_CHANGE_OPTION_BASE_CLASS =
-  "liquid-glass isolate flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-[18px] outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-forest disabled:cursor-not-allowed disabled:opacity-50";
+  "liquid-glass relative isolate flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-[18px] transition-all [-webkit-tap-highlight-color:transparent] disabled:cursor-not-allowed disabled:opacity-50";
 export const CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS =
-  "ring-2 ring-inset ring-brand-forest";
+  "outline outline-[3px] outline-offset-2 outline-[#163318]";
 export const CHECKOUT_CASH_CHANGE_OPTION_DEFAULT_CLASS =
-  "hover:brightness-[1.04]";
+  "outline-none hover:brightness-[1.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-forest";
 export const CHECKOUT_CASH_CHANGE_NONE_CLASS =
-  "aspect-[2/1] px-2 text-center text-base font-semibold leading-snug text-brand-forest sm:text-lg";
+  "aspect-[2/1] px-1.5 text-center text-[11px] font-semibold leading-snug text-brand-forest sm:px-2 sm:text-sm";
 export const CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS = "relative aspect-[2/1] p-0";
 export const CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS = "object-cover object-center";
 

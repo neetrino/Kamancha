@@ -36,6 +36,9 @@ const GLASS_PILL_BUTTON =
 
 const PILL_FULL = "max-w-none sm:max-w-none";
 
+const BLOCK_TITLE =
+  "font-big-fat-boii text-base font-normal tracking-wide text-black uppercase";
+
 type GroupOrderPageClientProps = {
   locale: Locale;
   labels: Dictionary["groupOrder"];
@@ -198,38 +201,57 @@ export function GroupOrderPageClient({
       </div>
 
       <section className="mb-6 liquid-glass isolate overflow-hidden rounded-3xl p-4">
-        <p className="text-sm font-medium text-gray-700">{labels.inviteLink}</p>
-        <p className="mt-1 truncate text-xs text-gray-500">{view.invitePath}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button type="button" className={GLASS_PILL_BUTTON} onClick={copyLink}>
-            <Copy className="mr-1.5 h-4 w-4" />
-            {copied ? labels.copied : labels.copyLink}
-          </button>
-          <button type="button" className={GLASS_PILL_BUTTON} onClick={shareLink}>
-            <Share2 className="mr-1.5 h-4 w-4" />
-            {labels.share}
-          </button>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className={BLOCK_TITLE}>{labels.inviteLink}</p>
+            <p className="mt-1 truncate text-xs text-gray-500">
+              {view.invitePath}
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-wrap justify-end gap-2">
+            <button
+              type="button"
+              className={GLASS_PILL_BUTTON}
+              onClick={copyLink}
+            >
+              <Copy className="mr-1.5 h-4 w-4" />
+              {copied ? labels.copied : labels.copyLink}
+            </button>
+            <button
+              type="button"
+              className={GLASS_PILL_BUTTON}
+              onClick={shareLink}
+            >
+              <Share2 className="mr-1.5 h-4 w-4" />
+              {labels.share}
+            </button>
+          </div>
         </div>
       </section>
 
       <section className="mb-6 space-y-2 liquid-glass isolate overflow-hidden rounded-3xl p-4 text-sm">
-        <div className="flex items-center gap-2 text-gray-800">
-          <Users className="h-4 w-4" />
-          {view.paymentMode === "ORGANIZER_PAYS_ALL"
-            ? labels.payingOrganizer.replace("{name}", view.organizerDisplayName)
-            : labels.payingSplit}
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 shrink-0 text-black" aria-hidden />
+          <p className={BLOCK_TITLE}>
+            {view.paymentMode === "ORGANIZER_PAYS_ALL"
+              ? labels.payingOrganizer.replace(
+                  "{name}",
+                  view.organizerDisplayName,
+                )
+              : labels.payingSplit}
+          </p>
         </div>
-        <p className="text-gray-600">
+        <p className="text-white">
           {view.spendLimitFormatted
             ? labels.limitLabel.replace("{amount}", view.spendLimitFormatted)
             : labels.noLimit}
         </p>
-        <p className="text-gray-600">
+        <p className="text-white">
           {view.deliveryAddress
             ? `${labels.deliveryAddressLabel}: ${view.deliveryAddress}`
             : labels.noDeliveryAddress}
         </p>
-        <p className="text-gray-600">
+        <p className="text-white">
           {labels.delivery}: {view.deliveryFormatted}
           {view.deliveryDistanceLabel
             ? ` · ${view.deliveryDistanceLabel}`
@@ -238,27 +260,23 @@ export function GroupOrderPageClient({
         {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
         view.currentParticipantId &&
         currentParticipant ? (
-          <p className="text-gray-600">
+          <p className="text-white">
             {labels.yourDeliveryShare}:{" "}
             {currentParticipant.deliveryShareFormatted}
           </p>
         ) : null}
-        <p className="font-semibold text-gray-900">
+        <p className="font-semibold text-white">
           {labels.total}: {view.grandTotalFormatted}
         </p>
       </section>
 
       {isOrganizer && canEdit ? (
         <section className="mb-6 space-y-5 liquid-glass isolate overflow-hidden rounded-3xl p-4">
-          <h2 className="text-base font-semibold text-gray-900">
-            {labels.settingsTitle}
-          </h2>
+          <h2 className={BLOCK_TITLE}>{labels.settingsTitle}</h2>
 
           <div className="space-y-2">
             <label className="block">
-              <span className="text-sm font-medium text-gray-900">
-                {labels.spendLimitFieldLabel}
-              </span>
+              <span className={BLOCK_TITLE}>{labels.spendLimitFieldLabel}</span>
               <span className="mt-0.5 block text-xs leading-relaxed text-gray-500">
                 {labels.spendLimitFieldHint}
               </span>
@@ -298,9 +316,7 @@ export function GroupOrderPageClient({
 
           <div className="space-y-2 border-t border-gray-100 pt-4">
             <label className="block">
-              <span className="text-sm font-medium text-gray-900">
-                {labels.deliveryFieldLabel}
-              </span>
+              <span className={BLOCK_TITLE}>{labels.deliveryFieldLabel}</span>
               <span className="mt-0.5 block text-xs leading-relaxed text-gray-500">
                 {labels.deliveryFieldHint}
               </span>
@@ -392,7 +408,7 @@ export function GroupOrderPageClient({
       ) : null}
 
       <section className="mb-6">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900">
+        <h2 className="mb-3 font-big-fat-boii text-base font-normal tracking-wide text-white uppercase">
           {labels.participants}
         </h2>
         <ul className="space-y-4">
@@ -403,10 +419,10 @@ export function GroupOrderPageClient({
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className={BLOCK_TITLE}>
                     {participant.displayName}
                     {participant.role === "ORGANIZER" ? (
-                      <span className="ml-2 text-xs font-normal text-gray-500">
+                      <span className="ml-2 text-xs font-normal text-black">
                         ({labels.organizer})
                       </span>
                     ) : null}
@@ -430,8 +446,10 @@ export function GroupOrderPageClient({
                       {participant.finalAmountFormatted}
                     </p>
                   ) : null}
+                </div>
+                <div className="flex shrink-0 items-start gap-1">
                   <p
-                    className={`mt-1 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
                       participant.itemsReady
                         ? "bg-emerald-50 text-emerald-700"
                         : "bg-amber-50 text-amber-800"
@@ -439,26 +457,26 @@ export function GroupOrderPageClient({
                   >
                     {participant.itemsReady ? labels.ready : labels.notReady}
                   </p>
+                  {isOrganizer &&
+                  participant.role !== "ORGANIZER" &&
+                  canEdit ? (
+                    <button
+                      type="button"
+                      className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                      aria-label={labels.removeParticipant}
+                      onClick={() =>
+                        run(async () =>
+                          removeParticipantAction({
+                            inviteToken,
+                            participantId: participant.id,
+                          }),
+                        )
+                      }
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  ) : null}
                 </div>
-                {isOrganizer &&
-                participant.role !== "ORGANIZER" &&
-                canEdit ? (
-                  <button
-                    type="button"
-                    className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
-                    aria-label={labels.removeParticipant}
-                    onClick={() =>
-                      run(async () =>
-                        removeParticipantAction({
-                          inviteToken,
-                          participantId: participant.id,
-                        }),
-                      )
-                    }
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                ) : null}
               </div>
 
               {participant.items.length === 0 ? (
@@ -676,7 +694,7 @@ function JoinPanel({
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4 py-10">
       <div className="liquid-glass isolate w-full overflow-hidden rounded-3xl p-6">
-        <h1 className="text-xl font-bold text-gray-900">
+        <h1 className={BLOCK_TITLE}>
           {labels.joinTitle.replace("{name}", view.organizerDisplayName)}
         </h1>
         <p className="mt-2 text-sm text-gray-500">{labels.joinDescription}</p>
@@ -699,7 +717,7 @@ function JoinPanel({
         </div>
 
         <label className="mt-5 block">
-          <span className="mb-1.5 block text-sm font-medium text-gray-700">
+          <span className={`mb-1.5 block ${BLOCK_TITLE}`}>
             {labels.joinNameLabel}
           </span>
           <input

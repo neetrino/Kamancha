@@ -109,7 +109,7 @@ export function CashChangePicker({
                   alt={`${amount} AMD`}
                   fill
                   className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS}`}
-                  sizes="(max-width: 640px) 33vw, 180px"
+                  sizes="(max-width: 640px) 25vw, 140px"
                 />
               ) : null}
             </button>
