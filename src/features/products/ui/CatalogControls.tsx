@@ -4,6 +4,7 @@ import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 
+import { Reveal } from "@/components/ui/RevealMotion";
 import { SideSheet } from "@/components/ui/SideSheet";
 import type { CatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
 import { catalogHref } from "@/features/products/application/catalog-search-params";
@@ -137,10 +138,19 @@ export function CatalogControls({
       data-catalog-layout
       className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-8"
     >
-      <CatalogStickySidebar>{sidebar}</CatalogStickySidebar>
+      <CatalogStickySidebar>
+        <Reveal immediate x={-20} y={0} delay={0.06}>
+          {sidebar}
+        </Reveal>
+      </CatalogStickySidebar>
 
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <Reveal
+          immediate
+          delay={0.1}
+          y={16}
+          className="flex flex-wrap items-center justify-between gap-3"
+        >
           <button
             type="button"
             className="inline-flex items-center gap-2 rounded-[50px] bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15 lg:hidden"
@@ -150,7 +160,7 @@ export function CatalogControls({
             {labels.openFilters}
           </button>
           <div className="ml-auto">{sortPills}</div>
-        </div>
+        </Reveal>
 
         <div className="pt-8">{children}</div>
       </div>

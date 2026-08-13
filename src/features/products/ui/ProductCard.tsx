@@ -108,6 +108,7 @@ export function ProductCard({
             }
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             priority={priority}
+            loading={priority ? undefined : "lazy"}
           />
         </AppLink>
 

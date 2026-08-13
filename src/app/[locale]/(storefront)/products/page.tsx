@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { getCatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
 import {
@@ -8,6 +9,7 @@ import {
   parseCatalogSearchParams,
 } from "@/features/products/application/catalog-search-params";
 import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
+import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
 import { CatalogControls } from "@/features/products/ui/CatalogControls";
 import { CatalogPageHeader } from "@/features/products/ui/CatalogPageHeader";
 import { ProductCard } from "@/features/products/ui/ProductCard";
@@ -24,6 +26,20 @@ type ProductsPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+function catalogGridMotionKey(filters: CatalogFilters): string {
+  return [
+    filters.category ?? "all",
+    filters.sort,
+    String(filters.page),
+    filters.q ?? "",
+    filters.minPrice ?? "",
+    filters.maxPrice ?? "",
+    filters.onSale ? "sale" : "",
+    filters.newArrivals ? "new" : "",
+    filters.inStock ? "stock" : "",
+  ].join(":");
+}
 
 export default async function ProductsPage({
   params,
@@ -125,80 +141,90 @@ export default async function ProductsPage({
         }}
       >
         {priced.length === 0 ? (
-          <div className="rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
-            <h2 className="text-lg font-semibold text-white">
-              {catalogCopy.emptyTitle}
-            </h2>
-            <p className="mt-2 text-sm text-white/60">
-              {catalogCopy.emptyDescription}
-            </p>
-          </div>
+          <Reveal immediate y={16}>
+            <div className="rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
+              <h2 className="text-lg font-semibold text-white">
+                {catalogCopy.emptyTitle}
+              </h2>
+              <p className="mt-2 text-sm text-white/60">
+                {catalogCopy.emptyDescription}
+              </p>
+            </div>
+          </Reveal>
         ) : (
-          <div className="grid grid-cols-1 justify-items-center gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <Stagger
+            key={catalogGridMotionKey(filters)}
+            className="grid grid-cols-1 justify-items-center gap-5 sm:grid-cols-2 xl:grid-cols-3"
+            stagger={0.06}
+            immediate
+          >
             {priced.map(({ product, price, compareAtFormatted }, index) => (
-              <ProductCard
-                key={product.id}
-                href={`/${rawLocale}/products/${product.translation.slug}`}
-                title={product.translation.title}
-                priceFormatted={price.formatted}
-                compareAtFormatted={compareAtFormatted}
-                discountPercent={product.discountPercent}
-                discountOffLabel={dictionary.home.discountOff}
-                imageUrl={product.imageUrl}
-                inStock={product.stockOnHand > 0}
-                priority={index < 4}
-                locale={rawLocale}
-                productId={product.id}
-                inWishlist={wishlistIds.has(product.id)}
-                isSignedIn={Boolean(user)}
-                wishlistLabel={dictionary.nav.wishlist}
-                addToCartLabel={dictionary.product.addToCart}
-                requiresCustomization={product.hasCustomizationOptions}
-                className="w-full max-w-[300px]"
-              />
+              <StaggerItem key={product.id} className="w-full max-w-[300px]">
+                <ProductCard
+                  href={`/${rawLocale}/products/${product.translation.slug}`}
+                  title={product.translation.title}
+                  priceFormatted={price.formatted}
+                  compareAtFormatted={compareAtFormatted}
+                  discountPercent={product.discountPercent}
+                  discountOffLabel={dictionary.home.discountOff}
+                  imageUrl={product.imageUrl}
+                  inStock={product.stockOnHand > 0}
+                  priority={index < 2}
+                  locale={rawLocale}
+                  productId={product.id}
+                  inWishlist={wishlistIds.has(product.id)}
+                  isSignedIn={Boolean(user)}
+                  wishlistLabel={dictionary.nav.wishlist}
+                  addToCartLabel={dictionary.product.addToCart}
+                  requiresCustomization={product.hasCustomizationOptions}
+                  className="w-full max-w-[300px]"
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
 
         {totalPages > 1 ? (
-          <nav
-            aria-label={catalogCopy.paginationLabel}
-            className="mt-8 flex items-center justify-center gap-4"
-          >
-            {filters.page > 1 ? (
-              <AppLink
-                href={pageHref(filters.page - 1)}
-                prefetchPolicy="intent"
-                scroll={false}
-                className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-              >
-                {catalogCopy.previousPage}
-              </AppLink>
-            ) : (
-              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
-                {catalogCopy.previousPage}
+          <Reveal immediate delay={0.18} y={16}>
+            <nav
+              aria-label={catalogCopy.paginationLabel}
+              className="mt-8 flex items-center justify-center gap-4"
+            >
+              {filters.page > 1 ? (
+                <AppLink
+                  href={pageHref(filters.page - 1)}
+                  prefetchPolicy="intent"
+                  scroll={false}
+                  className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  {catalogCopy.previousPage}
+                </AppLink>
+              ) : (
+                <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
+                  {catalogCopy.previousPage}
+                </span>
+              )}
+              <span className="text-sm text-white/60">
+                {catalogCopy.pageStatus
+                  .replace("{page}", String(filters.page))
+                  .replace("{total}", String(totalPages))}
               </span>
-            )}
-            <span className="text-sm text-white/60">
-              {catalogCopy.pageStatus
-                .replace("{page}", String(filters.page))
-                .replace("{total}", String(totalPages))}
-            </span>
-            {filters.page < totalPages ? (
-              <AppLink
-                href={pageHref(filters.page + 1)}
-                prefetchPolicy="intent"
-                scroll={false}
-                className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
-              >
-                {catalogCopy.nextPage}
-              </AppLink>
-            ) : (
-              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
-                {catalogCopy.nextPage}
-              </span>
-            )}
-          </nav>
+              {filters.page < totalPages ? (
+                <AppLink
+                  href={pageHref(filters.page + 1)}
+                  prefetchPolicy="intent"
+                  scroll={false}
+                  className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  {catalogCopy.nextPage}
+                </AppLink>
+              ) : (
+                <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
+                  {catalogCopy.nextPage}
+                </span>
+              )}
+            </nav>
+          </Reveal>
         ) : null}
       </CatalogControls>
     </section>
