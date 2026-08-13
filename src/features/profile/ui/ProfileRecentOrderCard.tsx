@@ -50,9 +50,9 @@ export function ProfileRecentOrderCard({
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
           <ShoppingBag className="h-5 w-5" aria-hidden />
         </div>
-        <div className="min-w-0 pt-0.5 text-sm leading-relaxed text-gray-700">
+        <div className="min-w-0 pt-0.5 text-sm leading-snug text-gray-700">
           <p>{metaLine}</p>
-          <p>{placedOnLine}</p>
+          <p className="whitespace-nowrap">{placedOnLine}</p>
         </div>
       </div>
 

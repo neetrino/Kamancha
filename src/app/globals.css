@@ -479,6 +479,8 @@ body {
     flex-direction: column;
     padding-top: var(--profile-sticky-gap);
     padding-bottom: var(--profile-sticky-gap);
+    padding-left: calc(2rem - 10px);
+    padding-right: calc(2rem - 10px);
   }
 
   .profile-desktop-page {

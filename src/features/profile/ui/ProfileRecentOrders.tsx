@@ -16,6 +16,7 @@ import {
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatShortDate } from "@/lib/i18n/format-date";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type RecentOrder = {
@@ -33,14 +34,6 @@ type ProfileRecentOrdersProps = {
   dictionary: Dictionary["profile"];
   adminCopy: Dictionary["admin"];
 };
-
-function formatPlacedOn(isoDate: string, locale: Locale): string {
-  return new Intl.DateTimeFormat(locale, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(isoDate));
-}
 
 function formatItemCount(count: number, one: string, other: string): string {
   const template = count === 1 ? one : other;
@@ -76,7 +69,7 @@ function RecentOrdersBody({
   }
 
   return (
-    <ul className="relative z-[2] grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <ul className="relative z-[2] grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-[15px]">
       {orders.map((order) => (
         <li key={order.id} className="min-w-0">
           <ProfileRecentOrderCard
@@ -88,7 +81,7 @@ function RecentOrdersBody({
               dictionary.itemCountOne,
               dictionary.itemCountOther,
             )}
-            placedOnLine={`${dictionary.placedOn} ${formatPlacedOn(order.placedAt, locale)}`}
+            placedOnLine={`${dictionary.placedOn} ${formatShortDate(order.placedAt, locale)}`}
             orderNumberLabel={dictionary.orderNumber}
             viewDetailsLabel={dictionary.viewDetails}
             onViewDetails={() => onOpenOrder(order.orderNumber)}
