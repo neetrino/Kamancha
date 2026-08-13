@@ -12,7 +12,8 @@
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
     "navigation": "Навигация",
-    "shopNow": "В магазин"
+    "shopNow": "В магазин",
+    "groupOrder": "Групповой заказ"
   },
   "header": {
     "language": "Язык",

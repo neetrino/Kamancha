@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
+import { GroupOrderHeaderButton } from "@/components/layout/GroupOrderHeaderButton";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -257,7 +258,13 @@ export function MobileNavDrawer({
                     })}
                   </div>
 
-                  <div className="mt-1 border-t border-gray-100 py-4">
+                  <div className="mt-1 flex flex-col gap-2 border-t border-gray-100 py-4">
+                    <GroupOrderHeaderButton
+                      href={`/${locale}/contact`}
+                      label={dictionary.nav.groupOrder}
+                      tone="onLight"
+                      onClick={() => setOpen(false)}
+                    />
                     <AppLink
                       href={shopHref}
                       prefetchPolicy="intent"

@@ -21,6 +21,14 @@ export const SITE_HEADER_CART_TRIGGER =
 export const SITE_HEADER_CART_BADGE =
   "absolute -top-0.5 -right-0.5 flex size-5 min-w-5 items-center justify-center rounded-full border border-solid border-white bg-brand-forest p-px text-center text-[10px] font-bold leading-none text-white";
 
-/** Desktop search pill (Figma 22:394 — lengthened toward available header space). */
+/** Desktop search pill — slightly longer than the «Որոնել» label. */
 export const SITE_HEADER_SEARCH_PILL =
-  "h-12 w-[300px] shrink-0 items-center gap-2 rounded-full bg-[rgba(255,255,255,0.31)] px-4 text-sm font-bold leading-6 text-white transition-colors hover:bg-[rgba(255,255,255,0.4)]";
+  "h-12 w-fit min-w-[120px] shrink-0 items-center justify-center gap-2 rounded-full bg-[rgba(255,255,255,0.31)] px-6 text-sm font-bold leading-6 whitespace-nowrap text-white transition-colors hover:bg-[rgba(255,255,255,0.4)]";
+
+/** Group-order CTA — same 48× pill chrome as the locale switcher. */
+export const SITE_HEADER_GROUP_ORDER =
+  "inline-flex h-12 min-w-[159px] shrink-0 items-center justify-center whitespace-nowrap rounded-[70px] bg-white px-4 font-big-fat-boii text-base leading-none text-brand-forest transition-colors hover:bg-white/95";
+
+/** Group-order CTA on the light mobile menu panel. */
+export const SITE_HEADER_GROUP_ORDER_ON_LIGHT =
+  "flex w-full items-center justify-center rounded-full bg-brand-forest px-6 py-3.5 font-big-fat-boii text-sm text-white transition-opacity hover:opacity-90";

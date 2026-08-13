@@ -16,7 +16,10 @@ describe("getDictionary", () => {
 
   it("loads Armenian and Russian namespaces", () => {
     expect(getDictionary("hy").nav.home).toBe("Գլխավոր");
+    expect(getDictionary("hy").nav.groupOrder).toBe("Խմբային պատվեր");
     expect(getDictionary("ru").nav.home).toBe("Главная");
+    expect(getDictionary("ru").nav.groupOrder).toBe("Групповой заказ");
+    expect(getDictionary("en").nav.groupOrder).toBe("Group order");
   });
 
   it("exposes admin.nav.dashboard for all locales", () => {

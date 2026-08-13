@@ -12,7 +12,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "navigation": "Navigation",
-    "shopNow": "Shop now"
+    "shopNow": "Shop now",
+    "groupOrder": "Group order"
   },
   "header": {
     "language": "Language",

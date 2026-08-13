@@ -1,5 +1,6 @@
 import { AccountControls } from "@/components/layout/AccountControls";
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { GroupOrderHeaderButton } from "@/components/layout/GroupOrderHeaderButton";
 import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import {
@@ -106,7 +107,7 @@ export function SiteHeaderMainNav({
           </div>
 
           <div className="ml-auto flex min-w-0 items-center self-center md:ml-0">
-            {/* Desktop: search | icons | language — compact equal gaps */}
+            {/* Desktop: search | icons | language | group order */}
             <div className="hidden h-12 items-center gap-4 md:flex">
               <HeaderSearch
                 locale={locale}
@@ -124,6 +125,11 @@ export function SiteHeaderMainNav({
                 currencyLabel={dictionary.header.currency}
                 languageLabel={dictionary.header.language}
                 tone="onDark"
+              />
+
+              <GroupOrderHeaderButton
+                href={`/${locale}/contact`}
+                label={dictionary.nav.groupOrder}
               />
             </div>
 

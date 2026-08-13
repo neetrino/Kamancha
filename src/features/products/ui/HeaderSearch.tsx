@@ -212,7 +212,7 @@ export function HeaderSearch({
           className={pillClass}
         >
           <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <span className="min-w-0 truncate leading-6">{labels.placeholder}</span>
+          <span className="leading-6">{labels.placeholder}</span>
         </button>
       ) : null}
 
