@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, type ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronRight,
   LayoutDashboard,
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { logoutAction } from "@/features/auth/logout-action";
 import { PROFILE_PILL_LIGHT } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -45,6 +46,7 @@ export function ProfileMobileHub({
   onOpenDashboard,
 }: ProfileMobileHubProps) {
   const pathname = usePathname() ?? "";
+  const router = useRouter();
   const logoutWithLocale = logoutAction.bind(null, locale);
   const displayName = `${user.firstName} ${user.lastName}`.trim();
   const hubHref = `/${locale}/profile`;
@@ -86,6 +88,15 @@ export function ProfileMobileHub({
 
   const mainItems = items.filter((item) => !item.danger);
   const dangerItem = items.find((item) => item.danger);
+
+  useEffect(() => {
+    router.prefetch(`/${locale}/profile`);
+    router.prefetch(`/${locale}/profile/orders`);
+    router.prefetch(`/${locale}/profile/personal-information`);
+    router.prefetch(`/${locale}/profile/addresses`);
+    router.prefetch(`/${locale}/profile/password`);
+    router.prefetch(`/${locale}/profile/delete-account`);
+  }, [locale, router]);
 
   function isActive(item: MenuItem): boolean {
     if (item.exact) {
@@ -167,52 +178,61 @@ export function ProfileMobileHub({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-4">
-      <section
-        className="liquid-glass isolate overflow-hidden rounded-3xl px-4 py-5"
-        aria-label={dictionary.title}
-      >
-        <div className="relative z-[2] flex items-center gap-3">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-forest text-base font-semibold text-white shadow-[0_0_0_3px_rgba(255,255,255,0.45)]">
-            {user.firstName.slice(0, 1).toUpperCase()}
-            {user.lastName.slice(0, 1).toUpperCase()}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-big-fat-boii text-xl font-normal leading-tight tracking-wide text-gray-900 uppercase">
-              {displayName}
-            </p>
-            <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
-              <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              <span className="truncate">{user.email}</span>
-            </p>
-            {user.phone ? (
-              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
-                <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                <span className="truncate">{user.phone}</span>
+    <Stagger
+      immediate
+      className="mx-auto flex w-full max-w-md flex-col gap-4"
+    >
+      <StaggerItem>
+        <section
+          className="liquid-glass isolate overflow-hidden rounded-3xl px-4 py-5"
+          aria-label={dictionary.title}
+        >
+          <div className="relative z-[2] flex items-center gap-3">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-forest text-base font-semibold text-white shadow-[0_0_0_3px_rgba(255,255,255,0.45)]">
+              {user.firstName.slice(0, 1).toUpperCase()}
+              {user.lastName.slice(0, 1).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-big-fat-boii text-xl font-normal leading-tight tracking-wide text-gray-900 uppercase">
+                {displayName}
               </p>
-            ) : null}
+              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
+                <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span className="truncate">{user.email}</span>
+              </p>
+              {user.phone ? (
+                <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
+                  <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  <span className="truncate">{user.phone}</span>
+                </p>
+              ) : null}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </StaggerItem>
 
-      <nav
-        className="liquid-glass isolate overflow-hidden rounded-3xl py-1"
-        aria-label={dictionary.title}
-      >
-        <div className="relative z-[2] divide-y divide-white/35">
-          {mainItems.map((item) => renderRow(item))}
-        </div>
-        {dangerItem ? (
-          <div className="relative z-[2]">{renderRow(dangerItem)}</div>
-        ) : null}
-      </nav>
+      <StaggerItem>
+        <nav
+          className="liquid-glass isolate overflow-hidden rounded-3xl py-1"
+          aria-label={dictionary.title}
+        >
+          <div className="relative z-[2] divide-y divide-white/35">
+            {mainItems.map((item) => renderRow(item))}
+          </div>
+          {dangerItem ? (
+            <div className="relative z-[2]">{renderRow(dangerItem)}</div>
+          ) : null}
+        </nav>
+      </StaggerItem>
 
-      <form action={logoutWithLocale}>
-        <button type="submit" className={`${PROFILE_PILL_LIGHT} w-full gap-2.5`}>
-          <LogOut className="h-5 w-5 shrink-0" aria-hidden />
-          {dictionary.logout}
-        </button>
-      </form>
-    </div>
+      <StaggerItem>
+        <form action={logoutWithLocale}>
+          <button type="submit" className={`${PROFILE_PILL_LIGHT} w-full gap-2.5`}>
+            <LogOut className="h-5 w-5 shrink-0" aria-hidden />
+            {dictionary.logout}
+          </button>
+        </form>
+      </StaggerItem>
+    </Stagger>
   );
 }

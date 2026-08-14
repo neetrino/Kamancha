@@ -8,7 +8,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Lock,
@@ -144,7 +144,18 @@ export function ProfileSidebarNav({
   logoutAction,
 }: ProfileSidebarNavProps) {
   const pathname = usePathname() ?? "";
+  const router = useRouter();
   const items = buildNavItems(locale, dictionary);
+
+  useEffect(() => {
+    router.prefetch(`/${locale}/profile`);
+    router.prefetch(`/${locale}/profile/orders`);
+    router.prefetch(`/${locale}/profile/personal-information`);
+    router.prefetch(`/${locale}/profile/addresses`);
+    router.prefetch(`/${locale}/profile/password`);
+    router.prefetch(`/${locale}/profile/delete-account`);
+  }, [locale, router]);
+
   const activeHref =
     items.find((item) => isItemActive(pathname, item))?.href ??
     items[0]?.href ??

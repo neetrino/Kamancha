@@ -523,7 +523,8 @@ body {
     flex-direction: column;
   }
 
-  .profile-desktop-content > * > .liquid-glass:last-of-type {
+  .profile-desktop-content > * > .liquid-glass:last-of-type,
+  .profile-desktop-content > .profile-page-reveal > * > .liquid-glass:last-of-type {
     flex: 1 1 auto;
   }
 }
@@ -548,7 +549,7 @@ body {
   }
 
   /* Dashboard + orders: more inset from the sheet edges. */
-  .profile-mobile-tab-sheet-scroll:has(> div > .profile-sheet-keep-frame) {
+  .profile-mobile-tab-sheet-scroll:has(.profile-sheet-keep-frame) {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
@@ -559,6 +560,11 @@ body {
    */
   .profile-mobile-tab-sheet-scroll
     > div
+    > *:not(.profile-sheet-keep-frame)
+    > .liquid-glass,
+  .profile-mobile-tab-sheet-scroll
+    > div
+    > .profile-page-reveal
     > *:not(.profile-sheet-keep-frame)
     > .liquid-glass {
     background: none;
@@ -571,6 +577,11 @@ body {
 
   .profile-mobile-tab-sheet-scroll
     > div
+    > *:not(.profile-sheet-keep-frame)
+    > .liquid-glass::before,
+  .profile-mobile-tab-sheet-scroll
+    > div
+    > .profile-page-reveal
     > *:not(.profile-sheet-keep-frame)
     > .liquid-glass::before {
     display: none;

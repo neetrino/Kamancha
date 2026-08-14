@@ -86,24 +86,6 @@ export function CartCheckoutSkeleton() {
   );
 }
 
-export function ProfileContentSkeleton() {
-  return (
-    <div className={`${pulse} space-y-8`} aria-busy="true" aria-live="polite">
-      <div className="space-y-2">
-        <Block className="h-10 w-56 rounded-xl bg-white/25" />
-        <Block className="h-4 w-40 rounded-xl bg-white/20" />
-      </div>
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Block className="h-24 rounded-3xl bg-white/20" />
-        <Block className="h-24 rounded-3xl bg-white/20" />
-        <Block className="h-24 rounded-3xl bg-white/20" />
-        <Block className="h-24 rounded-3xl bg-white/20" />
-      </div>
-      <Block className="h-64 w-full rounded-3xl bg-white/20" />
-    </div>
-  );
-}
-
 export function GenericPageSkeleton() {
   return (
     <div className={`${pulse} space-y-6`} aria-busy="true" aria-live="polite">

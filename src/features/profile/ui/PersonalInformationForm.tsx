@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import {
   updateProfileAction,
   type UpdateProfileActionState,
 } from "@/features/auth/update-profile-action";
+import { useProfileSession } from "@/features/profile/ui/ProfileSessionContext";
 import {
   PROFILE_FIELD,
   PROFILE_LABEL,
@@ -17,10 +18,6 @@ import {
 
 type PersonalInformationFormProps = {
   locale: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
   labels: {
     title: string;
     firstName: string;
@@ -41,12 +38,13 @@ const initialState: UpdateProfileActionState = {};
 
 export function PersonalInformationForm({
   locale,
-  firstName,
-  lastName,
-  email,
-  phone,
   labels,
 }: PersonalInformationFormProps) {
+  const user = useProfileSession();
+  const firstName = user.firstName;
+  const lastName = user.lastName;
+  const email = user.email;
+  const phone = user.phone ?? "";
   const action = updateProfileAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [values, setValues] = useState({
@@ -55,10 +53,6 @@ export function PersonalInformationForm({
     email,
     phone,
   });
-
-  useEffect(() => {
-    setValues({ firstName, lastName, email, phone });
-  }, [firstName, lastName, email, phone]);
 
   function resetToSaved(): void {
     setValues({ firstName, lastName, email, phone });
