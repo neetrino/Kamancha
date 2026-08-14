@@ -60,7 +60,7 @@ function CheckoutOrderItemCard({
 
   return (
     <article
-      className="liquid-glass isolate w-max shrink-0 overflow-hidden rounded-[20px] p-3"
+      className="isolate w-max shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
       style={{
         minWidth: CARD_MIN_WIDTH_PX,
         maxWidth: CARD_MAX_WIDTH_PX,
@@ -176,7 +176,7 @@ export function CheckoutProductsInOrder({
       <div className="relative z-[2] flex items-start justify-between gap-4">
         <h2
           id="checkout-order-items-title"
-          className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase"
+          className="font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase"
         >
           {title}
         </h2>

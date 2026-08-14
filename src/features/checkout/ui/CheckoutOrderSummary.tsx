@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { LiquidGlassPanel } from "@/components/ui/LiquidGlassPanel";
 
 const SUMMARY_HEADER_GAP_PX = 16;
 const SUMMARY_FALLBACK_TOP_PX = 140;
+const SUMMARY_ALERT_PILL_CLASS =
+  "mb-4 w-full rounded-full bg-white px-4 py-3 text-center text-sm font-medium leading-snug text-red-600";
 
 function useSummaryStickyTop(): number {
   const [top, setTop] = useState(SUMMARY_FALLBACK_TOP_PX);
@@ -51,6 +54,7 @@ type CheckoutOrderSummaryProps = {
   totalLabel: string;
   subtotalFormatted: string;
   shippingFormatted: string;
+  shippingAddressPrompt: string | null;
   discountFormatted: string | null;
   changeFormatted: string | null;
   totalFormatted: string;
@@ -78,6 +82,7 @@ export function CheckoutOrderSummary({
   totalLabel,
   subtotalFormatted,
   shippingFormatted,
+  shippingAddressPrompt,
   discountFormatted,
   changeFormatted,
   totalFormatted,
@@ -95,13 +100,13 @@ export function CheckoutOrderSummary({
 
   return (
     <div className="lg:sticky lg:self-start" style={{ top: stickyTop }}>
-      <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
-        <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+      <LiquidGlassPanel className="px-5 py-6 sm:px-6 sm:py-7">
+        <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
           {title}
         </h2>
 
         <div className="relative z-[2] mb-6 liquid-glass isolate overflow-hidden rounded-xl p-4">
-          <p className="relative z-[2] mb-3 text-sm text-gray-700">{couponTitle}</p>
+          <p className="relative z-[2] mb-3 text-sm text-white/80">{couponTitle}</p>
           <div className="relative z-[2] flex gap-2">
             <input
               type="text"
@@ -117,13 +122,13 @@ export function CheckoutOrderSummary({
               placeholder={couponPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingCoupon}
-              className="h-11 min-w-0 flex-1 rounded-lg border border-white/50 bg-white/55 px-3 text-sm text-gray-900 backdrop-blur-sm placeholder:text-gray-500 focus:border-white/80 focus:outline-none focus:ring-2 focus:ring-white/40"
+              className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
             />
             <Button
               type="button"
               variant="secondary"
               size="md"
-              className="h-11 shrink-0 rounded-lg px-4 text-sm"
+              className="h-11 shrink-0 rounded-lg border-gray-200 bg-white px-4 text-sm text-gray-900 hover:bg-gray-50"
               disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
               onClick={onApplyCoupon}
             >
@@ -131,7 +136,7 @@ export function CheckoutOrderSummary({
             </Button>
           </div>
           {couponError ? (
-            <p className="relative z-[2] mt-2 text-sm text-red-600" role="alert">
+            <p className={`${SUMMARY_ALERT_PILL_CLASS} mt-2`} role="alert">
               {couponError}
             </p>
           ) : null}
@@ -159,7 +164,7 @@ export function CheckoutOrderSummary({
             </div>
           ) : null}
           <div className="border-t border-white/40 pt-4">
-            <div className="flex justify-between text-lg font-bold text-gray-900">
+            <div className="flex justify-between text-lg font-bold text-white">
               <span>{totalLabel}</span>
               <span>{totalFormatted}</span>
             </div>
@@ -167,10 +172,23 @@ export function CheckoutOrderSummary({
         </div>
 
         <div className="relative z-[2]">
+          {shippingAddressPrompt ? (
+            <button
+              type="button"
+              onClick={() => {
+                document
+                  .getElementById("checkout-shipping-address")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              className={SUMMARY_ALERT_PILL_CLASS}
+            >
+              {shippingAddressPrompt}
+            </button>
+          ) : null}
           {error ? (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50/90 p-3">
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
+            <p className={SUMMARY_ALERT_PILL_CLASS} role="alert">
+              {error}
+            </p>
           ) : null}
 
           <KamanchaPillButton
@@ -181,7 +199,7 @@ export function CheckoutOrderSummary({
             className="max-w-none sm:max-w-none"
           />
         </div>
-      </section>
+      </LiquidGlassPanel>
     </div>
   );
 }

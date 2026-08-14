@@ -175,7 +175,7 @@ export function DeliverySlotPicker({
   const canNext = viewMonthYmd < maxMonth;
 
   return (
-    <div className="liquid-glass isolate relative z-[2] space-y-4 overflow-hidden rounded-2xl p-4">
+    <div className="relative z-[2] space-y-4 overflow-hidden rounded-2xl bg-white p-4">
       <h3 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
         {labels.title}
       </h3>
@@ -190,7 +190,7 @@ export function DeliverySlotPicker({
                 type="button"
                 disabled={disabled || !canPrev}
                 onClick={() => shiftMonth(-1)}
-                className="rounded-xl border border-white/45 bg-white/40 px-3 py-1.5 text-sm text-gray-800 hover:bg-white/60 disabled:opacity-40"
+                className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
               >
                 {labels.prevMonth}
               </button>
@@ -201,13 +201,13 @@ export function DeliverySlotPicker({
                 type="button"
                 disabled={disabled || !canNext}
                 onClick={() => shiftMonth(1)}
-                className="rounded-xl border border-white/45 bg-white/40 px-3 py-1.5 text-sm text-gray-800 hover:bg-white/60 disabled:opacity-40"
+                className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
               >
                 {labels.nextMonth}
               </button>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 text-center text-xs text-white">
+            <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-600">
               {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
                 <div key={label} className="py-1 font-medium">
                   {label}
@@ -229,7 +229,7 @@ export function DeliverySlotPicker({
                       isSelected
                         ? "bg-brand-forest text-white"
                         : bookable
-                          ? "bg-white/40 text-gray-900 hover:bg-white/60"
+                          ? "bg-white text-gray-900 ring-1 ring-gray-200 hover:bg-gray-50"
                           : "cursor-not-allowed text-gray-300"
                     }`}
                   >
@@ -242,7 +242,7 @@ export function DeliverySlotPicker({
 
           {selectedDay ? (
             <div className="relative z-[2]">
-              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-white">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-600">
                 {labels.pickTime}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -265,7 +265,7 @@ export function DeliverySlotPicker({
                       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                         isSelected
                           ? "border-brand-forest bg-brand-forest text-white"
-                          : "border-white/45 bg-white/40 text-gray-800 hover:bg-white/60"
+                          : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
                       }`}
                     >
                       {slot.label}

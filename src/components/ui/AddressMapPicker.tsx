@@ -182,7 +182,7 @@ export function AddressMapPicker({
           setExiting(false);
           setOpen(true);
         }}
-        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border border-white/50 bg-white/55 px-3 text-sm font-medium text-gray-800 shadow-sm backdrop-blur-sm transition-colors hover:border-white/70 hover:bg-white/70 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-3 text-sm font-medium text-gray-800 shadow-sm transition-colors hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         aria-label={labels.openMap}
       >
         <MapPin className="h-4 w-4 text-gray-700" aria-hidden />
@@ -300,11 +300,11 @@ function MapPickerHeader({
       <div>
         <h2
           id="address-map-picker-title"
-          className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase"
+          className="font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase"
         >
           {labels.title}
         </h2>
-        <p className="mt-1 text-sm text-gray-800">{labels.hint}</p>
+        <p className="mt-1 text-sm text-white">{labels.hint}</p>
       </div>
       <button
         type="button"

@@ -385,26 +385,34 @@ body {
 }
 
 /**
- * Liquid glass: frosted green wash, specular rim, soft depth.
- * Cart line items also add `isolate overflow-hidden`.
+ * Storefront glass cards: near-clear surface + 1px navbar pale stroke.
+ * Order summary adds rim refraction via `.liquid-glass-panel` / LiquidGlassPanel.
  */
-.liquid-glass {
+.liquid-glass,
+.liquid-glass-panel {
   position: relative;
   background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.7) 0%,
-    rgba(210, 228, 196, 0.48) 46%,
-    rgba(74, 107, 60, 0.34) 100%
+    180deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(255, 255, 255, 0.012) 42%,
+    rgba(255, 255, 255, 0.03) 100%
   );
-  backdrop-filter: blur(18px) saturate(1.7);
-  -webkit-backdrop-filter: blur(18px) saturate(1.7);
+  backdrop-filter: blur(3px) saturate(1.22);
+  -webkit-backdrop-filter: blur(3px) saturate(1.22);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
-    0 10px 28px rgba(38, 81, 39, 0.1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 10px 24px rgba(0, 0, 0, 0.1);
 }
 
-.liquid-glass::before {
+@supports (backdrop-filter: url(#a)) {
+  .liquid-glass,
+  .liquid-glass-panel {
+    backdrop-filter: blur(3px) saturate(1.2) url(#kamancha-liquid-glass-rim);
+  }
+}
+
+.liquid-glass::before,
+.liquid-glass-panel::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -412,12 +420,7 @@ body {
   border-radius: inherit;
   padding: 1px;
   pointer-events: none;
-  background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 255, 255, 0.18) 48%,
-    rgba(255, 255, 255, 0.5) 100%
-  );
+  background: var(--brand-pale-edge-stroke);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);

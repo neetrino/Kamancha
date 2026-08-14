@@ -9,9 +9,9 @@ export const CHECKOUT_PAYMENT_IDRAM_SRC = "/assets/payments/checkout/idram.webp"
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =
   "ring-2 ring-inset ring-brand-forest";
 export const CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS =
-  "hover:brightness-[1.04]";
+  "hover:bg-gray-50";
 export const CHECKOUT_PAYMENT_OPTION_BASE_CLASS =
-  "liquid-glass isolate flex cursor-pointer items-center overflow-hidden rounded-[15px] p-4 outline-none transition-all [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
+  "flex cursor-pointer items-center overflow-hidden rounded-[15px] bg-white p-4 outline-none transition-colors [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
 
 export const CHECKOUT_PAYMENT_ICON_BOX_HEIGHT_PX = 40;
 export const CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX = 8;

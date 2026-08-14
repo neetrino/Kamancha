@@ -39,7 +39,7 @@ export function CheckoutSuccessView({
           />
         </div>
 
-        <p className="relative z-[2] font-big-fat-boii text-2xl font-normal tracking-wide text-gray-900 uppercase sm:text-3xl">
+        <p className="relative z-[2] font-big-fat-boii text-2xl font-normal tracking-wide text-white uppercase sm:text-3xl">
           {orderNumber}
         </p>
         <p className="relative z-[2] mt-4 text-sm leading-relaxed text-gray-700 sm:text-base">
@@ -47,7 +47,7 @@ export function CheckoutSuccessView({
         </p>
 
         <div className="relative z-[2] mt-6 border-t border-white/40 pt-4">
-          <p className="font-big-fat-boii text-lg font-normal tracking-wide text-gray-900 uppercase">
+          <p className="font-big-fat-boii text-lg font-normal tracking-wide text-white uppercase">
             {labels.total.replace("{amount}", totalFormatted)}
           </p>
         </div>

@@ -45,7 +45,7 @@ export function CheckoutPaymentMethods({
 }: CheckoutPaymentMethodsProps) {
   return (
     <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
-      <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+      <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
         {title}
       </h2>
       <div className="relative z-[2] space-y-3">

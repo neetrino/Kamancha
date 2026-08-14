@@ -13,13 +13,16 @@ import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-s
 import type { Locale } from "@/lib/i18n/config";
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-2xl border border-white/50 bg-white/55 px-4 text-gray-900 shadow-sm outline-none backdrop-blur-sm transition-colors placeholder:text-gray-500 hover:border-white/70 focus:border-white/80 disabled:bg-white/30";
+  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-500 hover:border-gray-300 focus:border-gray-400 disabled:bg-gray-50";
+
+const FIELD_LABEL_CLASS =
+  "flex flex-col gap-1.5 text-sm font-medium text-white/80";
 
 const SECTION_CLASS =
   "liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
 
 const SECTION_TITLE_CLASS =
-  "relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";
+  "relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -70,7 +73,6 @@ type CheckoutDetailsSectionsProps = {
   onLine1Change: (value: string) => void;
   deliveryQuotePending: boolean;
   deliveryQuoteError: string | null;
-  deliveryQuoteHint: string | null;
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: CheckoutPaymentOption[];
@@ -98,7 +100,6 @@ export function CheckoutDetailsSections({
   onLine1Change,
   deliveryQuotePending,
   deliveryQuoteError,
-  deliveryQuoteHint,
   paymentMethod,
   onPaymentMethodChange,
   paymentOptions,
@@ -117,7 +118,7 @@ export function CheckoutDetailsSections({
         </h2>
         <div className="relative z-[2] space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.firstName}
               <input
                 name="firstName"
@@ -128,7 +129,7 @@ export function CheckoutDetailsSections({
                 autoComplete="given-name"
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.lastName}
               <input
                 name="lastName"
@@ -141,7 +142,7 @@ export function CheckoutDetailsSections({
             </label>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.email}
               <input
                 name="contactEmail"
@@ -153,7 +154,7 @@ export function CheckoutDetailsSections({
                 autoComplete="email"
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.phone}
               <input
                 name="contactPhone"
@@ -169,13 +170,13 @@ export function CheckoutDetailsSections({
         </div>
       </section>
 
-      <section className={SECTION_CLASS}>
+      <section className={SECTION_CLASS} id="checkout-shipping-address">
         <h2 className={SECTION_TITLE_CLASS}>
           {labels.shippingAddress}
         </h2>
         <div className="relative z-[2] space-y-4">
           <div className="space-y-1.5">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-white/80">
               {labels.address}
             </span>
             <div className="flex items-start gap-2">
@@ -209,7 +210,7 @@ export function CheckoutDetailsSections({
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.floor}
               <input
                 name="floor"
@@ -218,7 +219,7 @@ export function CheckoutDetailsSections({
                 className={FIELD_CLASS}
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.intercomCode}
               <input
                 name="intercomCode"
@@ -249,13 +250,8 @@ export function CheckoutDetailsSections({
           </p>
         ) : null}
         {deliveryQuoteError ? (
-          <p className="relative z-[2] mt-2 text-sm text-red-700">
+          <p className="relative z-[2] mt-2 text-sm font-bold text-white">
             {deliveryQuoteError}
-          </p>
-        ) : null}
-        {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
-          <p className="relative z-[2] mt-2 text-sm text-gray-600">
-            {deliveryQuoteHint}
           </p>
         ) : null}
       </section>

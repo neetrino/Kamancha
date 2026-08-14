@@ -5,6 +5,7 @@ import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StorefrontBackground } from "@/components/layout/StorefrontBackground";
+import { LiquidGlassOptics } from "@/components/ui/LiquidGlassOptics";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveGroupOrderBanner } from "@/features/group-orders/application/active-banner";
 import { ActiveGroupOrderBanner } from "@/features/group-orders/ui/ActiveGroupOrderBanner";
@@ -41,6 +42,7 @@ export default async function StorefrontLayout({
   return (
     <div className="storefront-shell relative flex min-h-dvh flex-1 flex-col overflow-x-clip bg-brand-forest text-white">
       <StorefrontBackground />
+      <LiquidGlassOptics />
       <div className="relative z-10 flex min-h-dvh flex-1 flex-col">
         <SiteHeader
           locale={locale}

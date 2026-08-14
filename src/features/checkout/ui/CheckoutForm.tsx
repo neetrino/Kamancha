@@ -208,23 +208,23 @@ export function CheckoutForm({
   const cashChangeDueFormatted =
     cashChangeDue != null ? formatMoney(cashChangeDue) : null;
 
+  const needsDeliveryAddress =
+    lockedDeliveryAmount == null &&
+    !deliveryQuote.pending &&
+    (deliveryQuote.error != null || !deliveryQuote.distanceLabel);
+
   const shippingFormatted =
     lockedDeliveryAmount != null
       ? formatMoney(lockedDeliveryAmount)
       : deliveryQuote.pending
         ? labels.calculatingDelivery
-        : deliveryQuote.error
-          ? labels.enterDeliveryAddress
-          : deliveryQuote.distanceLabel
-            ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
-            : labels.enterDeliveryAddress;
+        : deliveryQuote.distanceLabel && !deliveryQuote.error
+          ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
+          : "—";
 
-  const deliveryQuoteHint =
-    lockedDeliveryAmount != null
-      ? formatMoney(lockedDeliveryAmount)
-      : deliveryQuote.distanceLabel && !deliveryQuote.error
-        ? `${deliveryQuote.distanceLabel} · ${formatMoney(shippingAmount)}`
-        : null;
+  const shippingAddressPrompt = needsDeliveryAddress
+    ? labels.enterDeliveryAddress
+    : null;
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -368,7 +368,6 @@ export function CheckoutForm({
             deliveryQuoteError={
               lockedDeliveryAmount != null ? null : deliveryQuote.error
             }
-            deliveryQuoteHint={deliveryQuoteHint}
             addressLocked={lockedDeliveryAmount != null}
             prepaidNotice={
               splitOthersPrepaid
@@ -405,6 +404,7 @@ export function CheckoutForm({
             totalLabel={labels.total}
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
+            shippingAddressPrompt={shippingAddressPrompt}
             discountFormatted={
               discountAmount > 0 ? formatMoney(discountAmount) : null
             }
