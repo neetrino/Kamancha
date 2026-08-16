@@ -40,7 +40,7 @@ export default async function StorefrontLayout({
   const groupBanner = await getActiveGroupOrderBanner();
 
   return (
-    <div className="storefront-shell relative flex min-h-dvh flex-1 flex-col overflow-x-clip bg-brand-forest text-white">
+    <div className="storefront-shell relative flex min-h-dvh flex-1 flex-col overflow-x-clip overscroll-x-none bg-brand-forest text-white">
       <StorefrontBackground />
       <LiquidGlassOptics />
       <div className="relative z-10 flex min-h-dvh flex-1 flex-col">

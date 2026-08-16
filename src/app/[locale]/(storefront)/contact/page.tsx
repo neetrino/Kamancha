@@ -25,7 +25,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
       title={copy.heading}
       raiseLeftHand
       footer={
-        <div className="mt-20 mb-4 sm:mt-24 lg:mt-28">
+        <div className="mt-28 mb-4 sm:mt-32 lg:mt-36">
           <ContactInfo copy={copy} />
         </div>
       }
