@@ -14,9 +14,10 @@
   "submit": "Отправить",
   "success": "Спасибо — сообщение отправлено.",
   "error": "Не удалось отправить сообщение.",
-  "storePhone": "+374 41 402080",
-  "storeEmail": "janazyan@janazyanprojects.com",
-  "storeAddress": "проспект Гая 16, Мегамолл 2-й этаж",
+  "storePhone": "095 711700",
+  "storeEmail": "kamancharest@gmail.com",
+  "storeAddress": "ул. Туманяна 23, Ереван",
+  "storeAddress2": "ул. Сарьяна 8, Ереван",
   "social": {
     "instagram": "https://www.instagram.com/kamancha_yerevan/",
     "facebook": "https://www.facebook.com/kamancharest/",
@@ -29,11 +30,7 @@
   "writeDescription": "Заполните форму, и мы свяжемся с вами в течение 24 часов.",
   "emailLabel": "Email:",
   "hqTitle": "Главный офис:",
-  "hoursWeekdaysLabel": "Понедельник - Пятница:",
-  "hoursWeekdaysTime": "9:00-20:00",
-  "hoursSaturdayLabel": "Суббота:",
-  "hoursSaturdayTime": "11:00-15:00",
-  "hoursWeekdays": "Понедельник - Пятница: 9:00-20:00",
-  "hoursSaturday": "Суббота: 11:00 - 15:00",
+  "hoursEverydayLabel": "Каждый день:",
+  "hoursEverydayTime": "10:00-00:00",
   "mapTitle": "Расположение магазина"
 }

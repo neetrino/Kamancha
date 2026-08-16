@@ -53,14 +53,8 @@ export function ContactInfo({ copy }: ContactInfoProps) {
       data-node-id="267:221"
     >
       <ContactPill icon={<Clock className="size-[22px]" strokeWidth={1.75} />}>
-        <span className="block">
-          {copy.hoursWeekdaysLabel}{" "}
-          <span className={HOURS_TIME_CLASS}>{copy.hoursWeekdaysTime}</span>
-        </span>
-        <span className="mt-1 block">
-          {copy.hoursSaturdayLabel}{" "}
-          <span className={HOURS_TIME_CLASS}>{copy.hoursSaturdayTime}</span>
-        </span>
+        {copy.hoursEverydayLabel}{" "}
+        <span className={HOURS_TIME_CLASS}>{copy.hoursEverydayTime}</span>
       </ContactPill>
 
       <ContactPill
@@ -79,6 +73,9 @@ export function ContactInfo({ copy }: ContactInfoProps) {
 
       <ContactPill icon={<MapPin className="size-[22px]" strokeWidth={1.75} />}>
         {copy.storeAddress}
+      </ContactPill>
+      <ContactPill icon={<MapPin className="size-[22px]" strokeWidth={1.75} />}>
+        {copy.storeAddress2}
       </ContactPill>
     </div>
   );

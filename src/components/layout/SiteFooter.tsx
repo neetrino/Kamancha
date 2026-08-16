@@ -171,6 +171,9 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               <p className="font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/50">
                 {footer.address}
               </p>
+              <p className="font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/50">
+                {footer.address2}
+              </p>
               <a
                 href={`tel:${footer.phone.replace(/\s/g, "")}`}
                 className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/50 transition-colors hover:text-white"

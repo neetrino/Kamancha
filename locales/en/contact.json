@@ -14,9 +14,10 @@
   "submit": "Send message",
   "success": "Thank you — your message was sent.",
   "error": "Unable to send your message.",
-  "storePhone": "+374 41 402080",
-  "storeEmail": "janazyan@janazyanprojects.com",
-  "storeAddress": "Gai Avenue 16, Megamall 2nd floor",
+  "storePhone": "095 711700",
+  "storeEmail": "kamancharest@gmail.com",
+  "storeAddress": "23 Tumanyan St, Yerevan",
+  "storeAddress2": "Saryan 8, Yerevan",
   "social": {
     "instagram": "https://www.instagram.com/kamancha_yerevan/",
     "facebook": "https://www.facebook.com/kamancharest/",
@@ -29,11 +30,7 @@
   "writeDescription": "Fill out our form and we will contact you within 24 hours.",
   "emailLabel": "Email:",
   "hqTitle": "Headquarters:",
-  "hoursWeekdaysLabel": "Monday - Friday:",
-  "hoursWeekdaysTime": "9:00-20:00",
-  "hoursSaturdayLabel": "Saturday:",
-  "hoursSaturdayTime": "11:00-15:00",
-  "hoursWeekdays": "Monday - Friday: 9:00-20:00",
-  "hoursSaturday": "Saturday: 11:00 - 15:00",
+  "hoursEverydayLabel": "Every day:",
+  "hoursEverydayTime": "10:00-00:00",
   "mapTitle": "Store location"
 }

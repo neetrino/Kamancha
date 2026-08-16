@@ -14,9 +14,10 @@
   "submit": "Ուղարկել",
   "success": "Շնորհակալություն — հաղորդագրությունն ուղարկված է։",
   "error": "Չհաջողվեց ուղարկել հաղորդագրությունը։",
-  "storePhone": "+374 41 402080",
-  "storeEmail": "janazyan@janazyanprojects.com",
-  "storeAddress": "Գայի պողոտա 16, Մեգամոլլ 2-րդ հարկ",
+  "storePhone": "095 711700",
+  "storeEmail": "kamancharest@gmail.com",
+  "storeAddress": "Թումանյան 23, Երևան",
+  "storeAddress2": "Սարյան 8, Երևան",
   "social": {
     "instagram": "https://www.instagram.com/kamancha_yerevan/",
     "facebook": "https://www.facebook.com/kamancharest/",
@@ -29,11 +30,7 @@
   "writeDescription": "Լրացրեք ձևը, և մենք կկապվենք ձեզ հետ 24 ժամվա ընթացքում։",
   "emailLabel": "Էլ. փոստ՝",
   "hqTitle": "Գլխամաս՝",
-  "hoursWeekdaysLabel": "Երկուշաբթի - Ուրբաթ:",
-  "hoursWeekdaysTime": "9:00-20:00",
-  "hoursSaturdayLabel": "Շաբաթ:",
-  "hoursSaturdayTime": "11:00-15:00",
-  "hoursWeekdays": "Երկուշաբթի - Ուրբաթ՝ 9:00-20:00",
-  "hoursSaturday": "Շաբաթ՝ 11:00 - 15:00",
+  "hoursEverydayLabel": "Ամեն օր:",
+  "hoursEverydayTime": "10:00-00:00",
   "mapTitle": "Խանութի գտնվելու վայրը"
 }
