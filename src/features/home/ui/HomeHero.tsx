@@ -104,7 +104,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
       <motion.div
         className="pointer-events-none absolute right-0 z-[3] overflow-visible bg-transparent"
         data-node-id="22:208"
-        style={{ top: topPct(141) }}
+        style={{ top: topPct(100) }}
         initial={playMotion ? { opacity: 0, x: "12%" } : false}
         animate={{ opacity: 1, x: 0 }}
         transition={sideTransition}
