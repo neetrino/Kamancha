@@ -92,7 +92,10 @@ export function HomeCategories({
           className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2"
         >
           <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <HomeStagger className="flex gap-[19px] px-5 py-4" stagger={0.07}>
+            <HomeStagger
+              className="inline-flex gap-[19px] px-16 py-4"
+              stagger={0.07}
+            >
               {categories.map((category) => (
                 <HomeStaggerItem key={category.id} className="shrink-0">
                   <AppLink

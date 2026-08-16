@@ -67,7 +67,10 @@ export function HomeFeaturedProducts({
         <>
           <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
             <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <HomeStagger className="flex gap-5 px-5 py-4" stagger={0.08}>
+              <HomeStagger
+                className="inline-flex gap-5 px-16 py-4"
+                stagger={0.08}
+              >
                 {products.map((product, index) => (
                   <HomeStaggerItem key={product.id} className="shrink-0">
                     <ProductCard
