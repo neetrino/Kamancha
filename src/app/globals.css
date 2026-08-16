@@ -17,8 +17,8 @@
   --accent-foreground: #f9fafb;
   --brand-forest: #265127;
   --radius: 15px;
-  /* SiteHeader md+: pt-10 + min-h-[65px] + pb-2.5 */
-  --storefront-header-offset: calc(2.5rem + 65px + 0.625rem);
+  /* SiteHeader md+: pt-8 + min-h-[65px] + pb-2.5 */
+  --storefront-header-offset: calc(2rem + 65px + 0.625rem);
   --profile-sticky-gap: 1.75rem;
   --brand-pale-edge-stroke: linear-gradient(
     180deg,
