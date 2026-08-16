@@ -47,31 +47,31 @@ export function HomeOurStory({
       data-node-id="98:20"
       className="relative z-[1] overflow-visible pt-14 pb-36 sm:pt-16 sm:pb-44 md:pt-20 md:pb-56"
     >
-      <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible px-5">
-        {/* Angled rug — Figma 22:186 (~1768×1589 AABB, ~70° CW) */}
+      <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible">
+        {/* Rug — hero-side pattern: pinned to viewport right, capped like 13" */}
         <HomeReveal
           delay={0.12}
           y={48}
           x={32}
           amount={0.08}
-          className="pointer-events-none absolute top-[-8%] right-[-10%] left-auto z-0 hidden w-[min(78vw,1180px)] -translate-x-10 md:block lg:top-[-12%] lg:right-[-6%] lg:w-[min(70vw,1320px)]"
+          className="pointer-events-none absolute top-[-8%] right-0 z-0 hidden md:block"
           aria-hidden
           data-node-id="22:186"
         >
           <HomeFloat amplitude={7} duration={7.5}>
-            <div className="relative aspect-[768/1024] w-full origin-center rotate-[70deg]">
+            <div className="relative aspect-[768/1024] w-[min(70vw,1008px)] origin-center rotate-[70deg]">
               <Image
                 src={RUG_SRC}
                 alt=""
                 fill
-                sizes="(max-width: 1280px) 78vw, 1320px"
+                sizes="(min-width: 1440px) 1008px, 70vw"
                 className="object-contain drop-shadow-[0_28px_56px_rgba(0,0,0,0.4)]"
               />
             </div>
           </HomeFloat>
         </HomeReveal>
 
-        <div className="relative z-[1] mx-auto grid w-full max-w-[1338px] gap-10 lg:grid-cols-[minmax(0,821px)_minmax(0,390px)] lg:items-start lg:gap-[41px]">
+        <div className="relative z-[1] mx-auto grid w-full max-w-[1338px] gap-10 px-5 lg:grid-cols-[minmax(0,821px)_minmax(0,390px)] lg:items-start lg:gap-[41px]">
           <div className="min-w-0 overflow-visible">
             <HomeReveal>
               <h2

@@ -36,7 +36,7 @@ export function HomeFamilyDinnerPromo({
   return (
     <section className="relative z-[2] overflow-visible pt-20 pb-8 sm:pt-24 sm:pb-10 md:pt-[7.5rem] md:pb-12">
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible px-5">
-        <div className="relative ml-0 w-full max-w-[1313px]">
+        <div className="relative mx-auto w-full max-w-[1313px]">
           <HomeReveal y={36} amount={0.25}>
             <div
               data-node-id="22:219"
