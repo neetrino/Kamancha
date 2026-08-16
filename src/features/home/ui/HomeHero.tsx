@@ -58,6 +58,7 @@ const springCta: Transition = {
 /**
  * Kamancha home hero — Figma positions on 1440 artboard:
  * left 82:177 (663×828), wordmark 22:207 (590×283), right 22:208 (708×757), pill 22:435.
+ * Side images pin to the viewport edges (same pattern as ContactHands).
  * Sides slide in; wordmark scales in the center; CTA rises last.
  * Locale switches skip the entrance and keep everything in place.
  */
@@ -78,67 +79,55 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
       aria-label={brandName}
       className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -mt-8 overflow-visible sm:-mt-10 md:-mt-12"
     >
+      {/* Left — food platter (82:177), pinned to the viewport edge */}
+      <motion.div
+        className="pointer-events-none absolute top-0 left-0 z-[1] overflow-visible bg-transparent"
+        data-node-id="82:177"
+        initial={playMotion ? { opacity: 0, x: "-12%" } : false}
+        animate={{ opacity: 1, x: 0 }}
+        transition={sideTransition}
+      >
+        <Image
+          src="/assets/brand/hero/hero-left.webp"
+          alt=""
+          width={HERO_SIDE_W}
+          height={HERO_SIDE_H}
+          priority
+          fetchPriority="high"
+          unoptimized
+          sizes="(min-width: 1440px) 663px, 46vw"
+          className="h-auto w-[min(46vw,663px)] max-w-none bg-transparent object-contain object-left-top"
+        />
+      </motion.div>
+
+      {/* Right — kamancha (22:208), pinned to the viewport edge */}
+      <motion.div
+        className="pointer-events-none absolute right-0 z-[3] overflow-visible bg-transparent"
+        data-node-id="22:208"
+        style={{ top: topPct(141) }}
+        initial={playMotion ? { opacity: 0, x: "12%" } : false}
+        animate={{ opacity: 1, x: 0 }}
+        transition={sideTransition}
+      >
+        <Image
+          src="/assets/brand/hero/hero-right.webp"
+          alt=""
+          width={HERO_SIDE_W}
+          height={HERO_SIDE_H}
+          priority
+          fetchPriority="high"
+          unoptimized
+          sizes="(min-width: 1440px) 708px, 49vw"
+          className="h-auto w-[min(49vw,708px)] max-w-none bg-transparent object-contain object-right-top"
+        />
+      </motion.div>
+
       <div
-        className="relative mx-auto w-full"
+        className="relative mx-auto w-full max-w-[1440px]"
         style={{
-          maxWidth: "min(100%, calc(820px * 1440 / 708))",
           aspectRatio: `${FIGMA_W} / ${FIGMA_H}`,
         }}
       >
-        {/* Left — food platter (Figma 82:177): 0,98 / 663×828 */}
-        <motion.div
-          className="pointer-events-none absolute z-[1] bg-transparent"
-          data-node-id="82:177"
-          style={{
-            left: 0,
-            top: topPct(98),
-            width: widthPct(663),
-            height: heightPct(828),
-          }}
-          initial={playMotion ? { opacity: 0, x: "-12%" } : false}
-          animate={{ opacity: 1, x: 0 }}
-          transition={sideTransition}
-        >
-          <Image
-            src="/assets/brand/hero/hero-left.webp"
-            alt=""
-            width={HERO_SIDE_W}
-            height={HERO_SIDE_H}
-            priority
-            fetchPriority="high"
-            unoptimized
-            sizes="(min-width: 1440px) 663px, 46vw"
-            className="h-full w-full max-w-none bg-transparent object-contain object-left-top"
-          />
-        </motion.div>
-
-        {/* Right — kamancha (22:208): 732,141 / 708×757 */}
-        <motion.div
-          className="pointer-events-none absolute z-[3] bg-transparent"
-          data-node-id="22:208"
-          style={{
-            left: widthPct(732),
-            top: topPct(141),
-            width: widthPct(708),
-            height: heightPct(757),
-          }}
-          initial={playMotion ? { opacity: 0, x: "12%" } : false}
-          animate={{ opacity: 1, x: 0 }}
-          transition={sideTransition}
-        >
-          <Image
-            src="/assets/brand/hero/hero-right.webp"
-            alt=""
-            width={HERO_SIDE_W}
-            height={HERO_SIDE_H}
-            priority
-            fetchPriority="high"
-            unoptimized
-            sizes="(min-width: 1440px) 708px, 49vw"
-            className="h-full w-full max-w-none bg-transparent object-contain object-right-top"
-          />
-        </motion.div>
-
         {/* Center wordmark (22:207): 590×283 */}
         <motion.div
           className="absolute z-[2] bg-transparent"
