@@ -18,10 +18,10 @@ export function AuthPageShell({
   compactForm = false,
 }: AuthPageShellProps) {
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-2 sm:pt-3">
+    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-6 sm:pt-8">
       <ContactHands />
       <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pb-8 sm:px-6 lg:px-8">
-        <section className="relative z-[1] mx-auto flex max-w-[633px] flex-col items-center pt-0">
+        <section className="relative z-[1] mx-auto flex max-w-[633px] flex-col items-center pt-2">
           <div
             className="mb-2 flex items-center justify-center gap-2"
             aria-hidden
