@@ -12,6 +12,8 @@ import { hashPassword } from "@/lib/auth/password";
 import { createId } from "@/lib/id";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
+const CURRENT_TERMS_VERSION = "1.0";
+
 export async function registerAction(
   localeInput: string,
   _previousState: AuthActionState,
@@ -33,8 +35,12 @@ export async function registerAction(
     return { error: "Unable to create account with those details." };
   }
 
-  const { password, confirmPassword: _confirmPassword, ...registration } =
-    parsed.data;
+  const {
+    password,
+    confirmPassword: _confirmPassword,
+    acceptTerms: _acceptTerms,
+    ...registration
+  } = parsed.data;
   const [user] = await getDb()
     .insert(users)
     .values({
@@ -42,6 +48,8 @@ export async function registerAction(
       ...registration,
       passwordHash: await hashPassword(password),
       passwordUpdatedAt: new Date(),
+      termsAcceptedAt: new Date(),
+      termsVersion: CURRENT_TERMS_VERSION,
       // Temporary Phase 3 bypass until the verification provider is connected.
       emailVerifiedAt: new Date(),
       role: "CUSTOMER",

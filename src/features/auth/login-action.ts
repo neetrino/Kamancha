@@ -53,6 +53,8 @@ export async function loginAction(
     .update(users)
     .set({ lastLoginAt: new Date(), updatedAt: new Date() })
     .where(eq(users.id, user.id));
-  await createSession(user.id);
+  await createSession(user.id, {
+    persistent: parsed.data.rememberMe === "on",
+  });
   redirect(resolveSafeNextPath(locale, formData.get("next")));
 }

@@ -11,6 +11,7 @@ export const passwordSchema = z
 export const loginSchema = z.object({
   email: z.string().trim().email().transform((value) => value.toLowerCase()),
   password: z.string().min(1),
+  rememberMe: z.literal("on").optional(),
 });
 
 export const registerSchema = z
@@ -21,6 +22,9 @@ export const registerSchema = z
     phone: z.string().trim().min(5).max(40),
     password: passwordSchema,
     confirmPassword: z.string().min(1),
+    acceptTerms: z.literal("on", {
+      error: "You must accept the terms and privacy policy.",
+    }),
   })
   .refine((value) => value.password === value.confirmPassword, {
     message: "Passwords do not match.",
