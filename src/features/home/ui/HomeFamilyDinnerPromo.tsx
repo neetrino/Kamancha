@@ -35,12 +35,12 @@ export function HomeFamilyDinnerPromo({
 }: HomeFamilyDinnerPromoProps) {
   return (
     <section className="relative z-[2] overflow-visible pt-20 pb-8 sm:pt-24 sm:pb-10 md:pt-[7.5rem] md:pb-12">
-      <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible px-5">
-        <div className="relative mx-auto w-full max-w-[1313px]">
+      <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible px-16">
+        <div className="relative w-full">
           <HomeReveal y={36} amount={0.25}>
             <div
               data-node-id="22:219"
-              className="relative z-0 w-full rounded-[30px] bg-white md:aspect-[1313/522]"
+              className="relative z-0 w-full rounded-[30px] bg-white md:aspect-[1313/522] md:[container-type:inline-size]"
             >
               {/* Plate — Figma 22:220 @ 393,36 / 701×486, rounded-bl 261 */}
               <div
@@ -52,7 +52,7 @@ export function HomeFamilyDinnerPromo({
                   alt=""
                   width={1402}
                   height={1747}
-                  sizes="(max-width: 1313px) 55vw, 701px"
+                  sizes="(max-width: 768px) 100vw, 55vw"
                   className="pointer-events-none absolute top-[-0.04%] left-0 h-[179.96%] w-full max-w-none"
                 />
               </div>
@@ -60,7 +60,7 @@ export function HomeFamilyDinnerPromo({
               <div className="relative z-10 flex w-full flex-col px-8 pt-12 pb-4 sm:px-12 md:absolute md:inset-0 md:block md:px-0 md:pt-0 md:pb-0">
                 <h2
                   data-node-id="22:222"
-                  className="max-w-[813px] font-big-fat-boii text-[clamp(28px,4.4vw,58px)] leading-[1.05] font-normal text-brand-forest md:absolute md:top-[12.45%] md:left-[4.87%] md:w-[61.9%] md:leading-[60px]"
+                  className="max-w-[813px] font-big-fat-boii text-[clamp(28px,4.4vw,58px)] leading-[1.05] font-normal text-brand-forest md:absolute md:top-[12.45%] md:left-[4.87%] md:w-[61.9%] md:max-w-none md:text-[4.42cqw] md:leading-[4.57cqw]"
                 >
                   <span className="text-[rgba(38,81,39,0.6)]">
                     {headlineBefore}
@@ -73,7 +73,7 @@ export function HomeFamilyDinnerPromo({
 
                 <p
                   data-node-id="22:223"
-                  className="mt-6 text-[16px] leading-6 text-black sm:text-[18px] md:absolute md:top-[43.1%] md:left-[5.64%] md:mt-0 md:whitespace-nowrap"
+                  className="mt-6 text-[16px] leading-6 text-black sm:text-[18px] md:absolute md:top-[43.1%] md:left-[5.64%] md:mt-0 md:text-[1.37cqw] md:leading-[1.83cqw] md:whitespace-nowrap"
                 >
                   <span className="block">{subtitle}</span>
                   <span className="block text-black/42">{subtitleMuted}</span>
@@ -81,7 +81,7 @@ export function HomeFamilyDinnerPromo({
 
                 <p
                   data-node-id="22:224"
-                  className="mt-6 font-big-fat-boii text-[36px] leading-[1.05] font-normal whitespace-nowrap text-brand-forest sm:text-[42px] md:absolute md:top-[56.9%] md:left-[5.64%] md:mt-0 md:text-[48px] md:leading-[50px]"
+                  className="mt-6 font-big-fat-boii text-[36px] leading-[1.05] font-normal whitespace-nowrap text-brand-forest sm:text-[42px] md:absolute md:top-[56.9%] md:left-[5.64%] md:mt-0 md:text-[3.66cqw] md:leading-[3.81cqw]"
                 >
                   {priceLabel}
                 </p>
@@ -125,7 +125,7 @@ export function HomeFamilyDinnerPromo({
                 alt=""
                 width={1336}
                 height={2009}
-                sizes="(max-width: 1313px) 40vw, 668px"
+                sizes="(max-width: 768px) 50vw, 51vw"
                 className="pointer-events-none absolute top-[-0.04%] left-0 h-[128.57%] w-[101.5%] max-w-none"
               />
             </HomeFloat>
