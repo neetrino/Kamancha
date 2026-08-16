@@ -23,6 +23,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   return (
     <AuthPageShell
       title={copy.heading}
+      raiseLeftHand
       footer={
         <div className="mt-20 mb-4 sm:mt-24 lg:mt-28">
           <ContactInfo copy={copy} />

@@ -12,6 +12,8 @@ type AuthPageShellProps = {
   /** Slightly narrower white card (login / forgot-password). */
   compactForm?: boolean;
   footer?: ReactNode;
+  lowerLeftHand?: boolean;
+  raiseLeftHand?: boolean;
 };
 
 const springLogo: Transition = {
@@ -36,6 +38,8 @@ export function AuthPageShell({
   children,
   compactForm = false,
   footer,
+  lowerLeftHand = false,
+  raiseLeftHand = false,
 }: AuthPageShellProps) {
   const playMotion = usePlayHomeMotion();
   const instant: Transition = { duration: 0 };
@@ -48,7 +52,7 @@ export function AuthPageShell({
 
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-6 sm:pt-8">
-      <ContactHands />
+      <ContactHands lowerLeft={lowerLeftHand} raiseLeft={raiseLeftHand} />
       <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pb-8 sm:px-6 lg:px-8">
         <section className="relative z-[1] mx-auto flex max-w-[633px] flex-col items-center pt-2">
           <motion.div

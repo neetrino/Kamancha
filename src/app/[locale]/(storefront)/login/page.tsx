@@ -20,7 +20,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
   const dictionary = getDictionary(rawLocale);
 
   return (
-    <AuthPageShell title={dictionary.auth.loginTitle} compactForm>
+    <AuthPageShell title={dictionary.auth.loginTitle} compactForm lowerLeftHand>
       <Suspense fallback={<p className="px-5 pb-8 text-sm text-gray-500">…</p>}>
         <LoginForm locale={rawLocale} dictionary={dictionary.auth} />
       </Suspense>
