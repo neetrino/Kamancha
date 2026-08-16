@@ -21,7 +21,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   const copy = dictionary.contact;
 
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 -mt-10 overflow-visible">
+    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-8 sm:pt-10">
       <ContactHands />
       <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pb-8 sm:px-6 lg:px-8">
 

@@ -12,7 +12,7 @@ export function ContactHands() {
   return (
     <>
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-0 hidden h-[720px] overflow-visible lg:block"
+        className="pointer-events-none absolute inset-x-0 top-8 z-0 hidden h-[720px] overflow-visible sm:top-10 lg:block"
         aria-hidden
       >
         <Image
@@ -20,12 +20,12 @@ export function ContactHands() {
           alt=""
           width={540}
           height={719}
-          className="absolute -top-30 left-0 h-auto w-[min(42vw,560px)] max-w-none object-contain object-left-top"
+          className="absolute -top-26 left-0 h-auto w-[min(42vw,560px)] max-w-none object-contain object-left-top"
           data-node-id="244:509"
         />
       </div>
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 z-[2] hidden h-[720px] overflow-visible lg:block"
+        className="pointer-events-none absolute inset-x-0 top-8 z-[2] hidden h-[720px] overflow-visible sm:top-10 lg:block"
         aria-hidden
       >
         <Image
