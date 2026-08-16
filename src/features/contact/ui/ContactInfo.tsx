@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -7,58 +7,79 @@ type ContactInfoProps = {
   copy: Dictionary["contact"];
 };
 
-function InfoBlock({
+const PILL_CLASS =
+  "flex min-h-16 items-center gap-3 rounded-[70px] bg-white py-2 pr-5 pl-2.5 text-left";
+
+const ICON_WRAP_CLASS =
+  "flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white";
+
+const HOURS_TIME_CLASS = "text-[#b08a5a]";
+
+function ContactPill({
   icon,
-  title,
   children,
+  href,
 }: {
   icon: ReactNode;
-  title: string;
   children: ReactNode;
+  href?: string;
 }) {
-  return (
-    <div>
-      <div className="mb-3 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-700">
-          {icon}
-        </div>
-        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-      </div>
-      {children}
-    </div>
+  const inner = (
+    <>
+      <span className={ICON_WRAP_CLASS}>{icon}</span>
+      <span className="min-w-0 text-[15px] leading-4 font-medium tracking-[-0.3px] text-[#0a0a0a]">
+        {children}
+      </span>
+    </>
   );
+
+  if (href) {
+    return (
+      <a href={href} className={`${PILL_CLASS} transition-opacity hover:opacity-90`}>
+        {inner}
+      </a>
+    );
+  }
+
+  return <div className={PILL_CLASS}>{inner}</div>;
 }
 
 export function ContactInfo({ copy }: ContactInfoProps) {
+  const telHref = `tel:${copy.storePhone.replace(/\s/g, "")}`;
+
   return (
-    <div className="space-y-8">
-      <InfoBlock icon={<Phone className="h-6 w-6" />} title={copy.callTitle}>
-        <p className="mb-2 text-gray-600">{copy.callDescription}</p>
-        <a
-          href={`tel:${copy.storePhone}`}
-          className="font-medium text-orange-500 transition-colors hover:text-orange-600"
-        >
-          {copy.storePhone}
-        </a>
-      </InfoBlock>
+    <div
+      className="flex flex-wrap items-stretch justify-center gap-4"
+      data-node-id="267:221"
+    >
+      <ContactPill icon={<Clock className="size-[22px]" strokeWidth={1.75} />}>
+        <span className="block">
+          {copy.hoursWeekdaysLabel}{" "}
+          <span className={HOURS_TIME_CLASS}>{copy.hoursWeekdaysTime}</span>
+        </span>
+        <span className="mt-1 block">
+          {copy.hoursSaturdayLabel}{" "}
+          <span className={HOURS_TIME_CLASS}>{copy.hoursSaturdayTime}</span>
+        </span>
+      </ContactPill>
 
-      <InfoBlock icon={<Mail className="h-6 w-6" />} title={copy.writeTitle}>
-        <p className="mb-2 text-gray-600">{copy.writeDescription}</p>
-        <a
-          href={`mailto:${copy.storeEmail}`}
-          className="font-medium text-orange-500 transition-colors hover:text-orange-600"
-        >
-          {copy.emailLabel} {copy.storeEmail}
-        </a>
-      </InfoBlock>
+      <ContactPill
+        icon={<Phone className="size-[22px]" strokeWidth={1.75} />}
+        href={telHref}
+      >
+        {copy.storePhone}
+      </ContactPill>
 
-      <InfoBlock icon={<MapPin className="h-6 w-6" />} title={copy.hqTitle}>
-        <div className="mb-2 space-y-1 text-gray-600">
-          <p>{copy.hoursWeekdays}</p>
-          <p>{copy.hoursSaturday}</p>
-        </div>
-        <p className="font-medium text-orange-500">{copy.storeAddress}</p>
-      </InfoBlock>
+      <ContactPill
+        icon={<Mail className="size-[22px]" strokeWidth={1.75} />}
+        href={`mailto:${copy.storeEmail}`}
+      >
+        <span className="break-all">{copy.storeEmail}</span>
+      </ContactPill>
+
+      <ContactPill icon={<MapPin className="size-[22px]" strokeWidth={1.75} />}>
+        {copy.storeAddress}
+      </ContactPill>
     </div>
   );
 }
