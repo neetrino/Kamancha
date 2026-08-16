@@ -23,7 +23,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-8 sm:pt-10">
       <ContactHands />
-      <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pb-8 sm:px-6 lg:px-8">
+      <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pb-4 sm:px-6 lg:px-8">
 
         <section
           className="relative z-[1] mx-auto flex max-w-[633px] flex-col items-center pt-4"
@@ -57,7 +57,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
           </div>
         </section>
 
-        <div className="relative z-[1] mt-16 lg:mt-20">
+        <div className="relative z-[1] mt-20 mb-4 sm:mt-24 lg:mt-28">
           <ContactInfo copy={copy} />
         </div>
       </div>
