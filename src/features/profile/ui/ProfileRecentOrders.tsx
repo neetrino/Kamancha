@@ -9,10 +9,8 @@ import { getCustomerOrderDetailAction } from "@/features/orders/application/get-
 import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
 import {
-  PROFILE_LINK,
   PROFILE_PILL_LIGHT,
   PROFILE_SECTION,
-  PROFILE_SECTION_TITLE,
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -129,11 +127,13 @@ export function ProfileRecentOrders({
     <>
       <div className={PROFILE_SECTION}>
         <div className="relative z-[2] mb-6 flex items-center justify-between gap-4">
-          <h2 className={PROFILE_SECTION_TITLE}>{dictionary.recentOrders}</h2>
+          <h2 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
+            {dictionary.recentOrders}
+          </h2>
           <AppLink
             href={`/${locale}/profile/orders`}
             prefetchPolicy="intent"
-            className={`${PROFILE_LINK} inline-flex items-center gap-1`}
+            className="inline-flex items-center gap-1 font-big-fat-boii text-sm font-normal tracking-wide text-white uppercase transition-opacity hover:opacity-80"
           >
             {dictionary.viewAllOrders}
             <ArrowRight className="h-4 w-4" aria-hidden />
