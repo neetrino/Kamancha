@@ -242,13 +242,13 @@ export function HeaderSearch({
                 onClick={closePopup}
               />
               <div
-                className={`liquid-glass isolate relative z-[1] flex max-h-[min(70vh,560px)] w-full max-w-lg flex-col overflow-hidden rounded-3xl ${panelClass}`}
+                className={`relative z-[1] flex max-h-[min(70vh,560px)] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
-                <div className="relative z-[2] flex min-h-0 flex-1 flex-col">
-                  <div className="flex items-center gap-2 border-b border-white/35 px-4 py-3">
+                <div className="flex min-h-0 flex-1 flex-col">
+                  <div className="flex items-center gap-2 border-b border-gray-200 px-4 py-3">
                     <Search
-                      className="h-5 w-5 shrink-0 text-black/40"
+                      className="h-5 w-5 shrink-0 text-gray-400"
                       aria-hidden="true"
                     />
                     <label htmlFor={inputId} className="sr-only" id={titleId}>
@@ -262,13 +262,13 @@ export function HeaderSearch({
                       onChange={(event) => setQuery(event.target.value)}
                       placeholder={labels.placeholder}
                       autoComplete="off"
-                      className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-black/40"
+                      className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-400"
                     />
                     <button
                       type="button"
                       onClick={closePopup}
                       aria-label={labels.close}
-                      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/40 text-gray-800 transition-colors hover:bg-white/60"
+                      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-800 transition-colors hover:bg-gray-200"
                     >
                       <X className="h-5 w-5" aria-hidden="true" />
                     </button>
@@ -276,7 +276,7 @@ export function HeaderSearch({
 
                   <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
                     {showIdle ? (
-                      <p className="px-5 py-8 text-center text-sm text-black/55">
+                      <p className="px-5 py-8 text-center text-sm text-gray-500">
                         {labels.idle}
                       </p>
                     ) : null}
@@ -288,10 +288,10 @@ export function HeaderSearch({
                             key={index}
                             className="flex animate-pulse items-center gap-3"
                           >
-                            <div className="h-14 w-14 rounded-lg bg-white/40" />
+                            <div className="h-14 w-14 rounded-lg bg-gray-100" />
                             <div className="flex-1 space-y-2">
-                              <div className="h-3 w-3/4 rounded bg-white/40" />
-                              <div className="h-3 w-1/3 rounded bg-white/40" />
+                              <div className="h-3 w-3/4 rounded bg-gray-100" />
+                              <div className="h-3 w-1/3 rounded bg-gray-100" />
                             </div>
                           </div>
                         ))}
@@ -299,14 +299,14 @@ export function HeaderSearch({
                     ) : null}
 
                     {showEmpty ? (
-                      <p className="px-5 py-8 text-center text-sm text-black/55">
+                      <p className="px-5 py-8 text-center text-sm text-gray-500">
                         {labels.empty}
                       </p>
                     ) : null}
 
                     {products.length > 0 ? (
                       <ul
-                        className={`divide-y divide-white/25 ${pending ? "opacity-70" : ""}`}
+                        className={`divide-y divide-gray-100 ${pending ? "opacity-70" : ""}`}
                       >
                         {products.map((product) => (
                           <li key={product.id}>
@@ -314,9 +314,9 @@ export function HeaderSearch({
                               href={product.href}
                               prefetchPolicy="intent"
                               onClick={closePopup}
-                              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/35"
+                              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
                             >
-                              <div className="relative z-[2] h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white/30">
+                              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                                 <Image
                                   src={STOREFRONT_PRODUCT_PHOTO}
                                   alt=""
@@ -329,10 +329,10 @@ export function HeaderSearch({
                                 <p className="truncate text-sm font-medium text-gray-900">
                                   {product.title}
                                 </p>
-                                <p className="mt-0.5 text-sm text-black/60">
+                                <p className="mt-0.5 text-sm text-gray-600">
                                   {product.compareAtFormatted ? (
                                     <>
-                                      <span className="mr-2 text-black/35 line-through">
+                                      <span className="mr-2 text-gray-400 line-through">
                                         {product.compareAtFormatted}
                                       </span>
                                       <span>{product.priceFormatted}</span>
@@ -350,12 +350,12 @@ export function HeaderSearch({
                   </div>
 
                   {searchedQuery && total > products.length ? (
-                    <div className="border-t border-white/35 px-4 py-3">
+                    <div className="border-t border-gray-200 px-4 py-3">
                       <AppLink
                         href={viewAllHref}
                         prefetchPolicy="intent"
                         onClick={closePopup}
-                        className="block text-center text-sm font-medium text-gray-900 transition-colors hover:text-black/70"
+                        className="block text-center text-sm font-medium text-gray-900 transition-colors hover:text-gray-600"
                       >
                         {labels.viewAll}
                       </AppLink>
