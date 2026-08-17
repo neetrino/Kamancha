@@ -1,11 +1,6 @@
 "use client";
 
 import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
-import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
 } from "@/features/orders/ui/order-drawer-format";
@@ -28,6 +23,44 @@ type CustomerOrdersTableProps = {
 
 const ROW_RULE =
   "rounded-bl-[20px] border-l border-b border-white/55 pl-4";
+
+const STATUS_BADGE =
+  "inline-flex rounded-[14px] bg-white px-3.5 py-1.5 text-sm font-medium";
+
+function orderStatusTextClass(status: string): string {
+  const normalized = status.toUpperCase();
+  if (normalized === "PENDING" || normalized === "CONFIRMED") {
+    return "text-yellow-600";
+  }
+  if (normalized === "PROCESSING" || normalized === "SHIPPED") {
+    return "text-blue-600";
+  }
+  if (normalized === "DELIVERED") {
+    return "text-green-600";
+  }
+  if (normalized === "CANCELLED" || normalized === "REFUNDED") {
+    return "text-red-600";
+  }
+  return "text-gray-600";
+}
+
+function paymentStatusTextClass(status: string): string {
+  const normalized = status.toUpperCase();
+  if (normalized === "PAID" || normalized === "CAPTURED") {
+    return "text-green-600";
+  }
+  if (normalized === "PENDING" || normalized === "AUTHORIZED") {
+    return "text-yellow-600";
+  }
+  if (
+    normalized === "FAILED" ||
+    normalized === "CANCELLED" ||
+    normalized === "REFUNDED"
+  ) {
+    return "text-red-600";
+  }
+  return "text-gray-600";
+}
 
 export function CustomerOrdersTable({
   orders,
@@ -63,22 +96,22 @@ export function CustomerOrdersTable({
                   UTC
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                >
-                  {formatOrderStatusLabel(order.status)}
-                </span>
-                <span
-                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                >
-                  {formatOrderStatusLabel(order.paymentStatus)}
-                </span>
-                <span className="text-sm font-semibold text-gray-900">
+              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                <span className="text-sm font-semibold text-white">
                   {formatOrderDrawerMoney(
                     order.totalAmount,
                     order.baseCurrency,
                   )}
+                </span>
+                <span
+                  className={`${STATUS_BADGE} ${orderStatusTextClass(order.status)}`}
+                >
+                  {formatOrderStatusLabel(order.status)}
+                </span>
+                <span
+                  className={`${STATUS_BADGE} ${paymentStatusTextClass(order.paymentStatus)}`}
+                >
+                  {formatOrderStatusLabel(order.paymentStatus)}
                 </span>
               </div>
             </button>
