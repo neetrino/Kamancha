@@ -54,8 +54,8 @@ export function CustomerOrdersTable({
               className="flex w-full flex-col gap-2 py-4 text-left transition-colors hover:opacity-90 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
             >
               <div className="min-w-0">
-                <p className="font-medium text-gray-900">{order.orderNumber}</p>
-                <p className="mt-1 text-xs text-gray-600">
+                <p className="font-medium text-white">{order.orderNumber}</p>
+                <p className="mt-1 text-xs text-white/80">
                   {new Date(order.placedAt)
                     .toISOString()
                     .slice(0, 16)
@@ -85,7 +85,7 @@ export function CustomerOrdersTable({
           </li>
         ))}
       </ul>
-      <p className="relative z-[2] pt-3 pl-4 text-sm text-gray-700">
+      <p className="relative z-[2] pt-3 pl-4 text-sm text-white">
         {orders.length} order{orders.length === 1 ? "" : "s"} on this page
       </p>
     </section>

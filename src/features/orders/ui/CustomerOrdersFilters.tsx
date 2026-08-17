@@ -87,7 +87,7 @@ export function CustomerOrdersFilters({
         </div>
       </form>
       <div className="relative z-[2] mt-4 border-t border-white/35 pt-3">
-        <p className="text-sm text-gray-700">Total orders: {total}</p>
+        <p className="text-sm text-white">Total orders: {total}</p>
       </div>
     </section>
   );
