@@ -137,7 +137,6 @@ async function HomeBelowFold({
           discountOffLabel={dictionary.home.discountOff}
           isSignedIn={Boolean(user)}
           products={featuredCards}
-          layout="rail"
           overlayPlate
         />
         <HomeMobileProductSection
@@ -153,7 +152,6 @@ async function HomeBelowFold({
           discountOffLabel={dictionary.home.discountOff}
           isSignedIn={Boolean(user)}
           products={discountedCards}
-          layout="grid"
         />
       </div>
 

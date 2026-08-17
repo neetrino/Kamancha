@@ -14,6 +14,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import { GroupOrderHeaderButton } from "@/components/layout/GroupOrderHeaderButton";
+import { HeaderMenuIcon } from "@/components/layout/storefront-nav-icons";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -35,6 +36,8 @@ type MobileNavDrawerProps = {
   triggerClassName?: string;
   /** Extra controls inside the panel (locale/currency on home). */
   panelFooter?: ReactNode;
+  /** When true, Figma 181:504 forest hamburger (34px). */
+  forestTrigger?: boolean;
 };
 
 function isNavItemActive(pathname: string, href: string, locale: Locale): boolean {
@@ -54,6 +57,7 @@ export function MobileNavDrawer({
   navItems,
   triggerClassName,
   panelFooter,
+  forestTrigger = false,
 }: MobileNavDrawerProps) {
   const menuId = useId();
   const pathname = usePathname() ?? "";
@@ -185,18 +189,36 @@ export function MobileNavDrawer({
         aria-expanded={open}
         aria-controls={menuId}
       >
-        <Menu
-          className="pointer-events-none absolute h-4 w-4 transition-[opacity,transform] duration-[280ms] ease-out sm:h-5 sm:w-5"
-          aria-hidden="true"
-          style={{
-            opacity: open ? 0 : 1,
-            transform: open
-              ? "rotate(-90deg) scale(0.82)"
-              : "rotate(0deg) scale(1)",
-          }}
-        />
+        {forestTrigger ? (
+          <span
+            className="pointer-events-none absolute text-brand-forest transition-[opacity,transform] duration-[280ms] ease-out"
+            style={{
+              opacity: open ? 0 : 1,
+              transform: open
+                ? "rotate(-90deg) scale(0.82)"
+                : "rotate(0deg) scale(1)",
+            }}
+          >
+            <HeaderMenuIcon className="size-[34px]" />
+          </span>
+        ) : (
+          <Menu
+            className="pointer-events-none absolute h-4 w-4 transition-[opacity,transform] duration-[280ms] ease-out sm:h-5 sm:w-5"
+            aria-hidden="true"
+            style={{
+              opacity: open ? 0 : 1,
+              transform: open
+                ? "rotate(-90deg) scale(0.82)"
+                : "rotate(0deg) scale(1)",
+            }}
+          />
+        )}
         <X
-          className="pointer-events-none absolute h-4 w-4 transition-[opacity,transform] duration-[280ms] ease-out sm:h-5 sm:w-5"
+          className={`pointer-events-none absolute transition-[opacity,transform] duration-[280ms] ease-out ${
+            forestTrigger
+              ? "size-6 text-brand-forest"
+              : "h-4 w-4 sm:h-5 sm:w-5"
+          }`}
           aria-hidden="true"
           style={{
             opacity: open ? 1 : 0,

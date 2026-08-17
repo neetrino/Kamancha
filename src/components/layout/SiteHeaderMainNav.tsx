@@ -167,14 +167,15 @@ export function SiteHeaderMainNav({
               </div>
               <div className="header-mobile-home-pill items-center">
                 <div
-                  className="flex h-14 w-[113px] items-center rounded-full bg-white pl-2.5 pr-1"
+                  className="flex h-14 w-[113px] items-center justify-between rounded-[28px] bg-white pr-[2.5px] pl-3"
                   data-node-id="181:504"
                 >
                   <MobileNavDrawer
                     locale={locale}
                     dictionary={dictionary}
                     navItems={navItems}
-                    triggerClassName="relative flex size-9 shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
+                    forestTrigger
+                    triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
                     panelFooter={
                       <LocaleCurrencySwitcher
                         locale={locale}
@@ -191,7 +192,7 @@ export function SiteHeaderMainNav({
                     profileLabel={dictionary.header.profile}
                     adminLabel={dictionary.header.admin}
                     user={user}
-                    tone="onLight"
+                    tone="pill"
                   />
                 </div>
               </div>

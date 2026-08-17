@@ -3,6 +3,7 @@
 import { User } from "lucide-react";
 
 import { BrandHeaderIcon } from "@/components/layout/BrandHeaderIcon";
+import { HeaderProfileGlyph } from "@/components/layout/storefront-nav-icons";
 import { AppLink } from "@/components/ui/AppLink";
 import { IconDropdown } from "@/components/ui/IconDropdown";
 import { logoutAction } from "@/features/auth/logout-action";
@@ -16,19 +17,25 @@ type AccountControlsProps = {
   profileLabel: string;
   adminLabel: string;
   user: SessionUser | null;
-  tone?: "default" | "onDark" | "onLight";
+  tone?: "default" | "onDark" | "onLight" | "pill";
 };
 
 const menuItemClassName =
   "block w-full whitespace-nowrap px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900";
 
 function iconButtonClassName(
-  tone: "default" | "onDark" | "onLight",
+  tone: "default" | "onDark" | "onLight" | "pill",
   active = false,
 ): string {
   if (tone === "onDark") {
     const base =
       "inline-flex size-7 shrink-0 items-center justify-center text-white transition-opacity duration-150 hover:opacity-80";
+    return active ? `${base} opacity-100` : base;
+  }
+
+  if (tone === "pill") {
+    const base =
+      "inline-flex size-[51px] shrink-0 items-center justify-center rounded-full bg-brand-forest text-white transition-opacity duration-150 hover:opacity-90";
     return active ? `${base} opacity-100` : base;
   }
 
@@ -45,9 +52,16 @@ function iconButtonClassName(
     : `${base} text-gray-700 hover:text-gray-900`;
 }
 
-function AccountIcon({ tone }: { tone: "default" | "onDark" | "onLight" }) {
+function AccountIcon({
+  tone,
+}: {
+  tone: "default" | "onDark" | "onLight" | "pill";
+}) {
   if (tone === "onDark") {
     return <BrandHeaderIcon name="profile" size={28} />;
+  }
+  if (tone === "pill") {
+    return <HeaderProfileGlyph className="size-[22px]" />;
   }
   return <User className="h-5 w-5" aria-hidden="true" />;
 }

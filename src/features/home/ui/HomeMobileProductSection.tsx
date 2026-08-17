@@ -36,8 +36,6 @@ type HomeMobileProductSectionProps = {
   discountOffLabel: string;
   isSignedIn: boolean;
   products: readonly MobileProductItem[];
-  /** Horizontal peeking rail (featured) or 2-column grid (sale). */
-  layout: "rail" | "grid";
   /**
    * Figma Featured 181:480 / 196:413 — forest sheet with rounded top
    * sitting over the hero plate.
@@ -61,7 +59,6 @@ export function HomeMobileProductSection({
   discountOffLabel,
   isSignedIn,
   products,
-  layout,
   overlayPlate = false,
 }: HomeMobileProductSectionProps) {
   return (
@@ -94,80 +91,45 @@ export function HomeMobileProductSection({
         <p className="px-5 pt-8 text-center text-white/70">{emptyLabel}</p>
       ) : (
         <>
-          {layout === "rail" ? (
-            <div className="relative left-1/2 mt-4 w-screen max-w-[100vw] -translate-x-1/2">
-              <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <HomeStagger
-                  className="inline-flex gap-[13px] px-2.5 py-3"
-                  stagger={0.08}
-                >
-                  {products.map((product, index) => (
-                    <HomeStaggerItem
-                      key={product.id}
-                      className="w-[214px] shrink-0"
-                    >
-                      <ProductCard
-                        href={product.href}
-                        title={product.title}
-                        priceFormatted={product.priceFormatted}
-                        compareAtFormatted={product.compareAtFormatted}
-                        discountPercent={product.discountPercent}
-                        categoryLabel={product.categoryLabel}
-                        rating={product.rating}
-                        discountOffLabel={discountOffLabel}
-                        imageUrl={product.imageUrl}
-                        inStock={product.inStock}
-                        priority={index < 2}
-                        locale={locale}
-                        productId={product.id}
-                        inWishlist={product.inWishlist ?? false}
-                        isSignedIn={isSignedIn}
-                        wishlistLabel={wishlistLabel}
-                        addToCartLabel={addToCartLabel}
-                        requiresCustomization={
-                          product.requiresCustomization ?? false
-                        }
-                        layout="compact"
-                      />
-                    </HomeStaggerItem>
-                  ))}
-                </HomeStagger>
-              </div>
+          <div className="relative left-1/2 mt-4 w-screen max-w-[100vw] -translate-x-1/2">
+            <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <HomeStagger
+                className="inline-flex gap-[13px] px-2.5 py-3"
+                stagger={0.08}
+              >
+                {products.map((product, index) => (
+                  <HomeStaggerItem
+                    key={product.id}
+                    className="w-[214px] shrink-0"
+                  >
+                    <ProductCard
+                      href={product.href}
+                      title={product.title}
+                      priceFormatted={product.priceFormatted}
+                      compareAtFormatted={product.compareAtFormatted}
+                      discountPercent={product.discountPercent}
+                      categoryLabel={product.categoryLabel}
+                      rating={product.rating}
+                      discountOffLabel={discountOffLabel}
+                      imageUrl={product.imageUrl}
+                      inStock={product.inStock}
+                      priority={index < 2}
+                      locale={locale}
+                      productId={product.id}
+                      inWishlist={product.inWishlist ?? false}
+                      isSignedIn={isSignedIn}
+                      wishlistLabel={wishlistLabel}
+                      addToCartLabel={addToCartLabel}
+                      requiresCustomization={
+                        product.requiresCustomization ?? false
+                      }
+                      layout="compact"
+                    />
+                  </HomeStaggerItem>
+                ))}
+              </HomeStagger>
             </div>
-          ) : (
-            <HomeStagger
-              className="mt-4 grid grid-cols-2 gap-x-[13px] gap-y-7 px-2.5"
-              stagger={0.07}
-            >
-              {products.map((product, index) => (
-                <HomeStaggerItem key={product.id}>
-                  <ProductCard
-                    href={product.href}
-                    title={product.title}
-                    priceFormatted={product.priceFormatted}
-                    compareAtFormatted={product.compareAtFormatted}
-                    discountPercent={product.discountPercent}
-                    categoryLabel={product.categoryLabel}
-                    rating={product.rating}
-                    discountOffLabel={discountOffLabel}
-                    imageUrl={product.imageUrl}
-                    inStock={product.inStock}
-                    priority={index < 2}
-                    locale={locale}
-                    productId={product.id}
-                    inWishlist={product.inWishlist ?? false}
-                    isSignedIn={isSignedIn}
-                    wishlistLabel={wishlistLabel}
-                    addToCartLabel={addToCartLabel}
-                    requiresCustomization={
-                      product.requiresCustomization ?? false
-                    }
-                    layout="compact"
-                  />
-                </HomeStaggerItem>
-              ))}
-            </HomeStagger>
-          )}
+          </div>
 
           <HomeReveal delay={0.12} className="mt-6 flex justify-center">
             <KamanchaPillButton

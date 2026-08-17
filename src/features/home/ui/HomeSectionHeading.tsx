@@ -15,11 +15,11 @@ export function HomeSectionHeading({
 }: HomeSectionHeadingProps) {
   return (
     <HomeReveal>
-      <div className="flex flex-col items-center">
-        <HomeDiamondMark className="mb-[-6px]" />
+      <div className="flex flex-col items-center gap-2">
+        <HomeDiamondMark />
         <h2
           data-node-id={figmaNodeId}
-          className="font-big-fat-boii text-[28px] leading-[1.1] font-normal text-white"
+          className="font-big-fat-boii text-[28px] leading-none font-normal text-white"
         >
           {title}
         </h2>
