@@ -103,7 +103,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
           <KamanchaPillButton
             href={`/${rawLocale}/products`}
             label={wishlistCopy.browseProducts}
-            className="max-w-[280px]"
+            className="!max-w-[360px] !px-16 sm:!max-w-[400px]"
           />
         </div>
       ) : (
