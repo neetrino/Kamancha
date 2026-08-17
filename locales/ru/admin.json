@@ -185,6 +185,8 @@
       "paymentSection": "Оплата",
       "method": "Способ:",
       "amount": "Сумма:",
+      "customerPays": "Клиент платит:",
+      "prepareChange": "Подготовить сдачу:",
       "paymentStatus": "Статус:",
       "items": "Товары",
       "product": "Товар",

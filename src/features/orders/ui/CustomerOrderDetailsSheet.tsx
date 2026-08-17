@@ -8,6 +8,7 @@ import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
 } from "@/features/orders/ui/order-drawer-format";
+import { CustomerOrderSheetPayment } from "@/features/orders/ui/CustomerOrderSheetPayment";
 import {
   PROFILE_INNER_CARD,
   PROFILE_STATUS_BADGE,
@@ -102,10 +103,9 @@ function CustomerOrderSheetBody({
           {labels.shippingAddress}
         </h3>
         <div className="flex items-start gap-2 text-sm text-gray-700">
-          <MapPin
-            className="mt-0.5 h-4 w-4 shrink-0 text-brand-forest"
-            aria-hidden
-          />
+          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
+            <MapPin className="h-3.5 w-3.5" aria-hidden />
+          </span>
           <div className="min-w-0 space-y-1">
             <p className="font-medium text-gray-900">{detail.addressLine}</p>
             <p className="text-xs text-gray-500 capitalize">
@@ -123,14 +123,9 @@ function CustomerOrderSheetBody({
             ) : null}
           </div>
         </div>
-        <div className="border-t border-gray-100 pt-3 text-sm">
-          <p className="text-gray-500">{labels.paymentSection}</p>
-          <p className="mt-1 font-medium text-gray-900">
-            {detail.paymentMethod} ·{" "}
-            {formatOrderDrawerMoney(detail.paymentAmount, detail.baseCurrency)}
-          </p>
-        </div>
+        <CustomerOrderSheetPayment detail={detail} labels={labels} />
       </section>
+
 
       <section className="space-y-3">
         <h3 className="px-1 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">

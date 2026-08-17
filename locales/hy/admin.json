@@ -185,6 +185,8 @@
       "paymentSection": "Վճարում",
       "method": "Եղանակ՝",
       "amount": "Գումար՝",
+      "customerPays": "Հաճախորդը վճարում է՝",
+      "prepareChange": "Պատրաստել մանրադրամ՝",
       "paymentStatus": "Կարգավիճակ՝",
       "items": "Ապրանքներ",
       "product": "Ապրանք",

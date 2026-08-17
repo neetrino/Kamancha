@@ -185,6 +185,8 @@
       "paymentSection": "Payment",
       "method": "Method:",
       "amount": "Amount:",
+      "customerPays": "Customer pays:",
+      "prepareChange": "Prepare change:",
       "paymentStatus": "Status:",
       "items": "Items",
       "product": "Product",
