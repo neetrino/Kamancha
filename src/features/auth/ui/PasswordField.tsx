@@ -4,8 +4,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 import {
-  AUTH_FIELD_CLASS,
   AUTH_LABEL_CLASS,
+  authFieldClassName,
 } from "@/features/auth/ui/auth-form-styles";
 
 type PasswordFieldProps = {
@@ -16,6 +16,8 @@ type PasswordFieldProps = {
   autoComplete: string;
   disabled?: boolean;
   markRequired?: boolean;
+  defaultValue?: string;
+  invalid?: boolean;
 };
 
 export function PasswordField({
@@ -26,6 +28,8 @@ export function PasswordField({
   autoComplete,
   disabled = false,
   markRequired = false,
+  defaultValue = "",
+  invalid = false,
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
 
@@ -47,8 +51,10 @@ export function PasswordField({
           type={visible ? "text" : "password"}
           autoComplete={autoComplete}
           disabled={disabled}
+          defaultValue={defaultValue}
+          aria-invalid={invalid || undefined}
           aria-required={markRequired || undefined}
-          className={`${AUTH_FIELD_CLASS} pr-11`}
+          className={`${authFieldClassName(invalid)} pr-11`}
         />
         <button
           type="button"

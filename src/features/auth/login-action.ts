@@ -5,12 +5,35 @@ import { redirect } from "next/navigation";
 
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
+import {
+  fieldErrorsFromZod,
+  nextAuthResetKey,
+  readFormString,
+  type AuthActionState,
+  type AuthFieldErrors,
+} from "@/features/auth/auth-action-state";
 import { loginSchema } from "@/features/auth/schemas";
 import { createSession } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
-export type AuthActionState = { error?: string };
+function loginErrorState(
+  previous: AuthActionState,
+  formData: FormData,
+  error: string,
+  fieldErrors: AuthFieldErrors,
+): AuthActionState {
+  return {
+    error,
+    fieldErrors,
+    resetKey: nextAuthResetKey(previous),
+    values: {
+      email: readFormString(formData, "email"),
+      password: readFormString(formData, "password"),
+      rememberMe: formData.get("rememberMe") === "on",
+    },
+  };
+}
 
 function resolveSafeNextPath(locale: Locale, raw: FormDataEntryValue | null): string {
   if (typeof raw !== "string" || !raw.startsWith("/") || raw.startsWith("//")) {
@@ -26,14 +49,19 @@ function resolveSafeNextPath(locale: Locale, raw: FormDataEntryValue | null): st
 
 export async function loginAction(
   localeInput: string,
-  _previousState: AuthActionState,
+  previousState: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
   const locale: Locale = isLocale(localeInput) ? localeInput : defaultLocale;
 
   if (!parsed.success) {
-    return { error: "Invalid email or password." };
+    return loginErrorState(
+      previousState,
+      formData,
+      "Invalid email or password.",
+      fieldErrorsFromZod(parsed.error),
+    );
   }
 
   const [user] = await getDb()
@@ -46,7 +74,12 @@ export async function loginAction(
     : false;
 
   if (!user || !passwordMatches || user.status !== "ACTIVE") {
-    return { error: "Invalid email or password." };
+    return loginErrorState(
+      previousState,
+      formData,
+      "Invalid email or password.",
+      { email: true, password: true },
+    );
   }
 
   await getDb()

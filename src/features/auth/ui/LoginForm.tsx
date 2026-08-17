@@ -5,13 +5,14 @@ import { useSearchParams } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
-import { loginAction, type AuthActionState } from "@/features/auth/login-action";
+import { type AuthActionState } from "@/features/auth/auth-action-state";
+import { loginAction } from "@/features/auth/login-action";
 import {
   AUTH_ERROR_CLASS,
-  AUTH_FIELD_CLASS,
   AUTH_LABEL_CLASS,
   AUTH_LINK_CLASS,
   AUTH_STATUS_CLASS,
+  authFieldClassName,
 } from "@/features/auth/ui/auth-form-styles";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
 import type { Locale } from "@/lib/i18n/config";
@@ -30,9 +31,15 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
   const resetSucceeded = searchParams.get("reset") === "1";
   const action = loginAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const emailInvalid = state.fieldErrors?.email === true;
+  const passwordInvalid = state.fieldErrors?.password === true;
 
   return (
-    <form action={formAction} className="relative flex w-full flex-col items-center">
+    <form
+      key={state.resetKey ?? 0}
+      action={formAction}
+      className="relative flex w-full flex-col items-center"
+    >
       {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
 
       <div className="w-full space-y-6 px-4 sm:px-5">
@@ -50,7 +57,9 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
             type="email"
             autoComplete="email"
             disabled={isPending}
-            className={AUTH_FIELD_CLASS}
+            defaultValue={state.values?.email ?? ""}
+            aria-invalid={emailInvalid || undefined}
+            className={authFieldClassName(emailInvalid)}
           />
         </label>
 
@@ -61,6 +70,8 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
           hidePasswordLabel={dictionary.hidePassword}
           autoComplete="current-password"
           disabled={isPending}
+          defaultValue={state.values?.password ?? ""}
+          invalid={passwordInvalid}
         />
 
         <div className="flex items-center justify-between gap-3">
@@ -70,6 +81,7 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
               name="rememberMe"
               value="on"
               disabled={isPending}
+              defaultChecked={state.values?.rememberMe === true}
               className="size-4 shrink-0 accent-brand-forest"
             />
             {dictionary.rememberMe}
