@@ -33,6 +33,7 @@ type NavTab = {
   icon: LucideIcon;
   match: (pathname: string) => boolean;
   badge?: number;
+  className?: string;
 };
 
 function isHomePath(pathname: string, locale: Locale): boolean {
@@ -45,8 +46,8 @@ function startsWithPath(pathname: string, base: string): boolean {
 
 function tabClassName(active: boolean): string {
   return [
-    "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-medium transition-colors",
-    active ? "text-gray-900" : "text-gray-500 hover:text-gray-800",
+    "relative flex min-w-0 flex-1 flex-col items-center justify-center px-1 py-2 transition-colors",
+    active ? "text-brand-forest" : "text-gray-400 hover:text-brand-forest",
   ].join(" ");
 }
 
@@ -76,7 +77,7 @@ function LinkTab({
       href={tab.href}
       prefetchPolicy="intent"
       aria-current={active ? "page" : undefined}
-      className={tabClassName(active)}
+      className={`${tabClassName(active)} ${tab.className ?? ""}`}
     >
       <span className="relative inline-flex">
         <Icon
@@ -86,7 +87,14 @@ function LinkTab({
         />
         {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
       </span>
-      <span className="truncate">{tab.label}</span>
+      {active && tab.id === "home" ? (
+        <span className="absolute bottom-1 flex gap-0.5" aria-hidden>
+          <span className="size-1 rotate-45 bg-brand-forest" />
+          <span className="size-1.5 rotate-45 bg-brand-forest" />
+          <span className="size-1 rotate-45 bg-brand-forest" />
+        </span>
+      ) : null}
+      <span className="sr-only">{tab.label}</span>
     </AppLink>
   );
 }
@@ -135,6 +143,7 @@ export function MobileBottomNav({
     href: profileHref,
     label: dictionary.header.profile,
     icon: User,
+    className: "mobile-bottom-nav-profile",
     match: (path) =>
       startsWithPath(path, `/${locale}/profile`) ||
       startsWithPath(path, `/${locale}/login`),
@@ -143,9 +152,12 @@ export function MobileBottomNav({
   return (
     <nav
       aria-label={dictionary.nav.navigation}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm md:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden"
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-stretch">
+      <div
+        className="pointer-events-auto flex h-[63px] w-[min(calc(100%-3rem),325px)] items-stretch rounded-[80px] bg-white shadow-[0_0_9px_rgba(0,0,0,0.25)]"
+        data-node-id="181:729"
+      >
         <LinkTab tab={homeTab} active={homeTab.match(pathname)} />
         <LinkTab tab={shopTab} active={shopTab.match(pathname)} />
 
@@ -179,7 +191,7 @@ export function MobileBottomNav({
                 />
                 <NavBadge count={badgeCount} />
               </span>
-              <span className="truncate">{label}</span>
+              <span className="sr-only">{label}</span>
             </button>
           )}
         />

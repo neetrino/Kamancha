@@ -7,6 +7,8 @@ import { BRAND_ORNAMENT_SRC } from "@/lib/brand/assets";
 type KamanchaPillShared = {
   label: string;
   variant?: "light" | "dark";
+  /** `compact` — Figma mobile 268×64, no side ornaments. */
+  size?: "default" | "compact";
   className?: string;
   /** Figma node id — hero CTA 22:435, view-all 22:200. */
   figmaNodeId?: string;
@@ -59,41 +61,60 @@ function PillOrnament({
 
 function pillClassName(
   variant: "light" | "dark",
+  size: "default" | "compact",
   className: string,
 ): string {
   const tones =
     variant === "light"
       ? "kamancha-pill-button--light bg-white text-brand-forest"
       : "kamancha-pill-button--dark bg-brand-forest text-white";
+  const sizing =
+    size === "compact"
+      ? "min-h-16 max-w-[268px] px-8 text-[16px] leading-6"
+      : "min-h-16 max-w-[280px] px-12 text-[18px] leading-5 sm:max-w-[316px]";
 
-  return `kamancha-pill-button relative inline-flex min-h-16 w-full max-w-[280px] items-center justify-center overflow-hidden rounded-[50px] px-12 pt-2 pb-[7px] text-center text-[18px] leading-5 sm:max-w-[316px] ${tones} ${className}`;
+  return `kamancha-pill-button relative inline-flex w-full items-center justify-center overflow-hidden rounded-[50px] pt-2 pb-[7px] text-center ${sizing} ${tones} ${className}`;
 }
 
-function PillLabel({ children }: { children: ReactNode }) {
+function PillLabel({
+  children,
+  ornaments,
+}: {
+  children: ReactNode;
+  ornaments: boolean;
+}) {
   return (
     <>
-      <PillOrnament side="left" />
+      {ornaments ? <PillOrnament side="left" /> : null}
       <span className="relative z-[1] min-w-0 font-big-fat-boii font-normal">
         {children}
       </span>
-      <PillOrnament side="right" />
+      {ornaments ? <PillOrnament side="right" /> : null}
     </>
   );
+}
+
+function isLinkPill(
+  props: KamanchaPillButtonProps,
+): props is Extract<KamanchaPillButtonProps, { href: string }> {
+  return "href" in props && Boolean(props.href);
 }
 
 /**
  * Figma BUTTON (22:435) — pill CTA; hover slides ornaments outward + soft green fill.
  */
-export function KamanchaPillButton({
-  label,
-  variant = "light",
-  className = "",
-  figmaNodeId = "22:435",
-  ...props
-}: KamanchaPillButtonProps) {
-  const classNames = pillClassName(variant, className);
+export function KamanchaPillButton(props: KamanchaPillButtonProps) {
+  const {
+    label,
+    variant = "light",
+    size = "default",
+    className = "",
+    figmaNodeId = "22:435",
+  } = props;
+  const classNames = pillClassName(variant, size, className);
+  const ornaments = size !== "compact";
 
-  if ("href" in props && props.href) {
+  if (isLinkPill(props)) {
     return (
       <AppLink
         href={props.href}
@@ -102,7 +123,7 @@ export function KamanchaPillButton({
         data-node-id={figmaNodeId}
         className={classNames}
       >
-        <PillLabel>{label}</PillLabel>
+        <PillLabel ornaments={ornaments}>{label}</PillLabel>
       </AppLink>
     );
   }
@@ -115,7 +136,7 @@ export function KamanchaPillButton({
       data-node-id={figmaNodeId}
       className={`${classNames} disabled:cursor-not-allowed disabled:opacity-50`}
     >
-      <PillLabel>{label}</PillLabel>
+      <PillLabel ornaments={ornaments}>{label}</PillLabel>
     </button>
   );
 }

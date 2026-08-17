@@ -6,9 +6,13 @@
   "categoryProductCount": "({count} товаров)",
   "emptyCategories": "Категорий пока нет.",
   "featuredTitle": "ЛУЧШЕЕ",
+  "discountedTitle": "Со скидкой",
   "discountOff": "{percent}% Off",
   "viewAll": "Смотреть все",
   "emptyFeatured": "Пока нет рекомендуемых товаров.",
+  "emptyDiscounted": "Пока нет товаров со скидкой.",
+  "previousCategory": "Предыдущая категория",
+  "nextCategory": "Следующая категория",
   "familyDinner": {
     "headlineBefore": "ужин для ",
     "headlineAccent": "всей семьи",

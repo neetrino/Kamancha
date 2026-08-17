@@ -4,7 +4,9 @@ import {
   and,
   asc,
   eq,
+  gt,
   inArray,
+  isNotNull,
   isNull,
   sql,
 } from "drizzle-orm";
@@ -133,6 +135,41 @@ export async function getFeaturedProducts(
   return unstable_cache(
     async () => loadFeaturedProducts(locale),
     ["featured-products", locale],
+    {
+      tags: [CACHE_TAGS.products],
+      revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,
+    },
+  )();
+}
+
+const DISCOUNTED_PRODUCTS_LIMIT = 4;
+
+async function loadDiscountedProducts(
+  locale: Locale,
+): Promise<CatalogProduct[]> {
+  const rows = await getDb()
+    .select()
+    .from(products)
+    .where(
+      and(
+        eq(products.status, "ACTIVE"),
+        isNull(products.deletedAt),
+        isNotNull(products.compareAtAmount),
+        gt(products.compareAtAmount, products.priceAmount),
+      ),
+    )
+    .limit(DISCOUNTED_PRODUCTS_LIMIT);
+
+  return enrichCatalogProducts(rows, locale);
+}
+
+/** Active products with a compare-at price higher than the list price. */
+export async function getDiscountedProducts(
+  locale: Locale,
+): Promise<CatalogProduct[]> {
+  return unstable_cache(
+    async () => loadDiscountedProducts(locale),
+    ["discounted-products", locale],
     {
       tags: [CACHE_TAGS.products],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

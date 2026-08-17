@@ -5,9 +5,12 @@ import { listStorefrontCategories } from "@/features/categories/application/list
 import { HomeCategories } from "@/features/home/ui/HomeCategories";
 import { HomeFamilyDinnerPromo } from "@/features/home/ui/HomeFamilyDinnerPromo";
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
+import { HomeMobileCategories } from "@/features/home/ui/HomeMobileCategories";
+import { HomeMobileProductSection } from "@/features/home/ui/HomeMobileProductSection";
 import { HomePageChrome } from "@/features/home/ui/HomePageChrome";
 import { HomeOurStory } from "@/features/home/ui/HomeOurStory";
 import {
+  getDiscountedProducts,
   getFeaturedProducts,
   type CatalogProduct,
 } from "@/features/products/queries";
@@ -66,14 +69,21 @@ async function HomeBelowFold({
   locale: Locale;
   dictionary: Dictionary;
 }) {
-  const [categories, featuredProducts, currency, user] = await Promise.all([
-    listStorefrontCategories(locale),
-    getFeaturedProducts(locale),
-    getSelectedCurrency(),
-    getCurrentUser(),
-  ]);
+  const [categories, featuredProducts, discountedProducts, currency, user] =
+    await Promise.all([
+      listStorefrontCategories(locale),
+      getFeaturedProducts(locale),
+      getDiscountedProducts(locale),
+      getSelectedCurrency(),
+      getCurrentUser(),
+    ]);
 
-  const productIds = featuredProducts.map((product) => product.id);
+  const productIds = [
+    ...new Set([
+      ...featuredProducts.map((product) => product.id),
+      ...discountedProducts.map((product) => product.id),
+    ]),
+  ];
 
   const [wishlistIds, formatPrice, ratings] = await Promise.all([
     getWishlistProductIds(productIds),
@@ -88,20 +98,71 @@ async function HomeBelowFold({
     wishlistIds,
     ratings,
   );
+  const discountedCards = toProductCards(
+    discountedProducts,
+    locale,
+    formatPrice,
+    wishlistIds,
+    ratings,
+  );
+  const categoryItems = categories.map((category) => ({
+    id: category.id,
+    title: category.title,
+    href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
+    imageUrl: category.imageUrl,
+    productCount: category.productCount,
+  }));
 
   return (
     <>
+      <div className="md:hidden pb-8">
+        <HomeMobileCategories
+          productCountLabel={dictionary.home.categoryProductCount}
+          emptyLabel={dictionary.home.emptyCategories}
+          viewAllLabel={dictionary.home.viewAll}
+          previousLabel={dictionary.home.previousCategory}
+          nextLabel={dictionary.home.nextCategory}
+          categories={categoryItems}
+        />
+        <HomeMobileProductSection
+          locale={locale}
+          title={dictionary.home.featuredTitle}
+          titleNodeId="196:304"
+          viewAllLabel={dictionary.home.viewAll}
+          viewAllHref={`/${locale}/products`}
+          viewAllNodeId="196:308"
+          emptyLabel={dictionary.home.emptyFeatured}
+          wishlistLabel={dictionary.nav.wishlist}
+          addToCartLabel={dictionary.product.addToCart}
+          discountOffLabel={dictionary.home.discountOff}
+          isSignedIn={Boolean(user)}
+          products={featuredCards}
+          layout="rail"
+          overlayPlate
+        />
+        <HomeMobileProductSection
+          locale={locale}
+          title={dictionary.home.discountedTitle}
+          titleNodeId="196:358"
+          viewAllLabel={dictionary.home.viewAll}
+          viewAllHref={`/${locale}/products?onSale=true`}
+          viewAllNodeId="196:360"
+          emptyLabel={dictionary.home.emptyDiscounted}
+          wishlistLabel={dictionary.nav.wishlist}
+          addToCartLabel={dictionary.product.addToCart}
+          discountOffLabel={dictionary.home.discountOff}
+          isSignedIn={Boolean(user)}
+          products={discountedCards}
+          layout="grid"
+        />
+      </div>
+
+      <div className="hidden md:block">
       <HomeCategories
         title={dictionary.home.categoriesTitle}
         productCountLabel={dictionary.home.categoryProductCount}
         emptyLabel={dictionary.home.emptyCategories}
-        categories={categories.map((category) => ({
-          id: category.id,
-          title: category.title,
-          href: `/${locale}/products?category=${encodeURIComponent(category.slug)}`,
-          imageUrl: category.imageUrl,
-          productCount: category.productCount,
-        }))}
+        categories={categoryItems}
       />
 
       <HomeFeaturedProducts
@@ -149,6 +210,7 @@ async function HomeBelowFold({
           body: dictionary.home.ourStory.cardBodyLong,
         }}
       />
+      </div>
     </>
   );
 }

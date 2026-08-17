@@ -16,19 +16,25 @@ type AccountControlsProps = {
   profileLabel: string;
   adminLabel: string;
   user: SessionUser | null;
-  tone?: "default" | "onDark";
+  tone?: "default" | "onDark" | "onLight";
 };
 
 const menuItemClassName =
   "block w-full whitespace-nowrap px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900";
 
 function iconButtonClassName(
-  tone: "default" | "onDark",
+  tone: "default" | "onDark" | "onLight",
   active = false,
 ): string {
   if (tone === "onDark") {
     const base =
       "inline-flex size-7 shrink-0 items-center justify-center text-white transition-opacity duration-150 hover:opacity-80";
+    return active ? `${base} opacity-100` : base;
+  }
+
+  if (tone === "onLight") {
+    const base =
+      "inline-flex size-12 shrink-0 items-center justify-center text-brand-forest transition-opacity duration-150 hover:opacity-80";
     return active ? `${base} opacity-100` : base;
   }
 
@@ -39,7 +45,7 @@ function iconButtonClassName(
     : `${base} text-gray-700 hover:text-gray-900`;
 }
 
-function AccountIcon({ tone }: { tone: "default" | "onDark" }) {
+function AccountIcon({ tone }: { tone: "default" | "onDark" | "onLight" }) {
   if (tone === "onDark") {
     return <BrandHeaderIcon name="profile" size={28} />;
   }

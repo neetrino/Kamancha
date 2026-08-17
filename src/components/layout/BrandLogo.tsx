@@ -43,6 +43,7 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
         "relative inline-flex h-[52px] w-[110px] shrink-0 items-center md:h-[65px] md:w-[136px]"
       }
       aria-label={brandName}
+      data-brand-logo
     >
       <Image
         src="/assets/brand/kamancha-logo.svg"

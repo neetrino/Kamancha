@@ -1,4 +1,5 @@
 import { HomeHero } from "@/features/home/ui/HomeHero";
+import { HomeMobilePromo } from "@/features/home/ui/HomeMobilePromo";
 import { HomeOrnamentStrip } from "@/features/home/ui/HomeOrnamentStrip";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -10,7 +11,7 @@ type HomePageChromeProps = {
 };
 
 /**
- * Instant home shell — hero + ornament (animations run here).
+ * Instant home shell — desktop hero + ornament; mobile promo.
  * Below-fold catalog content is passed as children when ready.
  */
 export function HomePageChrome({
@@ -19,13 +20,22 @@ export function HomePageChrome({
   children,
 }: HomePageChromeProps) {
   return (
-    <div className="-mx-4 -my-10 sm:-mx-6 lg:-mx-8">
-      <HomeHero
-        brandName={dictionary.brand}
-        ctaLabel={dictionary.nav.products}
-        ctaHref={`/${locale}/products`}
-      />
-      <HomeOrnamentStrip />
+    <div className="home-mobile-page -mx-4 sm:-mx-6 md:-my-10 lg:-mx-8">
+      <div className="hidden md:block">
+        <HomeHero
+          brandName={dictionary.brand}
+          ctaLabel={dictionary.nav.products}
+          ctaHref={`/${locale}/products`}
+        />
+        <HomeOrnamentStrip />
+      </div>
+      <div className="md:hidden">
+        <HomeMobilePromo
+          headlineBefore={dictionary.home.familyDinner.headlineBefore}
+          headlineAccent={dictionary.home.familyDinner.headlineAccent}
+          headlineAfter={dictionary.home.familyDinner.headlineAfter}
+        />
+      </div>
       {children}
     </div>
   );

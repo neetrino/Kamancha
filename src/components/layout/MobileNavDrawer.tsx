@@ -7,6 +7,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
@@ -30,6 +31,10 @@ type MobileNavDrawerProps = {
   locale: Locale;
   dictionary: Dictionary;
   navItems: readonly NavItem[];
+  /** Override the menu trigger button classes (home header pill). */
+  triggerClassName?: string;
+  /** Extra controls inside the panel (locale/currency on home). */
+  panelFooter?: ReactNode;
 };
 
 function isNavItemActive(pathname: string, href: string, locale: Locale): boolean {
@@ -47,6 +52,8 @@ export function MobileNavDrawer({
   locale,
   dictionary,
   navItems,
+  triggerClassName,
+  panelFooter,
 }: MobileNavDrawerProps) {
   const menuId = useId();
   const pathname = usePathname() ?? "";
@@ -170,7 +177,10 @@ export function MobileNavDrawer({
       <button
         type="button"
         onClick={toggleMenu}
-        className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/15 text-white transition-opacity hover:opacity-80 touch-manipulation sm:h-10 sm:w-10"
+        className={
+          triggerClassName ??
+          "relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/15 text-white transition-opacity hover:opacity-80 touch-manipulation sm:h-10 sm:w-10"
+        }
         aria-label={open ? dictionary.nav.closeMenu : dictionary.nav.openMenu}
         aria-expanded={open}
         aria-controls={menuId}
@@ -259,6 +269,7 @@ export function MobileNavDrawer({
                   </div>
 
                   <div className="mt-1 flex flex-col gap-2 border-t border-gray-100 py-4">
+                    {panelFooter}
                     <GroupOrderHeaderButton
                       locale={locale}
                       label={dictionary.nav.groupOrder}

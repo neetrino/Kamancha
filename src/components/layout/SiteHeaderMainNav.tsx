@@ -141,28 +141,60 @@ export function SiteHeaderMainNav({
 
             {/* Below md: compact controls */}
             <div className="flex items-center gap-3 self-center md:hidden">
-              <HeaderSearch
-                locale={locale}
-                currency={currency}
-                labels={searchLabels}
-                variant="responsive"
-                tone="onDark"
-              />
-              <div className="hidden sm:block">
-                <IconRail />
+              <div className="header-mobile-default flex items-center gap-3 self-center">
+                <HeaderSearch
+                  locale={locale}
+                  currency={currency}
+                  labels={searchLabels}
+                  variant="responsive"
+                  tone="onDark"
+                />
+                <div className="hidden sm:block">
+                  <IconRail />
+                </div>
+                <LocaleCurrencySwitcher
+                  locale={locale}
+                  currency={currency}
+                  currencyLabel={dictionary.header.currency}
+                  languageLabel={dictionary.header.language}
+                  tone="onDark"
+                />
+                <MobileNavDrawer
+                  locale={locale}
+                  dictionary={dictionary}
+                  navItems={navItems}
+                />
               </div>
-              <LocaleCurrencySwitcher
-                locale={locale}
-                currency={currency}
-                currencyLabel={dictionary.header.currency}
-                languageLabel={dictionary.header.language}
-                tone="onDark"
-              />
-              <MobileNavDrawer
-                locale={locale}
-                dictionary={dictionary}
-                navItems={navItems}
-              />
+              <div className="header-mobile-home-pill items-center">
+                <div
+                  className="flex h-14 w-[113px] items-center rounded-full bg-white pl-2.5 pr-1"
+                  data-node-id="181:504"
+                >
+                  <MobileNavDrawer
+                    locale={locale}
+                    dictionary={dictionary}
+                    navItems={navItems}
+                    triggerClassName="relative flex size-9 shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
+                    panelFooter={
+                      <LocaleCurrencySwitcher
+                        locale={locale}
+                        currency={currency}
+                        currencyLabel={dictionary.header.currency}
+                        languageLabel={dictionary.header.language}
+                      />
+                    }
+                  />
+                  <AccountControls
+                    locale={locale}
+                    loginLabel={dictionary.header.login}
+                    logoutLabel={dictionary.header.logout}
+                    profileLabel={dictionary.header.profile}
+                    adminLabel={dictionary.header.admin}
+                    user={user}
+                    tone="onLight"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

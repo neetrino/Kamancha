@@ -17,9 +17,11 @@ type MobileBottomNavIslandProps = {
 function MobileBottomNavFallback() {
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 h-[calc(3.5rem+env(safe-area-inset-bottom))] border-t border-gray-200 bg-white md:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex h-[calc(63px+0.75rem+env(safe-area-inset-bottom))] justify-center md:hidden"
       aria-hidden="true"
-    />
+    >
+      <div className="h-[63px] w-[min(calc(100%-3rem),325px)] rounded-[80px] bg-white shadow-[0_0_9px_rgba(0,0,0,0.25)]" />
+    </div>
   );
 }
 
