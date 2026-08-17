@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { AppLink } from "@/components/ui/AppLink";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
-import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
 import {
   PROFILE_PILL_LIGHT,
@@ -146,7 +146,7 @@ export function ProfileRecentOrders({
           onOpenOrder={openOrder}
         />
       </div>
-      <OrderDetailsDrawer
+      <CustomerOrderDetailsSheet
         open={drawerOpen}
         onClose={closeDrawer}
         detail={detail}

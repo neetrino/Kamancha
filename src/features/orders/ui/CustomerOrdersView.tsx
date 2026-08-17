@@ -4,8 +4,8 @@ import { useState, useTransition } from "react";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
+import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import { CustomerOrdersTable } from "@/features/orders/ui/CustomerOrdersTable";
-import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrdersViewOrder = {
@@ -55,7 +55,7 @@ export function CustomerOrdersView({ locale, orders, copy }: CustomerOrdersViewP
   return (
     <>
       <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} />
-      <OrderDetailsDrawer
+      <CustomerOrderDetailsSheet
         open={drawerOpen}
         onClose={closeDrawer}
         detail={detail}
