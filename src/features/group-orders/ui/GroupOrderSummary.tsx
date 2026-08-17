@@ -79,7 +79,7 @@ export function GroupOrderSummary({
       style={{ top: stickyTop }}
     >
       <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
-        <h2 className="relative z-[2] mb-6 flex items-start gap-2 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+        <h2 className="relative z-[2] mb-6 flex items-start gap-2 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
           <Users
             className="mt-1 h-5 w-5 shrink-0"
             strokeWidth={2.75}
@@ -116,7 +116,7 @@ export function GroupOrderSummary({
             />
           ) : null}
           <div className="border-t border-white/40 pt-4">
-            <div className="flex justify-between text-lg font-bold text-gray-900">
+            <div className="flex justify-between text-lg font-bold text-white">
               <span>{labels.total}</span>
               <span>{view.grandTotalFormatted}</span>
             </div>

@@ -36,12 +36,12 @@ import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const GLASS_PILL_BUTTON =
-  "liquid-glass isolate inline-flex items-center justify-center overflow-hidden rounded-full px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
 
 const PILL_FULL = "max-w-none sm:max-w-none";
 
 const BLOCK_TITLE =
-  "font-big-fat-boii text-base font-normal tracking-wide text-black uppercase";
+  "font-big-fat-boii text-base font-normal tracking-wide text-white uppercase";
 
 const PRODUCT_THUMB_PX = 96;
 const PRODUCT_THUMB_RADIUS_PX = 16;
@@ -288,7 +288,7 @@ export function GroupOrderPageClient({
             </div>
           </div>
 
-          <div className="space-y-2 border-t border-gray-100 pt-4">
+          <div className="space-y-2 border-t border-white/40 pt-4">
             <label className="block">
               <span className={BLOCK_TITLE}>{labels.deliveryFieldLabel}</span>
               <span className="mt-0.5 block text-xs leading-relaxed text-white">
@@ -331,7 +331,7 @@ export function GroupOrderPageClient({
                 : labels.deliveryOrganizerPaysHint}
             </p>
             {view.deliveryAmount > 0 ? (
-              <p className="text-sm font-medium text-emerald-700">
+              <p className="text-sm font-medium text-emerald-200">
                 {labels.deliveryQuoteReady
                   .replace("{amount}", view.deliveryFormatted)
                   .replace(
@@ -359,7 +359,7 @@ export function GroupOrderPageClient({
             </button>
           </div>
 
-          <div className="space-y-2 border-t border-gray-100 pt-4">
+          <div className="space-y-2 border-t border-white/40 pt-4">
             <p className="text-xs leading-relaxed text-white">
               {labels.closeJoinsHint}
             </p>
@@ -397,7 +397,7 @@ export function GroupOrderPageClient({
                   <p className={BLOCK_TITLE}>
                     {participant.displayName}
                     {participant.role === "ORGANIZER" ? (
-                      <span className="ml-2 text-xs font-normal text-black">
+                      <span className="ml-2 text-xs font-normal text-white/70">
                         ({labels.organizer})
                       </span>
                     ) : null}
@@ -415,7 +415,7 @@ export function GroupOrderPageClient({
                     })}
                   </p>
                   {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
-                    <p className="mt-0.5 text-xs text-gray-500">
+                    <p className="mt-0.5 text-xs text-white/70">
                       {labels.deliveryShare}:{" "}
                       {participant.deliveryShareFormatted} · {labels.total}:{" "}
                       {participant.finalAmountFormatted}
@@ -437,7 +437,7 @@ export function GroupOrderPageClient({
                   canEdit ? (
                     <button
                       type="button"
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
                       aria-label={labels.removeParticipant}
                       onClick={() =>
                         run(async () =>
@@ -664,7 +664,7 @@ function JoinPanel({
         </h1>
         <p className="mt-2 text-sm text-white">{labels.joinDescription}</p>
 
-        <div className="mt-5 space-y-3 text-sm text-gray-800">
+        <div className="mt-5 space-y-3 text-sm text-white">
           <p className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             {view.paymentMode === "ORGANIZER_PAYS_ALL"
@@ -727,7 +727,7 @@ function GroupOrderProductCard({
 
   return (
     <article
-      className="liquid-glass isolate w-max shrink-0 overflow-hidden rounded-[20px] p-3"
+      className="isolate w-max shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
       style={{
         minWidth: PRODUCT_CARD_MIN_PX,
         maxWidth: PRODUCT_CARD_MAX_PX,

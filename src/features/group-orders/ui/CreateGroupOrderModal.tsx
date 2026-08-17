@@ -20,7 +20,9 @@ import type { Locale } from "@/lib/i18n/config";
 const MODAL_EXIT_MS = 320;
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-2xl border border-white/50 bg-white/55 px-4 text-sm text-gray-900 shadow-sm outline-none backdrop-blur-sm transition-colors placeholder:text-black/40 hover:border-white/70 focus:border-white/80";
+  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-500 hover:border-gray-300 focus:border-gray-400";
+
+const FIELD_LABEL_CLASS = "mb-1.5 block text-sm font-medium text-white/80";
 
 type CreateGroupOrderModalProps = {
   open: boolean;
@@ -150,28 +152,28 @@ export function CreateGroupOrderModal({
         onAnimationEnd={handlePanelAnimationEnd}
       >
         <div className="relative z-[2] flex min-h-0 flex-1 flex-col">
-          <div className="flex items-start justify-between gap-3 border-b border-white/35 px-5 py-4">
+          <div className="relative z-[2] flex items-start justify-between gap-3 border-b border-white/35 px-5 py-4">
             <div>
-              <h2 className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+              <h2 className="font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
                 {labels.createTitle}
               </h2>
-              <p className="mt-1 text-sm text-black/55">
+              <p className="mt-1 text-sm text-white/70">
                 {labels.createDescription}
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/40 text-gray-800 transition hover:bg-white/60"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-gray-800 transition hover:bg-white/90"
               aria-label={labels.close}
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
+          <div className="relative z-[2] min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium text-gray-800">
+              <span className={FIELD_LABEL_CLASS}>
                 {labels.organizerNameLabel}
               </span>
               <input
@@ -190,17 +192,17 @@ export function CreateGroupOrderModal({
             >
               {paymentMode === "ORGANIZER_PAYS_ALL" ? (
                 <div className="mt-3">
-                  <p className="mb-1.5 text-xs text-black/55">
+                  <p className="mb-1.5 text-xs text-gray-500">
                     {labels.spendLimitHint}
                   </p>
-                  <div className="flex items-center gap-2 rounded-2xl border border-white/50 bg-white/55 px-3 py-2 backdrop-blur-sm">
-                    <span className="text-sm text-black/50">֏</span>
+                  <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
+                    <span className="text-sm text-gray-500">֏</span>
                     <input
                       inputMode="numeric"
                       value={spendLimit}
                       onChange={(event) => setSpendLimit(event.target.value)}
                       placeholder={labels.spendLimitLabel}
-                      className="w-full bg-transparent text-sm text-gray-900 outline-none"
+                      className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-500"
                     />
                   </div>
                 </div>
@@ -213,22 +215,22 @@ export function CreateGroupOrderModal({
               onSelect={() => setPaymentMode("SPLIT_PER_PARTICIPANT")}
             />
 
-            <p className="flex items-start gap-2 text-xs leading-relaxed text-black/55">
+            <p className="flex items-start gap-2 text-xs leading-relaxed text-white/70">
               <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
               {labels.infoNote}
             </p>
 
             {error ? (
-              <p className="text-sm text-red-700" role="alert">
+              <p className="text-sm text-red-200" role="alert">
                 {error}
               </p>
             ) : null}
           </div>
 
-          <div className="border-t border-white/35 px-5 py-4">
+          <div className="relative z-[2] border-t border-white/35 px-5 py-4">
             <KamanchaPillButton
               type="button"
-              variant="dark"
+              variant="light"
               label={labels.start}
               disabled={pending || !name.trim()}
               onClick={submit}
@@ -259,22 +261,24 @@ function PaymentOption({
     <button
       type="button"
       onClick={onSelect}
-      className={`liquid-glass isolate w-full overflow-hidden rounded-2xl p-4 text-left transition-all ${
-        selected ? "ring-2 ring-inset ring-brand-forest" : "hover:brightness-[1.04]"
+      className={`w-full rounded-[15px] bg-white p-4 text-left outline-none transition-colors ${
+        selected
+          ? "ring-2 ring-inset ring-brand-forest"
+          : "hover:bg-gray-50"
       }`}
     >
-      <div className="relative z-[2] flex items-start gap-3">
+      <div className="flex items-start gap-3">
         <Users className="mt-0.5 h-5 w-5 shrink-0 text-gray-800" aria-hidden />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-gray-900">{title}</p>
           {hint ? (
-            <p className="mt-0.5 text-xs text-black/55">{hint}</p>
+            <p className="mt-0.5 text-xs text-gray-500">{hint}</p>
           ) : null}
           {children}
         </div>
         <span
           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-            selected ? "border-brand-forest" : "border-black/25"
+            selected ? "border-brand-forest" : "border-gray-300"
           }`}
           aria-hidden
         >
