@@ -24,6 +24,11 @@ type RevealProps = {
   amount?: number;
   /** Play on mount instead of waiting for the viewport. */
   immediate?: boolean;
+  /**
+   * When false, animates transform only. Use over `backdrop-filter` / liquid-glass
+   * — parent opacity breaks glass sampling until the fade finishes.
+   */
+  fade?: boolean;
   /** Extra gate (e.g. skip after locale swap). Reduced motion always wins. */
   enabled?: boolean;
 } & Omit<
@@ -49,12 +54,17 @@ export function Reveal({
   once = true,
   amount = 0.2,
   immediate = false,
+  fade = true,
   enabled = true,
   ...rest
 }: RevealProps) {
   const play = usePlayReveal(enabled);
-  const shown = { opacity: 1, y: 0, x: 0 };
-  const hidden = play ? { opacity: 0, y, x } : false;
+  const shown = fade ? { opacity: 1, y: 0, x: 0 } : { y: 0, x: 0 };
+  const hidden = play
+    ? fade
+      ? { opacity: 0, y, x }
+      : { y, x }
+    : false;
 
   return (
     <motion.div

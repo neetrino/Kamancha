@@ -1,16 +1,21 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 import { createEdgeDisplacementDataUrl } from "@/components/ui/edge-displacement-map";
 
 export const LIQUID_GLASS_FILTER_ID = "kamancha-liquid-glass-rim";
 
-const MAP_WIDTH_PX = 320;
-const MAP_HEIGHT_PX = 480;
+/** Smaller map = cheaper GPU sampling while rim bend stays readable. */
+const MAP_WIDTH_PX = 240;
+const MAP_HEIGHT_PX = 360;
 const MAP_RADIUS_PX = 36;
 const MAP_RIM_PX = 52;
-const DISPLACE_SCALE = 64;
+/** Mild rim bend — strong enough to read as glass, weak enough not to swim. */
+const DISPLACE_SCALE = 26;
+/** After scroll settles, restore refraction on opted-in panels only. */
+const SCROLL_IDLE_MS = 140;
+const SCROLLING_CLASS = "liquid-glass-scrolling";
 
 let cachedMapUrl: string | null | undefined;
 
@@ -31,11 +36,40 @@ function getDisplacementMap(): string | null {
   return cachedMapUrl;
 }
 
+function useScrollPausesRefraction(): void {
+  useEffect(() => {
+    const root = document.documentElement;
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const onScroll = (): void => {
+      root.classList.add(SCROLLING_CLASS);
+      if (idleTimer !== undefined) {
+        clearTimeout(idleTimer);
+      }
+      idleTimer = setTimeout(() => {
+        root.classList.remove(SCROLLING_CLASS);
+        idleTimer = undefined;
+      }, SCROLL_IDLE_MS);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll, { capture: true });
+      if (idleTimer !== undefined) {
+        clearTimeout(idleTimer);
+      }
+      root.classList.remove(SCROLLING_CLASS);
+    };
+  }, []);
+}
+
 /**
- * One document-level rim refraction filter for every `.liquid-glass` card.
+ * Document-level rim refraction for all storefront glass surfaces.
+ * Scroll pauses refraction via `html.liquid-glass-scrolling`.
  */
 export function LiquidGlassOptics() {
   const mapUrl = useSyncExternalStore(subscribe, getDisplacementMap, () => null);
+  useScrollPausesRefraction();
 
   if (!mapUrl) {
     return null;
@@ -48,10 +82,10 @@ export function LiquidGlassOptics() {
     >
       <filter
         id={LIQUID_GLASS_FILTER_ID}
-        x="-12%"
-        y="-12%"
-        width="124%"
-        height="124%"
+        x="-8%"
+        y="-8%"
+        width="116%"
+        height="116%"
         colorInterpolationFilters="sRGB"
       >
         <feImage
@@ -69,44 +103,7 @@ export function LiquidGlassOptics() {
           scale={DISPLACE_SCALE}
           xChannelSelector="R"
           yChannelSelector="G"
-          result="bend"
         />
-        <feDisplacementMap
-          in="SourceGraphic"
-          in2="map"
-          scale={DISPLACE_SCALE + 6}
-          xChannelSelector="R"
-          yChannelSelector="G"
-          result="bendR"
-        />
-        <feDisplacementMap
-          in="SourceGraphic"
-          in2="map"
-          scale={DISPLACE_SCALE - 5}
-          xChannelSelector="R"
-          yChannelSelector="G"
-          result="bendB"
-        />
-        <feColorMatrix
-          in="bendR"
-          type="matrix"
-          values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"
-          result="red"
-        />
-        <feColorMatrix
-          in="bend"
-          type="matrix"
-          values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0"
-          result="green"
-        />
-        <feColorMatrix
-          in="bendB"
-          type="matrix"
-          values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0"
-          result="blue"
-        />
-        <feBlend in="red" in2="green" mode="screen" result="rg" />
-        <feBlend in="rg" in2="blue" mode="screen" />
       </filter>
     </svg>
   );

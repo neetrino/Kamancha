@@ -10,7 +10,8 @@ type ProfilePageRevealProps = {
 };
 
 /**
- * Fade + rise when a profile section mounts or the route changes.
+ * Rise on section mount / route change. Transform-only (`fade={false}`) so
+ * liquid-glass backdrop-filter stays correct for the whole animation.
  */
 export function ProfilePageReveal({ children }: ProfilePageRevealProps) {
   const pathname = usePathname() ?? "";
@@ -19,6 +20,7 @@ export function ProfilePageReveal({ children }: ProfilePageRevealProps) {
     <Reveal
       key={pathname}
       immediate
+      fade={false}
       className="profile-page-reveal flex min-h-full flex-col"
     >
       {children}

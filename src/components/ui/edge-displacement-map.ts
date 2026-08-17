@@ -1,4 +1,4 @@
-const MAX_MAP_EDGE_PX = 420;
+const MAX_MAP_EDGE_PX = 280;
 
 function clamp01(value: number): number {
   return Math.min(1, Math.max(0, value));

@@ -8,8 +8,7 @@ type LiquidGlassPanelProps = {
 };
 
 /**
- * Order-summary shell. Material comes from shared `.liquid-glass-panel`
- * plus document-level `LiquidGlassOptics`.
+ * Order-summary shell. Shared `.liquid-glass-panel` material + document optics.
  */
 export function LiquidGlassPanel({
   children,
