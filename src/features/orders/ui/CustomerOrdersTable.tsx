@@ -97,7 +97,7 @@ export function CustomerOrdersTable({
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-                <span className="text-sm font-semibold text-white">
+                <span className="text-base font-semibold text-white">
                   {formatOrderDrawerMoney(
                     order.totalAmount,
                     order.baseCurrency,
