@@ -477,8 +477,8 @@ html {
 
 /**
  * Storefront profile desktop (Grill.am): sticky band under the header.
- * Equal top/bottom gaps; content column scrolls internally; footer stays
- * below the fold and is reached by page scroll.
+ * Equal top/bottom gaps; content column scrolls internally. When that
+ * column reaches its end, page scroll continues so the footer is reachable.
  */
 @media (min-width: 1024px) {
   .storefront-shell:has(.profile-desktop-page) .storefront-main {
@@ -516,7 +516,7 @@ html {
     min-width: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    overscroll-behavior: contain;
+    overscroll-behavior-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
