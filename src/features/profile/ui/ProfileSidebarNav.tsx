@@ -204,14 +204,14 @@ export function ProfileSidebarNav({
                 className={
                   active
                     ? "flex h-8 w-8 items-center justify-center rounded-xl bg-white text-brand-forest"
-                    : "flex h-8 w-8 items-center justify-center rounded-xl bg-white/40 text-gray-600"
+                    : "flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-white"
                 }
               >
                 {item.icon}
               </span>
               <span
                 className={`profile-nav-label min-w-0 flex-1 ${
-                  active ? "text-brand-forest" : "text-gray-700"
+                  active ? "text-brand-forest" : "text-white"
                 }`}
               >
                 {item.label}
@@ -225,10 +225,10 @@ export function ProfileSidebarNav({
         <form action={logoutAction}>
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left font-big-fat-boii text-sm font-normal tracking-wide text-red-700 uppercase transition-colors hover:bg-red-50/70"
+            className="flex w-full items-center gap-3 rounded-2xl border border-white/50 bg-white/15 px-3.5 py-2.5 text-left font-big-fat-boii text-sm font-normal tracking-wide text-white uppercase shadow-sm transition-colors hover:bg-white/25"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50/80 text-red-600">
-              <LogOut className="h-4 w-4" />
+            <span className="shrink-0 text-white">
+              <LogOut className="h-4 w-4" aria-hidden />
             </span>
             {dictionary.logout}
           </button>

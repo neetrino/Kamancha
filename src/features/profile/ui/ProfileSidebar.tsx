@@ -21,9 +21,9 @@ function ProfileContactRow({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-white/50 bg-white/55 px-3.5 py-2.5 text-left shadow-sm">
-      <span className="shrink-0 text-brand-forest">{icon}</span>
-      <p className="min-w-0 break-all text-xs font-medium text-gray-800 sm:text-sm">
+    <div className="flex items-center gap-3 rounded-2xl border border-white/50 bg-white/15 px-3.5 py-2.5 text-left shadow-sm">
+      <span className="shrink-0 text-white">{icon}</span>
+      <p className="min-w-0 break-all text-xs font-medium text-white sm:text-sm">
         {value}
       </p>
     </div>
@@ -49,10 +49,10 @@ export function ProfileSidebar({
             {user.lastName.slice(0, 1).toUpperCase()}
           </div>
           <div className="space-y-0.5">
-            <p className="font-big-fat-boii text-lg font-normal tracking-wide text-gray-900 uppercase">
+            <p className="font-big-fat-boii text-lg font-normal tracking-wide text-white uppercase">
               {user.firstName}
             </p>
-            <p className="text-xs font-medium tracking-wide text-gray-700">
+            <p className="text-xs font-medium tracking-wide text-white">
               {user.lastName}
             </p>
           </div>

@@ -7,7 +7,6 @@ import { Search } from "lucide-react";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
-import { PROFILE_FIELD } from "@/features/profile/ui/profile-surface";
 
 const ORDER_STATUS_FILTERS = [
   { label: "Pending", value: "PENDING" },
@@ -75,14 +74,14 @@ export function CustomerOrdersFilters({
           onValueChange={applyPayment}
         />
         <div
-          className={`${PROFILE_FIELD} flex min-w-0 items-center gap-2.5 lg:flex-1 lg:shrink`}
+          className="flex h-11 min-w-0 items-center gap-2.5 rounded-2xl border border-white/50 bg-white/15 px-4 shadow-sm backdrop-blur-sm transition-colors hover:border-white/70 focus-within:border-white/80 lg:flex-1 lg:shrink"
         >
-          <Search className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
+          <Search className="h-4 w-4 shrink-0 text-white" aria-hidden />
           <input
             name="q"
             defaultValue={q ?? ""}
             placeholder="Search by order #"
-            className="h-full min-w-0 flex-1 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-500"
+            className="h-full min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/60"
             aria-label="Search orders"
           />
         </div>
