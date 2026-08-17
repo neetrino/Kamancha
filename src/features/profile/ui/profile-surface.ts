@@ -10,13 +10,13 @@ export const PROFILE_SECTION =
   "liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
 
 export const PROFILE_SECTION_TITLE =
-  "relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";
+  "relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase";
 
 export const PROFILE_FIELD =
   "h-11 w-full rounded-2xl border border-white/50 bg-white/55 px-4 text-gray-900 shadow-sm outline-none backdrop-blur-sm transition-colors placeholder:text-gray-500 hover:border-white/70 focus:border-white/80 disabled:bg-white/30";
 
 export const PROFILE_LABEL =
-  "relative z-[2] flex flex-col gap-1.5 text-sm font-medium text-gray-800";
+  "relative z-[2] flex flex-col gap-1.5 text-sm font-medium text-white";
 
 export const PROFILE_BODY =
   "relative z-[2] text-sm leading-relaxed text-gray-700";

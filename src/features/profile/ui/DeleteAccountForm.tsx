@@ -7,7 +7,6 @@ import {
   type DeleteAccountActionState,
 } from "@/features/auth/delete-account-action";
 import {
-  PROFILE_BODY,
   PROFILE_FIELD,
   PROFILE_LABEL,
   PROFILE_PILL_DANGER,
@@ -43,10 +42,12 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
     <section className={PROFILE_SECTION}>
       <div className="relative z-[2] mb-6 space-y-2 sm:mb-8">
         <h1 className={PROFILE_SECTION_TITLE}>{labels.title}</h1>
-        <p className={PROFILE_BODY}>{labels.description}</p>
+        <p className="relative z-[2] text-sm leading-relaxed text-white">
+          {labels.description}
+        </p>
       </div>
 
-      <ul className="relative z-[2] mb-8 max-w-2xl list-disc space-y-2 pl-5 text-sm text-gray-700 sm:mb-10">
+      <ul className="relative z-[2] mb-8 max-w-2xl list-disc space-y-2 pl-5 text-sm text-white sm:mb-10">
         <li>{labels.pointOrders}</li>
         <li>{labels.pointLogin}</li>
         <li>{labels.pointData}</li>
@@ -79,7 +80,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
             checked={acknowledged}
             onChange={(event) => setAcknowledged(event.target.checked)}
           />
-          <span className="text-sm leading-snug text-gray-800">
+          <span className="text-sm leading-snug text-white">
             {labels.acknowledge}
           </span>
         </label>
