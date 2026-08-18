@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import {
   listAdminCategoryOptions,
@@ -9,7 +10,9 @@ import { listModifiersForProductAdmin } from "@/features/products/application/pr
 import { adminProductsFilterSchema } from "@/features/products/schemas/admin-list";
 import {
   ADMIN_PAGE_TITLE,
-  ADMIN_PAGINATION,
+  ADMIN_PAGINATION_CENTER,
+  ADMIN_PAGINATION_CIRCLE,
+  ADMIN_PAGINATION_CIRCLE_DISABLED,
 } from "@/features/admin/ui/admin-form-classes";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
@@ -149,15 +152,26 @@ export default async function AdminProductsPage({
       />
 
       {totalPages > 1 ? (
-        <nav className={ADMIN_PAGINATION}>
+        <nav
+          className={ADMIN_PAGINATION_CENTER}
+          aria-label={adminCopy.products.title}
+        >
           {filters.page > 1 ? (
             <Link
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page - 1 })}`}
-              className="font-medium hover:underline"
+              className={ADMIN_PAGINATION_CIRCLE}
+              aria-label={adminCopy.common.previous}
             >
-              {adminCopy.common.previous}
+              <ChevronLeft className="h-4 w-4" aria-hidden />
             </Link>
-          ) : null}
+          ) : (
+            <span
+              className={ADMIN_PAGINATION_CIRCLE_DISABLED}
+              aria-disabled
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden />
+            </span>
+          )}
           <span>
             {adminCopy.common.pageOf
               .replace("{page}", String(filters.page))
@@ -166,11 +180,19 @@ export default async function AdminProductsPage({
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page + 1 })}`}
-              className="font-medium hover:underline"
+              className={ADMIN_PAGINATION_CIRCLE}
+              aria-label={adminCopy.common.next}
             >
-              {adminCopy.common.next}
+              <ChevronRight className="h-4 w-4" aria-hidden />
             </Link>
-          ) : null}
+          ) : (
+            <span
+              className={ADMIN_PAGINATION_CIRCLE_DISABLED}
+              aria-disabled
+            >
+              <ChevronRight className="h-4 w-4" aria-hidden />
+            </span>
+          )}
         </nav>
       ) : null}
     </section>

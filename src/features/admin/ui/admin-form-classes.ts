@@ -26,3 +26,12 @@ export const ADMIN_SECTION_TITLE =
   "font-big-fat-boii text-xl font-normal tracking-wide text-brand-forest uppercase";
 
 export const ADMIN_PAGINATION = "mt-4 flex items-center gap-3 text-sm text-gray-700";
+
+export const ADMIN_PAGINATION_CENTER =
+  "mt-4 flex items-center justify-center gap-3 text-sm text-gray-700";
+
+export const ADMIN_PAGINATION_CIRCLE =
+  "flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-colors hover:bg-gray-50";
+
+export const ADMIN_PAGINATION_CIRCLE_DISABLED =
+  "flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 opacity-40";

@@ -32,7 +32,7 @@ import type { AdminProductsFilter } from "@/features/products/schemas/admin-list
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 15;
 
 export type AdminProductImage = {
   id: string;
