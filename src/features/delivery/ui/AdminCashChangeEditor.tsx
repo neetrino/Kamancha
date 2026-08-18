@@ -1,18 +1,17 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition, type ReactNode } from "react";
+import { Image as ImageIcon, ImagePlus, Loader2, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
-import {
-  ADMIN_INPUT,
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { uploadCashChangeImageAction } from "@/features/delivery/application/upload-cash-change-image";
 import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type CashChangeCopy = Dictionary["admin"]["delivery"]["cashChange"];
+type ConfirmCopy = Dictionary["admin"]["confirm"];
 
 type AdminCashChangeEditorProps = {
   locale: string;
@@ -22,6 +21,8 @@ type AdminCashChangeEditorProps = {
   onImageUrlsChange: (next: Record<string, string>) => void;
   disabled?: boolean;
   copy: CashChangeCopy;
+  confirm: ConfirmCopy;
+  saveAction?: ReactNode;
 };
 
 export function AdminCashChangeEditor({
@@ -32,9 +33,15 @@ export function AdminCashChangeEditor({
   onImageUrlsChange,
   disabled = false,
   copy,
+  confirm,
+  saveAction,
 }: AdminCashChangeEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadTargetId, setUploadTargetId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, startUpload] = useTransition();
 
@@ -116,15 +123,21 @@ export function AdminCashChangeEditor({
         onChange={(event) => onFileSelected(event.target.files)}
       />
 
-      <ul className="space-y-3">
+      <ul className="grid grid-cols-1 gap-2 md:grid-cols-3">
         {value.map((item) => {
           const previewUrl = imageUrls[item.id] ?? null;
+          const imageActionLabel =
+            isUploading && uploadTargetId === item.id
+              ? copy.uploading
+              : previewUrl
+                ? copy.changeImage
+                : copy.uploadImage;
           return (
             <li
               key={item.id}
-              className="flex flex-col gap-3 rounded-xl border border-gray-200 p-3 sm:flex-row sm:items-center"
+              className="flex items-center gap-2 rounded-xl border border-gray-200 px-2.5 py-3"
             >
-              <div className="flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-50">
+              <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-50">
                 {previewUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element -- remote/local object URL
                   <img
@@ -133,87 +146,129 @@ export function AdminCashChangeEditor({
                     className="h-full w-full object-contain"
                   />
                 ) : (
-                  <span className="px-2 text-center text-xs text-gray-400">
+                  <span className="px-1 text-center text-[10px] leading-tight text-gray-400">
                     {copy.noImage}
                   </span>
                 )}
               </div>
 
-              <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-[1fr_auto_auto] sm:items-end">
-                <label>
-                  <span className={ADMIN_LABEL}>{copy.amount}</span>
-                  <input
-                    type="number"
-                    min={1}
-                    step={1}
-                    value={item.amount > 0 ? String(item.amount) : ""}
-                    onChange={(event) =>
-                      updateItem(item.id, {
-                        amount: Number(event.target.value) || 0,
-                      })
-                    }
-                    placeholder={copy.amountPlaceholder}
-                    className={ADMIN_INPUT}
-                    disabled={disabled || isUploading}
-                  />
-                  {item.amount > 0 ? (
-                    <span className="mt-1 block text-xs text-gray-500">
-                      {formatMoneyAmount(item.amount, "AMD", locale)}
-                    </span>
-                  ) : null}
-                </label>
+              <label className="min-w-0 flex-1">
+                <span className="sr-only">{copy.amount}</span>
+                <input
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={item.amount > 0 ? String(item.amount) : ""}
+                  onChange={(event) =>
+                    updateItem(item.id, {
+                      amount: Number(event.target.value) || 0,
+                    })
+                  }
+                  placeholder={copy.amountPlaceholder}
+                  className="h-11 w-full rounded-xl border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none transition-colors hover:border-gray-300 focus:border-gray-300"
+                  disabled={disabled || isUploading}
+                  title={
+                    item.amount > 0
+                      ? formatMoneyAmount(item.amount, "AMD", locale)
+                      : undefined
+                  }
+                />
+              </label>
 
-                <label className="inline-flex items-center gap-2 pb-2 text-sm text-gray-800">
-                  <input
-                    type="checkbox"
-                    checked={item.isActive}
-                    onChange={(event) =>
-                      updateItem(item.id, { isActive: event.target.checked })
-                    }
-                    disabled={disabled || isUploading}
-                    className="h-4 w-4 rounded border-gray-300"
+              <div className="flex shrink-0 items-center gap-0.5">
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={item.isActive}
+                  disabled={disabled || isUploading}
+                  onClick={() =>
+                    updateItem(item.id, { isActive: !item.isActive })
+                  }
+                  className={`relative h-5 w-9 rounded-full transition-colors disabled:opacity-50 ${
+                    item.isActive ? "bg-green-500" : "bg-gray-300"
+                  }`}
+                  aria-label={copy.active}
+                  title={copy.active}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                      item.isActive ? "translate-x-4" : "translate-x-0"
+                    }`}
                   />
-                  {copy.active}
-                </label>
-
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    disabled={disabled || isUploading}
-                    onClick={() => pickImage(item.id)}
-                  >
-                    {isUploading && uploadTargetId === item.id
-                      ? copy.uploading
-                      : previewUrl
-                        ? copy.changeImage
-                        : copy.uploadImage}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    disabled={disabled || isUploading}
-                    onClick={() => removeItem(item.id)}
-                  >
-                    {copy.remove}
-                  </Button>
-                </div>
+                </button>
+                <button
+                  type="button"
+                  disabled={disabled || isUploading}
+                  onClick={() => pickImage(item.id)}
+                  className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
+                  aria-label={imageActionLabel}
+                  title={imageActionLabel}
+                >
+                  {isUploading && uploadTargetId === item.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  ) : previewUrl ? (
+                    <ImageIcon className="h-4 w-4" aria-hidden />
+                  ) : (
+                    <ImagePlus className="h-4 w-4" aria-hidden />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  disabled={disabled || isUploading}
+                  onClick={() =>
+                    setPendingDelete({
+                      id: item.id,
+                      name:
+                        item.amount > 0
+                          ? formatMoneyAmount(item.amount, "AMD", locale)
+                          : copy.amount,
+                    })
+                  }
+                  className="rounded p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-50"
+                  aria-label={copy.remove}
+                  title={copy.remove}
+                >
+                  <Trash2 className="h-4 w-4" aria-hidden />
+                </button>
               </div>
             </li>
           );
         })}
       </ul>
 
-      <div>
+      <div className="flex justify-end gap-2">
         <Button
           type="button"
           variant="secondary"
           disabled={disabled || isUploading || value.length >= 20}
           onClick={addItem}
+          className="inline-flex items-center gap-2"
         >
+          <Plus className="h-4 w-4" aria-hidden />
           {copy.add}
         </Button>
+        {saveAction}
       </div>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title={confirm.deleteTitle}
+        description={
+          pendingDelete
+            ? confirm.deleteEntity
+                .replace("{entity}", confirm.entityLabels.denomination)
+                .replace("{name}", pendingDelete.name)
+            : ""
+        }
+        confirmLabel={confirm.confirmLabel}
+        cancelLabel={confirm.cancelLabel}
+        onClose={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (!pendingDelete) return;
+          removeItem(pendingDelete.id);
+          setPendingDelete(null);
+        }}
+      />
     </div>
   );
 }

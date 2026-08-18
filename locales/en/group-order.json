@@ -104,5 +104,14 @@
   "payProcessing": "Processing…",
   "payBackToGroup": "Back to group order",
   "payAlreadyPaidTitle": "Already paid",
-  "payAlreadyPaidHint": "Your share is confirmed. You can return to the group order."
+  "payAlreadyPaidHint": "Your share is confirmed. You can return to the group order.",
+  "confirm": {
+    "deleteTitle": "Delete",
+    "confirmLabel": "Delete",
+    "cancelLabel": "Cancel",
+    "removeParticipant": "Are you sure you want to remove {name} from this group order?",
+    "removeItem": "Are you sure you want to remove \"{name}\" from this group order?",
+    "cancelOrder": "Are you sure you want to cancel this group order? This cannot be undone.",
+    "cancelOrderConfirm": "Cancel order"
+  }
 }

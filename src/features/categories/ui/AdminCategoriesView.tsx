@@ -359,7 +359,11 @@ export function AdminCategoriesView({
         }}
         categories={categories}
         category={editingCategory}
-        copy={{ drawer: copy.categories.drawer, common: copy.common }}
+        copy={{
+          drawer: copy.categories.drawer,
+          common: copy.common,
+          confirm: copy.confirm,
+        }}
       />
 
       <ConfirmDialog

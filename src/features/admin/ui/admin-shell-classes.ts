@@ -12,9 +12,9 @@ export const ADMIN_BRAND_LOGO_COLLAPSED_CLASS =
 export const ADMIN_SIDEBAR_ASIDE =
   "hidden lg:flex lg:h-full lg:shrink-0 lg:flex-col overflow-hidden rounded-r-[15px] border-r border-white/15 bg-brand-forest transition-[width] duration-200 ease-out";
 
-/** Desktop: viewport-height shell so only the main column scrolls; sidebar stays fixed. */
+/** Desktop: pinned to the viewport so only the main column scrolls; sidebar stays put. */
 export const ADMIN_PAGE_SHELL =
-  "flex min-h-screen flex-col bg-gray-50 lg:h-dvh lg:max-h-dvh lg:flex-row lg:overflow-hidden";
+  "flex min-h-dvh flex-col bg-gray-50 lg:fixed lg:inset-0 lg:flex-row lg:overflow-hidden";
 
 export const ADMIN_MAIN_COLUMN =
   "min-w-0 flex-1 px-4 pb-8 pt-12 sm:px-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-y-contain lg:px-8";

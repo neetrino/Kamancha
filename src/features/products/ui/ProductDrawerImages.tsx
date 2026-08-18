@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { X } from "lucide-react";
 
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -20,6 +21,7 @@ type ProductDrawerImagesProps = {
   disabled: boolean;
   onChange: (images: ProductDraftImage[]) => void;
   copy: Dictionary["admin"]["products"]["images"];
+  confirm: Dictionary["admin"]["confirm"];
 };
 
 export function ProductDrawerImages({
@@ -27,8 +29,10 @@ export function ProductDrawerImages({
   disabled,
   onChange,
   copy,
+  confirm,
 }: ProductDrawerImagesProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
 
   function setPrimary(key: string): void {
     onChange(
@@ -126,7 +130,7 @@ export function ProductDrawerImages({
                 <button
                   type="button"
                   disabled={disabled}
-                  onClick={() => removeImage(image.key)}
+                  onClick={() => setPendingKey(image.key)}
                   className="rounded p-1 text-gray-500 hover:bg-white hover:text-red-600"
                   aria-label={copy.removeAria}
                 >
@@ -137,6 +141,20 @@ export function ProductDrawerImages({
           ))}
         </ul>
       ) : null}
+
+      <ConfirmDialog
+        open={pendingKey !== null}
+        title={confirm.deleteTitle}
+        description={confirm.deleteImage}
+        confirmLabel={confirm.confirmLabel}
+        cancelLabel={confirm.cancelLabel}
+        onClose={() => setPendingKey(null)}
+        onConfirm={() => {
+          if (!pendingKey) return;
+          removeImage(pendingKey);
+          setPendingKey(null);
+        }}
+      />
     </div>
   );
 }

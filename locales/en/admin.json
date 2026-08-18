@@ -72,6 +72,7 @@
     "archiveConfirmLabel": "Archive",
     "cancelLabel": "Cancel",
     "deleteEntity": "Are you sure you want to delete the {entity} \"{name}\"? This action cannot be undone.",
+    "deleteImage": "Are you sure you want to remove this image? This action cannot be undone.",
     "deleteSelectedOrders": "Are you sure you want to delete {count} selected order{plural}? This action cannot be undone.",
     "deleteSelectedProducts": "Are you sure you want to delete {label}? This action cannot be undone.",
     "deleteSelectedUsers": "Are you sure you want to delete {count} selected user{plural}? This anonymizes their accounts and cannot be undone.",
@@ -81,7 +82,10 @@
       "category": "category",
       "promoCode": "promo code",
       "slide": "slide",
-      "post": "post"
+      "post": "post",
+      "denomination": "denomination",
+      "closedDate": "closed date",
+      "modifier": "modifier"
     },
     "selectedProduct": "selected product",
     "selectedProducts": "{count} selected products"

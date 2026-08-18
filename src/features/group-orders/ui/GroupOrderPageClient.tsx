@@ -13,6 +13,7 @@ import {
 
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { GroupOrderSummary } from "@/features/group-orders/ui/GroupOrderSummary";
 import {
@@ -48,6 +49,11 @@ const PRODUCT_THUMB_RADIUS_PX = 16;
 const PRODUCT_CARD_MIN_PX = 200;
 const PRODUCT_CARD_MAX_PX = 320;
 const PRODUCT_TITLE_MAX_PX = 180;
+
+type PendingConfirm =
+  | { kind: "participant"; id: string; name: string }
+  | { kind: "item"; id: string; name: string }
+  | { kind: "cancel" };
 
 type GroupOrderPageClientProps = {
   locale: Locale;
@@ -108,6 +114,9 @@ export function GroupOrderPageClient({
     lat: number;
     lng: number;
   } | null>(null);
+  const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(
+    null,
+  );
 
   const isOrganizer = view?.currentParticipantRole === "ORGANIZER";
   const canEdit = view?.status === "OPEN";
@@ -163,6 +172,45 @@ export function GroupOrderPageClient({
       }
       router.refresh();
     });
+  }
+
+  function pendingConfirmDescription(): string {
+    if (!pendingConfirm) return "";
+    if (pendingConfirm.kind === "participant") {
+      return labels.confirm.removeParticipant.replace(
+        "{name}",
+        pendingConfirm.name,
+      );
+    }
+    if (pendingConfirm.kind === "item") {
+      return labels.confirm.removeItem.replace("{name}", pendingConfirm.name);
+    }
+    return labels.confirm.cancelOrder;
+  }
+
+  function confirmPendingDelete(): void {
+    if (!pendingConfirm) return;
+    const next = pendingConfirm;
+    setPendingConfirm(null);
+    if (next.kind === "participant") {
+      run(async () =>
+        removeParticipantAction({
+          inviteToken,
+          participantId: next.id,
+        }),
+      );
+      return;
+    }
+    if (next.kind === "item") {
+      run(async () =>
+        removeGroupOrderItemAction({
+          inviteToken,
+          itemId: next.id,
+        }),
+      );
+      return;
+    }
+    run(async () => cancelGroupOrderAction({ inviteToken }));
   }
 
   async function copyLink(): Promise<void> {
@@ -440,12 +488,11 @@ export function GroupOrderPageClient({
                       className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
                       aria-label={labels.removeParticipant}
                       onClick={() =>
-                        run(async () =>
-                          removeParticipantAction({
-                            inviteToken,
-                            participantId: participant.id,
-                          }),
-                        )
+                        setPendingConfirm({
+                          kind: "participant",
+                          id: participant.id,
+                          name: participant.displayName,
+                        })
                       }
                     >
                       <Trash2 className="h-4 w-4" />
@@ -469,12 +516,11 @@ export function GroupOrderPageClient({
                           canEdit
                         }
                         onRemove={(itemId) =>
-                          run(async () =>
-                            removeGroupOrderItemAction({
-                              inviteToken,
-                              itemId,
-                            }),
-                          )
+                          setPendingConfirm({
+                            kind: "item",
+                            id: itemId,
+                            name: item.title,
+                          })
                         }
                       />
                     </li>
@@ -625,9 +671,7 @@ export function GroupOrderPageClient({
                 variant="light"
                 label={labels.cancelOrder}
                 className={`${PILL_FULL} !text-red-700`}
-                onClick={() =>
-                  run(async () => cancelGroupOrderAction({ inviteToken }))
-                }
+                onClick={() => setPendingConfirm({ kind: "cancel" })}
               />
             ) : null}
           </div>
@@ -635,6 +679,26 @@ export function GroupOrderPageClient({
       />
       </div>
       </div>
+      <ConfirmDialog
+        open={pendingConfirm !== null}
+        title={
+          pendingConfirm?.kind === "cancel"
+            ? labels.cancelOrder
+            : labels.confirm.deleteTitle
+        }
+        description={pendingConfirmDescription()}
+        confirmLabel={
+          pendingConfirm?.kind === "cancel"
+            ? labels.confirm.cancelOrderConfirm
+            : labels.confirm.confirmLabel
+        }
+        cancelLabel={labels.confirm.cancelLabel}
+        isPending={pending}
+        onClose={() => {
+          if (!pending) setPendingConfirm(null);
+        }}
+        onConfirm={confirmPendingDelete}
+      />
     </div>
   );
 }

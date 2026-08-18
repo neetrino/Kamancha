@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
@@ -113,8 +114,23 @@ export function BlogPostDrawer({
     () => post?.coverUrl ?? null,
   );
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
+  const [pendingRemoveImage, setPendingRemoveImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function clearImage(): void {
+    setImageFile(null);
+    setImagePreview((current) => {
+      if (current?.startsWith("blob:")) {
+        URL.revokeObjectURL(current);
+      }
+      return null;
+    });
+    if (isEdit && post?.coverUrl) {
+      setRemoveExistingImage(true);
+    }
+    setPendingRemoveImage(false);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -370,18 +386,7 @@ export function BlogPostDrawer({
                   <button
                     type="button"
                     disabled={isPending}
-                    onClick={() => {
-                      setImageFile(null);
-                      setImagePreview((current) => {
-                        if (current?.startsWith("blob:")) {
-                          URL.revokeObjectURL(current);
-                        }
-                        return null;
-                      });
-                      if (isEdit && post?.coverUrl) {
-                        setRemoveExistingImage(true);
-                      }
-                    }}
+                    onClick={() => setPendingRemoveImage(true)}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
                     {copy.blog.drawer.remove}
@@ -410,6 +415,15 @@ export function BlogPostDrawer({
             </Button>
           </div>
         </form>
+      <ConfirmDialog
+        open={pendingRemoveImage}
+        title={copy.confirm.deleteTitle}
+        description={copy.confirm.deleteImage}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
+        onClose={() => setPendingRemoveImage(false)}
+        onConfirm={clearImage}
+      />
     </SideSheet>
   );
 }

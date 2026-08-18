@@ -94,6 +94,7 @@ export function AdminProductsView({
           discount: copy.products.discount,
           modifiers: copy.products.modifiers,
           common: copy.common,
+          confirm: copy.confirm,
         }}
       />
     </>

@@ -51,6 +51,7 @@ type DrawerCopy = {
   discount: Dictionary["admin"]["products"]["discount"];
   modifiers: Dictionary["admin"]["products"]["modifiers"];
   common: Dictionary["admin"]["common"];
+  confirm: Dictionary["admin"]["confirm"];
 };
 
 type ProductDrawerProps = {
@@ -298,6 +299,7 @@ export function ProductDrawer({
               disabled={isPending}
               onChange={handleImagesChange}
               copy={copy.images}
+              confirm={copy.confirm}
             />
 
             <ProductDrawerCategories
@@ -318,6 +320,7 @@ export function ProductDrawer({
               onLibraryChange={setModifierLibrary}
               onSelectedChange={setModifierIds}
               copy={copy.modifiers}
+              confirm={copy.confirm}
             />
 
             <div className="grid gap-4 sm:grid-cols-2">

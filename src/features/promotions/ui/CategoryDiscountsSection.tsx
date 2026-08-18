@@ -124,7 +124,7 @@ export function CategoryDiscountsSection({
           {copy.categories.empty}
         </div>
       ) : (
-        <ul className="max-h-80 divide-y divide-gray-100 overflow-y-auto rounded-lg border border-gray-200">
+        <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200">
           {categories.map((category) => (
             <li
               key={category.id}

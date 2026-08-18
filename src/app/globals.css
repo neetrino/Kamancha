@@ -60,6 +60,19 @@ html {
   overscroll-behavior-x: none;
 }
 
+/**
+ * Admin desktop: lock the document so only the main column scrolls.
+ * Long pages (discounts, etc.) otherwise show a page scrollbar beside the column.
+ */
+@media (min-width: 1024px) {
+  html:has([data-admin-shell]),
+  html:has([data-admin-shell]) body {
+    overflow: hidden;
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
 @layer base {
   a[href],
   button:not(:disabled),

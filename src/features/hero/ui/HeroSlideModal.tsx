@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
   ADMIN_INPUT,
@@ -75,8 +76,23 @@ function HeroSlideDrawerForm({
     slide?.imageUrl ?? null,
   );
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
+  const [pendingRemoveImage, setPendingRemoveImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function clearImage(): void {
+    setImageFile(null);
+    setImagePreview((current) => {
+      if (current?.startsWith("blob:")) {
+        URL.revokeObjectURL(current);
+      }
+      return null;
+    });
+    if (isEdit && slide?.imageUrl) {
+      setRemoveExistingImage(true);
+    }
+    setPendingRemoveImage(false);
+  }
 
   return (
     <>
@@ -175,18 +191,7 @@ function HeroSlideDrawerForm({
                   <button
                     type="button"
                     disabled={isPending}
-                    onClick={() => {
-                      setImageFile(null);
-                      setImagePreview((current) => {
-                        if (current?.startsWith("blob:")) {
-                          URL.revokeObjectURL(current);
-                        }
-                        return null;
-                      });
-                      if (isEdit && slide?.imageUrl) {
-                        setRemoveExistingImage(true);
-                      }
-                    }}
+                    onClick={() => setPendingRemoveImage(true)}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
                     {copy.hero.drawer.remove}
@@ -225,6 +230,15 @@ function HeroSlideDrawerForm({
             </button>
           </div>
         </form>
+      <ConfirmDialog
+        open={pendingRemoveImage}
+        title={copy.confirm.deleteTitle}
+        description={copy.confirm.deleteImage}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
+        onClose={() => setPendingRemoveImage(false)}
+        onConfirm={clearImage}
+      />
     </>
   );
 }

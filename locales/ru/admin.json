@@ -72,6 +72,7 @@
     "archiveConfirmLabel": "Архивировать",
     "cancelLabel": "Отмена",
     "deleteEntity": "Удалить {entity} «{name}»? Это действие нельзя отменить.",
+    "deleteImage": "Удалить это изображение? Это действие нельзя отменить.",
     "deleteSelectedOrders": "Удалить {count} выбранных заказ{plural}? Это действие нельзя отменить.",
     "deleteSelectedProducts": "Удалить {label}? Это действие нельзя отменить.",
     "deleteSelectedUsers": "Удалить {count} выбранных пользовател{plural}? Их учётные записи будут анонимизированы, и это действие нельзя отменить.",
@@ -81,7 +82,10 @@
       "category": "категорию",
       "promoCode": "промокод",
       "slide": "слайд",
-      "post": "публикацию"
+      "post": "публикацию",
+      "denomination": "номинал",
+      "closedDate": "закрытый день",
+      "modifier": "модификатор"
     },
     "selectedProduct": "выбранный товар",
     "selectedProducts": "{count} выбранных товаров"

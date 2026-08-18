@@ -104,5 +104,14 @@
   "payProcessing": "Обработка…",
   "payBackToGroup": "Назад к групповому заказу",
   "payAlreadyPaidTitle": "Уже оплачено",
-  "payAlreadyPaidHint": "Ваша доля подтверждена. Можно вернуться к групповому заказу."
+  "payAlreadyPaidHint": "Ваша доля подтверждена. Можно вернуться к групповому заказу.",
+  "confirm": {
+    "deleteTitle": "Удалить",
+    "confirmLabel": "Удалить",
+    "cancelLabel": "Отмена",
+    "removeParticipant": "Удалить {name} из этого группового заказа?",
+    "removeItem": "Удалить «{name}» из этого группового заказа?",
+    "cancelOrder": "Отменить этот групповой заказ? Это действие нельзя отменить.",
+    "cancelOrderConfirm": "Отменить заказ"
+  }
 }

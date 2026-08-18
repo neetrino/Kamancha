@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -21,6 +22,7 @@ type AdminDeliveryScheduleEditorProps = {
   onChange: (value: DeliveryScheduleSettings) => void;
   disabled?: boolean;
   copy: Dictionary["admin"]["delivery"]["schedule"];
+  confirm: Dictionary["admin"]["confirm"];
 };
 
 function toHHmm(value: string): string {
@@ -66,8 +68,12 @@ export function AdminDeliveryScheduleEditor({
   onChange,
   disabled = false,
   copy,
+  confirm,
 }: AdminDeliveryScheduleEditorProps) {
   const [closedDraft, setClosedDraft] = useState("");
+  const [pendingClosedDate, setPendingClosedDate] = useState<string | null>(
+    null,
+  );
 
   const weekdayLabels: Record<IsoWeekday, string> = {
     1: copy.monday,
@@ -257,14 +263,7 @@ export function AdminDeliveryScheduleEditor({
                   disabled={disabled}
                   className="text-gray-500 hover:text-red-700"
                   aria-label={copy.removeClosedDateAria.replace("{date}", date)}
-                  onClick={() =>
-                    onChange({
-                      ...value,
-                      closedDates: value.closedDates.filter(
-                        (entry) => entry !== date,
-                      ),
-                    })
-                  }
+                  onClick={() => setPendingClosedDate(date)}
                 >
                   ×
                 </button>
@@ -275,6 +274,31 @@ export function AdminDeliveryScheduleEditor({
           <p className="mt-2 text-xs text-gray-500">{copy.noClosedDates}</p>
         )}
       </div>
+
+      <ConfirmDialog
+        open={pendingClosedDate !== null}
+        title={confirm.deleteTitle}
+        description={
+          pendingClosedDate
+            ? confirm.deleteEntity
+                .replace("{entity}", confirm.entityLabels.closedDate)
+                .replace("{name}", pendingClosedDate)
+            : ""
+        }
+        confirmLabel={confirm.confirmLabel}
+        cancelLabel={confirm.cancelLabel}
+        onClose={() => setPendingClosedDate(null)}
+        onConfirm={() => {
+          if (!pendingClosedDate) return;
+          onChange({
+            ...value,
+            closedDates: value.closedDates.filter(
+              (entry) => entry !== pendingClosedDate,
+            ),
+          });
+          setPendingClosedDate(null);
+        }}
+      />
     </div>
   );
 }

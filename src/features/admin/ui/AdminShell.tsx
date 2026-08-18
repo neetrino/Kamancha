@@ -22,7 +22,7 @@ type AdminShellProps = {
 export function AdminShell({ locale, copy, children }: AdminShellProps) {
   return (
     <AdminSidebarCollapseProvider>
-      <div className={ADMIN_PAGE_SHELL}>
+      <div className={ADMIN_PAGE_SHELL} data-admin-shell="">
         <AdminSidebar locale={locale} shell={copy.shell} nav={copy.nav} />
         <div className={ADMIN_MAIN_COLUMN}>
           <div className={ADMIN_MAIN_INNER}>
