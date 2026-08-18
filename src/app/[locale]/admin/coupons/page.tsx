@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ADMIN_PAGINATION } from "@/features/admin/ui/admin-form-classes";
 import { listAdminPromotions } from "@/features/promotions/application/queries";
 import { adminPromotionsFilterSchema } from "@/features/promotions/schemas/admin-promotions";
 import { AdminCouponsView } from "@/features/promotions/ui/AdminCouponsView";
@@ -65,7 +66,7 @@ export default async function AdminCouponsPage({
         }}
       />
       {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
+        <nav className={ADMIN_PAGINATION}>
           {filters.page > 1 ? (
             <Link
               href={`/${locale}/admin/coupons?page=${filters.page - 1}`}

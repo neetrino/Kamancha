@@ -12,9 +12,6 @@ export const ADMIN_BRAND_LOGO_COLLAPSED_CLASS =
 export const ADMIN_SIDEBAR_ASIDE =
   "hidden lg:flex lg:h-full lg:shrink-0 lg:flex-col overflow-hidden rounded-r-[15px] border-r border-white/15 bg-brand-forest transition-[width] duration-200 ease-out";
 
-export const ADMIN_SIDEBAR_NAV =
-  "flex min-h-0 flex-1 flex-col space-y-1 overflow-y-auto overscroll-y-contain px-2 py-6";
-
 /** Desktop: viewport-height shell so only the main column scrolls; sidebar stays fixed. */
 export const ADMIN_PAGE_SHELL =
   "flex min-h-screen flex-col bg-gray-50 lg:h-dvh lg:max-h-dvh lg:flex-row lg:overflow-hidden";

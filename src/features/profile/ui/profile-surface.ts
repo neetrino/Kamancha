@@ -49,4 +49,4 @@ export const PROFILE_STATUS_BADGE =
   "inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-medium capitalize text-gray-800";
 
 /** Sliding sidebar pill — same duration as Grill.am profile nav. */
-export const PROFILE_NAV_TRANSITION_MS = 380;
+export { SLIDING_NAV_TRANSITION_MS as PROFILE_NAV_TRANSITION_MS } from "@/components/ui/useSlidingNavIndicator";

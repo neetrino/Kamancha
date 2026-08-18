@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 
+import { AdminPageReveal } from "@/features/admin/ui/AdminPageReveal";
 import { AdminSidebar } from "@/features/admin/ui/AdminSidebar";
 import { AdminSidebarCollapseProvider } from "@/features/admin/ui/AdminSidebarCollapseContext";
 import {
@@ -24,7 +25,9 @@ export function AdminShell({ locale, copy, children }: AdminShellProps) {
       <div className={ADMIN_PAGE_SHELL}>
         <AdminSidebar locale={locale} shell={copy.shell} nav={copy.nav} />
         <div className={ADMIN_MAIN_COLUMN}>
-          <div className={ADMIN_MAIN_INNER}>{children}</div>
+          <div className={ADMIN_MAIN_INNER}>
+            <AdminPageReveal>{children}</AdminPageReveal>
+          </div>
         </div>
       </div>
     </AdminSidebarCollapseProvider>

@@ -7,6 +7,7 @@ import {
 } from "@/features/products/application/list-admin-products";
 import { listModifiersForProductAdmin } from "@/features/products/application/product-modifiers";
 import { adminProductsFilterSchema } from "@/features/products/schemas/admin-list";
+import { ADMIN_PAGINATION } from "@/features/admin/ui/admin-form-classes";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
 import { isLocale } from "@/lib/i18n/config";
@@ -141,7 +142,7 @@ export default async function AdminProductsPage({
       />
 
       {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
+        <nav className={ADMIN_PAGINATION}>
           {filters.page > 1 ? (
             <Link
               href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page - 1 })}`}

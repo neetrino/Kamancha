@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import { useEffect, type CSSProperties, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
@@ -20,7 +13,10 @@ import {
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { PROFILE_NAV_TRANSITION_MS } from "@/features/profile/ui/profile-surface";
+import {
+  SLIDING_NAV_TRANSITION_MS,
+  useSlidingNavIndicator,
+} from "@/components/ui/useSlidingNavIndicator";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -35,11 +31,6 @@ type NavItem = {
   label: string;
   icon: ReactNode;
   exact?: boolean;
-};
-
-type IndicatorBox = {
-  top: number;
-  height: number;
 };
 
 function buildNavItems(
@@ -88,56 +79,6 @@ function isItemActive(pathname: string, item: NavItem): boolean {
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
 }
 
-function useSlidingNavIndicator(activeHref: string) {
-  const navRef = useRef<HTMLElement>(null);
-  const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
-  const [indicator, setIndicator] = useState<IndicatorBox | null>(null);
-  const [slideEnabled, setSlideEnabled] = useState(false);
-
-  useLayoutEffect(() => {
-    const frameId = requestAnimationFrame(() => {
-      if (!activeHref) {
-        setIndicator(null);
-        return;
-      }
-      const link = linkRefs.current.get(activeHref);
-      if (!link) return;
-      setIndicator({ top: link.offsetTop, height: link.offsetHeight });
-    });
-    return () => cancelAnimationFrame(frameId);
-  }, [activeHref]);
-
-  useEffect(() => {
-    const frameId = requestAnimationFrame(() => setSlideEnabled(true));
-    return () => cancelAnimationFrame(frameId);
-  }, []);
-
-  useEffect(() => {
-    const nav = navRef.current;
-    if (!nav || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(() => {
-      const link = linkRefs.current.get(activeHref);
-      if (!link) return;
-      setIndicator({ top: link.offsetTop, height: link.offsetHeight });
-    });
-    observer.observe(nav);
-    for (const link of linkRefs.current.values()) {
-      observer.observe(link);
-    }
-    return () => observer.disconnect();
-  }, [activeHref]);
-
-  function registerLink(href: string, node: HTMLAnchorElement | null): void {
-    if (node) {
-      linkRefs.current.set(href, node);
-    } else {
-      linkRefs.current.delete(href);
-    }
-  }
-
-  return { navRef, indicator, slideEnabled, registerLink };
-}
-
 export function ProfileSidebarNav({
   locale,
   dictionary,
@@ -160,7 +101,7 @@ export function ProfileSidebarNav({
     items.find((item) => isItemActive(pathname, item))?.href ??
     items[0]?.href ??
     "";
-  const { navRef, indicator, slideEnabled, registerLink } =
+  const { navRef, indicator, slideEnabled, registerItem } =
     useSlidingNavIndicator(activeHref);
 
   return (
@@ -171,7 +112,7 @@ export function ProfileSidebarNav({
         aria-label={dictionary.title}
         style={
           {
-            "--profile-nav-ms": `${PROFILE_NAV_TRANSITION_MS}ms`,
+            "--profile-nav-ms": `${SLIDING_NAV_TRANSITION_MS}ms`,
           } as CSSProperties
         }
       >
@@ -194,7 +135,7 @@ export function ProfileSidebarNav({
               key={item.href}
               href={item.href}
               prefetchPolicy="intent"
-              ref={(node) => registerLink(item.href, node)}
+              ref={(node) => registerItem(item.href, node)}
               className={`relative z-10 flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left font-big-fat-boii text-sm font-normal tracking-wide uppercase ${
                 active ? "" : "hover:bg-white/40"
               }`}

@@ -8,6 +8,7 @@ import {
   ADMIN_LABEL,
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
+  ADMIN_PAGINATION,
   ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
 import {
@@ -191,7 +192,7 @@ export default async function AdminMessagesPage({
       </Card>
 
       {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
+        <nav className={ADMIN_PAGINATION}>
           <span>
             {dictionary.admin.common.pageOf
               .replace("{page}", String(filters.page))

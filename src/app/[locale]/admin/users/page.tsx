@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ADMIN_PAGINATION } from "@/features/admin/ui/admin-form-classes";
 import { listAdminUsers } from "@/features/users/application/queries";
 import { adminUsersFilterSchema } from "@/features/users/schemas/admin-users";
 import { AdminUsersView } from "@/features/users/ui/AdminUsersView";
@@ -75,7 +76,7 @@ export default async function AdminUsersPage({
       />
 
       {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
+        <nav className={ADMIN_PAGINATION}>
           {filters.page > 1 ? (
             <Link
               href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}

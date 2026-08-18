@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { AppLink } from "@/components/ui/AppLink";
 import { SideSheet } from "@/components/ui/SideSheet";
 
 import {
@@ -34,6 +34,12 @@ function isNestedVisible(
   return productsNestedExpanded;
 }
 
+function navIconClass(active: boolean): string {
+  return active
+    ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-brand-forest"
+    : "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/20 text-white";
+}
+
 export function AdminMenuDrawer({
   locale,
   pathname,
@@ -52,21 +58,8 @@ export function AdminMenuDrawer({
         aria-expanded={open}
         aria-controls="admin-menu-drawer-panel"
         onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold uppercase tracking-wide text-gray-800 shadow-sm"
+        className="inline-flex h-12 items-center gap-2 rounded-[70px] bg-white px-6 font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase"
       >
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M4 6H20M4 12H16M4 18H12"
-          />
-        </svg>
         {shell.menu}
       </button>
 
@@ -79,98 +72,100 @@ export function AdminMenuDrawer({
       >
         <div
           id="admin-menu-drawer-panel"
-          className="flex min-h-0 flex-1 flex-col"
+          className="flex min-h-0 flex-1 flex-col bg-brand-forest"
         >
-            <div className="border-b border-gray-200 bg-brand-forest px-4 py-4">
-              <BrandLogo
-                locale={locale}
-                brandName={shell.brandName}
-                className={ADMIN_BRAND_LOGO_CLASS}
-              />
-            </div>
+          <div className="border-b border-white/35 px-4 py-4">
+            <BrandLogo
+              locale={locale}
+              brandName={shell.brandName}
+              className={ADMIN_BRAND_LOGO_CLASS}
+            />
+          </div>
 
-            <nav className="flex-1 divide-y divide-gray-100 overflow-y-auto">
-              {tabs.map((tab) => {
-                if (
-                  !isNestedVisible(
-                    tab,
-                    pathname,
-                    locale,
-                    productsNestedExpanded,
-                  )
-                ) {
-                  return null;
-                }
+          <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">
+            {tabs.map((tab) => {
+              if (
+                !isNestedVisible(
+                  tab,
+                  pathname,
+                  locale,
+                  productsNestedExpanded,
+                )
+              ) {
+                return null;
+              }
 
-                const isActive = isAdminTabActive(tab.href, pathname, locale);
+              const isActive = isAdminTabActive(tab.href, pathname, locale);
 
-                if (tab.id === "products") {
-                  return (
-                    <div
-                      key={tab.id}
-                      className={`flex w-full ${isActive ? "bg-gray-900 text-white" : ""}`}
-                    >
-                      <Link
-                        href={tab.href}
-                        onClick={() => setOpen(false)}
-                        className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-sm font-medium ${
-                          isActive
-                            ? "text-white"
-                            : "text-gray-700 hover:bg-gray-50"
-                        } ${tab.isSubCategory ? "pl-10" : ""}`}
-                      >
-                        <span className="shrink-0">{tab.icon}</span>
-                        <span className="truncate">{tab.label}</span>
-                      </Link>
-                      <button
-                        type="button"
-                        aria-expanded={productsNestedExpanded}
-                        aria-label={shell.toggleProductSubpages}
-                        onClick={toggleProductsNested}
-                        className={`shrink-0 border-l px-3 py-3 ${
-                          isActive
-                            ? "border-white/25 text-white"
-                            : "border-gray-200 text-gray-600"
-                        }`}
-                      >
-                        <svg
-                          className={`h-5 w-5 transition-transform ${productsNestedExpanded ? "" : "-rotate-90"}`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  );
-                }
-
+              if (tab.id === "products") {
                 return (
-                  <Link
+                  <div
                     key={tab.id}
-                    href={tab.href}
-                    onClick={() => setOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium ${
-                      tab.isSubCategory ? "pl-10" : ""
-                    } ${
-                      isActive
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-700 hover:bg-gray-50"
+                    className={`flex w-full overflow-hidden rounded-2xl ${
+                      isActive ? "bg-white/70" : ""
                     }`}
                   >
-                    <span className="shrink-0">{tab.icon}</span>
-                    <span className="truncate">{tab.label}</span>
-                  </Link>
+                    <AppLink
+                      href={tab.href}
+                      prefetchPolicy="intent"
+                      onClick={() => setOpen(false)}
+                      className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2 font-big-fat-boii text-sm font-normal tracking-wide uppercase"
+                    >
+                      <span className={navIconClass(isActive)}>{tab.icon}</span>
+                      <span
+                        className={`truncate ${isActive ? "text-brand-forest" : "text-white"}`}
+                      >
+                        {tab.label}
+                      </span>
+                    </AppLink>
+                    <button
+                      type="button"
+                      aria-expanded={productsNestedExpanded}
+                      aria-label={shell.toggleProductSubpages}
+                      onClick={toggleProductsNested}
+                      className={`shrink-0 px-3 py-2 ${
+                        isActive ? "text-brand-forest" : "text-white/80"
+                      }`}
+                    >
+                      <svg
+                        className={`h-5 w-5 transition-transform ${productsNestedExpanded ? "" : "-rotate-90"}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 );
-              })}
-            </nav>
+              }
+
+              return (
+                <AppLink
+                  key={tab.id}
+                  href={tab.href}
+                  prefetchPolicy="intent"
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-3 rounded-2xl px-3 py-2 font-big-fat-boii text-sm font-normal tracking-wide uppercase ${
+                    tab.isSubCategory ? "pl-10" : ""
+                  } ${isActive ? "bg-white/70" : "hover:bg-white/40"}`}
+                >
+                  <span className={navIconClass(isActive)}>{tab.icon}</span>
+                  <span
+                    className={`truncate ${isActive ? "text-brand-forest" : "text-white"}`}
+                  >
+                    {tab.label}
+                  </span>
+                </AppLink>
+              );
+            })}
+          </nav>
         </div>
       </SideSheet>
     </div>

@@ -16,3 +16,5 @@ export const ADMIN_PAGE_TITLE = "text-2xl font-semibold text-gray-900";
 export const ADMIN_PAGE_SUBTITLE = "text-sm text-gray-600";
 
 export const ADMIN_SECTION_TITLE = "text-xl font-semibold text-gray-900";
+
+export const ADMIN_PAGINATION = "mt-4 flex items-center gap-3 text-sm text-gray-700";
