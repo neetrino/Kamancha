@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/Card";
 import {
   ConfirmDialog,
 } from "@/components/ui/ConfirmDialog";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   ADMIN_BADGE,
 } from "@/features/admin/ui/status-badge";
@@ -137,11 +137,11 @@ export function AdminUsersView({
   return (
     <section>
       <form method="get" className="mb-4 flex flex-wrap gap-3">
-        <input
+        <AdminSearchInput
           name="q"
           defaultValue={q ?? ""}
           placeholder={copy.users.searchPlaceholder}
-          className={`${ADMIN_INPUT} min-w-[220px] flex-1`}
+          className="min-w-[220px] flex-1"
           aria-label={copy.users.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}

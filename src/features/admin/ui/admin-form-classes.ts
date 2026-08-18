@@ -5,6 +5,12 @@ export const ADMIN_LABEL =
 export const ADMIN_INPUT =
   "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300";
 
+export const ADMIN_SEARCH_WRAP =
+  "flex h-11 w-full items-center gap-2.5 rounded-2xl border border-gray-200 bg-white px-4 shadow-sm transition-colors hover:border-gray-300 focus-within:border-gray-300";
+
+export const ADMIN_SEARCH_FIELD =
+  "h-full min-w-0 flex-1 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400";
+
 export const ADMIN_SELECT =
   "h-11 w-full appearance-none rounded-2xl border border-gray-200 bg-white bg-[url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\")] bg-[length:1rem_1rem] bg-[right_0.75rem_center] bg-no-repeat px-4 pr-10 text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300";
 

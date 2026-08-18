@@ -111,7 +111,7 @@ export function CategoryDiscountsSection({
         </div>
         <Button
           type="button"
-          size="sm"
+          className="h-11 px-4 text-sm"
           disabled={isPending || !isDirty || categories.length === 0}
           onClick={saveAll}
         >

@@ -102,7 +102,7 @@ export function StoreSettingsForms({
               disabled={isPending}
             />
           </label>
-          <Button type="submit" size="sm" disabled={isPending}>
+          <Button type="submit" className="h-11 px-4 text-sm" disabled={isPending}>
             {copy.settings.identity.saveIdentity}
           </Button>
         </form>
@@ -171,7 +171,7 @@ export function StoreSettingsForms({
               required
             />
           </label>
-          <Button type="submit" size="sm" disabled={isPending}>
+          <Button type="submit" className="h-11 px-4 text-sm" disabled={isPending}>
             {copy.settings.exchangeRates.saveExchangeRates}
           </Button>
         </form>

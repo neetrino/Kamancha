@@ -7,10 +7,8 @@ import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import {
-  ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -185,11 +183,11 @@ export function AdminCategoriesView({
         </Button>
       </div>
 
-      <input
+      <AdminSearchInput
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder={copy.categories.searchPlaceholder}
-        className={`${ADMIN_INPUT} mb-4`}
+        className="mb-4"
         aria-label={copy.categories.searchAria}
       />
 

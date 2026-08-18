@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
-  ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
@@ -100,11 +100,10 @@ export default async function AdminMessagesPage({
         <form method="get" className="flex flex-wrap items-end gap-3">
           <label className="min-w-[180px] flex-1">
             <span className={ADMIN_LABEL}>{t.search}</span>
-            <input
+            <AdminSearchInput
               name="q"
               defaultValue={filters.q ?? ""}
               placeholder={t.searchPlaceholder}
-              className={ADMIN_INPUT}
             />
           </label>
           <label className="min-w-[140px]">

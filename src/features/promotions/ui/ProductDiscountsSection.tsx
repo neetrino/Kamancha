@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import type { DiscountBoardProduct } from "@/features/promotions/application/discounts-board";
 import { upsertTargetDiscountAction } from "@/features/promotions/application/manage-discounts";
@@ -119,13 +120,12 @@ export function ProductDiscountsSection({
       <label className="sr-only" htmlFor="product-discount-search">
         {copy.products.searchAria}
       </label>
-      <input
+      <AdminSearchInput
         id="product-discount-search"
-        type="search"
         placeholder={copy.products.searchPlaceholder}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        className={`${ADMIN_INPUT} mb-4`}
+        className="mb-4"
       />
 
       {filtered.length === 0 ? (
@@ -195,7 +195,7 @@ export function ProductDiscountsSection({
                   <span className="text-sm text-gray-500">%</span>
                   <Button
                     type="button"
-                    size="sm"
+                    className="h-11 px-4 text-sm"
                     disabled={isPending}
                     onClick={() => saveOne(product.id, product.title)}
                   >

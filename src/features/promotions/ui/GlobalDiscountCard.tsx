@@ -111,7 +111,7 @@ export function GlobalDiscountCard({
         </div>
         <Button
           type="button"
-          size="sm"
+          className="h-11 px-4 text-sm"
           disabled={isPending}
           onClick={() => {
             const parsed = parseInput();
