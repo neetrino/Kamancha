@@ -67,7 +67,8 @@ export function AdminOrdersFilters({
           value={statusValue}
           allLabel={f.allStatuses}
           options={orderStatusFilters}
-          className="w-[180px] shrink-0"
+          className="shrink-0"
+          fitContent
           onValueChange={applyStatus}
         />
         <SelectDropdown
@@ -76,7 +77,8 @@ export function AdminOrdersFilters({
           value={paymentValue}
           allLabel={f.allPaymentStatuses}
           options={paymentStatusFilters}
-          className="w-[200px] shrink-0"
+          className="shrink-0"
+          fitContent
           onValueChange={applyPayment}
         />
         <AdminSearchInput
