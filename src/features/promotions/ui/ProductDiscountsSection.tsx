@@ -139,9 +139,9 @@ export function ProductDiscountsSection({
             return (
               <li
                 key={product.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3"
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   {product.imageUrl ? (
                     // Admin/R2 hosts vary — native img avoids brittle next/image allowlists.
                     // eslint-disable-next-line @next/next/no-img-element
@@ -166,7 +166,7 @@ export function ProductDiscountsSection({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex h-11 shrink-0 items-stretch gap-2">
                   <label
                     className="sr-only"
                     htmlFor={`product-discount-${product.id}`}
@@ -190,12 +190,15 @@ export function ProductDiscountsSection({
                         [product.id]: event.target.value,
                       }))
                     }
-                    className={`${ADMIN_INPUT} w-20`}
+                    className={`${ADMIN_INPUT} h-full w-20 appearance-none py-0 leading-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                   />
-                  <span className="text-sm text-gray-500">%</span>
+                  <span className="flex items-center text-sm text-gray-500">
+                    %
+                  </span>
                   <Button
                     type="button"
-                    className="h-11 px-4 text-sm"
+                    size="field"
+                    className="h-full whitespace-nowrap"
                     disabled={isPending}
                     onClick={() => saveOne(product.id, product.title)}
                   >
