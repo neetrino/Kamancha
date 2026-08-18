@@ -782,13 +782,24 @@
       "received": "Ստացվել է",
       "spamScore": "սպամ {score}"
     },
+    "statusLabels": {
+      "unread": "Չկարդացված",
+      "read": "Կարդացված",
+      "replied": "Պատասխանված",
+      "archived": "Արխիվացված"
+    },
     "detail": {
       "from": "Ումից՝ {name}",
+      "fromLabel": "Ումից",
       "email": "Էլ. փոստ՝ {email}",
+      "emailLabel": "Էլ. փոստ",
       "phone": "Հեռախոս՝ {phone}",
+      "phoneLabel": "Հեռախոս",
       "status": "Կարգավիճակ՝",
       "spamScore": "Սպամի գնահատական՝ {score}",
+      "spamScoreLabel": "Սպամի գնահատական",
       "received": "Ստացվել է՝ {datetime} UTC",
+      "receivedLabel": "Ստացվել է",
       "message": "Հաղորդագրություն",
       "unknownStatus": "Անհայտ կարգավիճակ։"
     },

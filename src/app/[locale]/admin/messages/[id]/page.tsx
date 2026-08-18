@@ -1,7 +1,17 @@
+import {
+  CalendarDays,
+  CircleCheckBig,
+  Mail,
+  MessageSquare,
+  Phone,
+  ShieldAlert,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
+import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import {
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
@@ -13,6 +23,7 @@ import {
   getEligibleContactStatuses,
   isContactStatus,
 } from "@/features/contact/domain/contact-rules";
+import { contactStatusLabel } from "@/features/contact/ui/contact-status-label";
 import { UpdateContactStatusForm } from "@/features/contact/ui/UpdateContactStatusForm";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -20,6 +31,8 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 type AdminMessageDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
+
+const FIELD_ICON_CLASS = "h-4 w-4";
 
 function contactStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
@@ -40,6 +53,7 @@ export default async function AdminMessageDetailPage({
 
   const dictionary = getDictionary(locale);
   const t = dictionary.admin;
+  const labels = t.messages.statusLabels;
 
   const message = await getAdminContactMessageById(id);
   if (!message) {
@@ -48,6 +62,7 @@ export default async function AdminMessageDetailPage({
 
   const status = isContactStatus(message.status) ? message.status : null;
   const eligible = status ? getEligibleContactStatuses(status) : [];
+  const receivedAt = `${message.createdAt.toISOString().slice(0, 19).replace("T", " ")} ${t.common.utc}`;
 
   return (
     <section>
@@ -63,52 +78,65 @@ export default async function AdminMessageDetailPage({
         <h1 className={ADMIN_PAGE_TITLE}>{message.subject}</h1>
       </div>
 
-      <Card className="mb-6 p-6">
-        <div className="grid gap-3 text-sm md:grid-cols-2">
-          <p className="text-gray-700">
-            {t.messages.detail.from.replace("{name}", message.name)}
-          </p>
-          <p className="text-gray-700">
-            {t.messages.detail.email.replace("{email}", message.email)}
-          </p>
-          <p className="text-gray-700">
-            {t.messages.detail.phone.replace(
-              "{phone}",
-              message.phone ?? t.common.none,
-            )}
-          </p>
-          <p className="text-gray-700">
-            {t.messages.detail.status}{" "}
+      <Card className="mb-4 p-5 sm:p-6">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+          <AdminDetailField
+            icon={<User className={FIELD_ICON_CLASS} />}
+            label={t.messages.detail.fromLabel}
+          >
+            {message.name}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Mail className={FIELD_ICON_CLASS} />}
+            label={t.messages.detail.emailLabel}
+          >
+            {message.email}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Phone className={FIELD_ICON_CLASS} />}
+            label={t.messages.detail.phoneLabel}
+          >
+            {message.phone ?? t.common.none}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
+            label={t.common.status}
+          >
             <span
               className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
             >
-              {message.status}
+              {contactStatusLabel(message.status, labels)}
             </span>
-          </p>
-          <p className="text-gray-700">
-            {t.messages.detail.spamScore.replace(
-              "{score}",
-              message.spamScore === null
-                ? t.common.none
-                : String(message.spamScore),
-            )}
-          </p>
-          <p className="text-gray-700">
-            {t.messages.detail.received.replace(
-              "{datetime}",
-              message.createdAt.toISOString().slice(0, 19).replace("T", " "),
-            )}
-          </p>
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<ShieldAlert className={FIELD_ICON_CLASS} />}
+            label={t.messages.detail.spamScoreLabel}
+          >
+            {message.spamScore === null
+              ? t.common.none
+              : String(message.spamScore)}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={t.messages.detail.receivedLabel}
+          >
+            {receivedAt}
+          </AdminDetailField>
         </div>
       </Card>
 
-      <Card className="mb-6 p-6">
-        <h2 className={`mb-3 ${ADMIN_SECTION_TITLE}`}>
-          {t.messages.detail.message}
-        </h2>
-        <p className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
-          {message.message}
-        </p>
+      <Card className="mb-4 p-5 sm:p-6">
+        <div className="flex items-start gap-4">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
+            <MessageSquare className="h-5 w-5" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className={ADMIN_SECTION_TITLE}>{t.messages.detail.message}</h2>
+            <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-gray-700">
+              {message.message}
+            </p>
+          </div>
+        </div>
       </Card>
 
       {status ? (

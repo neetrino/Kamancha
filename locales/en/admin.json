@@ -782,13 +782,24 @@
       "received": "Received",
       "spamScore": "spam {score}"
     },
+    "statusLabels": {
+      "unread": "Unread",
+      "read": "Read",
+      "replied": "Replied",
+      "archived": "Archived"
+    },
     "detail": {
       "from": "From: {name}",
+      "fromLabel": "From",
       "email": "Email: {email}",
+      "emailLabel": "Email",
       "phone": "Phone: {phone}",
+      "phoneLabel": "Phone",
       "status": "Status:",
       "spamScore": "Spam score: {score}",
+      "spamScoreLabel": "Spam score",
       "received": "Received: {datetime} UTC",
+      "receivedLabel": "Received",
       "message": "Message",
       "unknownStatus": "Unknown status."
     },
