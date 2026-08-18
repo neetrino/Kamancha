@@ -798,6 +798,29 @@
       "updateStatus": "Обновить статус"
     }
   },
+  "groupOrders": {
+    "title": "Групповые заказы",
+    "id": "ID",
+    "organizer": "Организатор",
+    "mode": "Режим",
+    "status": "Статус",
+    "participants": "Участники",
+    "delivery": "Доставка",
+    "created": "Создан",
+    "empty": "Групповых заказов пока нет.",
+    "sheetAria": "Детали группового заказа",
+    "sheetTitle": "Групповой заказ",
+    "organizerLabel": "Организатор: {name}",
+    "invite": "Приглашение: {path}",
+    "deliveryTotal": "Доставка: {delivery} · Итого: {total}",
+    "subtotalDeliveryFinal": "Подытог {subtotal} · Доставка {delivery} · Итого {final}",
+    "payment": "Оплата: {status}",
+    "activity": "Активность",
+    "markPaid": "Отметить как оплачено",
+    "closeJoins": "Закрыть присоединение",
+    "cancel": "Отменить групповой заказ",
+    "actionFailed": "Не удалось выполнить действие."
+  },
   "settings": {
     "title": "Настройки магазина",
     "subtitle": "Настройте данные магазина и курсы валют",

@@ -6,6 +6,10 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
+  ADMIN_BADGE,
+  groupOrderStatusBadgeClass,
+} from "@/features/admin/ui/status-badge";
+import {
   adminCancelGroupOrderAction,
   adminCloseJoinsAction,
   adminMarkParticipantPaidAction,
@@ -16,18 +20,21 @@ import type {
   GroupOrderDetailView,
 } from "@/features/group-orders/application/queries";
 import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Currency } from "@/lib/money/currency";
 
 type AdminGroupOrdersViewProps = {
   locale: Locale;
   currency: Currency;
   rows: AdminGroupOrderListItem[];
+  copy: Dictionary["admin"]["groupOrders"];
 };
 
 export function AdminGroupOrdersView({
   locale,
   currency,
   rows,
+  copy,
 }: AdminGroupOrdersViewProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -49,7 +56,7 @@ export function AdminGroupOrdersView({
     startTransition(async () => {
       const result = await action();
       if (!result.ok) {
-        setError(result.error ?? "Action failed.");
+        setError(result.error ?? copy.actionFailed);
         return;
       }
       if (detail) {
@@ -70,20 +77,20 @@ export function AdminGroupOrdersView({
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-gray-100 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
             <tr>
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">Organizer</th>
-              <th className="px-4 py-3">Mode</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Participants</th>
-              <th className="px-4 py-3">Delivery</th>
-              <th className="px-4 py-3">Created</th>
+              <th className="px-4 py-3">{copy.id}</th>
+              <th className="px-4 py-3">{copy.organizer}</th>
+              <th className="px-4 py-3">{copy.mode}</th>
+              <th className="px-4 py-3 text-center">{copy.status}</th>
+              <th className="px-4 py-3 text-center">{copy.participants}</th>
+              <th className="px-4 py-3 text-center">{copy.delivery}</th>
+              <th className="px-4 py-3">{copy.created}</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
-                  No group orders yet.
+                  {copy.empty}
                 </td>
               </tr>
             ) : (
@@ -96,9 +103,15 @@ export function AdminGroupOrdersView({
                   <td className="px-4 py-3 font-mono text-xs">{row.id.slice(0, 8)}…</td>
                   <td className="px-4 py-3">{row.organizerDisplayName}</td>
                   <td className="px-4 py-3 text-xs">{row.paymentMode}</td>
-                  <td className="px-4 py-3">{row.status}</td>
-                  <td className="px-4 py-3">{row.participantCount}</td>
-                  <td className="px-4 py-3">{row.deliveryAmount} ֏</td>
+                  <td className="px-4 py-3 text-center">
+                    <span
+                      className={`${ADMIN_BADGE} ${groupOrderStatusBadgeClass(row.status)}`}
+                    >
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-center">{row.participantCount}</td>
+                  <td className="px-4 py-3 text-center">{row.deliveryAmount} ֏</td>
                   <td className="px-4 py-3 text-xs text-gray-500">
                     {new Date(row.createdAt).toLocaleString()}
                   </td>
@@ -112,13 +125,13 @@ export function AdminGroupOrdersView({
       <SideSheet
         open={detail != null}
         onClose={() => setDetail(null)}
-        ariaLabel="Group order details"
+        ariaLabel={copy.sheetAria}
         panelClassName="w-full sm:w-[60%]"
       >
         {detail ? (
           <div className="flex h-full flex-col">
             <div className="border-b border-gray-100 px-6 py-5">
-              <h2 className="text-xl font-bold text-gray-900">Group order</h2>
+              <h2 className="text-xl font-bold text-gray-900">{copy.sheetTitle}</h2>
               <p className="mt-1 font-mono text-xs text-gray-500">{detail.id}</p>
               <p className="mt-1 text-sm text-gray-600">
                 {detail.status} · {detail.paymentMode}
@@ -128,19 +141,25 @@ export function AdminGroupOrdersView({
             <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5 text-sm">
               <div>
                 <p className="font-medium text-gray-900">
-                  Organizer: {detail.organizerDisplayName}
+                  {copy.organizerLabel.replace(
+                    "{name}",
+                    detail.organizerDisplayName,
+                  )}
                 </p>
                 <p className="mt-1 break-all text-xs text-gray-500">
-                  Invite: {detail.invitePath}
+                  {copy.invite.replace("{path}", detail.invitePath)}
                 </p>
                 <p className="mt-1 text-gray-600">
-                  Delivery: {detail.deliveryFormatted} · Total:{" "}
-                  {detail.grandTotalFormatted}
+                  {copy.deliveryTotal
+                    .replace("{delivery}", detail.deliveryFormatted)
+                    .replace("{total}", detail.grandTotalFormatted)}
                 </p>
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Participants</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">
+                  {copy.participants}
+                </h3>
                 <ul className="space-y-3">
                   {detail.participants.map((p) => (
                     <li
@@ -151,12 +170,13 @@ export function AdminGroupOrdersView({
                         <div>
                           <p className="font-medium">{p.displayName}</p>
                           <p className="text-xs text-gray-500">
-                            Subtotal {p.subtotalFormatted} · Delivery{" "}
-                            {p.deliveryShareFormatted} · Final{" "}
-                            {p.finalAmountFormatted}
+                            {copy.subtotalDeliveryFinal
+                              .replace("{subtotal}", p.subtotalFormatted)
+                              .replace("{delivery}", p.deliveryShareFormatted)
+                              .replace("{final}", p.finalAmountFormatted)}
                           </p>
                           <p className="text-xs text-gray-500">
-                            Payment: {p.paymentStatus}
+                            {copy.payment.replace("{status}", p.paymentStatus)}
                           </p>
                           <ul className="mt-2 space-y-1 text-xs text-gray-600">
                             {p.items.map((item) => (
@@ -186,7 +206,7 @@ export function AdminGroupOrdersView({
                               )
                             }
                           >
-                            Mark paid
+                            {copy.markPaid}
                           </Button>
                         ) : null}
                       </div>
@@ -196,7 +216,7 @@ export function AdminGroupOrdersView({
               </div>
 
               <div>
-                <h3 className="mb-2 font-semibold text-gray-900">Activity</h3>
+                <h3 className="mb-2 font-semibold text-gray-900">{copy.activity}</h3>
                 <ul className="space-y-1 text-xs text-gray-500">
                   {detail.events.map((event) => (
                     <li key={event.id}>
@@ -228,7 +248,7 @@ export function AdminGroupOrdersView({
                   )
                 }
               >
-                Close joins
+                {copy.closeJoins}
               </Button>
               <Button
                 type="button"
@@ -243,7 +263,7 @@ export function AdminGroupOrdersView({
                   )
                 }
               >
-                Cancel group order
+                {copy.cancel}
               </Button>
             </div>
           </div>

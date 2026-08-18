@@ -798,6 +798,29 @@
       "updateStatus": "Թարմացնել կարգավիճակը"
     }
   },
+  "groupOrders": {
+    "title": "Խմբային պատվերներ",
+    "id": "ID",
+    "organizer": "Կազմակերպիչ",
+    "mode": "Ռեժիմ",
+    "status": "Կարգավիճակ",
+    "participants": "Մասնակիցներ",
+    "delivery": "Առաքում",
+    "created": "Ստեղծված",
+    "empty": "Դեռևս խմբային պատվերներ չկան։",
+    "sheetAria": "Խմբային պատվերի մանրամասներ",
+    "sheetTitle": "Խմբային պատվեր",
+    "organizerLabel": "Կազմակերպիչ՝ {name}",
+    "invite": "Հրավեր՝ {path}",
+    "deliveryTotal": "Առաքում՝ {delivery} · Ընդամենը՝ {total}",
+    "subtotalDeliveryFinal": "Ենթագումար {subtotal} · Առաքում {delivery} · Վերջնական {final}",
+    "payment": "Վճարում՝ {status}",
+    "activity": "Գործունեություն",
+    "markPaid": "Նշել որպես վճարված",
+    "closeJoins": "Փակել միացումները",
+    "cancel": "Չեղարկել խմբային պատվերը",
+    "actionFailed": "Գործողությունը ձախողվեց։"
+  },
   "settings": {
     "title": "Խանութի կարգավորումներ",
     "subtitle": "Կարգավորեք խանութի նույնականացումը և արժույթի փոխարժեքները",

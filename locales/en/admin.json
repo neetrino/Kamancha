@@ -798,6 +798,29 @@
       "updateStatus": "Update status"
     }
   },
+  "groupOrders": {
+    "title": "Group orders",
+    "id": "ID",
+    "organizer": "Organizer",
+    "mode": "Mode",
+    "status": "Status",
+    "participants": "Participants",
+    "delivery": "Delivery",
+    "created": "Created",
+    "empty": "No group orders yet.",
+    "sheetAria": "Group order details",
+    "sheetTitle": "Group order",
+    "organizerLabel": "Organizer: {name}",
+    "invite": "Invite: {path}",
+    "deliveryTotal": "Delivery: {delivery} · Total: {total}",
+    "subtotalDeliveryFinal": "Subtotal {subtotal} · Delivery {delivery} · Final {final}",
+    "payment": "Payment: {status}",
+    "activity": "Activity",
+    "markPaid": "Mark paid",
+    "closeJoins": "Close joins",
+    "cancel": "Cancel group order",
+    "actionFailed": "Action failed."
+  },
   "settings": {
     "title": "Store settings",
     "subtitle": "Configure store identity and currency exchange rates",
