@@ -48,14 +48,9 @@ export function ProfileSidebar({
             {user.firstName.slice(0, 1).toUpperCase()}
             {user.lastName.slice(0, 1).toUpperCase()}
           </div>
-          <div className="space-y-0.5">
-            <p className="font-big-fat-boii text-lg font-normal tracking-wide text-white uppercase">
-              {user.firstName}
-            </p>
-            <p className="text-xs font-medium tracking-wide text-white">
-              {user.lastName}
-            </p>
-          </div>
+          <p className="min-w-0 font-big-fat-boii text-lg font-normal tracking-wide text-white uppercase">
+            {user.firstName} {user.lastName}
+          </p>
         </div>
 
         <div className="mt-5 flex flex-col gap-2">
