@@ -23,11 +23,11 @@ type CustomerOrderDetailsSheetProps = {
   error: string | null;
   isLoading: boolean;
   copy: Dictionary["admin"];
+  includeAdminDetails?: boolean;
 };
 
 /**
- * Storefront order details sheet — cart/profile visual language (Grill.am-style).
- * Admin keeps `OrderDetailsDrawer`; customers use this panel.
+ * Order details sheet — same visual language for profile and admin orders.
  */
 export function CustomerOrderDetailsSheet({
   open,
@@ -36,6 +36,7 @@ export function CustomerOrderDetailsSheet({
   error,
   isLoading,
   copy,
+  includeAdminDetails = false,
 }: CustomerOrderDetailsSheetProps) {
   const d = copy.orders.drawer;
 
@@ -76,7 +77,11 @@ export function CustomerOrderDetailsSheet({
         ) : null}
         {error ? <p className="py-4 text-sm text-red-700">{error}</p> : null}
         {!isLoading && !error && detail ? (
-          <CustomerOrderSheetBody detail={detail} labels={d} />
+          <CustomerOrderSheetBody
+            detail={detail}
+            labels={d}
+            includeAdminDetails={includeAdminDetails}
+          />
         ) : null}
       </div>
 
@@ -92,12 +97,36 @@ type DrawerLabels = Dictionary["admin"]["orders"]["drawer"];
 function CustomerOrderSheetBody({
   detail,
   labels,
+  includeAdminDetails,
 }: {
   detail: AdminOrderDetailView;
   labels: DrawerLabels;
+  includeAdminDetails: boolean;
 }) {
   return (
     <div className="space-y-4">
+      {includeAdminDetails ? (
+        <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
+          <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+            {labels.customer}
+          </h3>
+          <div className="space-y-1.5 text-sm">
+            <p className="flex flex-wrap items-baseline gap-x-1.5">
+              <span className="text-gray-500">{labels.name}</span>
+              <span className="font-medium text-gray-900">{detail.contactName}</span>
+            </p>
+            <p className="flex flex-wrap items-baseline gap-x-1.5">
+              <span className="text-gray-500">{labels.phoneNumber}</span>
+              <span className="font-medium text-gray-900">{detail.contactPhone}</span>
+            </p>
+            <p className="flex flex-wrap items-baseline gap-x-1.5">
+              <span className="text-gray-500">{labels.email}</span>
+              <span className="font-medium text-gray-900">{detail.contactEmail}</span>
+            </p>
+          </div>
+        </section>
+      ) : null}
+
       <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
         <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
           {labels.shippingAddress}
@@ -117,6 +146,16 @@ function CustomerOrderSheetBody({
             </p>
             {detail.scheduledDelivery ? (
               <p className="text-xs text-gray-500">{detail.scheduledDelivery}</p>
+            ) : null}
+            {includeAdminDetails && !detail.isPickup && detail.floor ? (
+              <p className="text-xs text-gray-500">
+                {labels.floor} {detail.floor}
+              </p>
+            ) : null}
+            {includeAdminDetails && !detail.isPickup && detail.intercomCode ? (
+              <p className="text-xs text-gray-500">
+                {labels.intercomCode} {detail.intercomCode}
+              </p>
             ) : null}
             {detail.addressHint ? (
               <p className="text-xs text-gray-500">{detail.addressHint}</p>

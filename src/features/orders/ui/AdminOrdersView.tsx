@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
 import { BulkChangeOrderStatusForm } from "@/features/orders/ui/BulkChangeOrderStatusForm";
-import { OrderDetailsDrawer } from "@/features/orders/ui/OrderDetailsDrawer";
+import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminOrdersViewOrder = {
@@ -63,13 +63,14 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         onOpenOrder={openOrder}
         copy={copy}
       />
-      <OrderDetailsDrawer
+      <CustomerOrderDetailsSheet
         open={drawerOpen}
         onClose={closeDrawer}
         detail={detail}
         error={error}
         isLoading={isPending}
         copy={copy}
+        includeAdminDetails
       />
     </>
   );
