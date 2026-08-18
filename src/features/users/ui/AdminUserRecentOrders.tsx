@@ -99,36 +99,39 @@ function RecentOrdersCard({
         </span>
         <h2 className={ADMIN_SECTION_TITLE}>{copy.users.detail.recentOrders}</h2>
       </div>
-      <div className="space-y-3">
-        {orders.map((order) => (
-          <button
-            key={order.id}
-            type="button"
-            className="block w-full rounded-lg border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
-            onClick={() => onOpenOrder(order.orderNumber)}
-          >
-            <div className="flex flex-wrap items-center gap-2">
-              <strong className="text-sm text-gray-900">{order.orderNumber}</strong>
-              <span
-                className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-              >
-                {order.status}
-              </span>
-              <span
-                className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-              >
-                {order.paymentStatus}
-              </span>
-            </div>
-            <p className="mt-1 text-sm text-gray-600">
-              {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
-            </p>
-          </button>
-        ))}
-        {orders.length === 0 ? (
-          <p className="text-sm text-gray-600">{copy.users.detail.noOrders}</p>
-        ) : null}
-      </div>
+      {orders.length === 0 ? (
+        <p className="text-sm text-gray-600">{copy.users.detail.noOrders}</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {orders.map((order) => (
+            <button
+              key={order.id}
+              type="button"
+              className="rounded-lg border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
+              onClick={() => onOpenOrder(order.orderNumber)}
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <strong className="text-sm text-gray-900">
+                  {order.orderNumber}
+                </strong>
+                <span
+                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
+                >
+                  {order.status}
+                </span>
+                <span
+                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
+                >
+                  {order.paymentStatus}
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-gray-600">
+                {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
+              </p>
+            </button>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }
