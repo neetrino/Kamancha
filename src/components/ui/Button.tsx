@@ -11,7 +11,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const VARIANT_STYLES: Record<ButtonVariant, string> = {
   primary:
-    "bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-900",
+    "bg-brand-forest text-white hover:opacity-90 focus:ring-brand-forest",
   secondary:
     "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-500",
   outline:

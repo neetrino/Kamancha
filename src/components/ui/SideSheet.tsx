@@ -167,7 +167,7 @@ export function SideSheet({
             type="button"
             onClick={onClose}
             className={`absolute top-1/2 ${closePosition} flex h-[38px] w-10 -translate-y-1/2 items-center justify-center ${closeMotionClass} ${closeTuckClass} ${
-              closeButtonClassName ?? "bg-gray-900 text-white"
+              closeButtonClassName ?? "bg-brand-forest text-white"
             } ${closeRadius}`}
             aria-label="Close"
           >
@@ -179,7 +179,7 @@ export function SideSheet({
             onClick={onClose}
             className={`absolute top-5 ${closePosition} flex h-10 w-10 shrink-0 items-center justify-center ${closeMotionClass} ${closeTuckClass} ${
               closeButtonClassName ??
-              "bg-gray-900 text-white hover:bg-black"
+              "bg-brand-forest text-white hover:opacity-90"
             } ${closeRadius}`}
             aria-label="Close"
           >

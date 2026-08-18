@@ -73,7 +73,7 @@ export function AdminHeroView({
         </h2>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid gap-3 md:grid-cols-2">
         {slides.map((slide) => (
           <Card key={slide.id} className="p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -131,7 +131,7 @@ export function AdminHeroView({
           </Card>
         ))}
         {slides.length === 0 ? (
-          <Card className="p-6">
+          <Card className="p-6 md:col-span-2">
             <p className="text-center text-sm text-gray-600">
               {copy.hero.empty}
             </p>

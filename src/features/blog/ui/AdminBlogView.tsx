@@ -116,9 +116,9 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
-      <div className="space-y-3">
+      <div className="grid gap-3 md:grid-cols-2">
         {filtered.length === 0 ? (
-          <Card className="rounded-xl p-8">
+          <Card className="rounded-xl p-8 md:col-span-2">
             <p className="text-center text-sm text-gray-600">
               {posts.length === 0 ? copy.blog.empty : copy.blog.noMatch}
             </p>
