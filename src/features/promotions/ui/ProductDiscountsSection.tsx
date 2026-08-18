@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
@@ -10,6 +11,8 @@ import type { DiscountBoardProduct } from "@/features/promotions/application/dis
 import { upsertTargetDiscountAction } from "@/features/promotions/application/manage-discounts";
 import { currencySymbols, isCurrency } from "@/lib/money/currency";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+const PAGE_SIZE = 15;
 
 type ProductDiscountsSectionCopy = {
   products: Dictionary["admin"]["discounts"]["products"];
@@ -53,6 +56,7 @@ export function ProductDiscountsSection({
 }: ProductDiscountsSectionProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [drafts, setDrafts] = useState<Record<string, string>>(() =>
     draftsFromProducts(products),
   );
@@ -75,6 +79,13 @@ export function ProductDiscountsSection({
         product.sku.toLowerCase().includes(needle),
     );
   }, [products, query]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   function saveOne(productId: string, title: string): void {
     const parsed = parsePercent(drafts[productId] ?? "");
@@ -124,7 +135,10 @@ export function ProductDiscountsSection({
         id="product-discount-search"
         placeholder={copy.products.searchPlaceholder}
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          setPage(1);
+        }}
         className="mb-4"
       />
 
@@ -134,7 +148,7 @@ export function ProductDiscountsSection({
         </div>
       ) : (
         <ul className="space-y-3">
-          {filtered.map((product) => {
+          {pageItems.map((product) => {
             const busy = isPending && savingId === product.id;
             return (
               <li
@@ -210,6 +224,37 @@ export function ProductDiscountsSection({
           })}
         </ul>
       )}
+
+      {filtered.length > 0 && totalPages > 1 ? (
+        <nav
+          className="mt-4 flex items-center justify-center gap-3 text-sm text-gray-700"
+          aria-label={copy.products.title}
+        >
+          <button
+            type="button"
+            disabled={currentPage <= 1}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label={copy.common.previous}
+            onClick={() => setPage(currentPage - 1)}
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden />
+          </button>
+          <span>
+            {copy.common.pageOf
+              .replace("{page}", String(currentPage))
+              .replace("{totalPages}", String(totalPages))}
+          </span>
+          <button
+            type="button"
+            disabled={currentPage >= totalPages}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label={copy.common.next}
+            onClick={() => setPage(currentPage + 1)}
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden />
+          </button>
+        </nav>
+      ) : null}
 
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       {message ? <p className="mt-3 text-sm text-green-700">{message}</p> : null}

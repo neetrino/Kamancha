@@ -129,9 +129,9 @@ export function AdminDeliveryScheduleEditor({
         <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label>
-          <span className={ADMIN_LABEL}>{copy.slotLength}</span>
+      <div className="grid items-stretch gap-4 sm:grid-cols-2">
+        <label className="flex flex-col">
+          <span className={`${ADMIN_LABEL} flex-1`}>{copy.slotLength}</span>
           <input
             type="number"
             min={15}
@@ -148,8 +148,8 @@ export function AdminDeliveryScheduleEditor({
             }
           />
         </label>
-        <label>
-          <span className={ADMIN_LABEL}>{copy.bookableDaysAhead}</span>
+        <label className="flex flex-col">
+          <span className={`${ADMIN_LABEL} flex-1`}>{copy.bookableDaysAhead}</span>
           <input
             type="number"
             min={1}
