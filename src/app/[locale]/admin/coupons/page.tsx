@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ADMIN_PAGINATION } from "@/features/admin/ui/admin-form-classes";
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import { listAdminPromotions } from "@/features/promotions/application/queries";
 import { adminPromotionsFilterSchema } from "@/features/promotions/schemas/admin-promotions";
 import { AdminCouponsView } from "@/features/promotions/ui/AdminCouponsView";
@@ -65,31 +64,16 @@ export default async function AdminCouponsPage({
           confirm: dict.admin.confirm,
         }}
       />
-      {totalPages > 1 ? (
-        <nav className={ADMIN_PAGINATION}>
-          {filters.page > 1 ? (
-            <Link
-              href={`/${locale}/admin/coupons?page=${filters.page - 1}`}
-              className="font-medium hover:underline"
-            >
-              {dict.admin.common.previous}
-            </Link>
-          ) : null}
-          <span>
-            {dict.admin.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-          {filters.page < totalPages ? (
-            <Link
-              href={`/${locale}/admin/coupons?page=${filters.page + 1}`}
-              className="font-medium hover:underline"
-            >
-              {dict.admin.common.next}
-            </Link>
-          ) : null}
-        </nav>
-      ) : null}
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={dict.admin.coupons.title}
+        previousLabel={dict.admin.common.previous}
+        nextLabel={dict.admin.common.next}
+        pageOfLabel={dict.admin.common.pageOf}
+        prevHref={`/${locale}/admin/coupons?page=${filters.page - 1}`}
+        nextHref={`/${locale}/admin/coupons?page=${filters.page + 1}`}
+      />
     </>
   );
 }

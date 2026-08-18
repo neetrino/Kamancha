@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ADMIN_PAGINATION } from "@/features/admin/ui/admin-form-classes";
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import { listAdminUsers } from "@/features/users/application/queries";
 import { adminUsersFilterSchema } from "@/features/users/schemas/admin-users";
 import { AdminUsersView } from "@/features/users/ui/AdminUsersView";
@@ -75,31 +74,16 @@ export default async function AdminUsersPage({
         copy={dictionary.admin}
       />
 
-      {totalPages > 1 ? (
-        <nav className={ADMIN_PAGINATION}>
-          {filters.page > 1 ? (
-            <Link
-              href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}
-              className="font-medium hover:underline"
-            >
-              {dictionary.admin.common.previous}
-            </Link>
-          ) : null}
-          <span>
-            {dictionary.admin.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-          {filters.page < totalPages ? (
-            <Link
-              href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page + 1)}`}
-              className="font-medium hover:underline"
-            >
-              {dictionary.admin.common.next}
-            </Link>
-          ) : null}
-        </nav>
-      ) : null}
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={dictionary.admin.users.breadcrumb}
+        previousLabel={dictionary.admin.common.previous}
+        nextLabel={dictionary.admin.common.next}
+        pageOfLabel={dictionary.admin.common.pageOf}
+        prevHref={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}
+        nextHref={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page + 1)}`}
+      />
     </>
   );
 }

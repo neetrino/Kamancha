@@ -25,8 +25,6 @@ export const ADMIN_PAGE_SUBTITLE = "text-sm text-gray-600";
 export const ADMIN_SECTION_TITLE =
   "font-big-fat-boii text-xl font-normal tracking-wide text-brand-forest uppercase";
 
-export const ADMIN_PAGINATION = "mt-4 flex items-center gap-3 text-sm text-gray-700";
-
 export const ADMIN_PAGINATION_CENTER =
   "mt-4 flex items-center justify-center gap-3 text-sm text-gray-700";
 

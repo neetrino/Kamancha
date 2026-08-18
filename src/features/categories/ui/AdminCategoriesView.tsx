@@ -167,29 +167,31 @@ export function AdminCategoriesView({
 
   return (
     <section>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.categories.title}</h1>
+      </div>
+
+      <div className="mb-4 flex items-center gap-3">
+        <AdminSearchInput
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={copy.categories.searchPlaceholder}
+          className="min-w-0 flex-1"
+          aria-label={copy.categories.searchAria}
+        />
         <Button
           type="button"
-          size="sm"
+          size="field"
           onClick={() => {
             setEditingCategory(null);
             setDrawerOpen(true);
           }}
-          className="inline-flex items-center gap-1.5"
+          className="shrink-0 gap-1.5 rounded-2xl"
         >
           <Plus className="h-4 w-4" aria-hidden />
           {copy.categories.addCategory}
         </Button>
       </div>
-
-      <AdminSearchInput
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder={copy.categories.searchPlaceholder}
-        className="mb-4"
-        aria-label={copy.categories.searchAria}
-      />
 
       {isFiltering ? (
         <p className="mb-3 text-xs text-gray-500">

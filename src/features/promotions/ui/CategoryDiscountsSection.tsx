@@ -2,9 +2,8 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
 import { Button } from "@/components/ui/Button";
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import {
   ADMIN_INPUT,
   ADMIN_SECTION_TITLE,
@@ -193,36 +192,16 @@ export function CategoryDiscountsSection({
         </ul>
       )}
 
-      {categories.length > 0 && totalPages > 1 ? (
-        <nav
-          className="mt-4 flex items-center justify-center gap-3 text-sm text-gray-700"
-          aria-label={copy.categories.title}
-        >
-          <button
-            type="button"
-            disabled={currentPage <= 1}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-            aria-label={copy.common.previous}
-            onClick={() => setPage(currentPage - 1)}
-          >
-            <ChevronLeft className="h-4 w-4" aria-hidden />
-          </button>
-          <span>
-            {copy.common.pageOf
-              .replace("{page}", String(currentPage))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-          <button
-            type="button"
-            disabled={currentPage >= totalPages}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-            aria-label={copy.common.next}
-            onClick={() => setPage(currentPage + 1)}
-          >
-            <ChevronRight className="h-4 w-4" aria-hidden />
-          </button>
-        </nav>
-      ) : null}
+      <AdminPagination
+        page={currentPage}
+        totalPages={categories.length > 0 ? totalPages : 1}
+        ariaLabel={copy.categories.title}
+        previousLabel={copy.common.previous}
+        nextLabel={copy.common.next}
+        pageOfLabel={copy.common.pageOf}
+        onPrevious={() => setPage(currentPage - 1)}
+        onNext={() => setPage(currentPage + 1)}
+      />
 
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       {message ? <p className="mt-3 text-sm text-green-700">{message}</p> : null}

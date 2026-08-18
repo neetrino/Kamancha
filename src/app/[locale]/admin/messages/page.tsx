@@ -4,11 +4,11 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import {
   ADMIN_LABEL,
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
-  ADMIN_PAGINATION,
   ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
 import {
@@ -43,6 +43,17 @@ function firstParam(
     return value[0];
   }
   return value;
+}
+
+function buildMessagesQuery(
+  filters: { q?: string; status?: string; page: number },
+  page: number,
+): string {
+  const params = new URLSearchParams();
+  if (filters.q) params.set("q", filters.q);
+  if (filters.status) params.set("status", filters.status);
+  params.set("page", String(page));
+  return params.toString();
 }
 
 function contactStatusBadgeClass(status: string): string {
@@ -190,15 +201,16 @@ export default async function AdminMessagesPage({
         )}
       </Card>
 
-      {totalPages > 1 ? (
-        <nav className={ADMIN_PAGINATION}>
-          <span>
-            {dictionary.admin.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-        </nav>
-      ) : null}
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={t.title}
+        previousLabel={dictionary.admin.common.previous}
+        nextLabel={dictionary.admin.common.next}
+        pageOfLabel={dictionary.admin.common.pageOf}
+        prevHref={`/${locale}/admin/messages?${buildMessagesQuery(filters, filters.page - 1)}`}
+        nextHref={`/${locale}/admin/messages?${buildMessagesQuery(filters, filters.page + 1)}`}
+      />
     </section>
   );
 }
