@@ -38,6 +38,7 @@
     "filter": "Filter",
     "apply": "Apply",
     "previous": "Previous",
+    "back": "Back",
     "next": "Next",
     "pageOf": "Page {page} / {totalPages}",
     "actions": "Actions",

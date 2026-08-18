@@ -1,5 +1,6 @@
 import {
   CalendarDays,
+  ChevronLeft,
   CircleCheckBig,
   Mail,
   MessageSquare,
@@ -13,7 +14,6 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import {
-  ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
@@ -67,14 +67,13 @@ export default async function AdminMessageDetailPage({
   return (
     <section>
       <div className="mb-6">
-        <p className={`mb-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          <Link
-            href={`/${locale}/admin/messages`}
-            className="font-medium text-gray-700 hover:underline"
-          >
-            {t.messages.breadcrumb}
-          </Link>
-        </p>
+        <Link
+          href={`/${locale}/admin/messages`}
+          className="mb-4 inline-flex h-11 items-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-4 text-sm font-medium text-gray-900 shadow-sm transition-colors hover:bg-gray-50"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+          {t.common.back}
+        </Link>
         <h1 className={ADMIN_PAGE_TITLE}>{message.subject}</h1>
       </div>
 

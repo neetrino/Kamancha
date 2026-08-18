@@ -38,6 +38,7 @@
     "filter": "Զտել",
     "apply": "Կիրառել",
     "previous": "Նախորդ",
+    "back": "Հետ",
     "next": "Հաջորդ",
     "pageOf": "Էջ {page} / {totalPages}",
     "actions": "Գործողություններ",

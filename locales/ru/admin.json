@@ -38,6 +38,7 @@
     "filter": "Фильтр",
     "apply": "Применить",
     "previous": "Назад",
+    "back": "Назад",
     "next": "Далее",
     "pageOf": "Страница {page} / {totalPages}",
     "actions": "Действия",
