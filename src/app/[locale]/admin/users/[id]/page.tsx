@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
 import {
@@ -74,14 +75,13 @@ export default async function AdminUserDetailPage({
   return (
     <section>
       <div className="mb-6">
-        <p className={`mb-1 ${ADMIN_PAGE_SUBTITLE}`}>
-          <Link
-            href={`/${locale}/admin/users`}
-            className="font-medium text-gray-700 hover:underline"
-          >
-            {t.users.breadcrumb}
-          </Link>
-        </p>
+        <Link
+          href={`/${locale}/admin/users`}
+          className="mb-4 inline-flex h-11 items-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-4 text-sm font-medium text-gray-900 shadow-sm transition-colors hover:bg-gray-50"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+          {t.common.back}
+        </Link>
         <h1 className={ADMIN_PAGE_TITLE}>
           {user.firstName} {user.lastName}
         </h1>

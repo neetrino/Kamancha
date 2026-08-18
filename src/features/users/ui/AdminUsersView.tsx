@@ -237,8 +237,8 @@ export function AdminUsersView({
                     user.status === "ACTIVE" || user.status === "SUSPENDED";
 
                   return (
-                    <tr key={user.id} className={ADMIN_TABLE_ROW}>
-                      <td className={ADMIN_TABLE_TD_CHECK}>
+                    <tr key={user.id} className={`${ADMIN_TABLE_ROW} group relative`}>
+                      <td className={`${ADMIN_TABLE_TD_CHECK} relative z-10`}>
                         <input
                           type="checkbox"
                           className={ADMIN_TABLE_CHECKBOX}
@@ -251,9 +251,9 @@ export function AdminUsersView({
                       <td className={ADMIN_TABLE_TD}>
                         <Link
                           href={`/${locale}/admin/users/${user.id}`}
-                          className="block min-w-[160px]"
+                          className="block min-w-[160px] after:absolute after:inset-0"
                         >
-                          <p className="font-medium text-gray-900 hover:underline">
+                          <p className="relative z-10 font-medium text-gray-900 group-hover:underline">
                             {displayName(user)}
                           </p>
                           <p className="truncate text-xs text-gray-400">
@@ -283,7 +283,7 @@ export function AdminUsersView({
                           {user.role.toLowerCase()}
                         </span>
                       </td>
-                      <td className={ADMIN_TABLE_TD_CENTER}>
+                      <td className={`${ADMIN_TABLE_TD_CENTER} relative z-10`}>
                         <button
                           type="button"
                           role="switch"
