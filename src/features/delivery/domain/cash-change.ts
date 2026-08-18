@@ -20,7 +20,7 @@ const DEFAULT_AMOUNTS = [
   2000, 5000, 10_000, 20_000, 50_000, 100_000,
 ] as const;
 
-/** Bundled checkout notes (always offered, even if store JSON is older). */
+/** Whether the amount is one of the default seeded banknotes. */
 export function isDefaultCashChangeAmount(amount: number): boolean {
   return (DEFAULT_AMOUNTS as readonly number[]).includes(amount);
 }

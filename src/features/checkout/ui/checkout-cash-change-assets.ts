@@ -1,24 +1,8 @@
-/** Bundled AMD banknote art and cash-change picker layout (MaMarie). */
+/** Cash-change picker layout and selection types. */
 
 export const CASH_CHANGE_NONE = "none" as const;
 
 export type CashChangeSelection = number | typeof CASH_CHANGE_NONE;
-
-export const CASH_CHANGE_DENOMINATIONS_AMD = [
-  2000, 5000, 10_000, 20_000, 50_000, 100_000,
-] as const;
-
-export const CASH_CHANGE_BANKNOTE_SRC: Record<
-  (typeof CASH_CHANGE_DENOMINATIONS_AMD)[number],
-  string
-> = {
-  2000: "/assets/payments/amd/2000.webp",
-  5000: "/assets/payments/amd/5000.webp",
-  10_000: "/assets/payments/amd/10000.webp",
-  20_000: "/assets/payments/amd/20000.webp",
-  50_000: "/assets/payments/amd/50000.webp",
-  100_000: "/assets/payments/amd/100000.webp",
-};
 
 export const CHECKOUT_CASH_CHANGE_SECTION_CLASS =
   "overflow-hidden rounded-[18px] bg-white p-4 sm:p-5";
@@ -38,14 +22,3 @@ export const CHECKOUT_CASH_CHANGE_NONE_CLASS =
   "aspect-[2/1] px-1.5 text-center font-big-fat-boii text-[11px] font-normal leading-snug tracking-wide text-brand-forest uppercase sm:px-2 sm:text-sm";
 export const CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS = "relative aspect-[2/1] p-0";
 export const CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS = "object-cover object-center";
-
-/** Prefers an uploaded admin image, then the bundled note for that amount. */
-export function resolveCashChangeImageUrl(
-  amount: number,
-  imageUrl: string | null,
-): string | null {
-  if (imageUrl != null && imageUrl.length > 0) {
-    return imageUrl;
-  }
-  return CASH_CHANGE_BANKNOTE_SRC[amount as keyof typeof CASH_CHANGE_BANKNOTE_SRC] ?? null;
-}

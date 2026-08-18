@@ -3,7 +3,6 @@
 import Image from "next/image";
 
 import {
-  CASH_CHANGE_DENOMINATIONS_AMD,
   CASH_CHANGE_NONE,
   CHECKOUT_CASH_CHANGE_GRID_CLASS,
   CHECKOUT_CASH_CHANGE_HINT_CLASS,
@@ -15,7 +14,6 @@ import {
   CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS,
   CHECKOUT_CASH_CHANGE_SECTION_CLASS,
   CHECKOUT_CASH_CHANGE_TITLE_CLASS,
-  resolveCashChangeImageUrl,
   type CashChangeSelection,
 } from "@/features/checkout/ui/checkout-cash-change-assets";
 import {
@@ -57,8 +55,8 @@ export function CashChangePicker({
   dueFormatted,
   labels,
 }: CashChangePickerProps) {
-  const imageByAmount = new Map(
-    options.map((option) => [option.amount, option.imageUrl]),
+  const visibleOptions = options.filter(
+    (option) => computeCashChangeDue(option.amount, payableTotal) != null,
   );
 
   return (
@@ -84,34 +82,33 @@ export function CashChangePicker({
         >
           <span className="relative z-[2]">{labels.noneLabel}</span>
         </button>
-        {CASH_CHANGE_DENOMINATIONS_AMD.filter(
-          (amount) => computeCashChangeDue(amount, payableTotal) != null,
-        ).map((amount) => {
-          const selected = value === amount;
-          const src = resolveCashChangeImageUrl(
-            amount,
-            imageByAmount.get(amount) ?? null,
-          );
+        {visibleOptions.map((option) => {
+          const selected = value === option.amount;
+          const src = option.imageUrl || null;
 
           return (
             <button
-              key={amount}
+              key={option.id}
               type="button"
               role="radio"
               aria-checked={selected}
               disabled={disabled}
               className={`${optionClass(selected)} ${CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS}`}
-              onClick={() => onChange(amount)}
+              onClick={() => onChange(option.amount)}
             >
               {src ? (
                 <Image
                   src={src}
-                  alt={`${amount} AMD`}
+                  alt={`${option.amount} AMD`}
                   fill
                   className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS}`}
                   sizes="(max-width: 640px) 25vw, 140px"
                 />
-              ) : null}
+              ) : (
+                <span className="relative z-[2] px-1.5 text-center font-big-fat-boii text-[11px] font-normal leading-snug tracking-wide text-brand-forest uppercase sm:text-sm">
+                  {option.amount}
+                </span>
+              )}
             </button>
           );
         })}

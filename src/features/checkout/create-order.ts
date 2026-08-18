@@ -46,7 +46,6 @@ import { getDeliverySettings } from "@/features/delivery/application/get-deliver
 import {
   computeCashChangeDue,
   findActiveCashChangeByAmount,
-  isDefaultCashChangeAmount,
 } from "@/features/delivery/domain/cash-change";
 import {
   formatDeliverySlotSnapshot,
@@ -179,10 +178,6 @@ export async function createOrderAction(
       if (matched) {
         cashChangeAmount = matched.amount;
         cashChangeImageKey = matched.imageObjectKey ?? undefined;
-      } else if (
-        isDefaultCashChangeAmount(input.cashChangeAmount)
-      ) {
-        cashChangeAmount = input.cashChangeAmount;
       } else {
         return {
           ok: false,
