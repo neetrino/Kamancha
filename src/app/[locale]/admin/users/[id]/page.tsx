@@ -1,10 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronLeft,
+  CircleCheckBig,
+  ClipboardList,
+  LogIn,
+  Mail,
+  MailCheck,
+  Phone,
+  Shield,
+} from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
+import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import {
-  ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
@@ -21,6 +31,7 @@ import {
 } from "@/features/users/domain/user-lifecycle";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
+import { userRoleLabel, userStatusLabel } from "@/features/users/ui/user-labels";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -43,6 +54,8 @@ function userStatusBadgeClass(status: string): string {
   }
   return "bg-gray-100 text-gray-800";
 }
+
+const FIELD_ICON_CLASS = "h-4 w-4";
 
 function userRoleBadgeClass(role: string): string {
   return role.toUpperCase() === "ADMIN"
@@ -85,52 +98,64 @@ export default async function AdminUserDetailPage({
         <h1 className={ADMIN_PAGE_TITLE}>
           {user.firstName} {user.lastName}
         </h1>
-        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{user.email}</p>
       </div>
 
-      <Card className="mb-6 p-6">
-        <div className="grid gap-3 text-sm md:grid-cols-2">
-          <p className="text-gray-700">
-            {t.users.detail.role}{" "}
+      <Card className="mb-4 p-5 sm:p-6">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+          <AdminDetailField
+            icon={<Shield className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.roleLabel}
+          >
             <span
               className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
             >
-              {user.role}
+              {userRoleLabel(user.role, t.users.roleLabels)}
             </span>
-          </p>
-          <p className="text-gray-700">
-            {t.users.detail.status}{" "}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
+            label={t.common.status}
+          >
             <span
               className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
             >
-              {user.status}
+              {userStatusLabel(user.status, t.users.statusLabels)}
             </span>
-          </p>
-          <p className="text-gray-700">
-            {t.users.detail.phone.replace("{phone}", user.phone ?? t.common.none)}
-          </p>
-          <p className="text-gray-700">
-            {t.users.detail.emailVerified.replace(
-              "{value}",
-              user.emailVerifiedAt
-                ? user.emailVerifiedAt.toISOString().slice(0, 10)
-                : t.users.detail.emailVerifiedNo,
-            )}
-          </p>
-          <p className="text-gray-700">
-            {t.users.detail.lastLogin.replace(
-              "{value}",
-              user.lastLoginAt
-                ? user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")
-                : t.users.detail.lastLoginNever,
-            )}
-          </p>
-          <p className="text-gray-700">
-            {t.users.detail.created.replace(
-              "{date}",
-              user.createdAt.toISOString().slice(0, 10),
-            )}
-          </p>
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Mail className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.emailLabel}
+          >
+            {user.email}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Phone className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.phoneLabel}
+          >
+            {user.phone ?? t.common.none}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<MailCheck className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.emailVerifiedLabel}
+          >
+            {user.emailVerifiedAt
+              ? user.emailVerifiedAt.toISOString().slice(0, 10)
+              : t.users.detail.emailVerifiedNo}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<LogIn className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.lastLoginLabel}
+          >
+            {user.lastLoginAt
+              ? `${user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")} ${t.common.utc}`
+              : t.users.detail.lastLoginNever}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.createdLabel}
+          >
+            {user.createdAt.toISOString().slice(0, 10)}
+          </AdminDetailField>
         </div>
       </Card>
 
@@ -159,8 +184,13 @@ export default async function AdminUserDetailPage({
         )}
       </div>
 
-      <Card className="p-6">
-        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{t.users.detail.recentOrders}</h2>
+      <Card className="p-5 sm:p-6">
+        <div className="mb-4 flex items-start gap-4">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
+            <ClipboardList className="h-5 w-5" aria-hidden />
+          </span>
+          <h2 className={ADMIN_SECTION_TITLE}>{t.users.detail.recentOrders}</h2>
+        </div>
         <div className="space-y-3">
           {recentOrders.map((order) => (
             <Link

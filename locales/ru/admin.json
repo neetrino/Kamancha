@@ -609,7 +609,13 @@
     "activateAria": "Активировать {name}",
     "detail": {
       "role": "Роль:",
+      "roleLabel": "Роль",
       "status": "Статус:",
+      "emailLabel": "Email",
+      "phoneLabel": "Телефон",
+      "emailVerifiedLabel": "Email подтверждён",
+      "lastLoginLabel": "Последний вход",
+      "createdLabel": "Создан",
       "phone": "Телефон: {phone}",
       "emailVerified": "Email подтверждён: {value}",
       "emailVerifiedNo": "нет",
@@ -620,6 +626,15 @@
       "unknownStatus": "Неизвестный статус.",
       "recentOrders": "Последние заказы",
       "noOrders": "Заказов нет."
+    },
+    "roleLabels": {
+      "admin": "Админ",
+      "customer": "Клиент"
+    },
+    "statusLabels": {
+      "active": "Активен",
+      "suspended": "Приостановлен",
+      "anonymized": "Анонимизирован"
     },
     "roleForm": {
       "title": "Роль",

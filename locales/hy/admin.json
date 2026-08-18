@@ -609,7 +609,13 @@
     "activateAria": "Ակտիվացնել {name}-ին",
     "detail": {
       "role": "Դեր՝",
+      "roleLabel": "Դեր",
       "status": "Կարգավիճակ՝",
+      "emailLabel": "Էլ. փոստ",
+      "phoneLabel": "Հեռախոս",
+      "emailVerifiedLabel": "Էլ. փոստը հաստատված է",
+      "lastLoginLabel": "Վերջին մուտք",
+      "createdLabel": "Ստեղծվել է",
       "phone": "Հեռախոս՝ {phone}",
       "emailVerified": "Էլ. փոստը հաստատված է՝ {value}",
       "emailVerifiedNo": "ոչ",
@@ -620,6 +626,15 @@
       "unknownStatus": "Անհայտ կարգավիճակ։",
       "recentOrders": "Վերջին պատվերներ",
       "noOrders": "Պատվերներ չկան։"
+    },
+    "roleLabels": {
+      "admin": "Ադմին",
+      "customer": "Հաճախորդ"
+    },
+    "statusLabels": {
+      "active": "Ակտիվ",
+      "suspended": "Կասեցված",
+      "anonymized": "Անանունացված"
     },
     "roleForm": {
       "title": "Դեր",

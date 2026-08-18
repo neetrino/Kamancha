@@ -609,7 +609,13 @@
     "activateAria": "Activate {name}",
     "detail": {
       "role": "Role:",
+      "roleLabel": "Role",
       "status": "Status:",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "emailVerifiedLabel": "Email verified",
+      "lastLoginLabel": "Last login",
+      "createdLabel": "Created",
       "phone": "Phone: {phone}",
       "emailVerified": "Email verified: {value}",
       "emailVerifiedNo": "no",
@@ -620,6 +626,15 @@
       "unknownStatus": "Unknown status.",
       "recentOrders": "Recent orders",
       "noOrders": "No orders."
+    },
+    "roleLabels": {
+      "admin": "Admin",
+      "customer": "Customer"
+    },
+    "statusLabels": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "anonymized": "Anonymized"
     },
     "roleForm": {
       "title": "Role",
