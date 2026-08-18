@@ -2,12 +2,18 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import {
+  ADMIN_INPUT,
+  ADMIN_SECTION_TITLE,
+} from "@/features/admin/ui/admin-form-classes";
 import type { DiscountBoardCategory } from "@/features/promotions/application/discounts-board";
 import { saveCategoryDiscountsAction } from "@/features/promotions/application/manage-discounts";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+const PAGE_SIZE = 5;
 
 type CategoryDiscountsSectionCopy = {
   categories: Dictionary["admin"]["discounts"]["categories"];
@@ -34,6 +40,7 @@ export function CategoryDiscountsSection({
   copy,
 }: CategoryDiscountsSectionProps) {
   const router = useRouter();
+  const [page, setPage] = useState(1);
   const [drafts, setDrafts] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       categories.map((category) => [
@@ -72,6 +79,13 @@ export function CategoryDiscountsSection({
     });
   }, [categories, drafts]);
 
+  const totalPages = Math.max(1, Math.ceil(categories.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = categories.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
   function saveAll(): void {
     const items: Array<{ categoryId: string; percentage: number | null }> = [];
     for (const category of categories) {
@@ -104,7 +118,7 @@ export function CategoryDiscountsSection({
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">
+          <h2 className={ADMIN_SECTION_TITLE}>
             {copy.categories.title}
           </h2>
           <p className="text-sm text-gray-500">{copy.categories.subtitle}</p>
@@ -125,7 +139,7 @@ export function CategoryDiscountsSection({
         </div>
       ) : (
         <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200">
-          {categories.map((category) => (
+          {pageItems.map((category) => (
             <li
               key={category.id}
               className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
@@ -178,6 +192,37 @@ export function CategoryDiscountsSection({
           ))}
         </ul>
       )}
+
+      {categories.length > 0 && totalPages > 1 ? (
+        <nav
+          className="mt-4 flex items-center justify-center gap-3 text-sm text-gray-700"
+          aria-label={copy.categories.title}
+        >
+          <button
+            type="button"
+            disabled={currentPage <= 1}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label={copy.common.previous}
+            onClick={() => setPage(currentPage - 1)}
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden />
+          </button>
+          <span>
+            {copy.common.pageOf
+              .replace("{page}", String(currentPage))
+              .replace("{totalPages}", String(totalPages))}
+          </span>
+          <button
+            type="button"
+            disabled={currentPage >= totalPages}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label={copy.common.next}
+            onClick={() => setPage(currentPage + 1)}
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden />
+          </button>
+        </nav>
+      ) : null}
 
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       {message ? <p className="mt-3 text-sm text-green-700">{message}</p> : null}

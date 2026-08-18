@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_INPUT, ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import type { DiscountBoardProduct } from "@/features/promotions/application/discounts-board";
 import { upsertTargetDiscountAction } from "@/features/promotions/application/manage-discounts";
 import { currencySymbols, isCurrency } from "@/lib/money/currency";
@@ -122,7 +122,7 @@ export function ProductDiscountsSection({
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4">
-        <h2 className="text-base font-semibold text-gray-900">
+        <h2 className={ADMIN_SECTION_TITLE}>
           {copy.products.title}
         </h2>
         <p className="text-sm text-gray-500">{copy.products.subtitle}</p>
@@ -153,7 +153,7 @@ export function ProductDiscountsSection({
             return (
               <li
                 key={product.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                   {product.imageUrl ? (
