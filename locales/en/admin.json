@@ -634,6 +634,7 @@
     }
   },
   "analytics": {
+    "title": "Analytics",
     "subtitle": "Track your business performance and statistics",
     "period": {
       "title": "Time Period",
