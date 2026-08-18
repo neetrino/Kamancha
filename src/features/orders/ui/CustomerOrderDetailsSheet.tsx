@@ -3,16 +3,16 @@
 import { MapPin } from "lucide-react";
 
 import { SideSheet } from "@/components/ui/SideSheet";
+import {
+  orderStatusBadgeClass,
+  paymentStatusBadgeClass,
+} from "@/features/admin/ui/status-badge";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
+import { orderStatusLabel } from "@/features/orders/domain/order-status";
+import { paymentStatusLabel } from "@/features/orders/domain/payment-status";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { CustomerOrderSheetPayment } from "@/features/orders/ui/CustomerOrderSheetPayment";
-import {
-  PROFILE_INNER_CARD,
-  PROFILE_STATUS_BADGE,
-} from "@/features/profile/ui/profile-surface";
+import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
@@ -57,11 +57,15 @@ export function CustomerOrderDetailsSheet({
         {detail ? (
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <p className="text-sm text-gray-500">#{detail.orderNumber}</p>
-            <span className={PROFILE_STATUS_BADGE}>
-              {formatOrderStatusLabel(detail.status)}
+            <span
+              className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
+            >
+              {orderStatusLabel(detail.status)}
             </span>
-            <span className={PROFILE_STATUS_BADGE}>
-              {formatOrderStatusLabel(detail.paymentStatus)}
+            <span
+              className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(detail.paymentStatus)}`}
+            >
+              {paymentStatusLabel(detail.paymentStatus)}
             </span>
           </div>
         ) : null}
