@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
+import { DASHBOARD_CARD_LIFT } from "@/features/admin/ui/DashboardStatsGrid";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type MetricTone = "blue" | "green" | "purple";
@@ -83,15 +84,17 @@ export function AnalyticsMetricCards({
         return (
           <Card
             key={metric.label}
-            className={`rounded-2xl border p-5 shadow-sm ${tone.card}`}
+            className={`rounded-2xl border p-5 shadow-sm ${tone.card} ${DASHBOARD_CARD_LIFT}`}
           >
-            <div
-              className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${tone.iconWrap}`}
-            >
-              <Icon className={`h-5 w-5 ${tone.icon}`} aria-hidden />
+            <div className="mb-4 flex items-center gap-3">
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tone.iconWrap}`}
+              >
+                <Icon className={`h-5 w-5 ${tone.icon}`} aria-hidden />
+              </div>
+              <p className="text-sm font-medium text-gray-600">{metric.label}</p>
             </div>
-            <p className="text-sm font-medium text-gray-600">{metric.label}</p>
-            <p className={`mt-1 text-3xl font-bold tracking-tight ${tone.value}`}>
+            <p className={`text-3xl font-bold tracking-tight ${tone.value}`}>
               {metric.value}
             </p>
           </Card>

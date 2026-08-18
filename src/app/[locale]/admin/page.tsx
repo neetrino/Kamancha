@@ -2,7 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
-import { DashboardStatsGrid } from "@/features/admin/ui/DashboardStatsGrid";
+import {
+  DASHBOARD_CARD_LIFT,
+  DashboardStatsGrid,
+} from "@/features/admin/ui/DashboardStatsGrid";
 import {
   ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
@@ -115,7 +118,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
               <Link
                 key={order.id}
                 href={`/${locale}/admin/orders/${order.orderNumber}`}
-                className="block rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
+                className={`block rounded-lg border border-gray-200 bg-white p-4 ${DASHBOARD_CARD_LIFT}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -161,7 +164,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
             {metrics.topProducts.map((product, index) => (
               <div
                 key={product.productId}
-                className="flex items-center gap-4 rounded-lg border border-gray-200 p-3"
+                className={`flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-3 ${DASHBOARD_CARD_LIFT}`}
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-gray-200 text-xs font-bold text-gray-500">
                   {index + 1}
@@ -185,14 +188,14 @@ export default async function AdminPage({ params }: AdminPageProps) {
         </Card>
       </div>
 
-      <Card className="mb-8 p-6">
+      <Card className={`mb-8 p-6 ${DASHBOARD_CARD_LIFT}`}>
         <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{dash.quickActions}</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {QUICK_ACTION_DEFS.map((action) => (
             <Link
               key={action.href}
               href={`/${locale}/admin/${action.href}`}
-              className="flex items-center gap-3 rounded-xl border border-gray-300 px-4 py-4 transition-colors hover:bg-gray-50"
+              className={`flex items-center gap-3 rounded-md border border-gray-200/70 bg-white px-4 py-4 shadow-sm ${DASHBOARD_CARD_LIFT}`}
             >
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full ${action.iconBg}`}

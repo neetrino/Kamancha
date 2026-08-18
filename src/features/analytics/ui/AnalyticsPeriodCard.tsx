@@ -95,7 +95,6 @@ export function AnalyticsPeriodCard({
       </div>
 
       <div className="max-w-md">
-        <span className={ADMIN_LABEL}>{copy.analytics.period.label}</span>
         <SelectDropdown
           ariaLabel={copy.analytics.period.aria}
           value={selectedPreset}
@@ -105,7 +104,6 @@ export function AnalyticsPeriodCard({
           }))}
           disabled={pending}
           deferChange={false}
-          className="mt-1"
           onValueChange={onPeriodChange}
         />
       </div>
