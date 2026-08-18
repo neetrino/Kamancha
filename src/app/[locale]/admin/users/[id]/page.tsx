@@ -4,7 +4,6 @@ import {
   CalendarDays,
   ChevronLeft,
   CircleCheckBig,
-  ClipboardList,
   LogIn,
   Mail,
   MailCheck,
@@ -14,21 +13,15 @@ import {
 
 import { Card } from "@/components/ui/Card";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
-import {
-  ADMIN_PAGE_TITLE,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
-import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   getEligibleUserStatuses,
   isUserRole,
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
+import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
 import { userRoleLabel, userStatusLabel } from "@/features/users/ui/user-labels";
@@ -159,7 +152,7 @@ export default async function AdminUserDetailPage({
         </div>
       </Card>
 
-      <div className="mb-6 grid gap-4 md:grid-cols-2">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-stretch">
         {role ? (
           <UpdateUserRoleForm
             locale={locale}
@@ -184,45 +177,7 @@ export default async function AdminUserDetailPage({
         )}
       </div>
 
-      <Card className="p-5 sm:p-6">
-        <div className="mb-4 flex items-start gap-4">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
-            <ClipboardList className="h-5 w-5" aria-hidden />
-          </span>
-          <h2 className={ADMIN_SECTION_TITLE}>{t.users.detail.recentOrders}</h2>
-        </div>
-        <div className="space-y-3">
-          {recentOrders.map((order) => (
-            <Link
-              key={order.id}
-              href={`/${locale}/admin/orders/${order.orderNumber}`}
-              className="block rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <strong className="text-sm text-gray-900">
-                  {order.orderNumber}
-                </strong>
-                <span
-                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                >
-                  {order.status}
-                </span>
-                <span
-                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                >
-                  {order.paymentStatus}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-gray-600">
-                {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
-              </p>
-            </Link>
-          ))}
-          {recentOrders.length === 0 ? (
-            <p className="text-sm text-gray-600">{t.users.detail.noOrders}</p>
-          ) : null}
-        </div>
-      </Card>
+      <AdminUserRecentOrders locale={locale} orders={recentOrders} copy={t} />
     </section>
   );
 }

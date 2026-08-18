@@ -51,61 +51,53 @@ export function UpdateUserStatusForm({
   }));
 
   return (
-    <Card className="p-5 sm:p-6">
-      <div className="flex items-start gap-4">
+    <Card className="min-w-0 flex-1 p-5 sm:p-6">
+      <div className="flex items-center gap-4">
         <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
           <CircleCheckBig className="h-5 w-5" aria-hidden />
         </span>
-        <div className="min-w-0 flex-1">
-          <h2 className={ADMIN_SECTION_TITLE}>
-            {copy.users.statusForm.title}
-            {": "}
-            <span className="text-brand-forest">
-              {userStatusLabel(currentStatus, labels)}
-            </span>
-          </h2>
-          <form
-            className="mt-4 flex flex-col gap-4"
-            onSubmit={(event) => {
-              event.preventDefault();
-              startTransition(async () => {
-                setError(null);
-                const result = await updateUserStatusAction(locale, {
-                  userId,
-                  status,
-                });
-                if (!result.ok) {
-                  setError(result.error.message);
-                  return;
-                }
-                router.refresh();
-              });
-            }}
-          >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <SegmentedControl
-                aria-label={copy.users.statusForm.newStatusAria}
-                value={status}
-                options={statusOptions}
-                disabled={isPending}
-                onSelect={setStatus}
-              />
-              <Button
-                type="submit"
-                size="field"
-                disabled={isPending || status === currentStatus}
-                className="w-full gap-2 sm:w-auto"
-              >
-                <Send className="h-4 w-4" aria-hidden />
-                {isPending
-                  ? copy.common.updating
-                  : copy.users.statusForm.updateStatus}
-              </Button>
-            </div>
-            {error ? <p className="text-sm text-red-700">{error}</p> : null}
-          </form>
-        </div>
+        <h2 className={ADMIN_SECTION_TITLE}>{copy.users.statusForm.title}</h2>
       </div>
+      <form
+        className="mt-4 flex flex-col gap-4"
+        onSubmit={(event) => {
+          event.preventDefault();
+          startTransition(async () => {
+            setError(null);
+            const result = await updateUserStatusAction(locale, {
+              userId,
+              status,
+            });
+            if (!result.ok) {
+              setError(result.error.message);
+              return;
+            }
+            router.refresh();
+          });
+        }}
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <SegmentedControl
+            aria-label={copy.users.statusForm.newStatusAria}
+            value={status}
+            options={statusOptions}
+            disabled={isPending}
+            onSelect={setStatus}
+          />
+          <Button
+            type="submit"
+            size="field"
+            disabled={isPending || status === currentStatus}
+            className="gap-2"
+          >
+            <Send className="h-4 w-4" aria-hidden />
+            {isPending
+              ? copy.common.updating
+              : copy.users.statusForm.updateStatus}
+          </Button>
+        </div>
+        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      </form>
     </Card>
   );
 }
