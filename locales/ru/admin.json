@@ -16,9 +16,7 @@
     "settings": "Настройки"
   },
   "shell": {
-    "brandName": "White Shop",
-    "brandHomeTitle": "Главная White Shop",
-    "brandInitial": "W",
+    "brandName": "Kamancha",
     "menu": "Меню",
     "adminMenuAria": "Меню администратора",
     "expandSidebar": "Развернуть боковую панель",

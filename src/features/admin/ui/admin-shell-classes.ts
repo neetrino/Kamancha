@@ -2,9 +2,15 @@
 export const ADMIN_SIDEBAR_MOBILE_DRAWER_WRAP =
   "mb-6 shrink-0 px-4 pt-8 sm:px-6 lg:hidden lg:pt-0";
 
+/** Navbar Kamancha wordmark, sized for the admin sidebar/header. */
+export const ADMIN_BRAND_LOGO_CLASS =
+  "relative inline-flex h-10 w-[84px] shrink-0 items-center";
+export const ADMIN_BRAND_LOGO_COLLAPSED_CLASS =
+  "relative inline-flex h-[27px] w-14 shrink-0 items-center";
+
 /** Width is set in `AdminSidebar` (expanded vs collapsed). */
 export const ADMIN_SIDEBAR_ASIDE =
-  "hidden lg:flex lg:h-full lg:shrink-0 lg:flex-col overflow-hidden rounded-r-[15px] border-r border-gray-200 bg-white transition-[width] duration-200 ease-out";
+  "hidden lg:flex lg:h-full lg:shrink-0 lg:flex-col overflow-hidden rounded-r-[15px] border-r border-white/15 bg-brand-forest transition-[width] duration-200 ease-out";
 
 export const ADMIN_SIDEBAR_NAV =
   "flex min-h-0 flex-1 flex-col space-y-1 overflow-y-auto overscroll-y-contain px-2 py-6";

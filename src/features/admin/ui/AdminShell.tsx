@@ -9,10 +9,11 @@ import {
   ADMIN_MAIN_INNER,
   ADMIN_PAGE_SHELL,
 } from "@/features/admin/ui/admin-shell-classes";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminShellProps = {
-  locale: string;
+  locale: Locale;
   copy: Dictionary["admin"];
   children: ReactNode;
 };

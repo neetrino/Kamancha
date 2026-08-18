@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { SideSheet } from "@/components/ui/SideSheet";
 
 import {
@@ -10,11 +11,13 @@ import {
   isAdminTabActive,
   type AdminMenuItem,
 } from "@/features/admin/ui/admin-menu.config";
+import { ADMIN_BRAND_LOGO_CLASS } from "@/features/admin/ui/admin-shell-classes";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminMenuDrawerProps = {
-  locale: string;
+  locale: Locale;
   pathname: string;
   shell: Dictionary["admin"]["shell"];
   nav: Dictionary["admin"]["nav"];
@@ -78,14 +81,12 @@ export function AdminMenuDrawer({
           id="admin-menu-drawer-panel"
           className="flex min-h-0 flex-1 flex-col"
         >
-            <div className="border-b border-gray-200 px-4 py-4">
-              <Link
-                href={`/${locale}`}
-                className="text-sm font-semibold text-gray-900"
-                onClick={() => setOpen(false)}
-              >
-                {shell.brandName}
-              </Link>
+            <div className="border-b border-gray-200 bg-brand-forest px-4 py-4">
+              <BrandLogo
+                locale={locale}
+                brandName={shell.brandName}
+                className={ADMIN_BRAND_LOGO_CLASS}
+              />
             </div>
 
             <nav className="flex-1 divide-y divide-gray-100 overflow-y-auto">

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import {
   getAdminMenuItems,
   isAdminTabActive,
@@ -12,18 +13,24 @@ import { AdminMenuDrawer } from "@/features/admin/ui/AdminMenuDrawer";
 import { AdminSidebarBrand } from "@/features/admin/ui/AdminSidebarBrand";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
 import {
+  ADMIN_BRAND_LOGO_CLASS,
   ADMIN_SIDEBAR_ASIDE,
   ADMIN_SIDEBAR_MOBILE_DRAWER_WRAP,
   ADMIN_SIDEBAR_NAV,
 } from "@/features/admin/ui/admin-shell-classes";
 import { useAdminProductsSubnavExpanded } from "@/features/admin/ui/useAdminProductsSubnavExpanded";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminSidebarProps = {
-  locale: string;
+  locale: Locale;
   shell: Dictionary["admin"]["shell"];
   nav: Dictionary["admin"]["nav"];
 };
+
+const ADMIN_NAV_ACTIVE = "bg-white text-brand-forest";
+const ADMIN_NAV_IDLE =
+  "text-white/85 hover:bg-white/10 hover:text-white";
 
 function isNestedVisible(
   tab: AdminMenuItem,
@@ -51,12 +58,13 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
     <>
       <div className={ADMIN_SIDEBAR_MOBILE_DRAWER_WRAP}>
         <div className="flex items-center justify-between gap-3">
-          <Link
-            href={`/${locale}`}
-            className="min-w-0 shrink text-sm font-semibold text-gray-900"
-          >
-            {shell.brandName}
-          </Link>
+          <div className="rounded-lg bg-brand-forest px-2.5 py-1.5">
+            <BrandLogo
+              locale={locale}
+              brandName={shell.brandName}
+              className={ADMIN_BRAND_LOGO_CLASS}
+            />
+          </div>
           <AdminMenuDrawer locale={locale} pathname={pathname} shell={shell} nav={nav} />
         </div>
       </div>
@@ -82,9 +90,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
             const rowClasses = `flex w-full items-center rounded-md text-sm font-medium transition-all ${
               collapsed ? "justify-center px-0 py-3" : "gap-3 px-4 py-3"
             } ${tab.isSubCategory && !collapsed ? "pl-12" : ""} ${
-              isActive
-                ? "bg-gray-900 text-white"
-                : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              isActive ? ADMIN_NAV_ACTIVE : ADMIN_NAV_IDLE
             }`;
 
             if (tab.id === "products" && !collapsed) {
@@ -92,7 +98,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                 <div
                   key={tab.id}
                   className={`flex w-full min-w-0 overflow-hidden rounded-md ${
-                    isActive ? "bg-gray-900 text-white" : "bg-transparent"
+                    isActive ? ADMIN_NAV_ACTIVE : "bg-transparent"
                   }`}
                 >
                   <Link
@@ -100,12 +106,12 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                     title={tab.label}
                     className={`flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left text-sm font-medium transition-all ${
                       isActive
-                        ? "text-white hover:bg-gray-800"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        ? "text-brand-forest hover:bg-white/90"
+                        : ADMIN_NAV_IDLE
                     }`}
                   >
                     <span
-                      className={`shrink-0 ${isActive ? "text-white" : "text-gray-500"}`}
+                      className={`shrink-0 ${isActive ? "text-brand-forest" : "text-white/70"}`}
                     >
                       {tab.icon}
                     </span>
@@ -122,8 +128,8 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                     }}
                     className={`shrink-0 border-l px-2 py-3 transition-colors ${
                       isActive
-                        ? "border-white/25 text-white hover:bg-white/10"
-                        : "border-gray-200 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                        ? "border-brand-forest/20 text-brand-forest hover:bg-black/5"
+                        : "border-white/20 text-white/80 hover:bg-white/10"
                     }`}
                   >
                     <svg
@@ -153,7 +159,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
                 className={rowClasses}
               >
                 <span
-                  className={`shrink-0 ${isActive ? "text-white" : "text-gray-500"}`}
+                  className={`shrink-0 ${isActive ? "text-brand-forest" : "text-white/70"}`}
                 >
                   {tab.icon}
                 </span>
