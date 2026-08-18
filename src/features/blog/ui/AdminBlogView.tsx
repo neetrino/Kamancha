@@ -91,26 +91,28 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
 
   return (
     <section>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.blog.title}</h1>
+      </div>
+
+      <div className="mb-4 flex items-center gap-3">
+        <AdminSearchInput
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={copy.blog.searchPlaceholder}
+          className="min-w-0 flex-1"
+          aria-label={copy.blog.searchAria}
+        />
         <Button
           type="button"
-          size="sm"
+          size="field"
           onClick={openCreate}
-          className="inline-flex items-center gap-1.5"
+          className="shrink-0 gap-1.5 rounded-2xl"
         >
           <Plus className="h-4 w-4" aria-hidden />
           {copy.blog.addPost}
         </Button>
       </div>
-
-      <AdminSearchInput
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder={copy.blog.searchPlaceholder}
-        className="mb-4"
-        aria-label={copy.blog.searchAria}
-      />
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 

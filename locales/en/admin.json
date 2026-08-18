@@ -582,6 +582,7 @@
     }
   },
   "users": {
+    "title": "Users",
     "breadcrumb": "Users",
     "searchPlaceholder": "Search by email, phone, name...",
     "searchAria": "Search users",

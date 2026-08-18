@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { AdminPagination } from "@/features/admin/ui/AdminPagination";
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { listAdminUsers } from "@/features/users/application/queries";
 import { adminUsersFilterSchema } from "@/features/users/schemas/admin-users";
 import { AdminUsersView } from "@/features/users/ui/AdminUsersView";
@@ -64,7 +65,11 @@ export default async function AdminUsersPage({
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <>
+    <section>
+      <div className="mb-6">
+        <h1 className={ADMIN_PAGE_TITLE}>{dictionary.admin.users.title}</h1>
+      </div>
+
       <AdminUsersView
         locale={locale}
         users={rows}
@@ -77,13 +82,13 @@ export default async function AdminUsersPage({
       <AdminPagination
         page={filters.page}
         totalPages={totalPages}
-        ariaLabel={dictionary.admin.users.breadcrumb}
+        ariaLabel={dictionary.admin.users.title}
         previousLabel={dictionary.admin.common.previous}
         nextLabel={dictionary.admin.common.next}
         pageOfLabel={dictionary.admin.common.pageOf}
         prevHref={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}
         nextHref={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page + 1)}`}
       />
-    </>
+    </section>
   );
 }

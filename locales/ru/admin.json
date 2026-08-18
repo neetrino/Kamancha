@@ -582,6 +582,7 @@
     }
   },
   "users": {
+    "title": "Пользователи",
     "breadcrumb": "Пользователи",
     "searchPlaceholder": "Поиск по email, телефону, имени…",
     "searchAria": "Поиск пользователей",

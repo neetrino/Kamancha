@@ -211,9 +211,11 @@ export function CouponDrawer({
             </label>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label>
-              <span className={ADMIN_LABEL}>{copy.drawer.quantity}</span>
+          <div className="grid items-stretch gap-4 sm:grid-cols-2">
+            <label className="flex flex-col">
+              <span className={`${ADMIN_LABEL} flex flex-1 items-end`}>
+                {copy.drawer.quantity}
+              </span>
               <input
                 type="number"
                 min={1}
@@ -223,8 +225,10 @@ export function CouponDrawer({
                 disabled={isPending}
               />
             </label>
-            <label>
-              <span className={ADMIN_LABEL}>{copy.drawer.expiresOptional}</span>
+            <label className="flex flex-col">
+              <span className={`${ADMIN_LABEL} flex-1`}>
+                {copy.drawer.expiresOptional}
+              </span>
               <input
                 type="datetime-local"
                 value={expiresAt}
