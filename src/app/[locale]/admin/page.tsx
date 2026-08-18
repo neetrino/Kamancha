@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
 import { DashboardStatsGrid } from "@/features/admin/ui/DashboardStatsGrid";
-import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
+import {
+  ADMIN_PAGE_TITLE,
+  ADMIN_SECTION_TITLE,
+} from "@/features/admin/ui/admin-form-classes";
 import {
   ADMIN_BADGE,
   paymentStatusBadgeClass,
@@ -83,7 +86,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
   return (
     <section>
       <div className="mb-8">
-        <p className={ADMIN_PAGE_SUBTITLE}>{dash.welcome}</p>
+        <h1 className={ADMIN_PAGE_TITLE}>{dash.welcome}</h1>
       </div>
 
       <DashboardStatsGrid
@@ -99,9 +102,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
       <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card className="p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {dash.recentOrders}
-            </h2>
+            <h2 className={ADMIN_SECTION_TITLE}>{dash.recentOrders}</h2>
             <Link
               href={`/${locale}/admin/orders`}
               className="rounded-xl px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100"
@@ -148,9 +149,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
 
         <Card className="p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {dash.topProducts}
-            </h2>
+            <h2 className={ADMIN_SECTION_TITLE}>{dash.topProducts}</h2>
             <Link
               href={`/${locale}/admin/products`}
               className="rounded-xl px-3 py-1.5 text-sm font-medium text-gray-900 hover:bg-gray-100"
@@ -187,9 +186,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
       </div>
 
       <Card className="mb-8 p-6">
-        <h2 className="mb-4 text-xl font-semibold text-gray-900">
-          {dash.quickActions}
-        </h2>
+        <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{dash.quickActions}</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {QUICK_ACTION_DEFS.map((action) => (
             <Link

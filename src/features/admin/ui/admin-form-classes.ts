@@ -11,10 +11,12 @@ export const ADMIN_SELECT =
 export const ADMIN_TEXTAREA =
   "min-h-[100px] w-full resize-y rounded-2xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300";
 
-export const ADMIN_PAGE_TITLE = "text-2xl font-semibold text-gray-900";
+export const ADMIN_PAGE_TITLE =
+  "font-big-fat-boii text-2xl font-normal tracking-wide text-gray-900 uppercase sm:text-3xl";
 
 export const ADMIN_PAGE_SUBTITLE = "text-sm text-gray-600";
 
-export const ADMIN_SECTION_TITLE = "text-xl font-semibold text-gray-900";
+export const ADMIN_SECTION_TITLE =
+  "font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";
 
 export const ADMIN_PAGINATION = "mt-4 flex items-center gap-3 text-sm text-gray-700";

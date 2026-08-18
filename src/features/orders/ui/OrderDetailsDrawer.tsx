@@ -33,7 +33,9 @@ export function OrderDetailsDrawer({
       panelClassName="w-full sm:w-[60%]"
     >
       <div className="border-b border-gray-100 px-6 py-5">
-        <h2 className="text-2xl font-semibold text-gray-900">{copy.orders.drawer.title}</h2>
+        <h2 className="font-big-fat-boii text-2xl font-normal tracking-wide text-gray-900 uppercase">
+          {copy.orders.drawer.title}
+        </h2>
         {detail ? (
           <p className="mt-1 text-sm text-gray-500">#{detail.orderNumber}</p>
         ) : null}
