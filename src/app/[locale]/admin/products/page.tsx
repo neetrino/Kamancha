@@ -7,7 +7,10 @@ import {
 } from "@/features/products/application/list-admin-products";
 import { listModifiersForProductAdmin } from "@/features/products/application/product-modifiers";
 import { adminProductsFilterSchema } from "@/features/products/schemas/admin-list";
-import { ADMIN_PAGINATION } from "@/features/admin/ui/admin-form-classes";
+import {
+  ADMIN_PAGE_TITLE,
+  ADMIN_PAGINATION,
+} from "@/features/admin/ui/admin-form-classes";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
 import { isLocale } from "@/lib/i18n/config";
@@ -116,6 +119,10 @@ export default async function AdminProductsPage({
 
   return (
     <section>
+      <div className="mb-6">
+        <h1 className={ADMIN_PAGE_TITLE}>{adminCopy.products.title}</h1>
+      </div>
+
       <AdminProductsFilters
         total={total}
         q={filters.q}

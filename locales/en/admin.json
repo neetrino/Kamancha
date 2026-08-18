@@ -252,6 +252,7 @@
     }
   },
   "products": {
+    "title": "Products",
     "addNewProduct": "Add New Product",
     "filters": {
       "totalProducts": "Total products: {total}",

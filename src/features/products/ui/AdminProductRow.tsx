@@ -5,6 +5,7 @@ import { Copy, Pencil, Star, Trash2 } from "lucide-react";
 import {
   ADMIN_TABLE_ROW,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TD_CHECK,
   ADMIN_TABLE_CHECKBOX,
 } from "@/features/admin/ui/admin-table-classes";
@@ -104,7 +105,7 @@ export function AdminProductRow({
             : copy.common.none}
         </span>
       </td>
-      <td className={ADMIN_TABLE_TD}>
+      <td className={ADMIN_TABLE_TD_CENTER}>
         <button
           type="button"
           disabled={disabled}
@@ -119,8 +120,8 @@ export function AdminProductRow({
           />
         </button>
       </td>
-      <td className={ADMIN_TABLE_TD}>
-        <div className="flex items-center gap-1">
+      <td className={ADMIN_TABLE_TD_CENTER}>
+        <div className="inline-flex items-center justify-center gap-1">
           <button
             type="button"
             onClick={onEdit}
@@ -166,7 +167,7 @@ export function AdminProductRow({
           </button>
         </div>
       </td>
-      <td className={ADMIN_TABLE_TD}>
+      <td className={ADMIN_TABLE_TD_CENTER}>
         <span className="text-xs text-gray-500">{createdLabel}</span>
       </td>
     </tr>

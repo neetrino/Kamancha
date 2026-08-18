@@ -252,6 +252,7 @@
     }
   },
   "products": {
+    "title": "Ապրանքներ",
     "addNewProduct": "Ավելացնել նոր ապրանք",
     "filters": {
       "totalProducts": "Ընդամենը ապրանքներ՝ {total}",

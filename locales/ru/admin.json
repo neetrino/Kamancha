@@ -252,6 +252,7 @@
     }
   },
   "products": {
+    "title": "Товары",
     "addNewProduct": "Добавить новый товар",
     "filters": {
       "totalProducts": "Всего товаров: {total}",

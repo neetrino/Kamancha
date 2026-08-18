@@ -33,7 +33,7 @@ export function OrderDetailsDrawer({
       panelClassName="w-full sm:w-[60%]"
     >
       <div className="border-b border-gray-100 px-6 py-5">
-        <h2 className="font-big-fat-boii text-2xl font-normal tracking-wide text-gray-900 uppercase">
+        <h2 className="font-big-fat-boii text-2xl font-normal tracking-wide text-brand-forest uppercase">
           {copy.orders.drawer.title}
         </h2>
         {detail ? (
