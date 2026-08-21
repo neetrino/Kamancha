@@ -121,22 +121,21 @@ export function HeaderMenuIcon({ className = "" }: NavIconProps) {
   );
 }
 
-/** White user glyph on the forest profile disc — Figma 192:183. */
+/** White user glyph on the forest profile disc — Figma 192:183 (17.5×22.5). */
 export function HeaderProfileGlyph({ className = "" }: NavIconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden className={className}>
-      <circle
-        cx="12"
-        cy="8"
-        r="3.6"
-        stroke="currentColor"
-        strokeWidth="2.2"
-      />
+    <svg
+      viewBox="0 0 19.9 24.9"
+      fill="none"
+      aria-hidden
+      className={className}
+    >
       <path
-        d="M5 20c0-3.6 3.1-6.2 7-6.2s7 2.6 7 6.2"
+        d="M18.7 23.7C18.7 22.5509 18.4737 21.4131 18.0339 20.3515C17.5942 19.2899 16.9497 18.3253 16.1372 17.5128C15.3247 16.7003 14.3601 16.0558 13.2985 15.6161C12.2369 15.1763 11.0991 14.95 9.95 14.95C8.80093 14.95 7.66312 15.1763 6.60152 15.6161C5.53992 16.0558 4.57533 16.7003 3.76282 17.5128C2.9503 18.3253 2.30578 19.2899 1.86605 20.3515C1.42633 21.4131 1.2 22.5509 1.2 23.7M9.95 11.2C8.62392 11.2 7.35215 10.6732 6.41447 9.73553C5.47678 8.79785 4.95 7.52608 4.95 6.2C4.95 4.87392 5.47678 3.60215 6.41447 2.66447C7.35215 1.72678 8.62392 1.2 9.95 1.2C11.2761 1.2 12.5479 1.72678 13.4855 2.66447C14.4232 3.60215 14.95 4.87392 14.95 6.2C14.95 7.52608 14.4232 8.79785 13.4855 9.73553C12.5479 10.6732 11.2761 11.2 9.95 11.2Z"
         stroke="currentColor"
-        strokeWidth="2.2"
+        strokeWidth="2.4"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

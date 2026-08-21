@@ -35,6 +35,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
   const header = (
     <CatalogPageHeader
       heading={wishlistCopy.heading}
+      headingSize="compact"
       resultsLabel={
         !user || products.length === 0
           ? wishlistCopy.resultsCountZero

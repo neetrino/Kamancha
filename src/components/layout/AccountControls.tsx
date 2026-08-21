@@ -61,7 +61,7 @@ function AccountIcon({
     return <BrandHeaderIcon name="profile" size={28} />;
   }
   if (tone === "pill") {
-    return <HeaderProfileGlyph className="size-[22px]" />;
+    return <HeaderProfileGlyph className="h-[25px] w-[20px]" />;
   }
   return <User className="h-5 w-5" aria-hidden="true" />;
 }
