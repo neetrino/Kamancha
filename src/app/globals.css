@@ -557,31 +557,14 @@ html {
 }
 
 @media (max-width: 767px) {
-  .header-mobile-home-pill {
-    display: none;
-  }
-
-  .storefront-shell:has(.home-mobile-page) .header-mobile-default {
-    display: none;
-  }
-
-  .storefront-shell:has(.home-mobile-page) .header-mobile-home-pill {
-    display: flex;
-  }
-
-  .storefront-shell:has(.home-mobile-page) [data-brand-logo] {
+  .site-header [data-brand-logo] {
     height: 79px;
     width: 164px;
   }
 
-  .storefront-shell:has(.home-mobile-page) .mobile-bottom-nav-profile {
-    display: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .header-mobile-home-pill {
-    display: none;
+  /* Sit the profile sheet above the 63px + 12px inset bottom nav. */
+  .profile-mobile-tab-sheet {
+    bottom: calc(63px + 0.75rem + env(safe-area-inset-bottom));
   }
 }
 
@@ -592,11 +575,7 @@ html {
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
     padding-top: 0.5rem;
-    padding-bottom: 2.5rem;
-  }
-
-  .storefront-shell:has(.profile-mobile-page) .mobile-bottom-nav {
-    display: none;
+    padding-bottom: 6rem;
   }
 
   .profile-mobile-tab-sheet-scroll {

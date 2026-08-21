@@ -5,7 +5,6 @@ import { SITE_HEADER_INNER } from "@/components/layout/site-header-classes";
 import { ProductGallery } from "@/features/products/ui/ProductGallery";
 import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
 import type { ProductDetail } from "@/features/products/types";
-import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -59,6 +58,11 @@ export function ProductDetailView({
           closeZoomLabel={labels.closeZoom}
           previousImageLabel={labels.previousImage}
           nextImageLabel={labels.nextImage}
+          locale={locale}
+          productId={product.id}
+          inWishlist={inWishlist}
+          isSignedIn={isSignedIn}
+          wishlistLabel={dictionary.nav.wishlist}
         />
 
         <div className="flex min-w-0 flex-1 flex-col gap-[22px]">
@@ -94,39 +98,27 @@ export function ProductDetailView({
             </span>
           </nav>
 
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 flex-wrap items-start gap-3">
-              <h1 className="font-big-fat-boii text-[clamp(32px,5vw,58px)] leading-[1.05] font-normal tracking-[0.5px] text-white uppercase">
-                {product.translation.title}
-              </h1>
+          <div className="flex min-w-0 flex-wrap items-start gap-3">
+            <h1 className="font-big-fat-boii text-[clamp(32px,5vw,58px)] leading-[1.05] font-normal tracking-[0.5px] text-white uppercase">
+              {product.translation.title}
+            </h1>
+            <span
+              className={`mt-2 inline-flex items-center gap-1 rounded-[40px] px-2.5 py-1 text-base leading-[27px] ${
+                inStock
+                  ? "bg-[rgba(34,34,34,0.53)] text-white/90"
+                  : "bg-black/40 text-white/70"
+              }`}
+            >
               <span
-                className={`mt-2 inline-flex items-center gap-1 rounded-[40px] px-2.5 py-1 text-base leading-[27px] ${
+                aria-hidden
+                className={`size-2.5 rounded-full ${
                   inStock
-                    ? "bg-[rgba(34,34,34,0.53)] text-white/90"
-                    : "bg-black/40 text-white/70"
+                    ? "bg-[#84d086] shadow-[0_0_8px_rgba(132,208,134,0.8)]"
+                    : "bg-white/40"
                 }`}
-              >
-                <span
-                  aria-hidden
-                  className={`size-2.5 rounded-full ${
-                    inStock
-                      ? "bg-[#84d086] shadow-[0_0_8px_rgba(132,208,134,0.8)]"
-                      : "bg-white/40"
-                  }`}
-                />
-                {inStock ? labels.inStockShort : labels.outOfStock}
-              </span>
-            </div>
-
-            <WishlistButton
-              locale={locale}
-              productId={product.id}
-              initialInWishlist={inWishlist}
-              isSignedIn={isSignedIn}
-              label={dictionary.nav.wishlist}
-              size="lg"
-              className="mt-2 size-11 shrink-0 bg-white text-brand-forest shadow-sm hover:bg-white/90"
-            />
+              />
+              {inStock ? labels.inStockShort : labels.outOfStock}
+            </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">

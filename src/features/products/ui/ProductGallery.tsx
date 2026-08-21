@@ -6,7 +6,9 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import type { ProductGalleryImage } from "@/features/products/types";
+import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import { clearActiveFocus } from "@/lib/dom/clear-active-focus";
+import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const ZOOM_SRC = "/assets/brand/product/zoom-in.svg";
@@ -22,6 +24,11 @@ type ProductGalleryProps = {
   closeZoomLabel: string;
   previousImageLabel: string;
   nextImageLabel: string;
+  locale: Locale;
+  productId: string;
+  inWishlist: boolean;
+  isSignedIn: boolean;
+  wishlistLabel: string;
 };
 
 function formatDiscountOff(template: string, percent: number): string {
@@ -39,6 +46,11 @@ export function ProductGallery({
   closeZoomLabel,
   previousImageLabel,
   nextImageLabel,
+  locale,
+  productId,
+  inWishlist,
+  isSignedIn,
+  wishlistLabel,
 }: ProductGalleryProps) {
   const galleryImages = useMemo<ProductGalleryImage[]>(
     () =>
@@ -226,6 +238,16 @@ export function ProductGallery({
             {outOfStockLabel}
           </span>
         ) : null}
+
+        <WishlistButton
+          locale={locale}
+          productId={productId}
+          initialInWishlist={inWishlist}
+          isSignedIn={isSignedIn}
+          label={wishlistLabel}
+          size="lg"
+          className="absolute top-3 right-3 z-10 size-11 bg-white text-brand-forest shadow-sm hover:bg-white/90"
+        />
 
         {canCycle ? (
           <>

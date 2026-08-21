@@ -230,7 +230,7 @@ export function ProfileMobileTabSheet({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[90] flex items-end overscroll-none lg:hidden"
+      className="profile-mobile-tab-sheet fixed inset-0 z-[90] flex items-end overscroll-none lg:hidden"
       role="dialog"
       aria-modal="true"
       aria-label={displayAriaLabel}
@@ -262,6 +262,7 @@ export function ProfileMobileTabSheet({
         className={`liquid-glass isolate relative z-[1] flex w-full flex-col overflow-hidden shadow-2xl ${panelClass}`}
         style={{
           height: `${SHEET_HEIGHT_VH}dvh`,
+          maxHeight: "100%",
           borderTopLeftRadius: "var(--radius)",
           borderTopRightRadius: "var(--radius)",
         }}

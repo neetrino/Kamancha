@@ -139,62 +139,36 @@ export function SiteHeaderMainNav({
               />
             </div>
 
-            {/* Below md: compact controls */}
-            <div className="flex items-center gap-3 self-center md:hidden">
-              <div className="header-mobile-default flex items-center gap-3 self-center">
-                <HeaderSearch
-                  locale={locale}
-                  currency={currency}
-                  labels={searchLabels}
-                  variant="responsive"
-                  tone="onDark"
-                />
-                <div className="hidden sm:block">
-                  <IconRail />
-                </div>
-                <LocaleCurrencySwitcher
-                  locale={locale}
-                  currency={currency}
-                  currencyLabel={dictionary.header.currency}
-                  languageLabel={dictionary.header.language}
-                  tone="onDark"
-                />
+            {/* Below md: home-style menu + account pill */}
+            <div className="flex items-center self-center md:hidden">
+              <div
+                className="flex h-14 w-[113px] items-center justify-between rounded-[28px] bg-white pr-[2.5px] pl-3"
+                data-node-id="181:504"
+              >
                 <MobileNavDrawer
                   locale={locale}
                   dictionary={dictionary}
                   navItems={navItems}
+                  forestTrigger
+                  triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
+                  panelFooter={
+                    <LocaleCurrencySwitcher
+                      locale={locale}
+                      currency={currency}
+                      currencyLabel={dictionary.header.currency}
+                      languageLabel={dictionary.header.language}
+                    />
+                  }
                 />
-              </div>
-              <div className="header-mobile-home-pill items-center">
-                <div
-                  className="flex h-14 w-[113px] items-center justify-between rounded-[28px] bg-white pr-[2.5px] pl-3"
-                  data-node-id="181:504"
-                >
-                  <MobileNavDrawer
-                    locale={locale}
-                    dictionary={dictionary}
-                    navItems={navItems}
-                    forestTrigger
-                    triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
-                    panelFooter={
-                      <LocaleCurrencySwitcher
-                        locale={locale}
-                        currency={currency}
-                        currencyLabel={dictionary.header.currency}
-                        languageLabel={dictionary.header.language}
-                      />
-                    }
-                  />
-                  <AccountControls
-                    locale={locale}
-                    loginLabel={dictionary.header.login}
-                    logoutLabel={dictionary.header.logout}
-                    profileLabel={dictionary.header.profile}
-                    adminLabel={dictionary.header.admin}
-                    user={user}
-                    tone="pill"
-                  />
-                </div>
+                <AccountControls
+                  locale={locale}
+                  loginLabel={dictionary.header.login}
+                  logoutLabel={dictionary.header.logout}
+                  profileLabel={dictionary.header.profile}
+                  adminLabel={dictionary.header.admin}
+                  user={user}
+                  tone="pill"
+                />
               </div>
             </div>
           </div>

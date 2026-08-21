@@ -13,6 +13,7 @@ import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
 import { CatalogControls } from "@/features/products/ui/CatalogControls";
 import { CatalogPageHeader } from "@/features/products/ui/CatalogPageHeader";
 import { ProductCard } from "@/features/products/ui/ProductCard";
+import { getProductAverageRatings } from "@/features/reviews/application/queries";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
@@ -83,9 +84,11 @@ export default async function ProductsPage({
   }
 
   const { products } = catalog;
-  const [wishlistIds, formatPrice] = await Promise.all([
-    getWishlistProductIds(products.map((product) => product.id)),
+  const productIds = products.map((product) => product.id);
+  const [wishlistIds, formatPrice, ratings] = await Promise.all([
+    getWishlistProductIds(productIds),
     createDisplayPriceFormatter(rawLocale, currency),
+    getProductAverageRatings(productIds),
   ]);
 
   const priced = products.map((product) => {
@@ -99,6 +102,7 @@ export default async function ProductsPage({
       product,
       price,
       compareAtFormatted: compareAt?.formatted ?? null,
+      rating: ratings.get(product.id) ?? null,
     };
   });
 
@@ -154,12 +158,12 @@ export default async function ProductsPage({
         ) : (
           <Stagger
             key={catalogGridMotionKey(filters)}
-            className="grid grid-cols-1 justify-items-center gap-5 sm:grid-cols-2 xl:grid-cols-3"
+            className="grid grid-cols-2 justify-items-stretch gap-3 sm:justify-items-center sm:gap-5 xl:grid-cols-3"
             stagger={0.06}
             immediate
           >
-            {priced.map(({ product, price, compareAtFormatted }, index) => (
-              <StaggerItem key={product.id} className="w-full max-w-[300px]">
+            {priced.map(({ product, price, compareAtFormatted, rating }, index) => (
+              <StaggerItem key={product.id} className="min-w-0 w-full sm:max-w-[300px]">
                 <ProductCard
                   href={`/${rawLocale}/products/${product.translation.slug}`}
                   title={product.translation.title}
@@ -167,6 +171,7 @@ export default async function ProductsPage({
                   compareAtFormatted={compareAtFormatted}
                   discountPercent={product.discountPercent}
                   discountOffLabel={dictionary.home.discountOff}
+                  rating={rating}
                   imageUrl={product.imageUrl}
                   inStock={product.stockOnHand > 0}
                   priority={index < 2}
@@ -177,7 +182,8 @@ export default async function ProductsPage({
                   wishlistLabel={dictionary.nav.wishlist}
                   addToCartLabel={dictionary.product.addToCart}
                   requiresCustomization={product.hasCustomizationOptions}
-                  className="w-full max-w-[300px]"
+                  layout="catalog"
+                  className="w-full"
                 />
               </StaggerItem>
             ))}

@@ -37,9 +37,10 @@ type ProductCardProps = {
   requiresCustomization?: boolean;
   className?: string;
   /**
-   * `fixed` — Figma 300×419 (catalog / home desktop).
+   * `fixed` — Figma 300×419 (home desktop).
    * `fluid` — fills grid cell (wishlist 5-up).
-   * `compact` — Figma mobile 214×302 (home rails / 2-col sale).
+   * `compact` — Figma mobile 214×302 (home rails).
+   * `catalog` — Figma 103:3029 menu card (2-col mobile, 300px from sm).
    */
   layout?: ProductCardLayout;
 };
@@ -49,7 +50,7 @@ function formatDiscountOff(template: string, percent: number): string {
 }
 
 /**
- * Storefront product card — Figma items / border (22:230 / 22:307).
+ * Storefront product card — Figma items 22:230 / catalog 103:3029.
  */
 export function ProductCard({
   href,
@@ -82,11 +83,13 @@ export function ProductCard({
   const ui = productCardLayout(layout);
   const fluid = layout === "fluid";
   const compact = layout === "compact";
-  const starPx = fluid ? 12 : 18;
+  const catalog = layout === "catalog";
+  const useScaledDivider = fluid || catalog;
+  const starPx = fluid ? 12 : catalog ? 24 : 18;
 
   return (
     <article
-      data-node-id="22:230"
+      data-node-id={catalog ? "103:3029" : "22:230"}
       className={`group relative flex flex-col overflow-hidden bg-white transition-[translate,box-shadow] duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:z-10 hover:-translate-y-2 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${ui.article} ${className}`}
     >
       <div
@@ -132,16 +135,16 @@ export function ProductCard({
 
       {compact ? null : (
         <div
-          className={`relative z-[1] mx-auto shrink-0 ${
-            fluid
-              ? "mt-1 w-[calc(100%-8px)] [container-type:inline-size]"
+          className={`relative z-[1] mx-auto shrink-0 overflow-visible ${
+            useScaledDivider
+              ? "mt-1 w-[calc(100%-24px)] max-w-[276px] [container-type:inline-size] sm:mt-2"
               : "mt-2 w-[276px]"
           }`}
           aria-hidden
         >
           <div
-            className={`relative w-full overflow-hidden ${
-              fluid ? "h-[clamp(1.5rem,12cqw,2rem)]" : "h-11"
+            className={`relative w-full overflow-visible ${
+              useScaledDivider ? "h-[calc(100cqi*44/276+8px)]" : "h-[52px]"
             }`}
           >
             <img
@@ -151,7 +154,7 @@ export function ProductCard({
               height={276}
               className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2 rotate-90"
               style={
-                fluid
+                useScaledDivider
                   ? {
                       height: "100cqi",
                       width: "calc(100cqi * 44 / 276)",
@@ -181,7 +184,7 @@ export function ProductCard({
               {categoryLabel}
             </p>
           ) : null}
-          <div className={`flex flex-col gap-px ${fluid ? "mt-0.5" : "mt-1"}`}>
+          <div className={`flex flex-col gap-px ${fluid || catalog ? "mt-0.5" : "mt-1"}`}>
             <p className={`leading-none font-bold text-[#222] ${ui.price}`}>
               {priceFormatted}
             </p>

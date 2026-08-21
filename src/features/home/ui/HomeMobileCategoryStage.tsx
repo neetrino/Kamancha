@@ -52,23 +52,25 @@ export function HomeMobileCategoryStage({
   direction = 1,
 }: HomeMobileCategoryStageProps) {
   return (
-    <div className="relative mt-2 overflow-visible pt-6 pb-2">
+    <div className="relative mt-2 pt-6 pb-2">
       <div
         aria-hidden
-        className="pointer-events-none absolute top-[-24px] left-1/2 z-0 size-[765px] -translate-x-1/2"
+        className="pointer-events-none absolute inset-x-0 top-[-24px] z-0 h-[765px] overflow-x-clip"
         data-node-id="181:476"
       >
-        <Image
-          src={HOME_HERO_PLATE_SRC}
-          alt=""
-          width={1370}
-          height={1370}
-          sizes="765px"
-          className="size-full rotate-180 rounded-full object-cover"
-        />
+        <div className="absolute top-0 left-1/2 size-[765px] -translate-x-1/2">
+          <Image
+            src={HOME_HERO_PLATE_SRC}
+            alt=""
+            width={1370}
+            height={1370}
+            sizes="765px"
+            className="size-full rotate-180 rounded-full object-cover"
+          />
+        </div>
       </div>
 
-      <HomeReveal className="relative z-[1]">
+      <HomeReveal immediate className="relative z-[1]">
         <HomeMobilePlateWheel
           current={current}
           prev={prev}

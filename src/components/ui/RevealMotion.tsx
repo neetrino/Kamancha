@@ -43,7 +43,8 @@ function usePlayReveal(enabled: boolean): boolean {
 
 /**
  * Fade + rise when the block enters the viewport.
- * Honors prefers-reduced-motion.
+ * Honors prefers-reduced-motion. Viewport threshold stays tiny so iOS
+ * IntersectionObserver (overflow-x clip / toolbar) still fires.
  */
 export function Reveal({
   children,
@@ -52,7 +53,7 @@ export function Reveal({
   y = 28,
   x = 0,
   once = true,
-  amount = 0.2,
+  amount = 0.01,
   immediate = false,
   fade = true,
   enabled = true,
@@ -74,7 +75,7 @@ export function Reveal({
       whileInView={play && !immediate ? shown : undefined}
       viewport={
         play && !immediate
-          ? { once, amount, margin: "0px 0px -8% 0px" }
+          ? { once, amount, margin: "40% 0px 40% 0px" }
           : undefined
       }
       transition={play ? { ...revealEaseOut, delay } : undefined}
@@ -101,7 +102,7 @@ export function Stagger({
   children,
   className,
   stagger = 0.09,
-  amount = 0.12,
+  amount = 0.01,
   immediate = false,
   enabled = true,
 }: StaggerProps) {
@@ -115,7 +116,7 @@ export function Stagger({
       whileInView={play && !immediate ? "show" : undefined}
       viewport={
         play && !immediate
-          ? { once: true, amount, margin: "0px 0px -6% 0px" }
+          ? { once: true, amount, margin: "40% 0px 40% 0px" }
           : undefined
       }
       variants={
