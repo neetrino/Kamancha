@@ -135,7 +135,7 @@ export function ProductCard({
 
       {compact ? null : (
         <div
-          className={`relative z-[1] mx-auto shrink-0 overflow-visible ${
+          className={`relative z-[1] mx-auto hidden shrink-0 overflow-visible md:block ${
             useScaledDivider
               ? "mt-1 w-[calc(100%-24px)] max-w-[276px] [container-type:inline-size] sm:mt-2"
               : "mt-2 w-[276px]"
@@ -169,7 +169,11 @@ export function ProductCard({
       <div
         className={`relative z-[1] flex min-h-0 flex-1 ${ui.body}`}
       >
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div
+          className={`flex min-w-0 flex-1 flex-col ${
+            compact ? "gap-1.5" : catalog ? "gap-2 sm:gap-0" : ""
+          }`}
+        >
           <h3 className={`truncate font-medium text-[#222] ${ui.title}`}>
             <AppLink
               href={href}
@@ -184,7 +188,15 @@ export function ProductCard({
               {categoryLabel}
             </p>
           ) : null}
-          <div className={`flex flex-col gap-px ${fluid || catalog ? "mt-0.5" : "mt-1"}`}>
+          <div
+            className={`flex flex-col ${
+              compact
+                ? "gap-1"
+                : catalog
+                  ? "gap-1.5 sm:mt-0.5 sm:gap-px"
+                  : `gap-px ${fluid ? "mt-0.5" : "mt-1"}`
+            }`}
+          >
             <p className={`leading-none font-bold text-[#222] ${ui.price}`}>
               {priceFormatted}
             </p>
@@ -220,10 +232,10 @@ export function ProductCard({
               label={addToCartLabel}
               disabled={!inStock}
               size="md"
-              icon="cart-plus"
+              icon={compact ? "cart-mobile" : "cart-plus"}
               productHref={href}
               requiresCustomization={requiresCustomization}
-              className={`mt-auto rounded-[40px] bg-brand-forest hover:bg-[#1e3f1f] ${ui.cart}`}
+              className={`mt-auto rounded-full bg-brand-forest hover:bg-[#1e3f1f] ${ui.cart}`}
             />
           ) : null}
         </div>

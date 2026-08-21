@@ -77,13 +77,13 @@ export function AccountControls({
 }: AccountControlsProps) {
   const logoutWithLocale = logoutAction.bind(null, locale);
 
-  if (!user) {
+  if (!user || tone === "pill") {
     return (
       <AppLink
-        href={`/${locale}/login`}
+        href={user ? `/${locale}/profile` : `/${locale}/login`}
         prefetchPolicy="intent"
         className={iconButtonClassName(tone)}
-        aria-label={loginLabel}
+        aria-label={user ? profileLabel : loginLabel}
       >
         <AccountIcon tone={tone} />
       </AppLink>

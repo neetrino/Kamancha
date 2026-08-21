@@ -120,6 +120,7 @@ async function HomeBelowFold({
           productCountLabel={dictionary.home.categoryProductCount}
           emptyLabel={dictionary.home.emptyCategories}
           viewAllLabel={dictionary.home.viewAll}
+          viewAllHref={`/${locale}/products`}
           previousLabel={dictionary.home.previousCategory}
           nextLabel={dictionary.home.nextCategory}
           categories={categoryItems}

@@ -12,6 +12,7 @@ type HomeMobileCategoriesProps = {
   productCountLabel: string;
   emptyLabel: string;
   viewAllLabel: string;
+  viewAllHref: string;
   previousLabel: string;
   nextLabel: string;
   categories: readonly HomeMobileCategorySlide[];
@@ -40,6 +41,7 @@ export function HomeMobileCategories({
   productCountLabel,
   emptyLabel,
   viewAllLabel,
+  viewAllHref,
   previousLabel,
   nextLabel,
   categories,
@@ -117,6 +119,7 @@ export function HomeMobileCategories({
         next={nextSlide ?? null}
         productCountLabel={productCountLabel}
         viewAllLabel={viewAllLabel}
+        viewAllHref={viewAllHref}
         previousLabel={previousLabel}
         nextLabel={nextLabel}
         onPrev={() => moveBy(-1)}

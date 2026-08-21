@@ -13,6 +13,9 @@ import {
 } from "@/features/storefront-chrome/storefront-counts-store";
 
 const CART_PLUS_SRC = "/assets/brand/home/cart-plus.svg";
+const CART_MOBILE_SRC = "/assets/brand/home/product-card-cart.svg";
+
+type AddToCartIcon = "cart" | "cart-plus" | "cart-mobile";
 
 type AddToCartButtonProps = {
   productId: string;
@@ -20,8 +23,8 @@ type AddToCartButtonProps = {
   disabled?: boolean;
   className?: string;
   size?: "sm" | "md";
-  /** Figma 22:295 cart-plus glyph; default Lucide cart. */
-  icon?: "cart" | "cart-plus";
+  /** `cart-plus` — Figma 22:295; `cart-mobile` — Figma 196:276 on 192:185. */
+  icon?: AddToCartIcon;
   /**
    * When the dish has additions/exceptions, navigate here instead of
    * quick-adding so the shopper can configure on the PDP.
@@ -29,6 +32,63 @@ type AddToCartButtonProps = {
   productHref?: string;
   requiresCustomization?: boolean;
 };
+
+function AddToCartGlyph({
+  icon,
+  justAdded,
+  iconClass,
+}: {
+  icon: AddToCartIcon;
+  justAdded: boolean;
+  iconClass: string;
+}) {
+  const addedClass = justAdded ? "opacity-80" : "";
+
+  if (icon === "cart-mobile") {
+    return (
+      <img
+        src={CART_MOBILE_SRC}
+        alt=""
+        width={24}
+        height={24}
+        className={`size-6 ${addedClass}`}
+        aria-hidden
+      />
+    );
+  }
+
+  if (icon === "cart-plus") {
+    return (
+      <>
+        <img
+          src={CART_MOBILE_SRC}
+          alt=""
+          width={24}
+          height={24}
+          className={`size-6 sm:hidden ${addedClass}`}
+          aria-hidden
+        />
+        <img
+          src={CART_PLUS_SRC}
+          alt=""
+          width={30}
+          height={26}
+          className={`hidden h-[26px] w-[30px] translate-y-[2px] sm:inline ${addedClass}`}
+          aria-hidden
+        />
+      </>
+    );
+  }
+
+  return (
+    <ShoppingCart
+      className={`${iconClass} ${
+        justAdded ? "fill-current text-current" : "fill-none text-current"
+      }`}
+      aria-hidden
+    />
+  );
+}
 
 export function AddToCartButton({
   productId,
@@ -80,23 +140,11 @@ export function AddToCartButton({
       data-just-added={justAdded || undefined}
       className={`inline-flex items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
-      {icon === "cart-plus" ? (
-        <img
-          src={CART_PLUS_SRC}
-          alt=""
-          width={30}
-          height={26}
-          className={`h-[26px] w-[30px] translate-y-[2px] ${justAdded ? "opacity-80" : ""}`}
-          aria-hidden
-        />
-      ) : (
-        <ShoppingCart
-          className={`${iconClass} ${
-            justAdded ? "fill-current text-current" : "fill-none text-current"
-          }`}
-          aria-hidden
-        />
-      )}
+      <AddToCartGlyph
+        icon={icon}
+        justAdded={justAdded}
+        iconClass={iconClass}
+      />
     </button>
   );
 }

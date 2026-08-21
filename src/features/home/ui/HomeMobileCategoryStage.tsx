@@ -22,6 +22,7 @@ type HomeMobileCategoryStageProps = {
   next: HomeMobileCategorySlide | null;
   productCountLabel: string;
   viewAllLabel: string;
+  viewAllHref: string;
   previousLabel: string;
   nextLabel: string;
   onPrev: () => void;
@@ -44,6 +45,7 @@ export function HomeMobileCategoryStage({
   next,
   productCountLabel,
   viewAllLabel,
+  viewAllHref,
   previousLabel,
   nextLabel,
   onPrev,
@@ -115,7 +117,7 @@ export function HomeMobileCategoryStage({
 
         <div className="mt-5 flex justify-center">
           <KamanchaPillButton
-            href={current.href}
+            href={viewAllHref}
             label={viewAllLabel}
             variant="dark"
             size="compact"
