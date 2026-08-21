@@ -125,15 +125,15 @@ export function ProfileRecentOrders({
 
   return (
     <>
-      <div className={PROFILE_SECTION}>
+      <div className={`profile-recent-orders ${PROFILE_SECTION}`}>
         <div className="relative z-[2] mb-6 flex items-center justify-between gap-4">
-          <h2 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
+          <h2 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase lg:text-white">
             {dictionary.recentOrders}
           </h2>
           <AppLink
             href={`/${locale}/profile/orders`}
             prefetchPolicy="intent"
-            className="inline-flex items-center gap-1 font-big-fat-boii text-sm font-normal tracking-wide text-white uppercase transition-opacity hover:opacity-80"
+            className="inline-flex items-center gap-1 font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase transition-opacity hover:opacity-80 lg:text-white"
           >
             {dictionary.viewAllOrders}
             <ArrowRight className="h-4 w-4" aria-hidden />

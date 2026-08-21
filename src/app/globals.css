@@ -596,7 +596,7 @@ html {
    */
   .profile-mobile-tab-sheet .liquid-glass {
     background: #ffffff;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+    box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
@@ -605,12 +605,27 @@ html {
     display: none;
   }
 
+  .profile-mobile-tab-sheet-scroll .profile-stat-card.liquid-glass {
+    background: #cfe8c4;
+  }
+
   .profile-mobile-tab-sheet-scroll .profile-stat-card-label {
-    color: rgb(75 85 99);
+    color: rgb(38 81 39 / 0.7);
   }
 
   .profile-mobile-tab-sheet-scroll .profile-stat-card-value {
-    color: rgb(17 24 39);
+    color: var(--brand-forest);
+  }
+
+  /* Dashboard recent-orders: no outer white frame on mobile (cards keep their own). */
+  .profile-mobile-tab-sheet-scroll .profile-recent-orders.liquid-glass {
+    background: none;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 0;
   }
 
   .profile-mobile-tab-sheet-scroll .profile-pill-light {
