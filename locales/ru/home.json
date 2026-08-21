@@ -11,6 +11,8 @@
   "viewAll": "Смотреть все",
   "emptyFeatured": "Пока нет рекомендуемых товаров.",
   "emptyDiscounted": "Пока нет товаров со скидкой.",
+  "previousCategory": "Предыдущая категория",
+  "nextCategory": "Следующая категория",
   "familyDinner": {
     "headlineBefore": "ужин для ",
     "headlineAccent": "всей семьи",

@@ -13,6 +13,7 @@ import {
   PROFILE_PILL_GHOST,
   PROFILE_PILL_LIGHT,
   PROFILE_SECTION,
+  PROFILE_SECTION_DIVIDER,
   PROFILE_SECTION_TITLE,
 } from "@/features/profile/ui/profile-surface";
 
@@ -60,7 +61,7 @@ export function PersonalInformationForm({
 
   return (
     <section className={PROFILE_SECTION}>
-      <div className="relative z-[2] mb-8 border-b border-white/35 pb-5 sm:mb-10 sm:pb-6">
+      <div className={PROFILE_SECTION_DIVIDER}>
         <h1 className={PROFILE_SECTION_TITLE}>{labels.title}</h1>
       </div>
 

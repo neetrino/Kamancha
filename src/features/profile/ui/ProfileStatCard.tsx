@@ -3,13 +3,16 @@ type ProfileStatCardProps = {
   value: string;
 };
 
+/**
+ * Desktop: liquid-glass on forest. Mobile sheet: solid white via CSS.
+ */
 export function ProfileStatCard({ label, value }: ProfileStatCardProps) {
   return (
-    <div className="liquid-glass isolate overflow-hidden rounded-3xl p-5 transition-[translate,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:z-10 hover:-translate-y-2 hover:shadow-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-6">
-      <p className="relative z-[2] font-big-fat-boii text-[11px] font-normal tracking-wide text-white uppercase sm:text-xs">
+    <div className="profile-stat-card liquid-glass isolate overflow-hidden rounded-3xl p-5 transition-[translate,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:z-10 hover:-translate-y-2 hover:shadow-lg motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-6">
+      <p className="profile-stat-card-label relative z-[2] font-big-fat-boii text-[11px] font-normal tracking-wide text-white uppercase sm:text-xs">
         {label}
       </p>
-      <p className="relative z-[2] mt-2 font-big-fat-boii text-2xl font-normal tracking-wide text-white sm:mt-3 sm:text-3xl">
+      <p className="profile-stat-card-value relative z-[2] mt-2 font-big-fat-boii text-2xl font-normal tracking-wide text-white sm:mt-3 sm:text-3xl">
         {value}
       </p>
     </div>

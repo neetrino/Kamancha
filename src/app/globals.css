@@ -561,11 +561,6 @@ html {
     height: 79px;
     width: 164px;
   }
-
-  /* Sit the profile sheet above the 63px + 12px inset bottom nav. */
-  .profile-mobile-tab-sheet {
-    bottom: calc(63px + 0.75rem + env(safe-area-inset-bottom));
-  }
 }
 
 @media (max-width: 1023px) {
@@ -583,6 +578,39 @@ html {
     touch-action: pan-y;
   }
 
+  /**
+   * Mobile profile sheets (Grill.am): solid white panel; nested glass → white cards.
+   * Desktop sidebar/content glass is unchanged (these rules are sheet-scoped).
+   */
+  .profile-mobile-tab-sheet .liquid-glass {
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .profile-mobile-tab-sheet .liquid-glass::before {
+    display: none;
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-stat-card-label {
+    color: rgb(75 85 99);
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-stat-card-value {
+    color: rgb(17 24 39);
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-pill-light {
+    background-color: var(--brand-forest);
+    color: #ffffff;
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-pill-light:hover {
+    background-color: var(--brand-forest);
+    opacity: 0.9;
+  }
+
   /* Dashboard + orders: more inset from the sheet edges. */
   .profile-mobile-tab-sheet-scroll:has(.profile-sheet-keep-frame) {
     padding-left: 1.25rem;
@@ -590,7 +618,7 @@ html {
   }
 
   /**
-   * Form sheets: flatten nested glass cards onto the sheet surface.
+   * Form sheets: flatten nested cards onto the white sheet surface.
    * Dashboard + orders (`.profile-sheet-keep-frame`) keep their own frames.
    */
   .profile-mobile-tab-sheet-scroll

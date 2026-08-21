@@ -11,6 +11,8 @@
   "viewAll": "Տեսնել բոլորը",
   "emptyFeatured": "Ընտրված ապրանքներ դեռ չկան։",
   "emptyDiscounted": "Զեղչված ապրանքներ դեռ չկան։",
+  "previousCategory": "Նախորդ կատեգորիա",
+  "nextCategory": "Հաջորդ կատեգորիա",
   "familyDinner": {
     "headlineBefore": "ընթրիք՝",
     "headlineAccent": "ամբողջ ընտանիքի ",

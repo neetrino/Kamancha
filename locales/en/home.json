@@ -11,6 +11,8 @@
   "viewAll": "View all",
   "emptyFeatured": "No featured products yet.",
   "emptyDiscounted": "No discounted products yet.",
+  "previousCategory": "Previous category",
+  "nextCategory": "Next category",
   "familyDinner": {
     "headlineBefore": "dinner for ",
     "headlineAccent": "the whole family",

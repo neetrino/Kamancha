@@ -259,7 +259,7 @@ export function ProfileMobileTabSheet({
       />
       <div
         ref={panelRef}
-        className={`liquid-glass isolate relative z-[1] flex w-full flex-col overflow-hidden shadow-2xl ${panelClass}`}
+        className={`relative z-[1] flex w-full flex-col overflow-hidden bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.18)] ${panelClass}`}
         style={{
           height: `${SHEET_HEIGHT_VH}dvh`,
           maxHeight: "100%",
@@ -276,7 +276,7 @@ export function ProfileMobileTabSheet({
           {...headerPointerHandlers}
         >
           <div
-            className="rounded-full bg-white/55"
+            className="rounded-full bg-gray-300"
             style={{ height: 6, width: 56 }}
             aria-hidden
           />

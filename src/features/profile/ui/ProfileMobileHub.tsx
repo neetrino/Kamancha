@@ -113,8 +113,8 @@ export function ProfileMobileHub({
           <span
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
               item.danger
-                ? "bg-red-50/80 text-red-600"
-                : "bg-white/50 text-brand-forest"
+                ? "bg-red-50 text-red-600"
+                : "bg-gray-100 text-brand-forest"
             }`}
           >
             {item.icon}
@@ -143,7 +143,7 @@ export function ProfileMobileHub({
           type="button"
           onClick={onOpenDashboard}
           aria-current={active ? "page" : undefined}
-          className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-white/30"
+          className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50"
         >
           {content}
         </button>
@@ -156,7 +156,7 @@ export function ProfileMobileHub({
           <AppLink
             href={item.href}
             prefetchPolicy="intent"
-            className="flex w-full items-center justify-between rounded-2xl border border-red-200/70 bg-white/35 px-3 py-3 text-left transition-colors hover:bg-red-50/50"
+            className="flex w-full items-center justify-between rounded-2xl border border-red-200 bg-red-50/60 px-3 py-3 text-left transition-colors hover:bg-red-50"
           >
             {content}
           </AppLink>
@@ -170,7 +170,7 @@ export function ProfileMobileHub({
         href={item.href}
         prefetchPolicy="intent"
         aria-current={active ? "page" : undefined}
-        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-white/30"
+        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50"
       >
         {content}
       </AppLink>
@@ -184,11 +184,11 @@ export function ProfileMobileHub({
     >
       <StaggerItem>
         <section
-          className="liquid-glass isolate overflow-hidden rounded-3xl px-4 py-5"
+          className="overflow-hidden rounded-3xl bg-white px-4 py-5 shadow-sm"
           aria-label={dictionary.title}
         >
-          <div className="relative z-[2] flex items-center gap-3">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-forest text-base font-semibold text-white shadow-[0_0_0_3px_rgba(255,255,255,0.45)]">
+          <div className="flex items-center gap-3">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-forest text-base font-semibold text-white">
               {user.firstName.slice(0, 1).toUpperCase()}
               {user.lastName.slice(0, 1).toUpperCase()}
             </div>
@@ -196,12 +196,12 @@ export function ProfileMobileHub({
               <p className="truncate font-big-fat-boii text-xl font-normal leading-tight tracking-wide text-gray-900 uppercase">
                 {displayName}
               </p>
-              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
+              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-600">
                 <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
                 <span className="truncate">{user.email}</span>
               </p>
               {user.phone ? (
-                <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-700">
+                <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-600">
                   <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
                   <span className="truncate">{user.phone}</span>
                 </p>
@@ -213,15 +213,13 @@ export function ProfileMobileHub({
 
       <StaggerItem>
         <nav
-          className="liquid-glass isolate overflow-hidden rounded-3xl py-1"
+          className="overflow-hidden rounded-3xl bg-white py-1 shadow-sm"
           aria-label={dictionary.title}
         >
-          <div className="relative z-[2] divide-y divide-white/35">
+          <div className="divide-y divide-gray-100">
             {mainItems.map((item) => renderRow(item))}
           </div>
-          {dangerItem ? (
-            <div className="relative z-[2]">{renderRow(dangerItem)}</div>
-          ) : null}
+          {dangerItem ? <div>{renderRow(dangerItem)}</div> : null}
         </nav>
       </StaggerItem>
 
