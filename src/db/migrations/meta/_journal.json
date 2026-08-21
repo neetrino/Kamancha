@@ -50,6 +50,13 @@
       "when": 1786627926717,
       "tag": "0006_eminent_dorian_gray",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1787320000000,
+      "tag": "0007_gift_cards_and_bonuses",
+      "breakpoints": true
     }
   ]
 }

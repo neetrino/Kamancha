@@ -11,6 +11,8 @@ import {
   MapPin,
   Package,
   Phone,
+  Gift,
+  Sparkles,
   Trash2,
   User,
 } from "lucide-react";
@@ -64,6 +66,16 @@ export function ProfileMobileHub({
       icon: <Package className="h-5 w-5" />,
     },
     {
+      href: `/${locale}/profile/bonuses`,
+      label: dictionary.bonuses,
+      icon: <Sparkles className="h-5 w-5" />,
+    },
+    {
+      href: `/${locale}/profile/gift-cards`,
+      label: dictionary.giftCards,
+      icon: <Gift className="h-5 w-5" />,
+    },
+    {
       href: `/${locale}/profile/personal-information`,
       label: dictionary.personal,
       icon: <User className="h-5 w-5" />,
@@ -92,6 +104,8 @@ export function ProfileMobileHub({
   useEffect(() => {
     router.prefetch(`/${locale}/profile`);
     router.prefetch(`/${locale}/profile/orders`);
+    router.prefetch(`/${locale}/profile/bonuses`);
+    router.prefetch(`/${locale}/profile/gift-cards`);
     router.prefetch(`/${locale}/profile/personal-information`);
     router.prefetch(`/${locale}/profile/addresses`);
     router.prefetch(`/${locale}/profile/password`);

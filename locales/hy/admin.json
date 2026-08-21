@@ -13,7 +13,8 @@
     "hero": "Հերոս",
     "blog": "Բլոգ",
     "messages": "Հաղորդագրություններ",
-    "settings": "Կարգավորումներ"
+    "settings": "Կարգավորումներ",
+    "giftCards": "Gift Card-եր"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -868,6 +869,44 @@
       "rubPerAmd": "RUB՝ 1 AMD-ի դիմաց",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Պահպանել փոխարժեքները"
+    }
+  },
+  "giftCards": {
+    "title": "Gift Card-եր",
+    "subtitle": "Ստեղծեք, որոնեք, ակտիվացրեք և անջատեք թվային Gift Card-երը։",
+    "add": "Ստեղծել Gift Card",
+    "empty": "Gift Card դեռ չկա։",
+    "history": "Օգտագործման պատմություն",
+    "activate": "Ակտիվացնել",
+    "searchPlaceholder": "Որոնել ըստ կոդի, գնորդի կամ ստացողի",
+    "statuses": {
+      "PENDING_PAYMENT": "Սպասում է վճարման",
+      "ACTIVE": "Ակտիվ",
+      "USED": "Օգտագործված",
+      "EXPIRED": "Ժամկետանց",
+      "DISABLED": "Անջատված"
+    },
+    "table": {
+      "code": "Կոդ",
+      "balance": "Մնացորդ",
+      "status": "Կարգավիճակ",
+      "recipient": "Ստացող",
+      "purchaser": "Գնորդ",
+      "copyAria": "Պատճենել {code}",
+      "resendAria": "Կրկին ուղարկել email",
+      "disableAria": "Անջատել Gift Card"
+    },
+    "drawer": {
+      "newTitle": "Նոր Gift Card",
+      "newAria": "Նոր Gift Card",
+      "amount": "Գումար (AMD)",
+      "recipientName": "Ստացողի անուն",
+      "recipientEmail": "Ստացողի email",
+      "recipientPhone": "Ստացողի հեռախոս",
+      "purchaserName": "Գնորդի / ուղարկողի անուն",
+      "message": "Հաղորդագրություն",
+      "expiresOptional": "Ավարտ (ըստ ցանկության)",
+      "sendEmail": "Ուղարկել email ակտիվացումից հետո"
     }
   }
 }

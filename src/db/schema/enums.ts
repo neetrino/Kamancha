@@ -42,6 +42,29 @@ export const stockMovementReasonEnum = pgEnum("stock_movement_reason", [
   "IMPORT",
 ]);
 
+export const bonusTransactionTypeEnum = pgEnum("bonus_transaction_type", [
+  "EARN",
+  "REDEEM",
+  "REVERSAL_EARN",
+  "REVERSAL_REDEEM",
+  "EXPIRE",
+]);
+
+export const giftCardStatusEnum = pgEnum("gift_card_status", [
+  "PENDING_PAYMENT",
+  "ACTIVE",
+  "USED",
+  "EXPIRED",
+  "DISABLED",
+]);
+
+export const giftCardTransactionTypeEnum = pgEnum("gift_card_transaction_type", [
+  "ISSUE",
+  "REDEEM",
+  "REVERSAL",
+  "ADJUST",
+]);
+
 export const blogPostStatusEnum = pgEnum("blog_post_status", [
   "DRAFT",
   "PUBLISHED",

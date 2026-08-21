@@ -13,7 +13,8 @@
     "hero": "Баннеры",
     "blog": "Блог",
     "messages": "Сообщения",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "giftCards": "Подарочные карты"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -868,6 +869,44 @@
       "rubPerAmd": "RUB за 1 AMD",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Сохранить курсы валют"
+    }
+  },
+  "giftCards": {
+    "title": "Подарочные карты",
+    "subtitle": "Выпускайте, ищите, активируйте и отключайте цифровые подарочные карты.",
+    "add": "Создать карту",
+    "empty": "Подарочных карт пока нет.",
+    "history": "История использования",
+    "activate": "Активировать",
+    "searchPlaceholder": "Поиск по коду, покупателю или получателю",
+    "statuses": {
+      "PENDING_PAYMENT": "Ожидает оплаты",
+      "ACTIVE": "Активна",
+      "USED": "Использована",
+      "EXPIRED": "Истекла",
+      "DISABLED": "Отключена"
+    },
+    "table": {
+      "code": "Код",
+      "balance": "Баланс",
+      "status": "Статус",
+      "recipient": "Получатель",
+      "purchaser": "Покупатель",
+      "copyAria": "Копировать {code}",
+      "resendAria": "Отправить email снова",
+      "disableAria": "Отключить карту"
+    },
+    "drawer": {
+      "newTitle": "Новая подарочная карта",
+      "newAria": "Новая подарочная карта",
+      "amount": "Сумма (AMD)",
+      "recipientName": "Имя получателя",
+      "recipientEmail": "Email получателя",
+      "recipientPhone": "Телефон получателя",
+      "purchaserName": "Имя покупателя / отправителя",
+      "message": "Сообщение",
+      "expiresOptional": "Срок (необязательно)",
+      "sendEmail": "Отправить email после активации"
     }
   }
 }

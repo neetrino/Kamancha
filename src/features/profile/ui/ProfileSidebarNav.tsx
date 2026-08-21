@@ -8,6 +8,8 @@ import {
   LogOut,
   MapPin,
   Package,
+  Gift,
+  Sparkles,
   Trash2,
   User,
 } from "lucide-react";
@@ -48,6 +50,16 @@ function buildNavItems(
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-4 w-4" />,
+    },
+    {
+      href: `/${locale}/profile/bonuses`,
+      label: dictionary.bonuses,
+      icon: <Sparkles className="h-4 w-4" />,
+    },
+    {
+      href: `/${locale}/profile/gift-cards`,
+      label: dictionary.giftCards,
+      icon: <Gift className="h-4 w-4" />,
     },
     {
       href: `/${locale}/profile/personal-information`,
@@ -91,6 +103,8 @@ export function ProfileSidebarNav({
   useEffect(() => {
     router.prefetch(`/${locale}/profile`);
     router.prefetch(`/${locale}/profile/orders`);
+    router.prefetch(`/${locale}/profile/bonuses`);
+    router.prefetch(`/${locale}/profile/gift-cards`);
     router.prefetch(`/${locale}/profile/personal-information`);
     router.prefetch(`/${locale}/profile/addresses`);
     router.prefetch(`/${locale}/profile/password`);

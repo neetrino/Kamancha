@@ -81,6 +81,14 @@ export const orders = pgTable(
     discountAmount: integer("discount_amount").notNull().default(0),
     taxAmount: integer("tax_amount").notNull().default(0),
     deliveryAmount: integer("delivery_amount").notNull().default(0),
+    /** Bonus points redeemed at checkout (1 point = 1 AMD). */
+    bonusRedeemedAmount: integer("bonus_redeemed_amount").notNull().default(0),
+    /** Bonus points earned when order reached DELIVERED (snapshot). */
+    bonusEarnedAmount: integer("bonus_earned_amount").notNull().default(0),
+    /** Gift card applied at checkout (no FK — avoids circular import with gift_cards). */
+    giftCardId: uuid("gift_card_id"),
+    giftCardCodeSnapshot: text("gift_card_code_snapshot"),
+    giftCardAmount: integer("gift_card_amount").notNull().default(0),
     totalAmount: integer("total_amount").notNull(),
     /**
      * Planned online portion of `totalAmount` (AMD).
@@ -142,6 +150,18 @@ export const orders = pgTable(
     ),
     index("orders_group_order_idx").on(table.groupOrderId),
     check("orders_money_nonneg_chk", sql`${table.totalAmount} >= 0`),
+    check(
+      "orders_bonus_redeemed_nonneg_chk",
+      sql`${table.bonusRedeemedAmount} >= 0`,
+    ),
+    check(
+      "orders_bonus_earned_nonneg_chk",
+      sql`${table.bonusEarnedAmount} >= 0`,
+    ),
+    check(
+      "orders_gift_card_amount_nonneg_chk",
+      sql`${table.giftCardAmount} >= 0`,
+    ),
     check("orders_online_amount_nonneg_chk", sql`${table.onlineAmount} >= 0`),
     check("orders_cash_amount_nonneg_chk", sql`${table.cashAmount} >= 0`),
     check(
