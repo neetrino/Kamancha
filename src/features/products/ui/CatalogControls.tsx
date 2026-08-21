@@ -94,9 +94,11 @@ export function CatalogControls({
   const sortPills = (
     <div
       data-node-id="103:1415"
-      className="flex flex-wrap items-center justify-end gap-2"
+      role="group"
+      aria-label={labels.sortLabel}
+      className="flex flex-wrap items-center justify-start gap-2 md:justify-end"
     >
-      <span className="pr-2 text-base leading-[21px] text-white/75">
+      <span className="hidden pr-2 text-base leading-[21px] text-white/75 md:inline">
         {labels.sortLabel}
       </span>
       {SORT_ORDER.map((value) => {
@@ -159,7 +161,7 @@ export function CatalogControls({
             <SlidersHorizontal className="size-4" aria-hidden />
             {labels.openFilters}
           </button>
-          <div className="ml-auto">{sortPills}</div>
+          <div className="w-full min-w-0 md:ml-auto md:w-auto">{sortPills}</div>
         </Reveal>
 
         <div className="pt-8">{children}</div>
