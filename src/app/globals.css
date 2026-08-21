@@ -96,6 +96,12 @@ html {
     cursor: not-allowed;
   }
 
+  /* Brand accent for native checkboxes / radios (replaces UA blue). */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--brand-forest);
+  }
+
   /* Suppress default blue UA focus ring; keep a11y ring only for keyboard. */
   :where(
     a,
