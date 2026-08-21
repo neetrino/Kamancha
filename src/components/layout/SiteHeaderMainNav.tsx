@@ -152,6 +152,11 @@ export function SiteHeaderMainNav({
                   dictionary={dictionary}
                   navItems={navItems}
                   forestTrigger
+                  groupOrderDefaultName={
+                    user
+                      ? [user.firstName, user.lastName].filter(Boolean).join(" ")
+                      : ""
+                  }
                   triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
                   panelFooter={
                     <div className="grid grid-cols-2 gap-3">
