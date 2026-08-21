@@ -84,14 +84,29 @@ export default async function OrdersPage({
     <section className="profile-sheet-keep-frame space-y-6">
       <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.orders}</h1>
 
-      <CustomerOrdersFilters
-        total={total}
-        status={filters.status}
-        paymentStatus={filters.paymentStatus}
-        q={filters.q}
-      />
+      <div className="hidden lg:block">
+        <CustomerOrdersFilters
+          total={total}
+          status={filters.status}
+          paymentStatus={filters.paymentStatus}
+          q={filters.q}
+        />
+      </div>
 
-      <CustomerOrdersView locale={locale} orders={rows} copy={dictionary.admin} />
+      <CustomerOrdersView
+        locale={locale}
+        orders={rows}
+        copy={dictionary.admin}
+        profileCopy={{
+          orderNumber: dictionary.profile.orderNumber,
+          itemCountOne: dictionary.profile.itemCountOne,
+          itemCountOther: dictionary.profile.itemCountOther,
+          placedOn: dictionary.profile.placedOn,
+          viewDetails: dictionary.profile.viewDetails,
+          noOrders: dictionary.profile.noOrders,
+          startShopping: dictionary.profile.startShopping,
+        }}
+      />
 
       {totalPages > 1 ? (
         <nav className="flex items-center gap-3 font-big-fat-boii text-sm font-normal tracking-wide text-gray-800 uppercase lg:text-white/80">

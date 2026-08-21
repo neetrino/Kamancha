@@ -106,7 +106,7 @@ export function PersonalInformationForm({
           </label>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:gap-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
           <label className={PROFILE_LABEL}>
             {labels.email}
             <input
