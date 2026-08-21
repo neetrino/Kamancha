@@ -1,21 +1,26 @@
 import { notFound, redirect } from "next/navigation";
 
+import { AppLink } from "@/components/ui/AppLink";
 import { getCustomerBonusSummary } from "@/features/bonuses/application/queries";
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
+import {
+  PROFILE_BODY,
+  PROFILE_INNER_CARD,
+  PROFILE_LINK,
+  PROFILE_PAGE_TITLE,
+  PROFILE_SECTION,
+  PROFILE_SECTION_TITLE,
+} from "@/features/profile/ui/profile-surface";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
-import { AppLink } from "@/components/ui/AppLink";
 
 type ProfileBonusesPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-function typeLabel(
-  type: string,
-  labels: Record<string, string>,
-): string {
+function typeLabel(type: string, labels: Record<string, string>): string {
   return labels[type] ?? type;
 }
 
@@ -38,13 +43,9 @@ export default async function ProfileBonusesPage({
 
   return (
     <section className="profile-sheet-keep-frame space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          {dictionary.profile.bonuses}
-        </h1>
-      </div>
+      <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.bonuses}</h1>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 overflow-visible sm:grid-cols-3 sm:gap-4">
         <ProfileStatCard
           label={copy.available}
           value={formatMoneyAmount(summary.availableBalance, "AMD", rawLocale)}
@@ -59,23 +60,24 @@ export default async function ProfileBonusesPage({
         />
       </div>
 
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          {copy.history}
-        </h2>
+      <div className={PROFILE_SECTION}>
+        <div className="relative z-[2] mb-6 border-b border-gray-100 pb-5 sm:mb-8 sm:pb-6 lg:border-white/35">
+          <h2 className={PROFILE_SECTION_TITLE}>{copy.history}</h2>
+        </div>
+
         {summary.transactions.length === 0 ? (
-          <p className="text-sm text-gray-600">{copy.empty}</p>
+          <p className={PROFILE_BODY}>{copy.empty}</p>
         ) : (
-          <ul className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <ul className="relative z-[2] space-y-3">
             {summary.transactions.map((row) => {
               const positive = row.delta > 0;
               return (
                 <li
                   key={row.id}
-                  className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5"
+                  className={`${PROFILE_INNER_CARD} flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5`}
                 >
                   <div className="min-w-0 space-y-1">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
                       {typeLabel(row.type, copy.types)}
                     </p>
                     <p className="text-xs text-gray-500">
@@ -86,7 +88,7 @@ export default async function ProfileBonusesPage({
                           {" · "}
                           <AppLink
                             href={`/${rawLocale}/profile/orders`}
-                            className="underline-offset-2 hover:underline"
+                            className={PROFILE_LINK}
                           >
                             {copy.order} {row.orderNumber}
                           </AppLink>
@@ -107,8 +109,8 @@ export default async function ProfileBonusesPage({
                   <p
                     className={
                       positive
-                        ? "text-sm font-semibold text-emerald-700"
-                        : "text-sm font-semibold text-gray-900"
+                        ? "font-big-fat-boii text-base font-normal tracking-wide text-brand-forest"
+                        : "font-big-fat-boii text-base font-normal tracking-wide text-gray-900"
                     }
                   >
                     {positive ? "+" : ""}

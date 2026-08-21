@@ -3,12 +3,19 @@
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/Button";
 import { purchaseGiftCardAction } from "@/features/gift-cards/application/admin-actions";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
+import { PROFILE_PILL_DARK, PROFILE_PILL_SM } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
+
+/** Solid white sheet fields (drawer is never on forest glass). */
+const DRAWER_FIELD =
+  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-brand-forest/40";
+
+const DRAWER_LABEL =
+  "flex flex-col gap-1.5 text-sm font-medium text-gray-900";
 
 type BuyGiftCardFormCopy = {
   title: string;
@@ -93,8 +100,14 @@ export function BuyGiftCardForm({
     });
   }
 
+  function amountChipClass(selected: boolean): string {
+    return selected
+      ? "rounded-full bg-brand-forest px-4 py-2 text-sm font-medium text-white"
+      : `${PROFILE_PILL_SM}`;
+  }
+
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-5">
       <div>
         <p className="mb-2 text-sm font-medium text-gray-900">{copy.amount}</p>
         <div className="flex flex-wrap gap-2">
@@ -106,11 +119,7 @@ export function BuyGiftCardForm({
                 setUseCustom(false);
                 setAmount(preset);
               }}
-              className={
-                !useCustom && amount === preset
-                  ? "rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white"
-                  : "rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400"
-              }
+              className={amountChipClass(!useCustom && amount === preset)}
             >
               {formatMoneyAmount(preset, "AMD", locale)}
             </button>
@@ -118,11 +127,7 @@ export function BuyGiftCardForm({
           <button
             type="button"
             onClick={() => setUseCustom(true)}
-            className={
-              useCustom
-                ? "rounded-lg border border-gray-900 bg-gray-900 px-3 py-2 text-sm text-white"
-                : "rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 hover:border-gray-400"
-            }
+            className={amountChipClass(useCustom)}
           >
             {copy.customAmount}
           </button>
@@ -134,91 +139,91 @@ export function BuyGiftCardForm({
             max={settings.maxAmount}
             value={customAmount}
             onChange={(event) => setCustomAmount(event.target.value)}
-            className="mt-3 h-11 w-full rounded-lg border border-gray-200 px-3 text-sm"
+            className={`mt-3 ${DRAWER_FIELD}`}
             required
           />
         ) : null}
       </div>
 
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.recipientName}</span>
+      <label className={DRAWER_LABEL}>
+        {copy.recipientName}
         <input
           name="recipientName"
           required
           maxLength={120}
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
+          className={DRAWER_FIELD}
         />
       </label>
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.recipientEmail}</span>
+      <label className={DRAWER_LABEL}>
+        {copy.recipientEmail}
         <input
           name="recipientEmail"
           type="email"
           required
           maxLength={254}
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
+          className={DRAWER_FIELD}
         />
       </label>
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.recipientPhone}</span>
-        <input
-          name="recipientPhone"
-          maxLength={40}
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
-        />
+      <label className={DRAWER_LABEL}>
+        {copy.recipientPhone}
+        <input name="recipientPhone" maxLength={40} className={DRAWER_FIELD} />
       </label>
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.purchaserName}</span>
+      <label className={DRAWER_LABEL}>
+        {copy.purchaserName}
         <input
           name="purchaserName"
           required
           maxLength={120}
           defaultValue={defaultPurchaserName}
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
+          className={DRAWER_FIELD}
         />
       </label>
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.message}</span>
+      <label className={DRAWER_LABEL}>
+        {copy.message}
         <textarea
           name="message"
           maxLength={1000}
           rows={3}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2"
+          className={`${DRAWER_FIELD} h-auto min-h-[5.5rem] py-3`}
         />
       </label>
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.sendDate}</span>
+      <label className={DRAWER_LABEL}>
+        {copy.sendDate}
         <input
           name="scheduledSendAt"
           type="datetime-local"
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
+          className={DRAWER_FIELD}
         />
       </label>
-      <label className="block space-y-1 text-sm">
-        <span className="font-medium text-gray-900">{copy.paymentMethod}</span>
+      <label className={DRAWER_LABEL}>
+        {copy.paymentMethod}
         <select
           name="paymentMethod"
           defaultValue="cash_on_delivery"
-          className="h-11 w-full rounded-lg border border-gray-200 px-3"
+          className={DRAWER_FIELD}
         >
           <option value="cash_on_delivery">{copy.cashOnDelivery}</option>
         </select>
       </label>
 
       {error ? (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-red-700" role="alert">
           {error}
         </p>
       ) : null}
       {success ? (
-        <p className="text-sm text-emerald-700" role="status">
+        <p className="text-sm text-brand-forest" role="status">
           {success}
         </p>
       ) : null}
 
-      <Button type="submit" disabled={pending} className="h-11">
+      <button
+        type="submit"
+        disabled={pending}
+        className={`${PROFILE_PILL_DARK} w-full`}
+      >
         {pending ? copy.submitting : copy.submit}
-      </Button>
+      </button>
     </form>
   );
 }
