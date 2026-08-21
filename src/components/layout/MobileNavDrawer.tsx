@@ -174,7 +174,14 @@ export function MobileNavDrawer({
     };
   }, [rendered]);
 
-  const shopHref = `/${locale}/products`;
+  const homeHref = `/${locale}`;
+  const productsHref = `/${locale}/products`;
+  const drawerNavItems = navItems.filter(
+    (item) =>
+      item.href !== homeHref &&
+      item.href !== `${homeHref}/` &&
+      item.href !== productsHref,
+  );
 
   return (
     <>
@@ -265,7 +272,7 @@ export function MobileNavDrawer({
                   className="flex max-h-inherit flex-col overflow-y-auto pb-[max(0.5rem,env(safe-area-inset-bottom))]"
                 >
                   <div className="flex flex-col py-3">
-                    {navItems.map((item) => {
+                    {drawerNavItems.map((item) => {
                       const active = isNavItemActive(
                         pathname,
                         item.href,
@@ -299,14 +306,6 @@ export function MobileNavDrawer({
                       tone="onLight"
                       onClick={() => setOpen(false)}
                     />
-                    <AppLink
-                      href={shopHref}
-                      prefetchPolicy="intent"
-                      className="flex w-full items-center justify-center rounded-full bg-gray-900 px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                      onClick={() => setOpen(false)}
-                    >
-                      {dictionary.nav.shopNow}
-                    </AppLink>
                   </div>
                 </nav>
               </div>

@@ -19,7 +19,7 @@ function isHomePath(pathname: string, locale: Locale): boolean {
 
 const HOVER_CLOSE_DELAY_MS = 140;
 
-/** Compact navbar labels (Figma: `Հայ / AMD`). */
+/** Compact navbar labels (Figma: `հայ / AMD`). */
 const localeShortLabels: Record<Locale, string> = {
   hy: "Հայ",
   en: "EN",

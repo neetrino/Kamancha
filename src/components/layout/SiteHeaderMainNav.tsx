@@ -1,7 +1,9 @@
 import { AccountControls } from "@/components/layout/AccountControls";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { GroupOrderHeaderButton } from "@/components/layout/GroupOrderHeaderButton";
+import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import {
   SITE_HEADER_ICON_RAIL,
@@ -152,12 +154,28 @@ export function SiteHeaderMainNav({
                   forestTrigger
                   triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
                   panelFooter={
-                    <LocaleCurrencySwitcher
-                      locale={locale}
-                      currency={currency}
-                      currencyLabel={dictionary.header.currency}
-                      languageLabel={dictionary.header.language}
-                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="min-w-0 space-y-2">
+                        <span className="text-xs font-medium tracking-wide text-gray-500">
+                          {dictionary.header.language}
+                        </span>
+                        <LocaleSwitcher
+                          locale={locale}
+                          label={dictionary.header.language}
+                          variant="segmented"
+                        />
+                      </div>
+                      <div className="min-w-0 space-y-2">
+                        <span className="text-xs font-medium tracking-wide text-gray-500">
+                          {dictionary.header.currency}
+                        </span>
+                        <CurrencySwitcher
+                          currency={currency}
+                          label={dictionary.header.currency}
+                          variant="segmented"
+                        />
+                      </div>
+                    </div>
                   }
                 />
                 <AccountControls
