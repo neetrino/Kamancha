@@ -84,7 +84,6 @@ export function ProductCard({
   const fluid = layout === "fluid";
   const compact = layout === "compact";
   const catalog = layout === "catalog";
-  const useScaledDivider = fluid || catalog;
   const starPx = fluid ? 12 : catalog ? 24 : 18;
 
   return (
@@ -135,34 +134,19 @@ export function ProductCard({
 
       {compact ? null : (
         <div
-          className={`relative z-[1] mx-auto hidden shrink-0 overflow-visible md:block ${
-            useScaledDivider
-              ? "mt-1 w-[calc(100%-24px)] max-w-[276px] [container-type:inline-size] sm:mt-2"
-              : "mt-2 w-[276px]"
+          className={`relative z-[1] mx-auto hidden h-11 w-[276px] max-w-[calc(100%-24px)] shrink-0 overflow-visible md:block ${
+            fluid ? "mt-1" : "mt-2"
           }`}
           aria-hidden
+          data-node-id="103:2591"
         >
-          <div
-            className={`relative w-full overflow-visible ${
-              useScaledDivider ? "h-[calc(100cqi*44/276+8px)]" : "h-[52px]"
-            }`}
-          >
-            <img
-              src={DIVIDER_SRC}
-              alt=""
-              width={44}
-              height={276}
-              className="absolute top-1/2 left-1/2 max-w-none -translate-x-1/2 -translate-y-1/2 rotate-90"
-              style={
-                useScaledDivider
-                  ? {
-                      height: "100cqi",
-                      width: "calc(100cqi * 44 / 276)",
-                    }
-                  : { width: 44, height: 276 }
-              }
-            />
-          </div>
+          <img
+            src={DIVIDER_SRC}
+            alt=""
+            width={44}
+            height={276}
+            className="absolute top-1/2 left-1/2 h-[276px] w-11 max-w-none -translate-x-1/2 -translate-y-1/2 rotate-90"
+          />
         </div>
       )}
 
@@ -171,7 +155,7 @@ export function ProductCard({
       >
         <div
           className={`flex min-w-0 flex-1 flex-col ${
-            compact ? "gap-1.5" : catalog ? "gap-2 sm:gap-0" : ""
+            compact ? "gap-1.5" : catalog ? "gap-2.5 sm:gap-0" : ""
           }`}
         >
           <h3 className={`truncate font-medium text-[#222] ${ui.title}`}>
@@ -193,7 +177,7 @@ export function ProductCard({
               compact
                 ? "gap-1"
                 : catalog
-                  ? "gap-1.5 sm:mt-0.5 sm:gap-px"
+                  ? "gap-2 sm:mt-0.5 sm:gap-px"
                   : `gap-px ${fluid ? "mt-0.5" : "mt-1"}`
             }`}
           >

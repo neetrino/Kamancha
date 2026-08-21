@@ -107,29 +107,31 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
           />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 justify-items-stretch gap-3 sm:grid-cols-3 sm:justify-items-center sm:gap-5 lg:grid-cols-4">
           {priced.map(
             ({ product, priceFormatted, compareAtFormatted }, index) => (
-              <ProductCard
-                key={product.id}
-                href={`/${rawLocale}/products/${product.translation.slug}`}
-                title={product.translation.title}
-                priceFormatted={priceFormatted}
-                compareAtFormatted={compareAtFormatted}
-                discountPercent={product.discountPercent}
-                discountOffLabel={dictionary.home.discountOff}
-                imageUrl={product.imageUrl}
-                inStock={product.stockOnHand > 0}
-                priority={index < 4}
-                locale={rawLocale}
-                productId={product.id}
-                inWishlist
-                isSignedIn
-                wishlistLabel={dictionary.nav.wishlist}
-                addToCartLabel={dictionary.product.addToCart}
-                requiresCustomization={product.hasCustomizationOptions}
-                layout="fluid"
-              />
+              <div key={product.id} className="min-w-0 w-full sm:max-w-[300px]">
+                <ProductCard
+                  href={`/${rawLocale}/products/${product.translation.slug}`}
+                  title={product.translation.title}
+                  priceFormatted={priceFormatted}
+                  compareAtFormatted={compareAtFormatted}
+                  discountPercent={product.discountPercent}
+                  discountOffLabel={dictionary.home.discountOff}
+                  imageUrl={product.imageUrl}
+                  inStock={product.stockOnHand > 0}
+                  priority={index < 4}
+                  locale={rawLocale}
+                  productId={product.id}
+                  inWishlist
+                  isSignedIn
+                  wishlistLabel={dictionary.nav.wishlist}
+                  addToCartLabel={dictionary.product.addToCart}
+                  requiresCustomization={product.hasCustomizationOptions}
+                  layout="catalog"
+                  className="w-full"
+                />
+              </div>
             ),
           )}
         </div>
