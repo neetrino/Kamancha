@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useTransition, type ReactNode } from "react";
+import { useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal } from "lucide-react";
 
 import { Reveal } from "@/components/ui/RevealMotion";
-import { SideSheet } from "@/components/ui/SideSheet";
 import type { CatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
 import { catalogHref } from "@/features/products/application/catalog-search-params";
 import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
@@ -16,6 +14,7 @@ import {
   type CatalogSidebarCategory,
 } from "@/features/products/ui/CatalogFilterForm";
 import { CatalogStickySidebar } from "@/features/products/ui/CatalogStickySidebar";
+import { MobileCatalogCategoryChips } from "@/features/products/ui/MobileCatalogCategoryChips";
 import type { Currency } from "@/lib/money/currency";
 
 export type CatalogLabels = CatalogFilterLabels & {
@@ -61,6 +60,7 @@ const SORT_ORDER: readonly CatalogSort[] = [
 
 /**
  * Catalog layout — Figma Container 103:1277 (sidebar + sort pills + grid).
+ * Mobile: category chips + sort; desktop: sticky sidebar filters.
  */
 export function CatalogControls({
   locale,
@@ -74,7 +74,6 @@ export function CatalogControls({
 }: CatalogControlsProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   function pushHref(href: string): void {
     startTransition(() => {
@@ -122,18 +121,6 @@ export function CatalogControls({
     </div>
   );
 
-  const sidebar = (
-    <CatalogFilterForm
-      locale={locale}
-      currency={currency}
-      filters={filters}
-      categories={categories}
-      allProductsCount={allProductsCount}
-      priceBounds={priceBounds}
-      labels={labels}
-    />
-  );
-
   return (
     <div
       data-node-id="103:1277"
@@ -142,40 +129,35 @@ export function CatalogControls({
     >
       <CatalogStickySidebar>
         <Reveal immediate x={-20} y={0} delay={0.06}>
-          {sidebar}
+          <CatalogFilterForm
+            locale={locale}
+            currency={currency}
+            filters={filters}
+            categories={categories}
+            allProductsCount={allProductsCount}
+            priceBounds={priceBounds}
+            labels={labels}
+          />
         </Reveal>
       </CatalogStickySidebar>
 
       <div className="min-w-0 flex-1">
-        <Reveal
-          immediate
-          delay={0.1}
-          y={16}
-          className="flex flex-wrap items-center justify-between gap-3"
-        >
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-[50px] bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/15 lg:hidden"
-            onClick={() => setMobileOpen(true)}
-          >
-            <SlidersHorizontal className="size-4" aria-hidden />
-            {labels.openFilters}
-          </button>
-          <div className="w-full min-w-0 md:ml-auto md:w-auto">{sortPills}</div>
+        <Reveal immediate delay={0.08} y={12} className="mb-4 lg:hidden">
+          <MobileCatalogCategoryChips
+            locale={locale}
+            filters={filters}
+            categories={categories}
+            allCategoriesLabel={labels.allCategories}
+            categoriesLabel={labels.categoryLabel}
+          />
+        </Reveal>
+
+        <Reveal immediate delay={0.1} y={16}>
+          {sortPills}
         </Reveal>
 
         <div className="pt-8">{children}</div>
       </div>
-
-      <SideSheet
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        ariaLabel={labels.filters}
-        side="left"
-        panelClassName="w-full max-w-sm bg-brand-forest"
-      >
-        <div className="flex h-full flex-col overflow-y-auto p-4">{sidebar}</div>
-      </SideSheet>
     </div>
   );
 }

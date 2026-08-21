@@ -117,12 +117,8 @@ async function HomeBelowFold({
     <>
       <div className="md:hidden pb-8">
         <HomeMobileCategories
-          productCountLabel={dictionary.home.categoryProductCount}
+          title={dictionary.home.categoriesTitle}
           emptyLabel={dictionary.home.emptyCategories}
-          viewAllLabel={dictionary.home.viewAll}
-          viewAllHref={`/${locale}/products`}
-          previousLabel={dictionary.home.previousCategory}
-          nextLabel={dictionary.home.nextCategory}
           categories={categoryItems}
         />
         <HomeMobileProductSection
