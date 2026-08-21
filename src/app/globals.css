@@ -576,6 +576,12 @@ html {
   .profile-mobile-tab-sheet-scroll {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .profile-mobile-tab-sheet-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   /**

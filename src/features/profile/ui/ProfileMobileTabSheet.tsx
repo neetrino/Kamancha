@@ -133,6 +133,17 @@ export function ProfileMobileTabSheet({
   }, [open, children, ariaLabel]);
 
   useEffect(() => {
+    if (!open || !rendered) return;
+    const node = scrollAreaRef.current;
+    if (!node) return;
+    node.scrollTop = 0;
+    const frame = window.requestAnimationFrame(() => {
+      node.scrollTop = 0;
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [open, rendered, children]);
+
+  useEffect(() => {
     if (open) {
       exitNotifiedRef.current = false;
       setIsDragging(false);
@@ -283,7 +294,7 @@ export function ProfileMobileTabSheet({
         </div>
         <div
           ref={scrollAreaRef}
-          className={`profile-mobile-tab-sheet-scroll relative z-[2] min-h-0 flex-1 overscroll-contain px-3 pt-1 ${
+          className={`profile-mobile-tab-sheet-scroll relative z-[2] min-h-0 flex-1 overscroll-contain px-3 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
             isDragging || phase === "exit-drag"
               ? "touch-none overflow-hidden"
               : "overflow-y-auto"

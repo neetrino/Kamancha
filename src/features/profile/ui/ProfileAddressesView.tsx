@@ -165,14 +165,16 @@ export function ProfileAddressesView({
       <section className={PROFILE_SECTION}>
         <div className="relative z-[2] mb-6 flex flex-col gap-4 border-b border-gray-100 pb-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:pb-6 lg:border-white/35">
           <h1 className={PROFILE_SECTION_TITLE}>{labels.title}</h1>
-          <button
-            type="button"
-            className={`${PROFILE_PILL_LIGHT} w-full shrink-0 sm:w-auto`}
-            onClick={toggleForm}
-            disabled={isPending}
-          >
-            {showForm ? labels.cancel : `+ ${labels.addNew}`}
-          </button>
+          {!showForm ? (
+            <button
+              type="button"
+              className={`${PROFILE_PILL_LIGHT} w-full shrink-0 sm:w-auto`}
+              onClick={toggleForm}
+              disabled={isPending}
+            >
+              {`+ ${labels.addNew}`}
+            </button>
+          ) : null}
         </div>
 
         {showForm ? (

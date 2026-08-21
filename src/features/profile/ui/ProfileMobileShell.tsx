@@ -92,7 +92,9 @@ export function ProfileMobileShell({
     />
   );
 
-  const revealed = <ProfilePageReveal>{children}</ProfilePageReveal>;
+  const revealed = (
+    <ProfilePageReveal y={isDesktop ? 28 : 0}>{children}</ProfilePageReveal>
+  );
 
   const desktopColumn = (
     <div className="profile-desktop-content profile-sticky-band min-w-0 flex-1">
