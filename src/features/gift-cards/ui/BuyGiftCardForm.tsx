@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { DateTimePickerField } from "@/components/ui/DateTimePickerField";
+import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { formatYerevanDate } from "@/features/delivery/domain/delivery-schedule";
 import { purchaseGiftCardAction } from "@/features/gift-cards/application/admin-actions";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
@@ -64,6 +65,8 @@ export function BuyGiftCardForm({
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
   const [scheduledSendAt, setScheduledSendAt] = useState("");
+  const [paymentMethod, setPaymentMethod] =
+    useState<CheckoutPaymentMethod>("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -215,16 +218,19 @@ export function BuyGiftCardForm({
           }}
         />
       </label>
-      <label className={DRAWER_LABEL}>
-        {copy.paymentMethod}
-        <select
+      <div className={DRAWER_LABEL}>
+        <span>{copy.paymentMethod}</span>
+        <SelectDropdown
           name="paymentMethod"
-          defaultValue="cash_on_delivery"
-          className={DRAWER_FIELD}
-        >
-          <option value="cash_on_delivery">{copy.cashOnDelivery}</option>
-        </select>
-      </label>
+          ariaLabel={copy.paymentMethod}
+          value={paymentMethod}
+          options={[{ label: copy.cashOnDelivery, value: "cash_on_delivery" }]}
+          onValueChange={(value) =>
+            setPaymentMethod(value as CheckoutPaymentMethod)
+          }
+          deferChange={false}
+        />
+      </div>
 
       {error ? (
         <p className="text-sm text-red-700" role="alert">
