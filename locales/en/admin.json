@@ -877,6 +877,8 @@
     "add": "Create gift card",
     "empty": "No gift cards yet.",
     "history": "Usage history",
+    "sheetAria": "Gift card details",
+    "sheetTitle": "Gift card",
     "activate": "Activate",
     "searchPlaceholder": "Search by code, purchaser, or recipient",
     "statuses": {

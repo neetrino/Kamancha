@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Check, Copy, Mail, Plus, Power } from "lucide-react";
 
@@ -29,8 +28,13 @@ import {
   adminActivateGiftCardAction,
   adminDisableGiftCardAction,
   adminResendGiftCardEmailAction,
+  getAdminGiftCardDetailAction,
 } from "@/features/gift-cards/application/admin-actions";
-import type { GiftCardListItem } from "@/features/gift-cards/application/queries";
+import type {
+  GiftCardDetail,
+  GiftCardListItem,
+} from "@/features/gift-cards/application/queries";
+import { GiftCardDetailSheet } from "@/features/gift-cards/ui/GiftCardDetailSheet";
 import { GiftCardDrawer } from "@/features/gift-cards/ui/GiftCardDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
@@ -58,9 +62,31 @@ export function AdminGiftCardsView({
   const router = useRouter();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerKey, setDrawerKey] = useState(0);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detail, setDetail] = useState<GiftCardDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isDetailPending, startDetailTransition] = useTransition();
+
+  function openDetail(id: string): void {
+    setDetailOpen(true);
+    setDetail(null);
+    startDetailTransition(async () => {
+      const card = await getAdminGiftCardDetailAction(locale, id);
+      if (!card) {
+        setDetailOpen(false);
+        setError(copy.common.actionFailed);
+        return;
+      }
+      setDetail(card);
+    });
+  }
+
+  function closeDetail(): void {
+    setDetailOpen(false);
+    setDetail(null);
+  }
 
   function runAction(action: () => Promise<void>): void {
     startTransition(async () => {
@@ -141,12 +167,13 @@ export function AdminGiftCardsView({
                   <tr key={card.id} className={ADMIN_TABLE_ROW}>
                     <td className={ADMIN_TABLE_TD}>
                       <span className="font-mono text-xs tracking-wide">
-                        <Link
-                          href={`/${locale}/admin/gift-cards/${card.id}`}
+                        <button
+                          type="button"
                           className="underline-offset-2 hover:underline"
+                          onClick={() => openDetail(card.id)}
                         >
                           {card.code}
-                        </Link>
+                        </button>
                       </span>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
@@ -266,6 +293,18 @@ export function AdminGiftCardsView({
           </table>
         </div>
       </Card>
+
+      <GiftCardDetailSheet
+        open={detailOpen}
+        onClose={closeDetail}
+        detail={detail}
+        isLoading={isDetailPending}
+        locale={locale}
+        copy={{
+          giftCards: copy.giftCards,
+          common: copy.common,
+        }}
+      />
 
       <GiftCardDrawer
         key={drawerKey}

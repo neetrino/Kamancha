@@ -9,6 +9,8 @@ import {
   activateGiftCardRecord,
   createGiftCardRecord,
 } from "@/features/gift-cards/application/create-gift-card";
+import { getGiftCardDetail } from "@/features/gift-cards/application/queries";
+import type { GiftCardDetail } from "@/features/gift-cards/application/queries";
 import { sendGiftCardEmail } from "@/features/gift-cards/application/send-gift-card-email";
 import {
   isValidGiftCardAmount,
@@ -374,4 +376,16 @@ export async function adminResendGiftCardEmailAction(
       caught instanceof Error ? caught.message : "Resend failed.",
     );
   }
+}
+
+/** Loads full gift card detail for the admin detail sheet. */
+export async function getAdminGiftCardDetailAction(
+  locale: string,
+  id: string,
+): Promise<GiftCardDetail | null> {
+  if (!isLocale(locale)) {
+    return null;
+  }
+  await requireAdmin(locale as Locale);
+  return getGiftCardDetail(id);
 }

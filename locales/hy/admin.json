@@ -877,6 +877,8 @@
     "add": "Ստեղծել Gift Card",
     "empty": "Gift Card դեռ չկա։",
     "history": "Օգտագործման պատմություն",
+    "sheetAria": "Gift Card-ի մանրամասներ",
+    "sheetTitle": "Gift Card",
     "activate": "Ակտիվացնել",
     "searchPlaceholder": "Որոնել ըստ կոդի, գնորդի կամ ստացողի",
     "statuses": {
