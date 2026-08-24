@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
@@ -11,21 +10,8 @@ import {
   ADMIN_PAGE_TITLE,
   ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
-import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_CARD,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_STATE_INSET,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TD_CENTER,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_TH_CENTER,
-  ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { listAdminContactMessages } from "@/features/contact/application/queries";
+import { AdminMessagesView } from "@/features/contact/ui/AdminMessagesView";
 import { CONTACT_STATUSES } from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
 import { isLocale } from "@/lib/i18n/config";
@@ -54,15 +40,6 @@ function buildMessagesQuery(
   if (filters.status) params.set("status", filters.status);
   params.set("page", String(page));
   return params.toString();
-}
-
-function contactStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "UNREAD") return "bg-blue-100 text-blue-800";
-  if (normalized === "READ") return "bg-yellow-100 text-yellow-800";
-  if (normalized === "REPLIED") return "bg-green-100 text-green-800";
-  if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
-  return "bg-gray-100 text-gray-800";
 }
 
 export default async function AdminMessagesPage({
@@ -138,71 +115,11 @@ export default async function AdminMessagesPage({
         </form>
       </Card>
 
-      <Card className={ADMIN_TABLE_CARD}>
-        {rows.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {t.empty}
-          </p>
-        ) : (
-          <div className={ADMIN_TABLE_OUTER_SCROLL}>
-            <table className={ADMIN_TABLE}>
-              <thead className={ADMIN_TABLE_THEAD}>
-                <tr>
-                  <th className={ADMIN_TABLE_TH}>{t.table.subject}</th>
-                  <th className={ADMIN_TABLE_TH}>{t.table.from}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{t.table.status}</th>
-                  <th className={ADMIN_TABLE_TH}>{t.table.received}</th>
-                </tr>
-              </thead>
-              <tbody className={ADMIN_TABLE_TBODY}>
-                {rows.map((message) => (
-                  <tr
-                    key={message.id}
-                    className={`${ADMIN_TABLE_ROW} group relative`}
-                  >
-                    <td className={ADMIN_TABLE_TD}>
-                      <Link
-                        href={`/${locale}/admin/messages/${message.id}`}
-                        className="font-medium text-gray-900 after:absolute after:inset-0 group-hover:underline"
-                      >
-                        {message.subject}
-                      </Link>
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <p className="text-sm text-gray-900">{message.name}</p>
-                      <p className="text-xs text-gray-500">{message.email}</p>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span
-                        className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
-                      >
-                        {message.status}
-                      </span>
-                      {message.spamScore !== null ? (
-                        <p className="mt-1 text-xs text-gray-500">
-                          {t.table.spamScore.replace(
-                            "{score}",
-                            String(message.spamScore),
-                          )}
-                        </p>
-                      ) : null}
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span className="text-xs text-gray-500">
-                        {message.createdAt
-                          .toISOString()
-                          .slice(0, 16)
-                          .replace("T", " ")}{" "}
-                        {dictionary.admin.common.utc}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      <AdminMessagesView
+        locale={locale}
+        rows={rows}
+        copy={dictionary.admin}
+      />
 
       <AdminPagination
         page={filters.page}

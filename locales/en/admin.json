@@ -794,6 +794,8 @@
     "all": "All",
     "filter": "Filter",
     "empty": "No messages match these filters.",
+    "sheetAria": "Message details",
+    "sheetTitle": "Message",
     "table": {
       "subject": "Subject",
       "from": "From",

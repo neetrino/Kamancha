@@ -23,6 +23,7 @@ import {
   getEligibleContactStatuses,
   isContactStatus,
 } from "@/features/contact/domain/contact-rules";
+import { contactStatusBadgeClass } from "@/features/contact/ui/contact-status-badge-class";
 import { contactStatusLabel } from "@/features/contact/ui/contact-status-label";
 import { UpdateContactStatusForm } from "@/features/contact/ui/UpdateContactStatusForm";
 import { isLocale } from "@/lib/i18n/config";
@@ -33,15 +34,6 @@ type AdminMessageDetailPageProps = {
 };
 
 const FIELD_ICON_CLASS = "h-4 w-4";
-
-function contactStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "UNREAD") return "bg-blue-100 text-blue-800";
-  if (normalized === "READ") return "bg-yellow-100 text-yellow-800";
-  if (normalized === "REPLIED") return "bg-green-100 text-green-800";
-  if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
-  return "bg-gray-100 text-gray-800";
-}
 
 export default async function AdminMessageDetailPage({
   params,
