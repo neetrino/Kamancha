@@ -19,6 +19,7 @@ export type SessionUser = {
   firstName: string;
   lastName: string;
   phone: string | null;
+  bonusBalance: number;
   role: "ADMIN" | "CUSTOMER";
   status: "ACTIVE" | "SUSPENDED" | "ANONYMIZED";
 };

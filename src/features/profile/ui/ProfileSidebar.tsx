@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Mail, Phone } from "lucide-react";
 
+import { ProfileBonusIcon } from "@/features/profile/ui/ProfileBonusIcon";
+import { formatProfileBonusBalance } from "@/features/profile/ui/format-profile-bonus-balance";
 import { ProfileSidebarNav } from "@/features/profile/ui/ProfileSidebarNav";
 import { logoutAction } from "@/features/auth/logout-action";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -64,6 +66,14 @@ export function ProfileSidebar({
               value={user.phone}
             />
           ) : null}
+          <ProfileContactRow
+            icon={<ProfileBonusIcon />}
+            value={formatProfileBonusBalance(
+              user.bonusBalance,
+              locale,
+              dictionary.bonusesLabel,
+            )}
+          />
         </div>
       </div>
 

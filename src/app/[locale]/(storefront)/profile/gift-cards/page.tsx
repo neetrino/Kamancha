@@ -67,6 +67,7 @@ export default async function MyGiftCardsPage({ params }: PageProps) {
           purchaserName: buyCopy.purchaserName,
           message: buyCopy.message,
           sendDate: buyCopy.sendDate,
+          datePicker: buyCopy.datePicker,
           paymentMethod: buyCopy.paymentMethod,
           cashOnDelivery: buyCopy.cashOnDelivery,
           submit: buyCopy.submit,

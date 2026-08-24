@@ -16,6 +16,13 @@ type BuyGiftCardDrawerCopy = {
   purchaserName: string;
   message: string;
   sendDate: string;
+  datePicker: {
+    dateTimePlaceholder: string;
+    clear: string;
+    today: string;
+    time: string;
+    weekdaysShort: readonly string[];
+  };
   paymentMethod: string;
   cashOnDelivery: string;
   submit: string;
@@ -75,6 +82,7 @@ export function BuyGiftCardDrawer({
               purchaserName: copy.purchaserName,
               message: copy.message,
               sendDate: copy.sendDate,
+              datePicker: copy.datePicker,
               paymentMethod: copy.paymentMethod,
               cashOnDelivery: copy.cashOnDelivery,
               submit: copy.submit,

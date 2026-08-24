@@ -3,6 +3,7 @@
   "dashboard": "Վահանակ",
   "orders": "Պատվերներ",
   "bonuses": "Իմ բոնուսները",
+  "bonusesLabel": "Բոնուսներ",
   "giftCards": "Իմ Gift Card-երը",
   "bonusesPage": {
     "available": "Հասանելի բալանս",
@@ -49,6 +50,13 @@
     "purchaserName": "Ուղարկողի անուն",
     "message": "Հաղորդագրություն",
     "sendDate": "Ուղարկման ամսաթիվ",
+    "datePicker": {
+      "dateTimePlaceholder": "ՕՕ.ԱԱ.ՏՏՏՏ ժ:ր",
+      "clear": "Մաքրել",
+      "today": "Այսօր",
+      "time": "Ժամ",
+      "weekdaysShort": ["Երկ", "Երք", "Չրք", "Հնգ", "Ուրբ", "Շբթ", "Կիր"]
+    },
     "paymentMethod": "Վճարման եղանակ",
     "cashOnDelivery": "Կանխիկ առաքման ժամանակ",
     "submit": "Գրանցել գնումը",

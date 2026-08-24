@@ -3,6 +3,7 @@
   "dashboard": "Панель",
   "orders": "Заказы",
   "bonuses": "Мои бонусы",
+  "bonusesLabel": "Бонусы",
   "giftCards": "Мои подарочные карты",
   "bonusesPage": {
     "available": "Доступный баланс",
@@ -49,6 +50,13 @@
     "purchaserName": "Имя отправителя",
     "message": "Сообщение",
     "sendDate": "Дата отправки",
+    "datePicker": {
+      "dateTimePlaceholder": "ДД.ММ.ГГГГ ЧЧ:ММ",
+      "clear": "Очистить",
+      "today": "Сегодня",
+      "time": "Время",
+      "weekdaysShort": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    },
     "paymentMethod": "Способ оплаты",
     "cashOnDelivery": "Наличными при доставке",
     "submit": "Оформить покупку",

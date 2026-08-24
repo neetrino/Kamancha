@@ -41,6 +41,13 @@ type MyGiftCardsViewCopy = {
     purchaserName: string;
     message: string;
     sendDate: string;
+    datePicker: {
+      dateTimePlaceholder: string;
+      clear: string;
+      today: string;
+      time: string;
+      weekdaysShort: readonly string[];
+    };
     paymentMethod: string;
     cashOnDelivery: string;
     submit: string;

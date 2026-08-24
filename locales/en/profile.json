@@ -3,6 +3,7 @@
   "dashboard": "Dashboard",
   "orders": "Orders",
   "bonuses": "My bonuses",
+  "bonusesLabel": "Bonuses",
   "giftCards": "My gift cards",
   "bonusesPage": {
     "available": "Available balance",
@@ -49,6 +50,13 @@
     "purchaserName": "Sender name",
     "message": "Message",
     "sendDate": "Send date",
+    "datePicker": {
+      "dateTimePlaceholder": "DD.MM.YYYY HH:mm",
+      "clear": "Clear",
+      "today": "Today",
+      "time": "Time",
+      "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    },
     "paymentMethod": "Payment method",
     "cashOnDelivery": "Cash on delivery",
     "submit": "Place purchase",

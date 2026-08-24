@@ -20,6 +20,8 @@ import {
 import { AppLink } from "@/components/ui/AppLink";
 import { Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { logoutAction } from "@/features/auth/logout-action";
+import { ProfileBonusIcon } from "@/features/profile/ui/ProfileBonusIcon";
+import { formatProfileBonusBalance } from "@/features/profile/ui/format-profile-bonus-balance";
 import { PROFILE_PILL_LIGHT } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -220,6 +222,16 @@ export function ProfileMobileHub({
                   <span className="truncate">{user.phone}</span>
                 </p>
               ) : null}
+              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-600">
+                <ProfileBonusIcon className="h-4 w-4 shrink-0" />
+                <span className="truncate">
+                  {formatProfileBonusBalance(
+                    user.bonusBalance,
+                    locale,
+                    dictionary.bonusesLabel,
+                  )}
+                </span>
+              </p>
             </div>
           </div>
         </section>

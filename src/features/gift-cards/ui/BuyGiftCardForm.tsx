@@ -3,6 +3,8 @@
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
+import { DateTimePickerField } from "@/components/ui/DateTimePickerField";
+import { formatYerevanDate } from "@/features/delivery/domain/delivery-schedule";
 import { purchaseGiftCardAction } from "@/features/gift-cards/application/admin-actions";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
@@ -27,6 +29,13 @@ type BuyGiftCardFormCopy = {
   purchaserName: string;
   message: string;
   sendDate: string;
+  datePicker: {
+    dateTimePlaceholder: string;
+    clear: string;
+    today: string;
+    time: string;
+    weekdaysShort: readonly string[];
+  };
   paymentMethod: string;
   cashOnDelivery: string;
   submit: string;
@@ -54,9 +63,11 @@ export function BuyGiftCardForm({
   const [amount, setAmount] = useState(settings.presets[0] ?? settings.minAmount);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
+  const [scheduledSendAt, setScheduledSendAt] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const minSendDate = formatYerevanDate(new Date());
 
   const resolvedAmount = useMemo(() => {
     if (!useCustom) {
@@ -189,10 +200,19 @@ export function BuyGiftCardForm({
       </label>
       <label className={DRAWER_LABEL}>
         {copy.sendDate}
-        <input
+        <DateTimePickerField
           name="scheduledSendAt"
-          type="datetime-local"
-          className={DRAWER_FIELD}
+          value={scheduledSendAt}
+          onChange={setScheduledSendAt}
+          locale={locale}
+          minDate={minSendDate}
+          labels={{
+            placeholder: copy.datePicker.dateTimePlaceholder,
+            clear: copy.datePicker.clear,
+            today: copy.datePicker.today,
+            weekdays: copy.datePicker.weekdaysShort,
+            time: copy.datePicker.time,
+          }}
         />
       </label>
       <label className={DRAWER_LABEL}>
