@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { CatalogPageHeader } from "@/features/products/ui/CatalogPageHeader";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import { listWishlistProducts } from "@/features/wishlist/queries";
@@ -53,21 +54,23 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     return (
       <section className="flex flex-col gap-6">
         {header}
-        <div className="rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
-          <p className="text-base text-white/80">
-            <AppLink
-              href={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
-              prefetchPolicy="intent"
-              className="font-semibold text-white underline underline-offset-2 hover:text-white/90"
-            >
-              {dictionary.header.login}
-            </AppLink>
-            <span className="text-white/60">
-              {" "}
-              — {wishlistCopy.signInPrompt}
-            </span>
-          </p>
-        </div>
+        <Reveal immediate y={16}>
+          <div className="rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
+            <p className="text-base text-white/80">
+              <AppLink
+                href={`/${rawLocale}/login?next=${encodeURIComponent(`/${rawLocale}/wishlist`)}`}
+                prefetchPolicy="intent"
+                className="font-semibold text-white underline underline-offset-2 hover:text-white/90"
+              >
+                {dictionary.header.login}
+              </AppLink>
+              <span className="text-white/60">
+                {" "}
+                — {wishlistCopy.signInPrompt}
+              </span>
+            </p>
+          </div>
+        </Reveal>
       </section>
     );
   }
@@ -92,26 +95,35 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
       {header}
 
       {priced.length === 0 ? (
-        <div className="flex flex-col items-center gap-6 rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              {wishlistCopy.empty}
-            </h2>
-            <p className="mt-2 text-sm text-white/60">
-              {wishlistCopy.emptyDescription}
-            </p>
+        <Reveal immediate y={16}>
+          <div className="flex flex-col items-center gap-6 rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                {wishlistCopy.empty}
+              </h2>
+              <p className="mt-2 text-sm text-white/60">
+                {wishlistCopy.emptyDescription}
+              </p>
+            </div>
+            <KamanchaPillButton
+              href={`/${rawLocale}/products`}
+              label={wishlistCopy.browseProducts}
+              className="!max-w-[360px] !px-16 sm:!max-w-[400px]"
+            />
           </div>
-          <KamanchaPillButton
-            href={`/${rawLocale}/products`}
-            label={wishlistCopy.browseProducts}
-            className="!max-w-[360px] !px-16 sm:!max-w-[400px]"
-          />
-        </div>
+        </Reveal>
       ) : (
-        <div className="grid grid-cols-2 justify-items-stretch gap-3 sm:grid-cols-3 sm:justify-items-center sm:gap-5 lg:grid-cols-4">
+        <Stagger
+          className="grid grid-cols-2 justify-items-stretch gap-3 sm:grid-cols-3 sm:justify-items-center sm:gap-5 lg:grid-cols-4"
+          stagger={0.06}
+          immediate
+        >
           {priced.map(
             ({ product, priceFormatted, compareAtFormatted }, index) => (
-              <div key={product.id} className="min-w-0 w-full sm:max-w-[300px]">
+              <StaggerItem
+                key={product.id}
+                className="min-w-0 w-full sm:max-w-[300px]"
+              >
                 <ProductCard
                   href={`/${rawLocale}/products/${product.translation.slug}`}
                   title={product.translation.title}
@@ -132,10 +144,10 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   layout="catalog"
                   className="w-full"
                 />
-              </div>
+              </StaggerItem>
             ),
           )}
-        </div>
+        </Stagger>
       )}
     </section>
   );
