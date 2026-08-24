@@ -1,7 +1,11 @@
 import Image from "next/image";
 
 import { SITE_HEADER_INNER } from "@/components/layout/site-header-classes";
-import { ABOUT_HERO_IMAGE } from "@/features/about/content/about-assets";
+import {
+  ABOUT_HERO_IMAGE,
+  ABOUT_HERO_IMAGE_HEIGHT,
+  ABOUT_HERO_IMAGE_WIDTH,
+} from "@/features/about/content/about-assets";
 import { HomeDiamondMark } from "@/features/home/ui/HomeDiamondMark";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -10,7 +14,7 @@ type AboutHeroSectionProps = {
 };
 
 /**
- * About hero — Figma 362:289–362:291 with kamancha portrait 362:282.
+ * About hero — Figma 362:289–362:291 with cropped portrait 362:282 (887×1774).
  */
 export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
   return (
@@ -48,18 +52,19 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
           </div>
         </div>
 
-        {/* Hero portrait — 887×1774, title aligned with head via lg:pt-[108px] */}
+        {/* Figma 362:282 — cropped 887×1774, object-bottom, overflows right by 55px at 1440 */}
         <div
           data-node-id="362:282"
-          className="relative mx-auto mt-2 aspect-[887/1774] w-full max-w-[820px] sm:max-w-[960px] lg:pointer-events-none lg:absolute lg:-top-[100px] lg:right-[-355px] lg:z-0 lg:mx-0 lg:mt-0 lg:aspect-auto lg:h-[min(215vh,2840px)] lg:w-[1480px] lg:max-w-none"
+          className="relative mx-auto -mt-4 w-full max-w-[420px] sm:max-w-[480px] lg:pointer-events-none lg:absolute lg:-top-[100px] lg:right-[-55px] lg:z-0 lg:mx-0 lg:mt-0 lg:w-[887px] lg:max-w-none"
         >
           <Image
             src={ABOUT_HERO_IMAGE}
             alt={copy.heroImageAlt}
-            fill
+            width={ABOUT_HERO_IMAGE_WIDTH}
+            height={ABOUT_HERO_IMAGE_HEIGHT}
             priority
-            sizes="(max-width: 1024px) 95vw, 1480px"
-            className="object-contain object-bottom lg:object-top"
+            sizes="(max-width: 1024px) 90vw, 887px"
+            className="h-auto w-full object-bottom"
           />
         </div>
       </div>
