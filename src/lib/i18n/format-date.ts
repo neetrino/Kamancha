@@ -93,3 +93,21 @@ export function formatShortDate(
       return `${day} ${HY_MONTHS[monthIndex]}, ${year} թ.`;
   }
 }
+
+function formatYerevanTime(value: Date): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: APP_TIME_ZONE,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(value);
+}
+
+/** Short date and local wall time in Asia/Yerevan (e.g. `28 հլս, 2026 թ. · 13:47`). */
+export function formatShortDateTime(
+  value: Date | string | number,
+  locale: string,
+): string {
+  const date = value instanceof Date ? value : new Date(value);
+  return `${formatShortDate(date, locale)} · ${formatYerevanTime(date)}`;
+}

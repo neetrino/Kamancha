@@ -16,6 +16,7 @@ import {
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatShortDate, formatShortDateTime } from "@/lib/i18n/format-date";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type BonusTransactionRow = {
@@ -132,13 +133,13 @@ export function ProfileBonusesView({
                     <div className="my-4 h-px rounded-full bg-gray-200" aria-hidden />
 
                     <div className="space-y-1.5 text-xs text-gray-500">
-                      <p>{row.createdAt.slice(0, 16).replace("T", " ")} UTC</p>
+                      <p>{formatShortDateTime(row.createdAt, locale)}</p>
                       {row.type === "EARN" ? (
                         <p>
                           {row.expiresAt
                             ? copy.expires.replace(
                                 "{date}",
-                                row.expiresAt.slice(0, 10),
+                                formatShortDate(row.expiresAt, locale),
                               )
                             : copy.noExpiry}
                         </p>
