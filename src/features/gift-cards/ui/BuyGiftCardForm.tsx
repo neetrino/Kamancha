@@ -4,12 +4,13 @@ import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 import { DateTimePickerField } from "@/components/ui/DateTimePickerField";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { formatYerevanDate } from "@/features/delivery/domain/delivery-schedule";
 import { purchaseGiftCardAction } from "@/features/gift-cards/application/admin-actions";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
-import { PROFILE_PILL_DARK, PROFILE_PILL_SM } from "@/features/profile/ui/profile-surface";
+import { PROFILE_PILL_DARK } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -61,9 +62,9 @@ export function BuyGiftCardForm({
   onSuccess,
 }: BuyGiftCardFormProps) {
   const router = useRouter();
-  const [amount, setAmount] = useState(settings.presets[0] ?? settings.minAmount);
+  const defaultPreset = String(settings.presets[0] ?? settings.minAmount);
+  const [selectedAmount, setSelectedAmount] = useState(defaultPreset);
   const [customAmount, setCustomAmount] = useState("");
-  const [useCustom, setUseCustom] = useState(false);
   const [scheduledSendAt, setScheduledSendAt] = useState("");
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
@@ -71,14 +72,26 @@ export function BuyGiftCardForm({
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const minSendDate = formatYerevanDate(new Date());
+  const useCustom = selectedAmount === "custom";
+
+  const amountOptions = useMemo(
+    () => [
+      ...settings.presets.map((preset) => ({
+        value: String(preset),
+        label: formatMoneyAmount(preset, "AMD", locale),
+      })),
+      { value: "custom", label: copy.customAmount },
+    ],
+    [settings.presets, locale, copy.customAmount],
+  );
 
   const resolvedAmount = useMemo(() => {
     if (!useCustom) {
-      return amount;
+      return Number(selectedAmount);
     }
     const parsed = Number(customAmount);
     return Number.isInteger(parsed) ? parsed : 0;
-  }, [amount, customAmount, useCustom]);
+  }, [selectedAmount, customAmount, useCustom]);
 
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -114,38 +127,16 @@ export function BuyGiftCardForm({
     });
   }
 
-  function amountChipClass(selected: boolean): string {
-    return selected
-      ? "rounded-full bg-brand-forest px-4 py-2 text-sm font-medium text-white"
-      : `${PROFILE_PILL_SM}`;
-  }
-
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <div>
-        <p className="mb-2 text-sm font-medium text-gray-900">{copy.amount}</p>
-        <div className="flex flex-wrap gap-2">
-          {settings.presets.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              onClick={() => {
-                setUseCustom(false);
-                setAmount(preset);
-              }}
-              className={amountChipClass(!useCustom && amount === preset)}
-            >
-              {formatMoneyAmount(preset, "AMD", locale)}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => setUseCustom(true)}
-            className={amountChipClass(useCustom)}
-          >
-            {copy.customAmount}
-          </button>
-        </div>
+      <div className={DRAWER_LABEL}>
+        <span>{copy.amount}</span>
+        <SegmentedControl
+          aria-label={copy.amount}
+          value={selectedAmount}
+          options={amountOptions}
+          onSelect={setSelectedAmount}
+        />
         {useCustom ? (
           <input
             type="number"
@@ -153,7 +144,7 @@ export function BuyGiftCardForm({
             max={settings.maxAmount}
             value={customAmount}
             onChange={(event) => setCustomAmount(event.target.value)}
-            className={`mt-3 ${DRAWER_FIELD}`}
+            className={DRAWER_FIELD}
             required
           />
         ) : null}
