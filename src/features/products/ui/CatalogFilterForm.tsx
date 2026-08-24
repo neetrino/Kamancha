@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import { AppLink } from "@/components/ui/AppLink";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import type { CatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
 import {
   catalogHref,
@@ -12,45 +11,39 @@ import {
 } from "@/features/products/application/catalog-search-params";
 import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
 import { CATALOG_PRICE_FILTER_MAX } from "@/features/products/schemas/catalog-list";
+import {
+  CATALOG_CATEGORY_ICON_ALL,
+  resolveCatalogCategoryIcon,
+} from "@/features/products/ui/catalog-category-icons";
 import { CatalogPriceRange } from "@/features/products/ui/CatalogPriceRange";
 import type { Currency } from "@/lib/money/currency";
 
 export type CatalogFilterLabels = {
   filters: string;
   clearFilters: string;
-  searchLabel: string;
-  searchPlaceholder: string;
   categoryLabel: string;
   allCategories: string;
   priceLabel: string;
-  availabilityLabel: string;
-  inStockOnly: string;
   onSaleOnly: string;
+  newArrivalsOnly: string;
 };
 
-type CategoryOption = {
+export type CatalogSidebarCategory = {
   slug: string;
   title: string;
+  productCount: number;
 };
 
 type CatalogFilterFormProps = {
   locale: string;
   currency: Currency;
   filters: CatalogFilters;
-  categories: CategoryOption[];
+  categories: CatalogSidebarCategory[];
+  allProductsCount: number;
   priceBounds: CatalogPriceBounds;
   labels: CatalogFilterLabels;
-  active: boolean;
   className?: string;
 };
-
-const FIELD =
-  "mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-400";
-
-const CHECK =
-  "size-4 rounded border-gray-300 text-gray-900 focus:ring-gray-400";
-
-const TEXT_DEBOUNCE_MS = 350;
 
 function resolveRange(
   filters: CatalogFilters,
@@ -79,38 +72,63 @@ function toFilterPrice(
   return value;
 }
 
+function CategoryIcon({
+  src,
+  className = "",
+}: {
+  src: string;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={`inline-block shrink-0 bg-current ${className}`}
+      style={{
+        maskImage: `url(${src})`,
+        WebkitMaskImage: `url(${src})`,
+        maskSize: "contain",
+        WebkitMaskSize: "contain",
+        maskRepeat: "no-repeat",
+        WebkitMaskRepeat: "no-repeat",
+        maskPosition: "center",
+        WebkitMaskPosition: "center",
+      }}
+    />
+  );
+}
+
+const CATEGORY_BTN =
+  "flex w-full items-center justify-between gap-5 rounded-xl px-4 py-3 text-left transition-colors";
+
+/**
+ * Catalog sidebar — Figma Sidebar 103:1278 (categories, price, filters, clear).
+ */
 export function CatalogFilterForm({
   locale,
   currency,
   filters,
   categories,
+  allProductsCount,
   priceBounds,
   labels,
-  active,
   className = "",
 }: CatalogFilterFormProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
   const initialRange = resolveRange(filters, priceBounds);
-  const [categoryValue, setCategoryValue] = useState(filters.category ?? "");
-  const [searchValue, setSearchValue] = useState(filters.q ?? "");
   const [rangeMin, setRangeMin] = useState(initialRange.min);
   const [rangeMax, setRangeMax] = useState(initialRange.max);
-  const [inStock, setInStock] = useState(Boolean(filters.inStock));
   const [onSale, setOnSale] = useState(Boolean(filters.onSale));
+  const [newArrivals, setNewArrivals] = useState(Boolean(filters.newArrivals));
 
   const [prevFilters, setPrevFilters] = useState(filters);
   if (filters !== prevFilters) {
     const previousRange = resolveRange(prevFilters, priceBounds);
     const nextRange = resolveRange(filters, priceBounds);
     setPrevFilters(filters);
-    setCategoryValue(filters.category ?? "");
-    setInStock(Boolean(filters.inStock));
     setOnSale(Boolean(filters.onSale));
-    if (searchValue === (prevFilters.q ?? "")) {
-      setSearchValue(filters.q ?? "");
-    }
+    setNewArrivals(Boolean(filters.newArrivals));
     if (rangeMin === previousRange.min && rangeMax === previousRange.max) {
       setRangeMin(nextRange.min);
       setRangeMax(nextRange.max);
@@ -122,29 +140,18 @@ export function CatalogFilterForm({
   function pushFilters(
     next: Partial<CatalogFilters>,
     draft?: {
-      searchValue: string;
       rangeMin: number;
       rangeMax: number;
-      categoryValue: string;
-      inStock: boolean;
       onSale: boolean;
+      newArrivals: boolean;
     },
   ): void {
-    const current = draft ?? {
-      searchValue,
-      rangeMin,
-      rangeMax,
-      categoryValue,
-      inStock,
-      onSale,
-    };
+    const current = draft ?? { rangeMin, rangeMax, onSale, newArrivals };
     const href = catalogHref(locale, filters, {
-      q: current.searchValue.trim() || undefined,
       minPrice: toFilterPrice(current.rangeMin, priceBounds.min, "min"),
       maxPrice: toFilterPrice(current.rangeMax, priceBounds.max, "max"),
-      category: current.categoryValue || undefined,
-      inStock: current.inStock ? true : undefined,
       onSale: current.onSale ? true : undefined,
+      newArrivals: current.newArrivals ? true : undefined,
       ...next,
       page: 1,
     });
@@ -161,94 +168,135 @@ export function CatalogFilterForm({
     }
 
     const timer = window.setTimeout(() => {
-      const nextQ = searchValue.trim() || undefined;
       const nextMin = toFilterPrice(rangeMin, priceBounds.min, "min");
       const nextMax = toFilterPrice(rangeMax, priceBounds.max, "max");
 
-      if (
-        (nextQ ?? "") === (filters.q ?? "") &&
-        nextMin === filters.minPrice &&
-        nextMax === filters.maxPrice
-      ) {
+      if (nextMin === filters.minPrice && nextMax === filters.maxPrice) {
         return;
       }
 
       pushFilters({
-        q: nextQ,
         minPrice: nextMin,
         maxPrice: nextMax,
       });
-    }, TEXT_DEBOUNCE_MS);
+    }, 350);
 
     return () => window.clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- debounce search/price only
-  }, [searchValue, rangeMin, rangeMax]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- debounce price only
+  }, [rangeMin, rangeMax]);
+
+  const selectedCategory = filters.category ?? "";
 
   return (
-    <div
-      className={`rounded-xl border border-gray-200 bg-white p-4 ${className}`}
+    <aside
+      data-node-id="103:1278"
+      className={`flex w-full max-w-[280px] flex-col items-start pb-8 ${className}`}
     >
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-gray-900">{labels.filters}</h2>
-        {active ? (
-          <AppLink
-            href={clearCatalogFiltersHref(locale)}
-            prefetchPolicy="intent"
-            className="text-xs font-medium text-gray-600 underline-offset-2 hover:underline"
-            scroll={false}
+      <div className="w-full">
+        <h2 className="font-big-fat-boii text-[18px] leading-[27px] font-normal tracking-[0.45px] text-white uppercase">
+          {labels.categoryLabel}
+        </h2>
+
+        <div
+          className="flex flex-col pt-4 pb-6"
+          role="listbox"
+          aria-label={labels.categoryLabel}
+        >
+          <button
+            type="button"
+            role="option"
+            aria-selected={!selectedCategory}
+            className={`${CATEGORY_BTN} ${
+              !selectedCategory
+                ? "bg-white text-brand-forest"
+                : "bg-white/10 text-white hover:bg-white/15"
+            }`}
+            onClick={() => {
+              pushFilters({ category: undefined });
+            }}
           >
-            {labels.clearFilters}
-          </AppLink>
-        ) : null}
+            <span className="flex min-w-0 items-center gap-1">
+              <CategoryIcon
+                src={CATALOG_CATEGORY_ICON_ALL}
+                className="h-8 w-[30px]"
+              />
+              <span
+                className={`truncate text-[15px] leading-[22.5px] ${
+                  !selectedCategory ? "font-semibold" : "font-normal"
+                }`}
+              >
+                {labels.allCategories}
+              </span>
+            </span>
+            <span
+              className={`shrink-0 text-[13px] leading-[19.5px] ${
+                !selectedCategory
+                  ? "font-semibold text-brand-forest/60"
+                  : "text-white/50"
+              }`}
+            >
+              ({allProductsCount})
+            </span>
+          </button>
+
+          {categories.map((category) => {
+            const active = selectedCategory === category.slug;
+            const icon = resolveCatalogCategoryIcon(
+              category.slug,
+              category.title,
+            );
+
+            return (
+              <div key={category.slug} className="pt-2">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  className={`${CATEGORY_BTN} ${
+                    active
+                      ? "bg-white text-brand-forest"
+                      : "bg-white/10 text-white hover:bg-white/15"
+                  }`}
+                  onClick={() => {
+                    pushFilters({
+                      category: active ? undefined : category.slug,
+                    });
+                  }}
+                >
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    <CategoryIcon
+                      src={icon}
+                      className="h-8 w-9 shrink-0"
+                    />
+                    <span
+                      className={`truncate text-[15px] leading-[22.5px] ${
+                        active ? "font-semibold" : "font-normal"
+                      }`}
+                    >
+                      {category.title}
+                    </span>
+                  </span>
+                  <span
+                    className={`shrink-0 text-[13px] leading-[19.5px] ${
+                      active
+                        ? "font-semibold text-brand-forest/60"
+                        : "text-white/50"
+                    }`}
+                  >
+                    ({category.productCount})
+                  </span>
+                </button>
+              </div>
+            );
+          })}
+          <div
+            aria-hidden="true"
+            className="mt-4 h-px w-full bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          />
+        </div>
       </div>
 
-      <div className="flex flex-col gap-5">
-        <label className="block">
-          <span className="text-sm font-medium text-gray-900">
-            {labels.searchLabel}
-          </span>
-          <input
-            type="search"
-            value={searchValue}
-            onChange={(event) => setSearchValue(event.target.value)}
-            placeholder={labels.searchPlaceholder}
-            className={FIELD}
-            autoComplete="off"
-          />
-        </label>
-
-        <div>
-          <span className="text-sm font-medium text-gray-900">
-            {labels.categoryLabel}
-          </span>
-          <div className="mt-1">
-            <SelectDropdown
-              ariaLabel={labels.categoryLabel}
-              value={categoryValue}
-              allLabel={labels.allCategories}
-              options={categories.map((category) => ({
-                label: category.title,
-                value: category.slug,
-              }))}
-              onValueChange={(next) => {
-                setCategoryValue(next);
-                pushFilters(
-                  { category: next.trim() ? next : undefined },
-                  {
-                    searchValue,
-                    rangeMin,
-                    rangeMax,
-                    categoryValue: next,
-                    inStock,
-                    onSale,
-                  },
-                );
-              }}
-              deferChange={false}
-            />
-          </div>
-        </div>
-
+      <div className="w-full pt-5">
         <CatalogPriceRange
           label={labels.priceLabel}
           currency={currency}
@@ -260,35 +308,15 @@ export function CatalogFilterForm({
             setRangeMax(max);
           }}
         />
+      </div>
 
-        <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-medium text-gray-900">
-            {labels.availabilityLabel}
-          </legend>
-          <label className="flex items-center gap-2 text-sm text-gray-700">
-            <input
-              type="checkbox"
-              checked={inStock}
-              onChange={(event) => {
-                const next = event.target.checked;
-                setInStock(next);
-                pushFilters(
-                  { inStock: next ? true : undefined },
-                  {
-                    searchValue,
-                    rangeMin,
-                    rangeMax,
-                    categoryValue,
-                    inStock: next,
-                    onSale,
-                  },
-                );
-              }}
-              className={CHECK}
-            />
-            {labels.inStockOnly}
-          </label>
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+      <div className="flex w-full flex-col py-8">
+        <h2 className="font-big-fat-boii text-[18px] leading-[27px] font-normal tracking-[0.45px] text-white uppercase">
+          {labels.filters}
+        </h2>
+
+        <div className="flex flex-col pt-4">
+          <label className="flex cursor-pointer items-center gap-3">
             <input
               type="checkbox"
               checked={onSale}
@@ -298,21 +326,52 @@ export function CatalogFilterForm({
                 pushFilters(
                   { onSale: next ? true : undefined },
                   {
-                    searchValue,
                     rangeMin,
                     rangeMax,
-                    categoryValue,
-                    inStock,
                     onSale: next,
+                    newArrivals,
                   },
                 );
               }}
-              className={CHECK}
+              className="size-5 shrink-0 appearance-none rounded-[5px] border-2 border-white/40 bg-transparent checked:border-white checked:bg-white checked:bg-[length:12px_12px] checked:bg-center checked:bg-no-repeat checked:[background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23265127%22%20d%3D%22M4.7%209.2%201.4%205.9l1.2-1.2%202.1%202.1%204.7-4.7%201.2%201.2z%22%2F%3E%3C%2Fsvg%3E')]"
             />
-            {labels.onSaleOnly}
+            <span className="text-[15px] leading-[22.5px] text-white">
+              {labels.onSaleOnly}
+            </span>
           </label>
-        </fieldset>
+
+          <label className="mt-3 flex cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              checked={newArrivals}
+              onChange={(event) => {
+                const next = event.target.checked;
+                setNewArrivals(next);
+                pushFilters(
+                  { newArrivals: next ? true : undefined },
+                  {
+                    rangeMin,
+                    rangeMax,
+                    onSale,
+                    newArrivals: next,
+                  },
+                );
+              }}
+              className="size-5 shrink-0 appearance-none rounded-[5px] border-2 border-white/40 bg-transparent checked:border-white checked:bg-white checked:bg-[length:12px_12px] checked:bg-center checked:bg-no-repeat checked:[background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23265127%22%20d%3D%22M4.7%209.2%201.4%205.9l1.2-1.2%202.1%202.1%204.7-4.7%201.2%201.2z%22%2F%3E%3C%2Fsvg%3E')]"
+            />
+            <span className="text-[15px] leading-[22.5px] text-white">
+              {labels.newArrivalsOnly}
+            </span>
+          </label>
+        </div>
+
+        <KamanchaPillButton
+          href={clearCatalogFiltersHref(locale)}
+          label={labels.clearFilters}
+          className="mt-4 max-w-[280px]"
+          figmaNodeId="103:3104"
+        />
       </div>
-    </div>
+    </aside>
   );
 }

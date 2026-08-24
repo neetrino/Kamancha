@@ -1,8 +1,8 @@
 {
-  "brand": "White-Shop",
+  "brand": "Kamancha",
   "nav": {
     "home": "Главная",
-    "products": "Товары",
+    "products": "Меню",
     "shop": "Магазин",
     "blog": "Блог",
     "cart": "Корзина",
@@ -12,7 +12,9 @@
     "openMenu": "Открыть меню",
     "closeMenu": "Закрыть меню",
     "navigation": "Навигация",
-    "shopNow": "В магазин"
+    "shopNow": "В магазин",
+    "groupOrder": "Групповой заказ",
+    "policy": "Политика"
   },
   "header": {
     "language": "Язык",
@@ -24,20 +26,35 @@
     "createAccount": "Создать аккаунт",
     "search": "Поиск",
     "searchClose": "Закрыть поиск",
-    "searchPlaceholder": "Искать товары…",
+    "searchPlaceholder": "Поиск",
     "searchIdle": "Введите название товара",
     "searchEmpty": "Товары не найдены",
     "searchViewAll": "Смотреть все результаты"
   },
   "footer": {
-    "shop": "Магазин",
-    "description": "Профессиональный интернет-магазин для повседневных покупок.",
-    "quickLinks": "Быстрые ссылки",
-    "legal": "Правовая информация",
+    "tagline": "«Армянская кухня, музыка и гостеприимство — в новом звучании».",
+    "navigationTitle": "Навигация",
+    "menu": "Меню",
+    "about": "О нас",
+    "specialOffers": "Специальные предложения",
+    "gallery": "Галерея",
+    "contact": "Контакты",
+    "supportTitle": "Поддержка",
+    "shippingReturns": "Доставка и возврат",
+    "terms": "Условия использования",
     "privacyPolicy": "Политика конфиденциальности",
-    "terms": "Условия",
-    "contactInfo": "Контактная информация",
-    "followUs": "Мы в соцсетях",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "faq": "Частые вопросы",
+    "contactTitle": "Контакты",
+    "address": "ул. Туманяна 23, Ереван",
+    "address2": "ул. Сарьяна 8, Ереван",
+    "phone": "095 711700",
+    "email": "kamancharest@gmail.com",
+    "hours": "Каждый день: 10:00-00:00",
+    "copyrightBefore": "Copyright © {year} | Все права защищены | Создано",
+    "copyrightCompany": "Neetrino IT Company",
+    "copyrightAfter": "",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok"
   }
 }

@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   listAdminCategoryOptions,
   listAdminProducts,
@@ -115,6 +116,10 @@ export default async function AdminProductsPage({
 
   return (
     <section>
+      <div className="mb-6">
+        <h1 className={ADMIN_PAGE_TITLE}>{adminCopy.products.title}</h1>
+      </div>
+
       <AdminProductsFilters
         total={total}
         q={filters.q}
@@ -140,31 +145,16 @@ export default async function AdminProductsPage({
         }}
       />
 
-      {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
-          {filters.page > 1 ? (
-            <Link
-              href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page - 1 })}`}
-              className="font-medium hover:underline"
-            >
-              {adminCopy.common.previous}
-            </Link>
-          ) : null}
-          <span>
-            {adminCopy.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-          {filters.page < totalPages ? (
-            <Link
-              href={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page + 1 })}`}
-              className="font-medium hover:underline"
-            >
-              {adminCopy.common.next}
-            </Link>
-          ) : null}
-        </nav>
-      ) : null}
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={adminCopy.products.title}
+        previousLabel={adminCopy.common.previous}
+        nextLabel={adminCopy.common.next}
+        pageOfLabel={adminCopy.common.pageOf}
+        prevHref={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page - 1 })}`}
+        nextHref={`/${locale}/admin/products?${buildQuery(filters, { page: filters.page + 1 })}`}
+      />
     </section>
   );
 }

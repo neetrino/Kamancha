@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { DROPDOWN_ANIMATION_MS } from "@/components/ui/SelectDropdown";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 const HOVER_CLOSE_DELAY_MS = 140;
 
@@ -60,7 +61,7 @@ export function IconDropdown({
 
   useEffect(() => {
     if (open) {
-      setElevated(true);
+      scheduleStateUpdate(setElevated, true);
       return;
     }
     const timer = setTimeout(() => setElevated(false), DROPDOWN_ANIMATION_MS);

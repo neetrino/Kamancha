@@ -23,7 +23,7 @@ export function RatingStars({ average, size = "md" }: RatingStarsProps) {
             className={`${iconClass} ${
               isFilled
                 ? "fill-amber-400 text-amber-400"
-                : "fill-gray-200 text-gray-200"
+                : "fill-white/25 text-white/25"
             }`}
           />
         );
@@ -47,18 +47,18 @@ export function RatingDistribution({ aggregate }: RatingDistributionProps) {
 
         return (
           <li key={level} className="flex items-center gap-2.5">
-            <span className="w-3 text-sm text-gray-500">{level}</span>
+            <span className="w-3 text-sm text-white/50">{level}</span>
             <Star
               className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400"
               aria-hidden
             />
-            <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-gray-100">
+            <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-white/15">
               <div
                 className="h-full rounded-full bg-amber-400 transition-[width]"
                 style={{ width: `${percent}%` }}
               />
             </div>
-            <span className="w-6 text-right text-sm text-gray-500">{count}</span>
+            <span className="w-6 text-right text-sm text-white/50">{count}</span>
           </li>
         );
       })}

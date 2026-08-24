@@ -15,6 +15,7 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
@@ -142,18 +143,20 @@ export function AdminProductsTable({
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">{selectedLabel}</p>
-        <Button
-          type="button"
-          size="sm"
-          variant="danger"
-          disabled={isPending || selected.size === 0}
-          onClick={deleteSelected}
-        >
-          {copy.table.deleteSelected}
-        </Button>
-      </Card>
+      {selected.size > 0 ? (
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">{selectedLabel}</p>
+          <Button
+            type="button"
+            size="sm"
+            variant="danger"
+            disabled={isPending}
+            onClick={deleteSelected}
+          >
+            {copy.table.deleteSelected}
+          </Button>
+        </Card>
+      ) : null}
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
 
@@ -193,9 +196,9 @@ export function AdminProductsTable({
                     </Link>
                   </th>
                   <th className={ADMIN_TABLE_TH}>{copy.table.category}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.featured}</th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.actions}</th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.featured}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.actions}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     <Link
                       href={sortLinks.created}
                       className="hover:text-gray-900"

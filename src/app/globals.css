@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Big Fat Boii";
+  src: url("/fonts/BigFatBoii.otf") format("opentype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #f9fafb;
   --foreground: #111827;
@@ -7,7 +15,18 @@
   --border: #e5e7eb;
   --accent: #111827;
   --accent-foreground: #f9fafb;
+  --brand-forest: #265127;
   --radius: 15px;
+  /* SiteHeader xl+: pt-8 + min-h-[65px] + pb-2.5 */
+  --storefront-header-offset: calc(2rem + 65px + 0.625rem);
+  --profile-sticky-gap: 1.75rem;
+  --brand-pale-edge-stroke: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.04) 55%,
+    rgba(255, 255, 255, 0.12) 82%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
 }
 
 @theme inline {
@@ -17,8 +36,10 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-brand-forest: var(--brand-forest);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-big-fat-boii: "Big Fat Boii", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: 15px;
   --radius-md: 15px;
   --radius-lg: 15px;
@@ -32,6 +53,24 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, sans-serif;
+  overscroll-behavior-x: none;
+}
+
+html {
+  overscroll-behavior-x: none;
+}
+
+/**
+ * Admin desktop: lock the document so only the main column scrolls.
+ * Long pages (discounts, etc.) otherwise show a page scrollbar beside the column.
+ */
+@media (min-width: 1024px) {
+  html:has([data-admin-shell]),
+  html:has([data-admin-shell]) body {
+    overflow: hidden;
+    height: 100dvh;
+    max-height: 100dvh;
+  }
 }
 
 @layer base {
@@ -55,6 +94,38 @@ body {
   input:disabled,
   [aria-disabled="true"] {
     cursor: not-allowed;
+  }
+
+  /* Brand accent for native checkboxes / radios (replaces UA blue). */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--brand-forest);
+  }
+
+  /* Suppress default blue UA focus ring; keep a11y ring only for keyboard. */
+  :where(
+    a,
+    button,
+    summary,
+    [role="button"],
+    input,
+    select,
+    textarea
+  ):focus {
+    outline: none;
+  }
+
+  :where(
+    a,
+    button,
+    summary,
+    [role="button"],
+    input,
+    select,
+    textarea
+  ):focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--brand-forest) 70%, white);
+    outline-offset: 2px;
   }
 }
 
@@ -123,6 +194,44 @@ body {
   .animate-confirm-dialog-backdrop-out,
   .animate-confirm-dialog-panel-in,
   .animate-confirm-dialog-panel-out {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}
+
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.animate-toast-in {
+  animation: 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards toast-in;
+}
+
+.animate-toast-out {
+  animation: 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards toast-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-toast-in,
+  .animate-toast-out {
     animation-duration: 0.01ms;
     animation-iteration-count: 1;
   }
@@ -248,79 +357,419 @@ body {
   }
 }
 
+/* Kamancha MENU pill (Figma 22:435) — hover: soft green + ornaments slide out */
+.kamancha-pill-button {
+  transition: background-color 0.45s ease;
+}
+
+.kamancha-pill-button--light {
+  background-color: #ffffff;
+}
+
+.kamancha-pill-button--light:hover,
+.kamancha-pill-button--light:focus-visible {
+  background-color: #dcecc6;
+}
+
+.kamancha-pill-button--dark {
+  background-color: var(--brand-forest);
+}
+
+.kamancha-pill-button--dark:hover,
+.kamancha-pill-button--dark:focus-visible {
+  background-color: #1e3f1f;
+}
+
+.kamancha-pill-button--dark .kamancha-pill-ornament {
+  mix-blend-mode: screen;
+}
+
+.kamancha-pill-ornament {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  height: 49px;
+  width: 62px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.kamancha-pill-ornament--left {
+  left: 0;
+}
+
+.kamancha-pill-ornament--right {
+  right: 0;
+}
+
+.kamancha-pill-button:hover .kamancha-pill-ornament--left,
+.kamancha-pill-button:focus-visible .kamancha-pill-ornament--left {
+  transform: translate(-36px, -50%);
+}
+
+.kamancha-pill-button:hover .kamancha-pill-ornament--right,
+.kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
+  transform: translate(36px, -50%);
+}
+
 /**
- * MaMarie-style profile desktop shell:
- * lock viewport height, hide footer, scroll only the content column.
+ * Scrolled header edge stroke (Figma 173:143) — soft pale rim, stronger
+ * only near the bottom curve (not a hard white line).
  */
-@media (min-width: 1024px) {
-  .storefront-shell:has(.profile-desktop-page) {
-    height: 100dvh;
-    max-height: 100dvh;
-    min-height: 0;
-    overflow: hidden;
+.site-header-scrolled-stroke {
+  border-radius: 0 0 28px 28px;
+  padding: 1px;
+  background: var(--brand-pale-edge-stroke);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.side-sheet-close-stroke::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--brand-pale-edge-stroke);
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/**
+ * Storefront glass: frosted base; rim refraction while idle.
+ * Refraction paused during scroll (`html.liquid-glass-scrolling` from LiquidGlassOptics).
+ */
+.liquid-glass,
+.liquid-glass-panel {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(255, 255, 255, 0.012) 42%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(3px) saturate(1.22);
+  -webkit-backdrop-filter: blur(3px) saturate(1.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+@supports (backdrop-filter: url(#a)) {
+  .liquid-glass,
+  .liquid-glass-panel {
+    backdrop-filter: blur(3px) saturate(1.2) url(#kamancha-liquid-glass-rim);
   }
 
-  .storefront-shell:has(.profile-desktop-page) .storefront-main {
-    display: flex;
-    flex: 1 1 0%;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-    padding-top: 24px;
-    padding-bottom: 20px;
+  html.liquid-glass-scrolling .liquid-glass,
+  html.liquid-glass-scrolling .liquid-glass-panel {
+    backdrop-filter: blur(3px) saturate(1.22);
+    -webkit-backdrop-filter: blur(3px) saturate(1.22);
+  }
+}
+
+.liquid-glass::before,
+.liquid-glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: var(--brand-pale-edge-stroke);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+@media (min-width: 768px) {
+  .site-header-scrolled-stroke {
+    border-radius: 0 0 40px 40px;
+  }
+}
+
+@keyframes cart-fly-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cart-fly-pulse {
+  animation: cart-fly-pulse 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-fly-pulse {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kamancha-pill-button,
+  .kamancha-pill-ornament {
+    transition: none;
   }
 
-  .storefront-shell:has(.profile-desktop-page) .storefront-footer {
-    display: none;
+  .kamancha-pill-button:hover .kamancha-pill-ornament--left,
+  .kamancha-pill-button:focus-visible .kamancha-pill-ornament--left,
+  .kamancha-pill-button:hover .kamancha-pill-ornament--right,
+  .kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
+    transform: translateY(-50%);
   }
 }
 
 /**
- * MaMarie-style mobile profile page: slightly cooler canvas behind hub cards.
- * Hide the storefront top header — profile hub is the chrome on mobile.
- * Hide the storefront bottom tab bar — profile has its own hub chrome.
+ * Storefront profile desktop (Grill.am): sticky band under the header.
+ * Equal top/bottom gaps; content column scrolls internally. When that
+ * column reaches its end, page scroll continues so the footer is reachable.
  */
-@media (max-width: 1023px) {
+@media (min-width: 1280px) {
+  .storefront-shell:has(.profile-desktop-page) .storefront-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding-top: var(--profile-sticky-gap);
+    padding-bottom: var(--profile-sticky-gap);
+    padding-left: calc(2rem - 10px);
+    padding-right: calc(2rem - 10px);
+  }
+
+  .profile-desktop-page {
+    flex: 1 1 auto;
+    min-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-items: flex-start;
+  }
+
+  .profile-sticky-band {
+    position: sticky;
+    top: calc(var(--storefront-header-offset) + var(--profile-sticky-gap));
+    z-index: 10;
+    height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    max-height: calc(
+      100dvh - var(--storefront-header-offset) - (var(--profile-sticky-gap) * 2)
+    );
+    align-self: flex-start;
+  }
+
+  .profile-desktop-content {
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .profile-desktop-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .profile-desktop-content > * {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+  }
+
+  .profile-desktop-content > * > .liquid-glass:last-of-type,
+  .profile-desktop-content > .profile-page-reveal > * > .liquid-glass:last-of-type {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 1279px) {
+  .site-header [data-brand-logo] {
+    height: 79px;
+    width: 164px;
+  }
+}
+
+@media (max-width: 1279px) {
   .storefront-shell:has(.profile-mobile-page) .site-header {
     display: none;
   }
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
     padding-top: 0.5rem;
-    padding-bottom: 2.5rem;
+    padding-bottom: 6rem;
   }
 
-  .storefront-shell:has(.profile-mobile-page) .mobile-bottom-nav {
-    display: none;
+  /* Checkout + group order — Grill.am mobile inset (single 1.25rem; no double px). */
+  .storefront-main:has(.checkout-page),
+  .storefront-main:has(.group-order-page) {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  /* Checkout white cards (e.g. ՄԱՆՐ) on the forest background. */
+  .checkout-page .profile-inner-card {
+    border-color: rgb(229 231 235);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.08),
+      0 1px 2px -1px rgb(0 0 0 / 0.06);
   }
 
   .profile-mobile-tab-sheet-scroll {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .profile-mobile-tab-sheet-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /**
+   * Mobile profile sheets (Grill.am): solid white panel; nested glass → white cards.
+   * Desktop sidebar/content glass is unchanged (these rules are sheet-scoped).
+   */
+  .profile-mobile-tab-sheet .liquid-glass {
+    background: #ffffff;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .profile-mobile-tab-sheet .liquid-glass::before {
+    display: none;
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-stat-card.liquid-glass {
+    background: #cfe8c4;
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-stat-card-label {
+    color: rgb(38 81 39 / 0.7);
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-stat-card-value {
+    color: var(--brand-forest);
+  }
+
+  /* Dashboard recent-orders: no outer white frame on mobile (cards keep their own). */
+  .profile-mobile-tab-sheet-scroll .profile-recent-orders.liquid-glass {
+    background: none;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 0;
+  }
+
+  /* Bonuses history: align section width with stat cards above. */
+  .profile-mobile-tab-sheet-scroll .profile-bonuses-history.liquid-glass {
+    background: none;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 0;
+  }
+
+  /* White inner cards on the white sheet need a clearer edge. */
+  .profile-mobile-tab-sheet-scroll .profile-inner-card {
+    border-color: rgb(229 231 235);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.08),
+      0 1px 2px -1px rgb(0 0 0 / 0.06);
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-pill-light {
+    background-color: var(--brand-forest);
+    color: #ffffff;
+  }
+
+  .profile-mobile-tab-sheet-scroll .profile-pill-light:hover {
+    background-color: var(--brand-forest);
+    opacity: 0.9;
   }
 
   /* Dashboard + orders: more inset from the sheet edges. */
-  .profile-mobile-tab-sheet-scroll:has(> div > .profile-sheet-keep-frame) {
+  .profile-mobile-tab-sheet-scroll:has(.profile-sheet-keep-frame) {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
 
   /**
-   * Form sheets: flush outer cards + compact horizontal inset.
-   * Dashboard + orders (`.profile-sheet-keep-frame`) keep their own padding/frames.
+   * Form sheets: flatten nested cards onto the white sheet surface.
+   * Dashboard + orders (`.profile-sheet-keep-frame`) keep their own frames.
    */
   .profile-mobile-tab-sheet-scroll
     > div
     > *:not(.profile-sheet-keep-frame)
-    > .rounded-2xl,
+    > .liquid-glass,
+  .profile-mobile-tab-sheet-scroll
+    > div
+    > .profile-page-reveal
+    > *:not(.profile-sheet-keep-frame)
+    > .liquid-glass {
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
   .profile-mobile-tab-sheet-scroll
     > div
     > *:not(.profile-sheet-keep-frame)
-    > .rounded-lg {
-    border-width: 0;
-    box-shadow: none;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    > .liquid-glass::before,
+  .profile-mobile-tab-sheet-scroll
+    > div
+    > .profile-page-reveal
+    > *:not(.profile-sheet-keep-frame)
+    > .liquid-glass::before {
+    display: none;
+  }
+}
+
+.profile-nav-indicator {
+  transition-property: top, height;
+  transition-duration: var(--profile-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.profile-nav-indicator-instant {
+  transition-duration: 0ms;
+}
+
+.profile-nav-label {
+  transition-property: color;
+  transition-duration: var(--profile-nav-ms, 380ms);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-nav-indicator,
+  .profile-nav-label {
+    transition: none;
   }
 }
 
@@ -333,33 +782,33 @@ body {
   pointer-events: auto;
   -webkit-appearance: none;
   appearance: none;
-  height: 18px;
-  width: 18px;
+  height: 11px;
+  width: 11px;
   border-radius: 9999px;
   background: #fff;
-  border: 2px solid #3b82f6;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  border: 0;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
   cursor: pointer;
 }
 
 .catalog-price-range::-moz-range-thumb {
   pointer-events: auto;
-  height: 18px;
-  width: 18px;
+  height: 11px;
+  width: 11px;
   border-radius: 9999px;
   background: #fff;
-  border: 2px solid #3b82f6;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  border: 0;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
   cursor: pointer;
 }
 
 .catalog-price-range::-webkit-slider-runnable-track {
   background: transparent;
-  height: 4px;
+  height: 6px;
 }
 
 .catalog-price-range::-moz-range-track {
   background: transparent;
-  height: 4px;
+  height: 6px;
   border: none;
 }

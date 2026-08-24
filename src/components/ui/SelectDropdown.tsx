@@ -1,28 +1,51 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown } from "lucide-react";
 
-export const DROPDOWN_ANIMATION_MS = 280;
+export const DROPDOWN_ANIMATION_MS = 360;
 
 export type SelectDropdownOption = {
   label: string;
   value: string;
 };
 
+type MenuPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
+
 type SelectDropdownProps = {
   name?: string;
   ariaLabel: string;
   value: string;
-  /** When set, shows an empty-value row at the top of the list. */
   allLabel?: string;
   options: ReadonlyArray<SelectDropdownOption>;
   className?: string;
   disabled?: boolean;
   onValueChange: (value: string) => void;
-  /** Wait for close animation before calling onValueChange. Default true. */
   deferChange?: boolean;
+  /** Grow the trigger to the selected label instead of truncating. */
+  fitContent?: boolean;
 };
+
+function measureMenuPosition(trigger: HTMLElement): MenuPosition {
+  const rect = trigger.getBoundingClientRect();
+  return {
+    top: rect.bottom + 8,
+    left: rect.left,
+    width: rect.width,
+  };
+}
 
 export function SelectDropdown({
   name,
@@ -34,10 +57,13 @@ export function SelectDropdown({
   disabled = false,
   onValueChange,
   deferChange = true,
+  fitContent = false,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
-  const [elevated, setElevated] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [position, setPosition] = useState<MenuPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const pendingChangeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listId = useId();
 
@@ -45,6 +71,20 @@ export function SelectDropdown({
     options.find((option) => option.value === value)?.label ??
     allLabel ??
     value;
+
+  const wantOpenRef = useRef(false);
+
+  const closeMenu = useCallback(() => {
+    wantOpenRef.current = false;
+    setOpen(false);
+  }, []);
+
+  function openMenu(): void {
+    const trigger = rootRef.current;
+    if (trigger) setPosition(measureMenuPosition(trigger));
+    wantOpenRef.current = true;
+    setMounted(true);
+  }
 
   useEffect(() => {
     return () => {
@@ -55,37 +95,66 @@ export function SelectDropdown({
   }, []);
 
   useEffect(() => {
-    if (open) {
-      setElevated(true);
-      return;
-    }
-    const timer = setTimeout(() => setElevated(false), DROPDOWN_ANIMATION_MS);
+    if (!mounted || !wantOpenRef.current) return;
+    let innerFrame = 0;
+    const outerFrame = requestAnimationFrame(() => {
+      innerFrame = requestAnimationFrame(() => {
+        if (wantOpenRef.current) setOpen(true);
+      });
+    });
+    return () => {
+      cancelAnimationFrame(outerFrame);
+      cancelAnimationFrame(innerFrame);
+    };
+  }, [mounted]);
+
+  useEffect(() => {
+    if (open || !mounted || wantOpenRef.current) return;
+    const timer = setTimeout(() => {
+      setMounted(false);
+      setPosition(null);
+    }, DROPDOWN_ANIMATION_MS);
     return () => clearTimeout(timer);
-  }, [open]);
+  }, [open, mounted]);
 
   useEffect(() => {
     if (!open) return;
 
     function handlePointerDown(event: MouseEvent): void {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
       }
+      closeMenu();
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") closeMenu();
+    }
+
+    function handleReposition(): void {
+      const trigger = rootRef.current;
+      if (trigger) setPosition(measureMenuPosition(trigger));
     }
 
     document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleReposition);
+    window.addEventListener("scroll", handleReposition, true);
+
     return () => {
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleReposition);
+      window.removeEventListener("scroll", handleReposition, true);
     };
-  }, [open]);
+  }, [open, closeMenu]);
 
   function selectValue(next: string): void {
-    setOpen(false);
+    closeMenu();
     if (!deferChange) {
       onValueChange(next);
       return;
@@ -102,58 +171,109 @@ export function SelectDropdown({
   return (
     <div
       ref={rootRef}
-      className={`relative ${elevated ? "z-50" : "z-0"} ${className}`}
+      className={`relative ${fitContent ? "w-max" : ""} ${className}`}
     >
       {name ? <input type="hidden" name={name} value={value} /> : null}
       <button
         type="button"
         disabled={disabled}
-        className="flex h-11 w-full items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+        className={`flex h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 ${fitContent ? "w-auto" : "w-full"}`}
         aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => (open ? closeMenu() : openMenu())}
       >
-        <span className="min-w-0 truncate">{selectedLabel}</span>
+        <span className={fitContent ? "whitespace-nowrap" : "min-w-0 truncate"}>
+          {selectedLabel}
+        </span>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-[360ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "rotate-180" : ""}`}
           aria-hidden
         />
       </button>
+      {mounted && position
+        ? createPortal(
+            <SelectDropdownMenu
+              menuRef={menuRef}
+              listId={listId}
+              ariaLabel={ariaLabel}
+              open={open}
+              position={position}
+              value={value}
+              allLabel={allLabel}
+              options={options}
+              onSelect={selectValue}
+            />,
+            document.body,
+          )
+        : null}
+    </div>
+  );
+}
 
-      <div
-        className={`absolute top-[calc(100%+0.5rem)] left-0 z-[100] grid w-full transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          open
-            ? "translate-y-0 grid-rows-[1fr] opacity-100"
-            : "pointer-events-none -translate-y-1 grid-rows-[0fr] opacity-0"
-        }`}
-        style={{ transitionDuration: `${DROPDOWN_ANIMATION_MS}ms` }}
-        aria-hidden={!open}
-      >
-        <div className="min-h-0 overflow-hidden">
-          <div
-            id={listId}
-            role="listbox"
-            aria-label={ariaLabel}
-            className="max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2"
-          >
-            {allLabel !== undefined ? (
-              <SelectDropdownOptionRow
-                label={allLabel}
-                selected={value === ""}
-                onSelect={() => selectValue("")}
-              />
-            ) : null}
-            {options.map((option) => (
-              <SelectDropdownOptionRow
-                key={option.value}
-                label={option.label}
-                selected={value === option.value}
-                onSelect={() => selectValue(option.value)}
-              />
-            ))}
-          </div>
+type SelectDropdownMenuProps = {
+  menuRef: RefObject<HTMLDivElement | null>;
+  listId: string;
+  ariaLabel: string;
+  open: boolean;
+  position: MenuPosition;
+  value: string;
+  allLabel?: string;
+  options: ReadonlyArray<SelectDropdownOption>;
+  onSelect: (value: string) => void;
+};
+
+function SelectDropdownMenu({
+  menuRef,
+  listId,
+  ariaLabel,
+  open,
+  position,
+  value,
+  allLabel,
+  options,
+  onSelect,
+}: SelectDropdownMenuProps) {
+  return (
+    <div
+      ref={menuRef}
+      className={`fixed z-[200] origin-top grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        open
+          ? "translate-y-0 grid-rows-[1fr] opacity-100"
+          : "pointer-events-none -translate-y-2 grid-rows-[0fr] opacity-0"
+      }`}
+      style={{
+        top: position.top,
+        left: position.left,
+        minWidth: position.width,
+        width: "max-content",
+        transitionDuration: `${DROPDOWN_ANIMATION_MS}ms`,
+      }}
+      aria-hidden={!open}
+    >
+      <div className="min-h-0 overflow-hidden">
+        <div
+          id={listId}
+          role="listbox"
+          aria-label={ariaLabel}
+          className="max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2"
+        >
+          {allLabel !== undefined ? (
+            <SelectDropdownOptionRow
+              label={allLabel}
+              selected={value === ""}
+              onSelect={() => onSelect("")}
+            />
+          ) : null}
+          {options.map((option) => (
+            <SelectDropdownOptionRow
+              key={option.value}
+              label={option.label}
+              selected={value === option.value}
+              onSelect={() => onSelect(option.value)}
+            />
+          ))}
         </div>
       </div>
     </div>
@@ -199,7 +319,7 @@ export function SelectDropdownOptionRow({
           </svg>
         ) : null}
       </span>
-      <span className="min-w-0 truncate">{label}</span>
+      <span className="whitespace-nowrap">{label}</span>
     </button>
   );
 }

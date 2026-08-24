@@ -2,11 +2,25 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
 
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { removeItem } from "@/features/cart/cart";
+import {
+  adjustCartItemCount,
+  revertCartItemCountAdjust,
+  settleCartItemCountAdjust,
+} from "@/features/storefront-chrome/storefront-counts-store";
+import type { Locale } from "@/lib/i18n/config";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { formatMoneyAmount } from "@/lib/money/format";
+
+const THUMB_SIZE_PX = 96;
+const THUMB_RADIUS_PX = 16;
+const CARD_MIN_WIDTH_PX = 200;
+const CARD_MAX_WIDTH_PX = 320;
+const TITLE_MAX_WIDTH_PX = 180;
 
 type CheckoutProductsInOrderProps = {
   products: CheckoutOrderProduct[];
@@ -14,6 +28,7 @@ type CheckoutProductsInOrderProps = {
   itemsOneLabel: string;
   itemsManyLabel: string;
   removeItemLabel: string;
+  locale: Locale;
   onCartChanged?: () => void;
 };
 
@@ -28,21 +43,104 @@ function formatItemCount(
   return itemsManyLabel.replace("{count}", String(count));
 }
 
+type CheckoutOrderItemCardProps = {
+  product: CheckoutOrderProduct;
+  locale: Locale;
+  removeItemLabel: string;
+  onRemove: (itemId: string) => void;
+};
+
+function CheckoutOrderItemCard({
+  product,
+  locale,
+  removeItemLabel,
+  onRemove,
+}: CheckoutOrderItemCardProps) {
+  const imageSrc = product.imageUrl ?? STOREFRONT_PRODUCT_PHOTO;
+
+  return (
+    <article
+      className="isolate w-max shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
+      style={{
+        minWidth: CARD_MIN_WIDTH_PX,
+        maxWidth: CARD_MAX_WIDTH_PX,
+        ["--checkout-order-item-title-max-width" as string]: `${TITLE_MAX_WIDTH_PX}px`,
+      }}
+    >
+      <div className="relative z-[2] flex items-stretch gap-3">
+        <div
+          className="relative block shrink-0 self-stretch overflow-hidden"
+          style={{
+            width: THUMB_SIZE_PX,
+            minHeight: THUMB_SIZE_PX,
+            borderRadius: THUMB_RADIUS_PX,
+          }}
+        >
+          <Image
+            src={imageSrc}
+            alt={product.title}
+            fill
+            className="object-cover"
+            sizes={`${THUMB_SIZE_PX}px`}
+          />
+        </div>
+
+        <div className="flex w-max min-w-0 max-w-full flex-1 flex-col justify-between gap-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="w-max min-w-0 max-w-full">
+              <p className="line-clamp-2 w-max max-w-[var(--checkout-order-item-title-max-width)] text-sm font-medium text-gray-900">
+                {product.title}
+              </p>
+              {product.modifierSummary ? (
+                <p
+                  className="mt-0.5 line-clamp-2 text-xs text-gray-500"
+                  title={product.modifierSummary}
+                >
+                  {product.modifierSummary}
+                </p>
+              ) : null}
+              <p className="mt-1 text-sm font-semibold text-gray-900">
+                {formatMoneyAmount(product.lineTotalAmount, "AMD", locale)}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onRemove(product.id)}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+              aria-label={removeItemLabel}
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="inline-flex h-6 min-w-[24px] shrink-0 items-center justify-center rounded-full border border-gray-200 bg-sky-50/70 px-2 text-[11px] font-semibold text-gray-900">
+              ×{product.quantity}
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export function CheckoutProductsInOrder({
   products: initialProducts,
   title,
   itemsOneLabel,
   itemsManyLabel,
   removeItemLabel,
+  locale,
   onCartChanged,
 }: CheckoutProductsInOrderProps) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
-  const [pending, startTransition] = useTransition();
+  const [prevInitialProducts, setPrevInitialProducts] = useState(initialProducts);
 
-  useEffect(() => {
+  if (initialProducts !== prevInitialProducts) {
+    setPrevInitialProducts(initialProducts);
     setProducts(initialProducts);
-  }, [initialProducts]);
+  }
 
   const itemCount = products.reduce((sum, product) => sum + product.quantity, 0);
 
@@ -51,72 +149,53 @@ export function CheckoutProductsInOrder({
   }
 
   function onRemove(itemId: string): void {
-    setProducts((current) => current.filter((product) => product.id !== itemId));
+    const current = products.find((product) => product.id === itemId);
+    if (!current) return;
+
+    const previous = products;
+    setProducts((list) => list.filter((product) => product.id !== itemId));
+    adjustCartItemCount(-current.quantity);
     onCartChanged?.();
 
-    startTransition(async () => {
-      await removeItem(itemId);
-      router.refresh();
-    });
+    void removeItem(itemId)
+      .then(() => {
+        settleCartItemCountAdjust();
+        router.refresh();
+      })
+      .catch(() => {
+        setProducts(previous);
+        revertCartItemCountAdjust(current.quantity);
+      });
   }
 
   return (
     <section
-      className="mb-8 rounded-3xl bg-[#eef3f8] px-5 py-5 sm:px-6"
-      aria-label={title}
+      className="liquid-glass isolate overflow-hidden mb-6 rounded-[15px] px-5 py-4 sm:px-6 sm:py-5"
+      aria-labelledby="checkout-order-items-title"
     >
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <h2 className="text-sm font-bold tracking-wide text-gray-900 uppercase">
+      <div className="relative z-[2] flex items-start justify-between gap-4">
+        <h2
+          id="checkout-order-items-title"
+          className="font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase"
+        >
           {title}
         </h2>
-        <p className="shrink-0 text-sm text-gray-800">
+        <p className="shrink-0 text-sm text-white">
           {formatItemCount(itemCount, itemsOneLabel, itemsManyLabel)}
         </p>
       </div>
 
-      <ul className="flex flex-wrap gap-4">
+      <div className="relative z-[2] flex gap-3 overflow-x-auto overscroll-x-contain pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {products.map((product) => (
-          <li key={product.id} className="w-24 sm:w-28">
-            <div className="relative">
-              <div className="relative aspect-square overflow-hidden rounded-2xl bg-white">
-                {product.imageUrl ? (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.title}
-                    fill
-                    sizes="112px"
-                    className="object-contain p-2"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
-                    —
-                  </div>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => onRemove(product.id)}
-                disabled={pending}
-                className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white text-gray-700 shadow-sm transition-colors hover:text-gray-900 disabled:opacity-60"
-                aria-label={removeItemLabel}
-              >
-                <X className="h-3.5 w-3.5" aria-hidden="true" />
-              </button>
-            </div>
-            <p className="mt-2 truncate text-sm text-gray-900" title={product.title}>
-              {product.title}
-            </p>
-            {product.modifierSummary ? (
-              <p
-                className="mt-0.5 line-clamp-2 text-xs text-gray-500"
-                title={product.modifierSummary}
-              >
-                {product.modifierSummary}
-              </p>
-            ) : null}
-          </li>
+          <CheckoutOrderItemCard
+            key={product.id}
+            product={product}
+            locale={locale}
+            removeItemLabel={removeItemLabel}
+            onRemove={onRemove}
+          />
         ))}
-      </ul>
+      </div>
     </section>
   );
 }

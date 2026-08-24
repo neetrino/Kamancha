@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
@@ -16,10 +18,12 @@ import {
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type DrawerCopy = {
   drawer: Dictionary["admin"]["categories"]["drawer"];
   common: Dictionary["admin"]["common"];
+  confirm: Dictionary["admin"]["confirm"];
 };
 
 type AddCategoryDrawerProps = {
@@ -50,33 +54,52 @@ export function AddCategoryDrawer({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
+  const [pendingRemoveImage, setPendingRemoveImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function clearImage(): void {
+    setImageFile(null);
+    setImagePreview((current) => {
+      if (current?.startsWith("blob:")) {
+        URL.revokeObjectURL(current);
+      }
+      return null;
+    });
+    if (isEdit && category?.imageUrl) {
+      setRemoveExistingImage(true);
+    }
+    setPendingRemoveImage(false);
+  }
 
   useEffect(() => {
     if (!open) return;
 
     if (category) {
-      setTitle(category.title);
-      setSlug(category.slug);
-      setSlugTouched(true);
-      setParentId(category.parentId ?? "");
-      setStatus(category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE");
-      setImageFile(null);
-      setImagePreview(category.imageUrl);
-      setRemoveExistingImage(false);
-      setError(null);
+      scheduleStateUpdate(setTitle, category.title);
+      scheduleStateUpdate(setSlug, category.slug);
+      scheduleStateUpdate(setSlugTouched, true);
+      scheduleStateUpdate(setParentId, category.parentId ?? "");
+      scheduleStateUpdate(
+        setStatus,
+        category.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE",
+      );
+      scheduleStateUpdate(setImageFile, null);
+      scheduleStateUpdate(setImagePreview, category.imageUrl);
+      scheduleStateUpdate(setRemoveExistingImage, false);
+      scheduleStateUpdate(setError, null);
     } else {
-      setTitle("");
-      setSlug("");
-      setSlugTouched(false);
-      setParentId("");
-      setStatus("ACTIVE");
-      setImageFile(null);
-      setImagePreview(null);
-      setRemoveExistingImage(false);
-      setError(null);
+      scheduleStateUpdate(setTitle, "");
+      scheduleStateUpdate(setSlug, "");
+      scheduleStateUpdate(setSlugTouched, false);
+      scheduleStateUpdate(setParentId, "");
+      scheduleStateUpdate(setStatus, "ACTIVE");
+      scheduleStateUpdate(setImageFile, null);
+      scheduleStateUpdate(setImagePreview, null);
+      scheduleStateUpdate(setRemoveExistingImage, false);
+      scheduleStateUpdate(setError, null);
     }
+    scheduleStateUpdate(setPendingRemoveImage, false);
   }, [open, category]);
 
   const displaySlug = slugTouched ? slug : slugifyCategoryTitle(title) || "---";
@@ -239,18 +262,7 @@ export function AddCategoryDrawer({
                   <button
                     type="button"
                     disabled={isPending}
-                  onClick={() => {
-                    setImageFile(null);
-                    setImagePreview((current) => {
-                      if (current?.startsWith("blob:")) {
-                        URL.revokeObjectURL(current);
-                      }
-                      return null;
-                    });
-                    if (isEdit && category?.imageUrl) {
-                      setRemoveExistingImage(true);
-                    }
-                  }}
+                  onClick={() => setPendingRemoveImage(true)}
                   className="text-sm font-medium text-gray-600 hover:text-red-600"
                 >
                   {copy.drawer.remove}
@@ -258,9 +270,12 @@ export function AddCategoryDrawer({
                 ) : null}
               </div>
               {imagePreview ? (
-                <img
+                <Image
                   src={imagePreview}
                   alt=""
+                  width={112}
+                  height={112}
+                  unoptimized
                   className="mt-3 h-28 w-28 rounded-xl border border-gray-200 object-cover"
                 />
               ) : null}
@@ -288,6 +303,15 @@ export function AddCategoryDrawer({
             </button>
           </div>
         </form>
+      <ConfirmDialog
+        open={pendingRemoveImage}
+        title={copy.confirm.deleteTitle}
+        description={copy.confirm.deleteImage}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
+        onClose={() => setPendingRemoveImage(false)}
+        onConfirm={clearImage}
+      />
     </SideSheet>
   );
 }

@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronRight, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import {
-  ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -31,6 +30,7 @@ import {
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
 import { AddCategoryDrawer } from "@/features/categories/ui/AddCategoryDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type CategoriesViewCopy = {
   categories: Dictionary["admin"]["categories"];
@@ -92,7 +92,7 @@ export function AdminCategoriesView({
   const persistedRef = useRef(false);
 
   useEffect(() => {
-    setOrdered(categories);
+    scheduleStateUpdate(setOrdered, categories);
     orderedRef.current = categories;
   }, [categories]);
 
@@ -169,29 +169,31 @@ export function AdminCategoriesView({
 
   return (
     <section>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.categories.title}</h1>
+      </div>
+
+      <div className="mb-4 flex items-center gap-3">
+        <AdminSearchInput
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={copy.categories.searchPlaceholder}
+          className="min-w-0 flex-1"
+          aria-label={copy.categories.searchAria}
+        />
         <Button
           type="button"
-          size="sm"
+          size="field"
           onClick={() => {
             setEditingCategory(null);
             setDrawerOpen(true);
           }}
-          className="inline-flex items-center gap-1.5"
+          className="shrink-0 gap-1.5 rounded-2xl"
         >
           <Plus className="h-4 w-4" aria-hidden />
           {copy.categories.addCategory}
         </Button>
       </div>
-
-      <input
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder={copy.categories.searchPlaceholder}
-        className={`${ADMIN_INPUT} mb-4`}
-        aria-label={copy.categories.searchAria}
-      />
 
       {isFiltering ? (
         <p className="mb-3 text-xs text-gray-500">
@@ -278,12 +280,14 @@ export function AdminCategoriesView({
                         </button>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
-                        <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded border border-dashed border-gray-300 bg-gray-50">
+                        <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded border border-dashed border-gray-300 bg-gray-50">
                           {category.imageUrl ? (
-                            <img
+                            <Image
                               src={category.imageUrl}
                               alt=""
-                              className="h-full w-full object-cover"
+                              fill
+                              unoptimized
+                              className="object-cover"
                             />
                           ) : (
                             <span className="text-gray-400">—</span>
@@ -361,7 +365,11 @@ export function AdminCategoriesView({
         }}
         categories={categories}
         category={editingCategory}
-        copy={{ drawer: copy.categories.drawer, common: copy.common }}
+        copy={{
+          drawer: copy.categories.drawer,
+          common: copy.common,
+          confirm: copy.confirm,
+        }}
       />
 
       <ConfirmDialog

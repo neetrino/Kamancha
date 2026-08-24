@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import {
@@ -11,7 +12,6 @@ import {
 
 type DeliverySlotPickerLabels = {
   title: string;
-  pickDate: string;
   pickTime: string;
   noSlots: string;
   prevMonth: string;
@@ -65,40 +65,43 @@ const MONTH_NAMES: Record<string, readonly string[]> = {
     "December",
   ],
   hy: [
-    "հունվար",
-    "փետրվար",
-    "մարտ",
-    "ապրիլ",
-    "մայիս",
-    "հունիս",
-    "հուլիս",
-    "օգոստոս",
-    "սեպտեմբեր",
-    "հոկտեմբեր",
-    "նոյեմբեր",
-    "դեկտեմբեր",
+    "Հունվար",
+    "Փետրվար",
+    "Մարտ",
+    "Ապրիլ",
+    "Մայիս",
+    "Հունիս",
+    "Հուլիս",
+    "Օգոստոս",
+    "Սեպտեմբեր",
+    "Հոկտեմբեր",
+    "Նոյեմբեր",
+    "Դեկտեմբեր",
   ],
   ru: [
-    "январь",
-    "февраль",
-    "март",
-    "апрель",
-    "май",
-    "июнь",
-    "июль",
-    "август",
-    "сентябрь",
-    "октябрь",
-    "ноябрь",
-    "декабрь",
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
   ],
 };
 
 function monthLabel(year: number, monthIndex: number, locale: string): string {
-  const months = MONTH_NAMES[locale] ?? MONTH_NAMES.en;
+  const months = MONTH_NAMES[locale] ?? MONTH_NAMES.en ?? [];
   const month = months[monthIndex] ?? months[0] ?? "";
   return `${month} ${year}`;
 }
+
+const MONTH_NAV_BUTTON =
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-sm";
 
 /**
  * Calendar + time-slot picker for checkout delivery scheduling.
@@ -176,40 +179,43 @@ export function DeliverySlotPicker({
   const canNext = viewMonthYmd < maxMonth;
 
   return (
-    <div className="space-y-4 rounded-2xl border border-gray-200 p-4">
-      <h3 className="text-base font-semibold text-gray-900">{labels.title}</h3>
+    <div className="relative z-[2] space-y-4 overflow-hidden rounded-2xl bg-white p-4">
+      <h3 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+        {labels.title}
+      </h3>
 
       {availableDays.length === 0 ? (
-        <p className="text-sm text-red-700">{labels.noSlots}</p>
+        <p className="relative z-[2] text-sm text-red-700">{labels.noSlots}</p>
       ) : (
         <>
-          <div>
+          <div className="relative z-[2]">
             <div className="mb-3 flex items-center justify-between gap-2">
               <button
                 type="button"
                 disabled={disabled || !canPrev}
                 onClick={() => shiftMonth(-1)}
-                className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
+                aria-label={labels.prevMonth}
+                className={MONTH_NAV_BUTTON}
               >
-                {labels.prevMonth}
+                <ChevronLeft className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">{labels.prevMonth}</span>
               </button>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-base font-medium text-gray-900">
                 {monthLabel(viewYear, viewMonth, locale)}
               </p>
               <button
                 type="button"
                 disabled={disabled || !canNext}
                 onClick={() => shiftMonth(1)}
-                className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
+                aria-label={labels.nextMonth}
+                className={MONTH_NAV_BUTTON}
               >
-                {labels.nextMonth}
+                <ChevronRight className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">{labels.nextMonth}</span>
               </button>
             </div>
 
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-              {labels.pickDate}
-            </p>
-            <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
+            <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-600">
               {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
                 <div key={label} className="py-1 font-medium">
                   {label}
@@ -229,9 +235,9 @@ export function DeliverySlotPicker({
                     onClick={() => selectDate(date)}
                     className={`h-10 rounded-xl text-sm font-medium transition-colors ${
                       isSelected
-                        ? "bg-gray-900 text-white"
+                        ? "bg-brand-forest text-white"
                         : bookable
-                          ? "bg-gray-50 text-gray-900 hover:bg-gray-100"
+                          ? "bg-white text-gray-900 ring-1 ring-gray-200 hover:bg-gray-50"
                           : "cursor-not-allowed text-gray-300"
                     }`}
                   >
@@ -242,11 +248,11 @@ export function DeliverySlotPicker({
             </div>
           </div>
 
-          <div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
-              {labels.pickTime}
-            </p>
-            {selectedDay ? (
+          {selectedDay ? (
+            <div className="relative z-[2]">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-600">
+                {labels.pickTime}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {selectedDay.slots.map((slot) => {
                   const isSelected =
@@ -266,7 +272,7 @@ export function DeliverySlotPicker({
                       }
                       className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
                         isSelected
-                          ? "border-gray-900 bg-gray-900 text-white"
+                          ? "border-brand-forest bg-brand-forest text-white"
                           : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
                       }`}
                     >
@@ -275,10 +281,8 @@ export function DeliverySlotPicker({
                   );
                 })}
               </div>
-            ) : (
-              <p className="text-sm text-gray-500">{labels.pickDate}</p>
-            )}
-          </div>
+            </div>
+          ) : null}
         </>
       )}
     </div>

@@ -1,7 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { SquarePen, Trash2 } from "lucide-react";
+
 import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
+import {
+  PROFILE_INNER_CARD,
+  PROFILE_PILL_GHOST,
+  PROFILE_STATUS_BADGE,
+} from "@/features/profile/ui/profile-surface";
 
 type ProfileAddressCardProps = {
   address: CustomerAddressListItem;
@@ -17,6 +23,9 @@ type ProfileAddressCardProps = {
   onDelete: (addressId: string) => void;
 };
 
+const ICON_BUTTON =
+  "flex size-8 shrink-0 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-white/70 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
+
 export function ProfileAddressCard({
   address,
   disabled,
@@ -26,57 +35,53 @@ export function ProfileAddressCard({
   onDelete,
 }: ProfileAddressCardProps) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 lg:p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
-        <div className="min-w-0 flex-1 space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            {address.isDefaultShipping ? (
-              <span className="rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
-                {labels.defaultBadge}
-              </span>
-            ) : null}
-          </div>
-          <p className="text-sm text-gray-800 sm:text-base">{address.line1}</p>
-          <p className="text-sm text-gray-800 sm:text-base">{address.city}</p>
-          {address.phone ? (
-            <p className="text-sm text-gray-600 sm:text-base">{address.phone}</p>
+    <article className={`flex h-full flex-col p-4 sm:p-5 ${PROFILE_INNER_CARD}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          {address.isDefaultShipping ? (
+            <div className="mb-3">
+              <span className={PROFILE_STATUS_BADGE}>{labels.defaultBadge}</span>
+            </div>
           ) : null}
+          <h2 className="truncate text-base font-semibold text-gray-900">
+            {address.line1}
+          </h2>
+          <p className="mt-1 truncate text-sm text-gray-600">{address.city}</p>
         </div>
-        <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-4 lg:border-0 lg:pt-0">
-          {!address.isDefaultShipping ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="min-h-9 flex-1 sm:flex-initial"
-              onClick={() => onSetDefault(address.id)}
-              disabled={disabled}
-            >
-              {labels.setDefault}
-            </Button>
-          ) : null}
-          <Button
+        <div className="flex shrink-0 items-center gap-0.5">
+          <button
             type="button"
-            variant="outline"
-            size="sm"
-            className="min-h-9 flex-1 sm:flex-initial"
+            className={ICON_BUTTON}
+            aria-label={labels.edit}
+            disabled={disabled}
             onClick={() => onEdit(address)}
-            disabled={disabled}
           >
-            {labels.edit}
-          </Button>
-          <Button
+            <SquarePen className="h-4 w-4" aria-hidden />
+          </button>
+          <button
             type="button"
-            variant="outline"
-            size="sm"
-            className="min-h-9 flex-1 text-red-600 hover:border-red-300 hover:text-red-700 sm:flex-initial"
-            onClick={() => onDelete(address.id)}
+            className={ICON_BUTTON}
+            aria-label={labels.delete}
             disabled={disabled}
+            onClick={() => onDelete(address.id)}
           >
-            {labels.delete}
-          </Button>
+            <Trash2 className="h-4 w-4" aria-hidden />
+          </button>
         </div>
       </div>
-    </div>
+
+      {!address.isDefaultShipping ? (
+        <div className="mt-auto pt-5">
+          <button
+            type="button"
+            className={`${PROFILE_PILL_GHOST} w-full`}
+            onClick={() => onSetDefault(address.id)}
+            disabled={disabled}
+          >
+            {labels.setDefault}
+          </button>
+        </div>
+      ) : null}
+    </article>
   );
 }

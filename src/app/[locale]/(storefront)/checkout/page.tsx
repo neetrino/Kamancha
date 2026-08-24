@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { getCartWithItems } from "@/features/cart/cart";
 import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
+import { getGroupOrderCheckoutUiFlags } from "@/features/checkout/application/group-order-checkout-context";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
 import { listActiveCashChangeDenominations } from "@/features/delivery/domain/cash-change";
@@ -25,12 +26,14 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliverySettings] = await Promise.all([
-    getCurrentUser(),
-    getCartWithItems(),
-    getDeliverySettings(),
-  ]);
-  const [defaultAddress, prices, orderProducts] = await Promise.all([
+  const [user, { items }, deliverySettings, groupCheckoutFlags] =
+    await Promise.all([
+      getCurrentUser(),
+      getCartWithItems(),
+      getDeliverySettings(),
+      getGroupOrderCheckoutUiFlags(),
+    ]);
+  const [defaultAddress, prices] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(
       items.map(({ product }) => ({
@@ -39,8 +42,12 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         compareAtAmount: product.compareAtAmount,
       })),
     ),
-    getCheckoutOrderProducts(rawLocale, items),
   ]);
+  const orderProducts = await getCheckoutOrderProducts(
+    rawLocale,
+    items,
+    prices,
+  );
   const subtotal = items.reduce((sum, { item, product, modifiers }) => {
     const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
     return sum + item.quantity * cartLineUnitAmount(base, modifiers);
@@ -70,10 +77,17 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       }
       defaultEmail={user?.email ?? ""}
       defaultPhone={defaultAddress?.phone ?? user?.phone ?? ""}
-      defaultLine1={defaultAddress?.line1 ?? ""}
+      defaultLine1={
+        groupCheckoutFlags.defaultDeliveryAddress ??
+        defaultAddress?.line1 ??
+        ""
+      }
       subtotalAmount={subtotal}
       deliverySchedule={deliverySettings.schedule}
       cashChangeOptions={cashChangeOptions}
+      splitOthersPrepaid={groupCheckoutFlags.splitOthersPrepaid}
+      othersPrepaidAmount={groupCheckoutFlags.othersPrepaidAmount}
+      lockedDeliveryAmount={groupCheckoutFlags.lockedDeliveryAmount}
       labels={{
         title: copy.title,
         productsInOrder: copy.productsInOrder,
@@ -104,22 +118,22 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
         calculatingDelivery: copy.shipping.calculatingDelivery,
         scheduleTitle: copy.schedule.title,
-        schedulePickDate: copy.schedule.pickDate,
         schedulePickTime: copy.schedule.pickTime,
         scheduleNoSlots: copy.schedule.noSlots,
         schedulePrevMonth: copy.schedule.prevMonth,
         scheduleNextMonth: copy.schedule.nextMonth,
         selectDeliverySlot: copy.schedule.selectSlot,
-        selectCashChange: copy.cashChange.select,
         cashChangeTitle: copy.cashChange.title,
         cashChangeHint: copy.cashChange.hint,
-        cashChangeAria: copy.cashChange.aria,
+        cashChangeNone: copy.cashChange.none,
+        cashChangeDue: copy.cashChange.due,
         cashOnDelivery: copy.payment.cashOnDelivery,
         cashOnDeliveryDescription: copy.payment.cashOnDeliveryDescription,
+        cashShort: copy.payment.cashShort,
         idram: copy.payment.idram,
         idramDescription: copy.payment.idramDescription,
-        arca: copy.payment.arca,
-        arcaDescription: copy.payment.arcaDescription,
+        card: copy.payment.card,
+        cardDescription: copy.payment.cardDescription,
         couponTitle: copy.coupon.title,
         couponPlaceholder: copy.coupon.placeholder,
         couponApply: copy.coupon.apply,
@@ -127,12 +141,16 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         discount: copy.summary.discount,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,
-        tax: copy.summary.tax,
+        change: copy.summary.change,
         total: copy.summary.total,
         placeOrder: copy.buttons.placeOrder,
         processing: copy.buttons.processing,
         continueShopping: copy.buttons.continueShopping,
         cartEmpty: copy.errors.cartEmpty,
+        groupPrepaidTitle: copy.groupPrepaid.title,
+        groupPrepaidHint: copy.groupPrepaid.hint,
+        groupPrepaidOthersPaid: copy.groupPrepaid.othersPaid,
+        groupPrepaidYouPay: copy.groupPrepaid.youPay,
       }}
     />
   );

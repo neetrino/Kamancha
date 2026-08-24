@@ -1,0 +1,13 @@
+---
+description: Raster brand/media assets must be stored as WebP unless SVG is appropriate.
+alwaysApply: true
+---
+
+# Brand media assets → WebP
+
+When the user provides images (Figma export, Downloads, chat attachment, or other raster sources):
+
+1. **Convert rasters to WebP** before wiring into the app (`public/assets/...`). Do this automatically — do not leave PNG/JPG/JPEG/TIFF as the shipped format unless the user explicitly asks otherwise.
+2. **Keep SVG as SVG** for icons, logos, and other vector artwork. Do not rasterize vectors to WebP.
+3. Prefer lossless or high-quality WebP for UI photography/texture; drop oversized sources to a sensible display size when the design already defines dimensions.
+4. Point code at the `.webp` path; remove unused intermediate PNG/JPG from `public/` after conversion unless still needed.

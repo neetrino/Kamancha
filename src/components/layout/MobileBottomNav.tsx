@@ -1,20 +1,30 @@
 "use client";
 
-import {
-  Heart,
-  Home,
-  ShoppingBag,
-  ShoppingCart,
-  User,
-} from "lucide-react";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import { useState, type ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { GroupOrderHeaderButton } from "@/components/layout/GroupOrderHeaderButton";
+import {
+  NavActiveDiamonds,
+  NavCartIcon,
+  NavClocheIcon,
+  NavGroupIcon,
+  NavHeartIcon,
+  NavHomeIcon,
+} from "@/components/layout/storefront-nav-icons";
+import { SLIDING_NAV_TRANSITION_MS } from "@/components/ui/useSlidingNavIndicator";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
+import { useWishlistCount } from "@/features/storefront-chrome/storefront-counts-store";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+
+const TAB_ORDER = ["home", "shop", "cart", "wishlist"] as const;
+const DIAMOND_WIDTH_PX = 27;
+const TAB_PERCENT = 100 / TAB_ORDER.length;
+
+type BottomNavTabId = (typeof TAB_ORDER)[number];
 
 type MobileBottomNavProps = {
   locale: Locale;
@@ -22,15 +32,14 @@ type MobileBottomNavProps = {
   dictionary: Dictionary;
   cartItemCount: number;
   wishlistCount: number;
-  isSignedIn: boolean;
+  groupOrderDefaultName?: string;
 };
 
 type NavTab = {
-  id: string;
+  id: Exclude<BottomNavTabId, "cart">;
   href: string;
   label: string;
-  icon: LucideIcon;
-  match: (pathname: string) => boolean;
+  icon: ReactNode;
   badge?: number;
 };
 
@@ -44,9 +53,21 @@ function startsWithPath(pathname: string, base: string): boolean {
 
 function tabClassName(active: boolean): string {
   return [
-    "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-medium transition-colors",
-    active ? "text-gray-900" : "text-gray-500 hover:text-gray-800",
+    "relative flex min-w-0 flex-1 flex-col items-center justify-center px-1 text-brand-forest transition-opacity",
+    active ? "opacity-100" : "opacity-70 hover:opacity-100",
   ].join(" ");
+}
+
+function resolveSelectedTab(
+  pathname: string,
+  locale: Locale,
+  cartOpen: boolean,
+): BottomNavTabId | null {
+  if (cartOpen) return "cart";
+  if (isHomePath(pathname, locale)) return "home";
+  if (startsWithPath(pathname, `/${locale}/products`)) return "shop";
+  if (startsWithPath(pathname, `/${locale}/wishlist`)) return "wishlist";
+  return null;
 }
 
 function NavBadge({ count }: { count: number }) {
@@ -55,7 +76,7 @@ function NavBadge({ count }: { count: number }) {
   }
 
   return (
-    <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-900 px-1 text-[9px] font-semibold text-white">
+    <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-forest px-1 text-[9px] font-semibold text-white">
       {count > 99 ? "99+" : count}
     </span>
   );
@@ -68,8 +89,6 @@ function LinkTab({
   tab: NavTab;
   active: boolean;
 }) {
-  const Icon = tab.icon;
-
   return (
     <AppLink
       href={tab.href}
@@ -78,15 +97,100 @@ function LinkTab({
       className={tabClassName(active)}
     >
       <span className="relative inline-flex">
-        <Icon
-          className="h-5 w-5"
-          strokeWidth={active ? 2.25 : 1.75}
-          aria-hidden="true"
-        />
+        {tab.icon}
         {tab.badge != null ? <NavBadge count={tab.badge} /> : null}
       </span>
-      <span className="truncate">{tab.label}</span>
+      <span className="sr-only">{tab.label}</span>
     </AppLink>
+  );
+}
+
+function SlidingDiamonds({
+  tabIndex,
+  visible,
+}: {
+  tabIndex: number;
+  visible: boolean;
+}) {
+  return (
+    <span
+      aria-hidden
+      className={`pointer-events-none absolute bottom-1.5 z-[1] h-[10px] w-[27px] text-brand-forest motion-reduce:transition-none ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+      style={{
+        left: `calc(${TAB_PERCENT / 2}% - ${DIAMOND_WIDTH_PX / 2}px)`,
+        transform: `translate3d(calc(${tabIndex} * 100cqw / ${TAB_ORDER.length}), 0, 0)`,
+        transitionProperty: "transform, opacity",
+        transitionDuration: `${SLIDING_NAV_TRANSITION_MS}ms`,
+        transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+      }}
+    >
+      <NavActiveDiamonds className="h-full w-full" />
+    </span>
+  );
+}
+
+type BottomNavBarProps = {
+  pathname: string;
+  locale: Locale;
+  homeTab: NavTab;
+  shopTab: NavTab;
+  wishlistTab: NavTab;
+  cartOpen: boolean;
+  badgeCount: number;
+  cartLabel: string;
+  openDrawer: () => void;
+  prefetchDrawerView: () => void;
+};
+
+function BottomNavBar({
+  pathname,
+  locale,
+  homeTab,
+  shopTab,
+  wishlistTab,
+  cartOpen,
+  badgeCount,
+  cartLabel,
+  openDrawer,
+  prefetchDrawerView,
+}: BottomNavBarProps) {
+  const selectedTab = resolveSelectedTab(pathname, locale, cartOpen);
+  const selectedIndex =
+    selectedTab == null ? null : TAB_ORDER.indexOf(selectedTab);
+  const [parkedIndex, setParkedIndex] = useState(selectedIndex ?? 0);
+  if (selectedIndex != null && selectedIndex !== parkedIndex) {
+    setParkedIndex(selectedIndex);
+  }
+  const tabIndex = selectedIndex ?? parkedIndex;
+
+  return (
+    <div
+      className="pointer-events-auto relative flex h-[63px] w-[267px] min-w-0 max-w-full flex-1 items-stretch rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] [container-type:inline-size]"
+      data-node-id="181:727"
+    >
+      <LinkTab tab={homeTab} active={selectedTab === "home"} />
+      <LinkTab tab={shopTab} active={selectedTab === "shop"} />
+      <button
+        type="button"
+        data-cart-fly-target
+        onClick={openDrawer}
+        onPointerEnter={prefetchDrawerView}
+        onFocus={prefetchDrawerView}
+        aria-label={cartLabel}
+        aria-expanded={cartOpen}
+        className={tabClassName(selectedTab === "cart")}
+      >
+        <span className="relative inline-flex">
+          <NavCartIcon className="h-[25px] w-[25px]" />
+          <NavBadge count={badgeCount} />
+        </span>
+        <span className="sr-only">{cartLabel}</span>
+      </button>
+      <LinkTab tab={wishlistTab} active={selectedTab === "wishlist"} />
+      <SlidingDiamonds tabIndex={tabIndex} visible={selectedTab != null} />
+    </div>
   );
 }
 
@@ -96,57 +200,42 @@ export function MobileBottomNav({
   dictionary,
   cartItemCount,
   wishlistCount,
-  isSignedIn,
+  groupOrderDefaultName = "",
 }: MobileBottomNavProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const profileHref = isSignedIn
-    ? `/${locale}/profile`
-    : `/${locale}/login`;
+  const liveWishlistCount = useWishlistCount(wishlistCount);
 
   const homeTab: NavTab = {
     id: "home",
     href: `/${locale}`,
     label: dictionary.nav.home,
-    icon: Home,
-    match: (path) => isHomePath(path, locale),
+    icon: <NavHomeIcon className="h-6 w-6" />,
   };
 
   const shopTab: NavTab = {
     id: "shop",
     href: `/${locale}/products`,
     label: dictionary.nav.shop,
-    icon: ShoppingBag,
-    match: (path) => startsWithPath(path, `/${locale}/products`),
+    icon: <NavClocheIcon className="h-[25px] w-[29px]" />,
   };
 
   const wishlistTab: NavTab = {
     id: "wishlist",
     href: `/${locale}/wishlist`,
     label: dictionary.nav.wishlist,
-    icon: Heart,
-    match: (path) => startsWithPath(path, `/${locale}/wishlist`),
-    badge: wishlistCount,
-  };
-
-  const profileTab: NavTab = {
-    id: "profile",
-    href: profileHref,
-    label: dictionary.header.profile,
-    icon: User,
-    match: (path) =>
-      startsWithPath(path, `/${locale}/profile`) ||
-      startsWithPath(path, `/${locale}/login`),
+    icon: <NavHeartIcon className="h-6 w-7" />,
+    badge: liveWishlistCount,
   };
 
   return (
     <nav
       aria-label={dictionary.nav.navigation}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm md:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(0.75rem,env(safe-area-inset-bottom))] xl:hidden"
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-stretch">
-        <LinkTab tab={homeTab} active={homeTab.match(pathname)} />
-        <LinkTab tab={shopTab} active={shopTab.match(pathname)} />
-
+      <div
+        className="pointer-events-auto flex w-[339px] max-w-[calc(100%-3rem)] items-center gap-[9px]"
+        data-node-id="370:369"
+      >
         <CartDrawer
           locale={locale}
           currency={currency}
@@ -159,30 +248,28 @@ export function MobileBottomNav({
             openDrawer,
             prefetchDrawerView,
           }) => (
-            <button
-              type="button"
-              onClick={openDrawer}
-              onPointerEnter={prefetchDrawerView}
-              onFocus={prefetchDrawerView}
-              aria-label={label}
-              aria-expanded={open}
-              className={tabClassName(open)}
-            >
-              <span className="relative inline-flex">
-                <ShoppingCart
-                  className="h-5 w-5"
-                  strokeWidth={open ? 2.25 : 1.75}
-                  aria-hidden="true"
-                />
-                <NavBadge count={badgeCount} />
-              </span>
-              <span className="truncate">{label}</span>
-            </button>
+            <BottomNavBar
+              pathname={pathname}
+              locale={locale}
+              homeTab={homeTab}
+              shopTab={shopTab}
+              wishlistTab={wishlistTab}
+              cartOpen={open}
+              badgeCount={badgeCount}
+              cartLabel={label}
+              openDrawer={openDrawer}
+              prefetchDrawerView={prefetchDrawerView}
+            />
           )}
         />
-
-        <LinkTab tab={wishlistTab} active={wishlistTab.match(pathname)} />
-        <LinkTab tab={profileTab} active={profileTab.match(pathname)} />
+        <GroupOrderHeaderButton
+          locale={locale}
+          label={dictionary.nav.groupOrder}
+          labels={dictionary.groupOrder}
+          defaultName={groupOrderDefaultName}
+          className="flex size-[63px] shrink-0 items-center justify-center rounded-full bg-white text-brand-forest shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] touch-manipulation"
+          icon={<NavGroupIcon className="h-[26px] w-[30px]" />}
+        />
       </div>
     </nav>
   );

@@ -43,6 +43,10 @@ export type AdminOrderListItem = {
   isArchived: boolean;
 };
 
+export type CustomerOrderListItem = AdminOrderListItem & {
+  itemsCount: number;
+};
+
 export type OrderItemModifierSnapshot = {
   id: string;
   kind: "ADDITION" | "EXCEPTION";
@@ -148,7 +152,11 @@ export async function listAdminOrders(
 export async function listCustomerOrders(
   userId: string,
   filters: AdminOrdersFilter,
-): Promise<{ rows: AdminOrderListItem[]; total: number; pageSize: number }> {
+): Promise<{
+  rows: CustomerOrderListItem[];
+  total: number;
+  pageSize: number;
+}> {
   const baseWhere = buildOrderFilters(filters);
   const where = baseWhere
     ? and(eq(orders.userId, userId), baseWhere)
@@ -168,6 +176,16 @@ export async function listCustomerOrders(
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        itemsCount: sql<number>`
+          coalesce(
+            (
+              select sum(${orderItems.quantity})
+              from ${orderItems}
+              where ${orderItems.orderId} = ${orders.id}
+            ),
+            0
+          )
+        `.mapWith(Number),
       })
       .from(orders)
       .where(where)

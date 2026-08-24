@@ -1,8 +1,8 @@
 {
-  "brand": "White-Shop",
+  "brand": "Kamancha",
   "nav": {
     "home": "Home",
-    "products": "Products",
+    "products": "Menu",
     "shop": "Shop",
     "blog": "Blog",
     "cart": "Cart",
@@ -12,7 +12,9 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "navigation": "Navigation",
-    "shopNow": "Shop now"
+    "shopNow": "Shop now",
+    "groupOrder": "Group order",
+    "policy": "Policy"
   },
   "header": {
     "language": "Language",
@@ -24,20 +26,35 @@
     "createAccount": "Create account",
     "search": "Search",
     "searchClose": "Close search",
-    "searchPlaceholder": "Search products…",
+    "searchPlaceholder": "Search",
     "searchIdle": "Type a product name",
     "searchEmpty": "No products found",
     "searchViewAll": "View all results"
   },
   "footer": {
-    "shop": "Shop",
-    "description": "Professional e-commerce storefront for everyday shopping.",
-    "quickLinks": "Quick Links",
-    "legal": "Legal",
-    "privacyPolicy": "Privacy Policy",
-    "terms": "Terms",
-    "contactInfo": "Contact Information",
-    "followUs": "Follow us",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "tagline": "“Armenian cuisine, music and hospitality — with a new sound.”",
+    "navigationTitle": "Navigation",
+    "menu": "Menu",
+    "about": "About us",
+    "specialOffers": "Special offers",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "supportTitle": "Support",
+    "shippingReturns": "Shipping & returns",
+    "terms": "Terms & conditions",
+    "privacyPolicy": "Privacy policy",
+    "faq": "FAQ",
+    "contactTitle": "Contact",
+    "address": "23 Tumanyan St, Yerevan",
+    "address2": "Saryan 8, Yerevan",
+    "phone": "095 711700",
+    "email": "kamancharest@gmail.com",
+    "hours": "Every day: 10:00-00:00",
+    "copyrightBefore": "Copyright © {year} | All rights reserved | Created by",
+    "copyrightCompany": "Neetrino IT Company",
+    "copyrightAfter": "",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok"
   }
 }

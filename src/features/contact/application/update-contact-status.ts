@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { auditLogs, contactMessages } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { getAdminContactMessageById } from "@/features/contact/application/queries";
 import {
   canTransitionContactStatus,
   isContactStatus,
@@ -98,4 +99,16 @@ export async function updateContactStatusAction(
         return err("CONTACT_UPDATE_FAILED", "Unable to update message.");
     }
   }
+}
+
+/** Loads one contact message for the admin detail sheet. */
+export async function getAdminContactMessageDetailAction(
+  locale: string,
+  id: string,
+) {
+  if (!isLocale(locale)) {
+    return null;
+  }
+  await requireAdmin(locale as Locale);
+  return getAdminContactMessageById(id);
 }

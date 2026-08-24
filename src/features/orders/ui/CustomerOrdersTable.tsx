@@ -1,27 +1,10 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_BADGE,
-  orderStatusBadgeClass,
-  paymentStatusBadgeClass,
-} from "@/features/admin/ui/status-badge";
-import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_CARD,
-  ADMIN_TABLE_FOOTER_ROUNDED_B,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_STATE_INSET,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
 import {
   formatOrderDrawerMoney,
   formatOrderStatusLabel,
 } from "@/features/orders/ui/order-drawer-format";
+import { PROFILE_SECTION } from "@/features/profile/ui/profile-surface";
 
 type CustomerOrderRow = {
   id: string;
@@ -38,82 +21,106 @@ type CustomerOrdersTableProps = {
   onOpenOrder: (orderNumber: string) => void;
 };
 
+const ROW_RULE =
+  "rounded-bl-[20px] border-l border-b border-white/55 pl-4";
+
+const STATUS_BADGE =
+  "inline-flex rounded-[14px] bg-white px-3.5 py-1.5 text-sm font-medium";
+
+function orderStatusTextClass(status: string): string {
+  const normalized = status.toUpperCase();
+  if (normalized === "PENDING" || normalized === "CONFIRMED") {
+    return "text-yellow-600";
+  }
+  if (normalized === "PROCESSING" || normalized === "SHIPPED") {
+    return "text-blue-600";
+  }
+  if (normalized === "DELIVERED") {
+    return "text-green-600";
+  }
+  if (normalized === "CANCELLED" || normalized === "REFUNDED") {
+    return "text-red-600";
+  }
+  return "text-gray-600";
+}
+
+function paymentStatusTextClass(status: string): string {
+  const normalized = status.toUpperCase();
+  if (normalized === "PAID" || normalized === "CAPTURED") {
+    return "text-green-600";
+  }
+  if (normalized === "PENDING" || normalized === "AUTHORIZED") {
+    return "text-yellow-600";
+  }
+  if (
+    normalized === "FAILED" ||
+    normalized === "CANCELLED" ||
+    normalized === "REFUNDED"
+  ) {
+    return "text-red-600";
+  }
+  return "text-gray-600";
+}
+
 export function CustomerOrdersTable({
   orders,
   onOpenOrder,
 }: CustomerOrdersTableProps) {
-  return (
-    <Card className={ADMIN_TABLE_CARD}>
-      <div className={ADMIN_TABLE_OUTER_SCROLL}>
-        <table className={ADMIN_TABLE}>
-          <thead className={ADMIN_TABLE_THEAD}>
-            <tr>
-              <th className={ADMIN_TABLE_TH}>Order</th>
-              <th className={ADMIN_TABLE_TH}>Status</th>
-              <th className={ADMIN_TABLE_TH}>Payment</th>
-              <th className={ADMIN_TABLE_TH}>Total</th>
-              <th className={ADMIN_TABLE_TH}>Placed</th>
-            </tr>
-          </thead>
-          <tbody className={ADMIN_TABLE_TBODY}>
-            {orders.map((order) => (
-              <tr key={order.id} className={ADMIN_TABLE_ROW}>
-                <td className={ADMIN_TABLE_TD}>
-                  <button
-                    type="button"
-                    onClick={() => onOpenOrder(order.orderNumber)}
-                    className="font-medium text-gray-900 hover:underline"
-                  >
-                    {order.orderNumber}
-                  </button>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span
-                    className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                  >
-                    {formatOrderStatusLabel(order.status)}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span
-                    className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                  >
-                    {formatOrderStatusLabel(order.paymentStatus)}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="font-medium text-gray-900">
-                    {formatOrderDrawerMoney(
-                      order.totalAmount,
-                      order.baseCurrency,
-                    )}
-                  </span>
-                </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="text-xs text-gray-500">
-                    {new Date(order.placedAt)
-                      .toISOString()
-                      .slice(0, 16)
-                      .replace("T", " ")}{" "}
-                    UTC
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {orders.length === 0 ? (
-        <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
+  if (orders.length === 0) {
+    return (
+      <section className={PROFILE_SECTION}>
+        <p className="relative z-[2] text-sm text-gray-700">
           No orders match these filters.
         </p>
-      ) : (
-        <div className={ADMIN_TABLE_FOOTER_ROUNDED_B}>
-          <p className="text-sm text-gray-600">
-            {orders.length} order{orders.length === 1 ? "" : "s"} on this page
-          </p>
-        </div>
-      )}
-    </Card>
+      </section>
+    );
+  }
+
+  return (
+    <section className={PROFILE_SECTION}>
+      <ul className="relative z-[2]">
+        {orders.map((order) => (
+          <li key={order.id} className={ROW_RULE}>
+            <button
+              type="button"
+              onClick={() => onOpenOrder(order.orderNumber)}
+              className="flex w-full flex-col gap-2 py-4 text-left transition-colors hover:opacity-90 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+            >
+              <div className="min-w-0">
+                <p className="font-medium text-white">{order.orderNumber}</p>
+                <p className="mt-1 text-xs text-white/80">
+                  {new Date(order.placedAt)
+                    .toISOString()
+                    .slice(0, 16)
+                    .replace("T", " ")}{" "}
+                  UTC
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                <span className="text-base font-semibold text-white">
+                  {formatOrderDrawerMoney(
+                    order.totalAmount,
+                    order.baseCurrency,
+                  )}
+                </span>
+                <span
+                  className={`${STATUS_BADGE} ${orderStatusTextClass(order.status)}`}
+                >
+                  {formatOrderStatusLabel(order.status)}
+                </span>
+                <span
+                  className={`${STATUS_BADGE} ${paymentStatusTextClass(order.paymentStatus)}`}
+                >
+                  {formatOrderStatusLabel(order.paymentStatus)}
+                </span>
+              </div>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="relative z-[2] pt-3 pl-4 text-sm text-white">
+        {orders.length} order{orders.length === 1 ? "" : "s"} on this page
+      </p>
+    </section>
   );
 }

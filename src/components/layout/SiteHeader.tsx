@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import { SiteHeaderMainNav } from "@/components/layout/SiteHeaderMainNav";
-import { SiteHeaderTopBar } from "@/components/layout/SiteHeaderTopBar";
+import { SiteHeaderScrollShell } from "@/components/layout/SiteHeaderScrollShell";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getWishlistCount } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -15,11 +15,36 @@ type SiteHeaderProps = {
   dictionary: Dictionary;
 };
 
-function HeaderControlsFallback() {
+function buildNavItems(locale: Locale, dictionary: Dictionary) {
+  return [
+    { href: `/${locale}`, label: dictionary.nav.home },
+    { href: `/${locale}/products`, label: dictionary.nav.products },
+    { href: `/${locale}/about`, label: dictionary.nav.about },
+    { href: `/${locale}/contact`, label: dictionary.nav.contact },
+  ] as const;
+}
+
+function SiteHeaderShell({
+  locale,
+  currency,
+  dictionary,
+  user = null,
+  cartItemCount = 0,
+  wishlistCount = 0,
+}: SiteHeaderProps & {
+  user?: Awaited<ReturnType<typeof getCurrentUser>>;
+  cartItemCount?: number;
+  wishlistCount?: number;
+}) {
   return (
-    <div
-      className="h-11 w-28 animate-pulse rounded-lg bg-gray-100"
-      aria-hidden="true"
+    <SiteHeaderMainNav
+      locale={locale}
+      currency={currency}
+      dictionary={dictionary}
+      user={user}
+      navItems={buildNavItems(locale, dictionary)}
+      cartItemCount={cartItemCount}
+      wishlistCount={wishlistCount}
     />
   );
 }
@@ -29,14 +54,6 @@ async function SiteHeaderMainNavAsync({
   currency,
   dictionary,
 }: SiteHeaderProps) {
-  const navItems = [
-    { href: `/${locale}`, label: dictionary.nav.home },
-    { href: `/${locale}/products`, label: dictionary.nav.products },
-    { href: `/${locale}/blog`, label: dictionary.nav.blog },
-    { href: `/${locale}/about`, label: dictionary.nav.about },
-    { href: `/${locale}/contact`, label: dictionary.nav.contact },
-  ] as const;
-
   const [user, cartItemCount, wishlistCount] = await Promise.all([
     getCurrentUser(),
     getCartItemCount(),
@@ -44,12 +61,11 @@ async function SiteHeaderMainNavAsync({
   ]);
 
   return (
-    <SiteHeaderMainNav
+    <SiteHeaderShell
       locale={locale}
       currency={currency}
       dictionary={dictionary}
       user={user}
-      navItems={navItems}
       cartItemCount={cartItemCount}
       wishlistCount={wishlistCount}
     />
@@ -57,30 +73,20 @@ async function SiteHeaderMainNavAsync({
 }
 
 /**
- * Storefront chrome: top bar streams immediately; account/cart/wishlist
- * load in a Suspense island so page content is not blocked.
+ * Storefront chrome: sticky navbar over the forest background.
+ * On scroll, reveals the frosted green bar (Figma 173:143).
+ * Cart/account counts hydrate in Suspense without a gray pulse pill.
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
-    <div
-      className="site-header sticky top-0 z-[80] shrink-0 md:relative"
-      data-site-header
-    >
-      <SiteHeaderTopBar
-        locale={locale}
-        currency={currency}
-        dictionary={dictionary}
-      />
+    <SiteHeaderScrollShell>
       <Suspense
         fallback={
-          <header className="relative z-10 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-              <span className="text-lg font-semibold tracking-tight text-gray-900">
-                {dictionary.brand}
-              </span>
-              <HeaderControlsFallback />
-            </div>
-          </header>
+          <SiteHeaderShell
+            locale={locale}
+            currency={currency}
+            dictionary={dictionary}
+          />
         }
       >
         <SiteHeaderMainNavAsync
@@ -89,6 +95,6 @@ export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
           dictionary={dictionary}
         />
       </Suspense>
-    </div>
+    </SiteHeaderScrollShell>
   );
 }

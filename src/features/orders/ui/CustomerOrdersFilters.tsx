@@ -2,14 +2,11 @@
 
 import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { Search } from "lucide-react";
 
-import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
-
-const FILTER_SEARCH =
-  "h-11 w-full min-w-0 shrink-0 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300 lg:flex-1 lg:shrink";
 
 const ORDER_STATUS_FILTERS = [
   { label: "Pending", value: "PENDING" },
@@ -52,11 +49,11 @@ export function CustomerOrdersFilters({
   }
 
   return (
-    <Card className="mb-6 overflow-visible">
+    <section className="liquid-glass isolate overflow-visible rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
       <form
         ref={formRef}
         method="get"
-        className="flex flex-col gap-3 p-4 lg:flex-row lg:flex-nowrap lg:items-center"
+        className="relative z-[2] flex flex-col gap-3 xl:flex-row xl:flex-nowrap xl:items-center"
       >
         <SelectDropdown
           name="status"
@@ -64,7 +61,7 @@ export function CustomerOrdersFilters({
           value={statusValue}
           allLabel="All statuses"
           options={ORDER_STATUS_FILTERS}
-          className="w-full lg:w-[180px] lg:shrink-0"
+          className="w-full xl:w-[180px] xl:shrink-0"
           onValueChange={applyStatus}
         />
         <SelectDropdown
@@ -73,20 +70,25 @@ export function CustomerOrdersFilters({
           value={paymentValue}
           allLabel="All payment statuses"
           options={PAYMENT_STATUS_FILTERS}
-          className="w-full lg:w-[200px] lg:shrink-0"
+          className="w-full xl:w-[200px] xl:shrink-0"
           onValueChange={applyPayment}
         />
-        <input
-          name="q"
-          defaultValue={q ?? ""}
-          placeholder="Search by order #"
-          className={FILTER_SEARCH}
-          aria-label="Search orders"
-        />
+        <div
+          className="flex h-11 min-w-0 items-center gap-2.5 rounded-2xl border border-white/50 bg-white/15 px-4 shadow-sm backdrop-blur-sm transition-colors hover:border-white/70 focus-within:border-white/80 xl:flex-1 xl:shrink"
+        >
+          <Search className="h-4 w-4 shrink-0 text-white" aria-hidden />
+          <input
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder="Search by order #"
+            className="h-full min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/60"
+            aria-label="Search orders"
+          />
+        </div>
       </form>
-      <div className="border-t border-gray-200 px-4 py-3">
-        <p className="text-sm text-gray-600">Total orders: {total}</p>
+      <div className="relative z-[2] mt-4 border-t border-white/35 pt-3">
+        <p className="text-sm text-white">Total orders: {total}</p>
       </div>
-    </Card>
+    </section>
   );
 }

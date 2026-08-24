@@ -1,7 +1,8 @@
 {
   "nav": {
-    "dashboard": "Կառավարման վահանակ",
+    "dashboard": "Վահանակ",
     "orders": "Պատվերներ",
+    "groupOrders": "Խմբային պատվերներ",
     "products": "Ապրանքներ",
     "categories": "Կատեգորիաներ",
     "delivery": "Առաքում",
@@ -12,12 +13,11 @@
     "hero": "Հերոս",
     "blog": "Բլոգ",
     "messages": "Հաղորդագրություններ",
-    "settings": "Կարգավորումներ"
+    "settings": "Կարգավորումներ",
+    "giftCards": "Gift Card-եր"
   },
   "shell": {
-    "brandName": "White Shop",
-    "brandHomeTitle": "White Shop-ի գլխավոր էջ",
-    "brandInitial": "W",
+    "brandName": "Kamancha",
     "menu": "Մենյու",
     "adminMenuAria": "Ադմինիստրատորի մենյու",
     "expandSidebar": "Բացել կողային վահանակը",
@@ -35,10 +35,18 @@
     "deleting": "Ջնջվում է…",
     "remove": "Հեռացնել",
     "clear": "Մաքրել",
+    "datePicker": {
+      "placeholder": "ՕՕ.ԱԱ.ՏՏՏՏ",
+      "dateTimePlaceholder": "ՕՕ.ԱԱ.ՏՏՏՏ ժ:ր",
+      "today": "Այսօր",
+      "time": "Ժամ",
+      "weekdaysShort": ["Երկ", "Երք", "Չրք", "Հնգ", "Ուրբ", "Շբթ", "Կիր"]
+    },
     "search": "Որոնել",
     "filter": "Զտել",
     "apply": "Կիրառել",
     "previous": "Նախորդ",
+    "back": "Հետ",
     "next": "Հաջորդ",
     "pageOf": "Էջ {page} / {totalPages}",
     "actions": "Գործողություններ",
@@ -73,6 +81,7 @@
     "archiveConfirmLabel": "Արխիվացնել",
     "cancelLabel": "Չեղարկել",
     "deleteEntity": "Վստա՞հ եք, որ ցանկանում եք ջնջել {entity} «{name}»-ը։ Այս գործողությունն անհնար է հետարկել։",
+    "deleteImage": "Վստա՞հ եք, որ ցանկանում եք հեռացնել այս նկարը։ Այս գործողությունն անհնար է հետարկել։",
     "deleteSelectedOrders": "Վստա՞հ եք, որ ցանկանում եք ջնջել {count} ընտրված պատվեր{plural}։ Այս գործողությունն անհնար է հետարկել։",
     "deleteSelectedProducts": "Վստա՞հ եք, որ ցանկանում եք ջնջել {label}։ Այս գործողությունն անհնար է հետարկել։",
     "deleteSelectedUsers": "Վստա՞հ եք, որ ցանկանում եք ջնջել {count} ընտրված օգտատեր{plural}։ Նրանց հաշիվները կանանունացվեն, և այս գործողությունն անհնար է հետարկել։",
@@ -82,7 +91,10 @@
       "category": "կատեգորիան",
       "promoCode": "պրոմո կոդը",
       "slide": "սլայդը",
-      "post": "հրապարակումը"
+      "post": "հրապարակումը",
+      "denomination": "անվանումը",
+      "closedDate": "փակ օրը",
+      "modifier": "հավելումը"
     },
     "selectedProduct": "ընտրված ապրանքը",
     "selectedProducts": "{count} ընտրված ապրանք"
@@ -184,6 +196,8 @@
       "paymentSection": "Վճարում",
       "method": "Եղանակ՝",
       "amount": "Գումար՝",
+      "customerPays": "Հաճախորդը վճարում է՝",
+      "prepareChange": "Պատրաստել մանրադրամ՝",
       "paymentStatus": "Կարգավիճակ՝",
       "items": "Ապրանքներ",
       "product": "Ապրանք",
@@ -251,6 +265,7 @@
     }
   },
   "products": {
+    "title": "Ապրանքներ",
     "addNewProduct": "Ավելացնել նոր ապրանք",
     "filters": {
       "totalProducts": "Ընդամենը ապրանքներ՝ {total}",
@@ -534,12 +549,14 @@
     }
   },
   "coupons": {
-    "title": "Պրոմո կոդեր",
+    "title": "Կուպոններ",
     "subtitle": "Ստեղծեք, խմբագրեք կամ հեռացրեք պատվերի ձևակերպման զեղչի կոդերը։",
-    "addPromoCode": "Ավելացնել պրոմո կոդ",
+    "addPromoCode": "Ավելացնել կուպոն",
+    "codeCopied": "«{code}» կոդը պատճենված է",
     "empty": "Դեռևս պրոմո կոդեր չկան։",
     "table": {
       "code": "Կոդ",
+      "copyCodeAria": "Պատճենել {code} կոդը",
       "type": "Տեսակ",
       "value": "Արժեք",
       "usageLimit": "Օգտագործման սահմանաչափ",
@@ -576,6 +593,7 @@
     }
   },
   "users": {
+    "title": "Օգտատերեր",
     "breadcrumb": "Օգտատերեր",
     "searchPlaceholder": "Որոնել էլ. փոստով, հեռախոսով, անունով…",
     "searchAria": "Որոնել օգտատերեր",
@@ -601,7 +619,13 @@
     "activateAria": "Ակտիվացնել {name}-ին",
     "detail": {
       "role": "Դեր՝",
+      "roleLabel": "Դեր",
       "status": "Կարգավիճակ՝",
+      "emailLabel": "Էլ. փոստ",
+      "phoneLabel": "Հեռախոս",
+      "emailVerifiedLabel": "Էլ. փոստը հաստատված է",
+      "lastLoginLabel": "Վերջին մուտք",
+      "createdLabel": "Ստեղծվել է",
       "phone": "Հեռախոս՝ {phone}",
       "emailVerified": "Էլ. փոստը հաստատված է՝ {value}",
       "emailVerifiedNo": "ոչ",
@@ -612,6 +636,15 @@
       "unknownStatus": "Անհայտ կարգավիճակ։",
       "recentOrders": "Վերջին պատվերներ",
       "noOrders": "Պատվերներ չկան։"
+    },
+    "roleLabels": {
+      "admin": "Ադմին",
+      "customer": "Հաճախորդ"
+    },
+    "statusLabels": {
+      "active": "Ակտիվ",
+      "suspended": "Կասեցված",
+      "anonymized": "Անանունացված"
     },
     "roleForm": {
       "title": "Դեր",
@@ -628,6 +661,7 @@
     }
   },
   "analytics": {
+    "title": "Վերլուծություն",
     "subtitle": "Հետևեք ձեր բիզնեսի արդյունավետությանը և վիճակագրությանը",
     "period": {
       "title": "Ժամանակահատված",
@@ -767,6 +801,8 @@
     "all": "Բոլորը",
     "filter": "Զտել",
     "empty": "Այս զտիչներին համապատասխան հաղորդագրություններ չկան։",
+    "sheetAria": "Հաղորդագրության մանրամասներ",
+    "sheetTitle": "Հաղորդագրություն",
     "table": {
       "subject": "Թեմա",
       "from": "Ումից",
@@ -774,13 +810,24 @@
       "received": "Ստացվել է",
       "spamScore": "սպամ {score}"
     },
+    "statusLabels": {
+      "unread": "Չկարդացված",
+      "read": "Կարդացված",
+      "replied": "Պատասխանված",
+      "archived": "Արխիվացված"
+    },
     "detail": {
       "from": "Ումից՝ {name}",
+      "fromLabel": "Ումից",
       "email": "Էլ. փոստ՝ {email}",
+      "emailLabel": "Էլ. փոստ",
       "phone": "Հեռախոս՝ {phone}",
+      "phoneLabel": "Հեռախոս",
       "status": "Կարգավիճակ՝",
       "spamScore": "Սպամի գնահատական՝ {score}",
+      "spamScoreLabel": "Սպամի գնահատական",
       "received": "Ստացվել է՝ {datetime} UTC",
+      "receivedLabel": "Ստացվել է",
       "message": "Հաղորդագրություն",
       "unknownStatus": "Անհայտ կարգավիճակ։"
     },
@@ -788,8 +835,31 @@
       "noFurtherChanges": "Կարգավիճակի հետագա փոփոխություններ չկան։",
       "newStatus": "Նոր կարգավիճակ",
       "newStatusAria": "Նոր կարգավիճակ",
-      "updateStatus": "Թարմացնել կարգավիճակը"
+      "updateStatus": "Թարմացնել"
     }
+  },
+  "groupOrders": {
+    "title": "Խմբային պատվերներ",
+    "id": "ID",
+    "organizer": "Կազմակերպիչ",
+    "mode": "Ռեժիմ",
+    "status": "Կարգավիճակ",
+    "participants": "Մասնակիցներ",
+    "delivery": "Առաքում",
+    "created": "Ստեղծված",
+    "empty": "Դեռևս խմբային պատվերներ չկան։",
+    "sheetAria": "Խմբային պատվերի մանրամասներ",
+    "sheetTitle": "Խմբային պատվեր",
+    "organizerLabel": "Կազմակերպիչ՝ {name}",
+    "invite": "Հրավեր՝ {path}",
+    "deliveryTotal": "Առաքում՝ {delivery} · Ընդամենը՝ {total}",
+    "subtotalDeliveryFinal": "Ենթագումար {subtotal} · Առաքում {delivery} · Վերջնական {final}",
+    "payment": "Վճարում՝ {status}",
+    "activity": "Գործունեություն",
+    "markPaid": "Նշել որպես վճարված",
+    "closeJoins": "Փակել միացումները",
+    "cancel": "Չեղարկել խմբային պատվերը",
+    "actionFailed": "Գործողությունը ձախողվեց։"
   },
   "settings": {
     "title": "Խանութի կարգավորումներ",
@@ -810,6 +880,46 @@
       "rubPerAmd": "RUB՝ 1 AMD-ի դիմաց",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Պահպանել փոխարժեքները"
+    }
+  },
+  "giftCards": {
+    "title": "Gift Card-եր",
+    "subtitle": "Ստեղծեք, որոնեք, ակտիվացրեք և անջատեք թվային Gift Card-երը։",
+    "add": "Ստեղծել Gift Card",
+    "empty": "Gift Card դեռ չկա։",
+    "history": "Օգտագործման պատմություն",
+    "sheetAria": "Gift Card-ի մանրամասներ",
+    "sheetTitle": "Gift Card",
+    "activate": "Ակտիվացնել",
+    "searchPlaceholder": "Որոնել ըստ կոդի, գնորդի կամ ստացողի",
+    "statuses": {
+      "PENDING_PAYMENT": "Սպասում է վճարման",
+      "ACTIVE": "Ակտիվ",
+      "USED": "Օգտագործված",
+      "EXPIRED": "Ժամկետանց",
+      "DISABLED": "Անջատված"
+    },
+    "table": {
+      "code": "Կոդ",
+      "balance": "Մնացորդ",
+      "status": "Կարգավիճակ",
+      "recipient": "Ստացող",
+      "purchaser": "Գնորդ",
+      "copyAria": "Պատճենել {code}",
+      "resendAria": "Կրկին ուղարկել email",
+      "disableAria": "Անջատել Gift Card"
+    },
+    "drawer": {
+      "newTitle": "Նոր Gift Card",
+      "newAria": "Նոր Gift Card",
+      "amount": "Գումար (AMD)",
+      "recipientName": "Ստացողի անուն",
+      "recipientEmail": "Ստացողի email",
+      "recipientPhone": "Ստացողի հեռախոս",
+      "purchaserName": "Գնորդի / ուղարկողի անուն",
+      "message": "Հաղորդագրություն",
+      "expiresOptional": "Ավարտ (ըստ ցանկության)",
+      "sendEmail": "Ուղարկել email ակտիվացումից հետո"
     }
   }
 }

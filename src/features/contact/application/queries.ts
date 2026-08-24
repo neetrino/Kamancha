@@ -82,3 +82,7 @@ export async function getAdminContactMessageById(id: string) {
 
   return row ?? null;
 }
+
+export type AdminContactMessageDetail = NonNullable<
+  Awaited<ReturnType<typeof getAdminContactMessageById>>
+>;

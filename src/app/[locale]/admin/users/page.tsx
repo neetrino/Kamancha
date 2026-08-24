@@ -1,6 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { listAdminUsers } from "@/features/users/application/queries";
 import { adminUsersFilterSchema } from "@/features/users/schemas/admin-users";
 import { AdminUsersView } from "@/features/users/ui/AdminUsersView";
@@ -64,7 +65,11 @@ export default async function AdminUsersPage({
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <>
+    <section>
+      <div className="mb-6">
+        <h1 className={ADMIN_PAGE_TITLE}>{dictionary.admin.users.title}</h1>
+      </div>
+
       <AdminUsersView
         locale={locale}
         users={rows}
@@ -74,31 +79,16 @@ export default async function AdminUsersPage({
         copy={dictionary.admin}
       />
 
-      {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
-          {filters.page > 1 ? (
-            <Link
-              href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}
-              className="font-medium hover:underline"
-            >
-              {dictionary.admin.common.previous}
-            </Link>
-          ) : null}
-          <span>
-            {dictionary.admin.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-          {filters.page < totalPages ? (
-            <Link
-              href={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page + 1)}`}
-              className="font-medium hover:underline"
-            >
-              {dictionary.admin.common.next}
-            </Link>
-          ) : null}
-        </nav>
-      ) : null}
-    </>
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={dictionary.admin.users.title}
+        previousLabel={dictionary.admin.common.previous}
+        nextLabel={dictionary.admin.common.next}
+        pageOfLabel={dictionary.admin.common.pageOf}
+        prevHref={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page - 1)}`}
+        nextHref={`/${locale}/admin/users?${buildUsersQuery(filters, filters.page + 1)}`}
+      />
+    </section>
   );
 }

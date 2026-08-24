@@ -10,7 +10,9 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { ProfileMobileHub } from "@/features/profile/ui/ProfileMobileHub";
 import { ProfileMobileTabSheet } from "@/features/profile/ui/ProfileMobileTabSheet";
+import { ProfilePageReveal } from "@/features/profile/ui/ProfilePageReveal";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 import type { Locale } from "@/lib/i18n/config";
 import type { SessionUser } from "@/lib/auth/session";
 
@@ -27,8 +29,8 @@ function isProfileHubPath(pathname: string, locale: Locale): boolean {
 }
 
 /**
- * Mobile profile shell (MaMarie): hub always visible; section content in a bottom sheet.
- * Desktop content column is unchanged (`lg+`). Renders `children` once (matchMedia).
+ * Mobile profile shell: hub always visible; section content in a bottom sheet.
+ * Desktop content column is unchanged (`xl+`). Renders `children` once (matchMedia).
  */
 export function ProfileMobileShell({
   locale,
@@ -45,7 +47,7 @@ export function ProfileMobileShell({
   const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
+    const media = window.matchMedia("(min-width: 1280px)");
     function sync(): void {
       setIsDesktop(media.matches);
     }
@@ -56,8 +58,8 @@ export function ProfileMobileShell({
 
   useEffect(() => {
     if (isHub) {
-      setHubSheetOpen(false);
-      setClosingToHub(false);
+      scheduleStateUpdate(setHubSheetOpen, false);
+      scheduleStateUpdate(setClosingToHub, false);
     }
   }, [isHub, pathname]);
 
@@ -91,39 +93,45 @@ export function ProfileMobileShell({
     />
   );
 
+  const revealed = (
+    <ProfilePageReveal y={isDesktop ? 28 : 0}>{children}</ProfilePageReveal>
+  );
+
   const desktopColumn = (
-    <div className="min-w-0 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain">
-      {children}
+    <div className="profile-desktop-content profile-sticky-band min-w-0 flex-1">
+      {revealed}
     </div>
   );
 
-  // SSR / pre-hydration: hub on mobile via CSS; content only from lg up.
+  let content: ReactNode;
+
+  // SSR / pre-hydration: hub on mobile via CSS; content only from xl up.
   if (isDesktop === null) {
-    return (
+    content = (
       <>
-        <div className="profile-mobile-page w-full lg:hidden">{hub}</div>
-        <div className="hidden lg:block lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain">
-          {children}
+        <div className="profile-mobile-page w-full xl:hidden">{hub}</div>
+        <div className="profile-desktop-content profile-sticky-band hidden min-w-0 flex-1 xl:block">
+          {revealed}
         </div>
       </>
     );
+  } else if (isDesktop) {
+    content = desktopColumn;
+  } else {
+    content = (
+      <div className="profile-mobile-page w-full">
+        {hub}
+        <ProfileMobileTabSheet
+          open={sheetOpen}
+          onClose={closeSheet}
+          onExited={handleSheetExited}
+          ariaLabel={dictionary.title}
+        >
+          {revealed}
+        </ProfileMobileTabSheet>
+      </div>
+    );
   }
 
-  if (isDesktop) {
-    return desktopColumn;
-  }
-
-  return (
-    <div className="profile-mobile-page w-full">
-      {hub}
-      <ProfileMobileTabSheet
-        open={sheetOpen}
-        onClose={closeSheet}
-        onExited={handleSheetExited}
-        ariaLabel={dictionary.title}
-      >
-        {children}
-      </ProfileMobileTabSheet>
-    </div>
-  );
+  return content;
 }

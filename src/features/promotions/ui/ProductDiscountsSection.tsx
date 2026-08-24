@@ -2,13 +2,17 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/Button";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { ADMIN_INPUT, ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import type { DiscountBoardProduct } from "@/features/promotions/application/discounts-board";
 import { upsertTargetDiscountAction } from "@/features/promotions/application/manage-discounts";
 import { currencySymbols, isCurrency } from "@/lib/money/currency";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+
+const PAGE_SIZE = 15;
 
 type ProductDiscountsSectionCopy = {
   products: Dictionary["admin"]["discounts"]["products"];
@@ -52,12 +56,13 @@ export function ProductDiscountsSection({
 }: ProductDiscountsSectionProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [drafts, setDrafts] = useState<Record<string, string>>(() =>
     draftsFromProducts(products),
   );
 
   useEffect(() => {
-    setDrafts(draftsFromProducts(products));
+    scheduleStateUpdate(setDrafts, draftsFromProducts(products));
   }, [products]);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -74,6 +79,13 @@ export function ProductDiscountsSection({
         product.sku.toLowerCase().includes(needle),
     );
   }, [products, query]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = filtered.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   function saveOne(productId: string, title: string): void {
     const parsed = parsePercent(drafts[productId] ?? "");
@@ -110,7 +122,7 @@ export function ProductDiscountsSection({
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4">
-        <h2 className="text-base font-semibold text-gray-900">
+        <h2 className={ADMIN_SECTION_TITLE}>
           {copy.products.title}
         </h2>
         <p className="text-sm text-gray-500">{copy.products.subtitle}</p>
@@ -119,13 +131,15 @@ export function ProductDiscountsSection({
       <label className="sr-only" htmlFor="product-discount-search">
         {copy.products.searchAria}
       </label>
-      <input
+      <AdminSearchInput
         id="product-discount-search"
-        type="search"
         placeholder={copy.products.searchPlaceholder}
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        className={`${ADMIN_INPUT} mb-4`}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          setPage(1);
+        }}
+        className="mb-4"
       />
 
       {filtered.length === 0 ? (
@@ -134,14 +148,14 @@ export function ProductDiscountsSection({
         </div>
       ) : (
         <ul className="space-y-3">
-          {filtered.map((product) => {
+          {pageItems.map((product) => {
             const busy = isPending && savingId === product.id;
             return (
               <li
                 key={product.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3"
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   {product.imageUrl ? (
                     // Admin/R2 hosts vary — native img avoids brittle next/image allowlists.
                     // eslint-disable-next-line @next/next/no-img-element
@@ -166,7 +180,7 @@ export function ProductDiscountsSection({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex h-11 shrink-0 items-stretch gap-2">
                   <label
                     className="sr-only"
                     htmlFor={`product-discount-${product.id}`}
@@ -190,12 +204,15 @@ export function ProductDiscountsSection({
                         [product.id]: event.target.value,
                       }))
                     }
-                    className={`${ADMIN_INPUT} w-20`}
+                    className={`${ADMIN_INPUT} h-full w-20 appearance-none py-0 leading-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                   />
-                  <span className="text-sm text-gray-500">%</span>
+                  <span className="flex items-center text-sm text-gray-500">
+                    %
+                  </span>
                   <Button
                     type="button"
-                    size="sm"
+                    size="field"
+                    className="h-full whitespace-nowrap"
                     disabled={isPending}
                     onClick={() => saveOne(product.id, product.title)}
                   >
@@ -207,6 +224,17 @@ export function ProductDiscountsSection({
           })}
         </ul>
       )}
+
+      <AdminPagination
+        page={currentPage}
+        totalPages={filtered.length > 0 ? totalPages : 1}
+        ariaLabel={copy.products.title}
+        previousLabel={copy.common.previous}
+        nextLabel={copy.common.next}
+        pageOfLabel={copy.common.pageOf}
+        onPrevious={() => setPage(currentPage - 1)}
+        onNext={() => setPage(currentPage + 1)}
+      />
 
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       {message ? <p className="mt-3 text-sm text-green-700">{message}</p> : null}

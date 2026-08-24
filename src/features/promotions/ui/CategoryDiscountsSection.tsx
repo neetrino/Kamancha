@@ -2,12 +2,18 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/Button";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
+import {
+  ADMIN_INPUT,
+  ADMIN_SECTION_TITLE,
+} from "@/features/admin/ui/admin-form-classes";
 import type { DiscountBoardCategory } from "@/features/promotions/application/discounts-board";
 import { saveCategoryDiscountsAction } from "@/features/promotions/application/manage-discounts";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+
+const PAGE_SIZE = 5;
 
 type CategoryDiscountsSectionCopy = {
   categories: Dictionary["admin"]["discounts"]["categories"];
@@ -34,6 +40,7 @@ export function CategoryDiscountsSection({
   copy,
 }: CategoryDiscountsSectionProps) {
   const router = useRouter();
+  const [page, setPage] = useState(1);
   const [drafts, setDrafts] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       categories.map((category) => [
@@ -49,7 +56,8 @@ export function CategoryDiscountsSection({
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    setDrafts(
+    scheduleStateUpdate(
+      setDrafts,
       Object.fromEntries(
         categories.map((category) => [
           category.id,
@@ -71,6 +79,13 @@ export function CategoryDiscountsSection({
       return draft !== saved;
     });
   }, [categories, drafts]);
+
+  const totalPages = Math.max(1, Math.ceil(categories.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = categories.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
 
   function saveAll(): void {
     const items: Array<{ categoryId: string; percentage: number | null }> = [];
@@ -104,14 +119,14 @@ export function CategoryDiscountsSection({
     <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-gray-900">
+          <h2 className={ADMIN_SECTION_TITLE}>
             {copy.categories.title}
           </h2>
           <p className="text-sm text-gray-500">{copy.categories.subtitle}</p>
         </div>
         <Button
           type="button"
-          size="sm"
+          size="field"
           disabled={isPending || !isDirty || categories.length === 0}
           onClick={saveAll}
         >
@@ -124,8 +139,8 @@ export function CategoryDiscountsSection({
           {copy.categories.empty}
         </div>
       ) : (
-        <ul className="max-h-80 divide-y divide-gray-100 overflow-y-auto rounded-lg border border-gray-200">
-          {categories.map((category) => (
+        <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200">
+          {pageItems.map((category) => (
             <li
               key={category.id}
               className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
@@ -178,6 +193,17 @@ export function CategoryDiscountsSection({
           ))}
         </ul>
       )}
+
+      <AdminPagination
+        page={currentPage}
+        totalPages={categories.length > 0 ? totalPages : 1}
+        ariaLabel={copy.categories.title}
+        previousLabel={copy.common.previous}
+        nextLabel={copy.common.next}
+        pageOfLabel={copy.common.pageOf}
+        onPrevious={() => setPage(currentPage - 1)}
+        onNext={() => setPage(currentPage + 1)}
+      />
 
       {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
       {message ? <p className="mt-3 text-sm text-green-700">{message}</p> : null}

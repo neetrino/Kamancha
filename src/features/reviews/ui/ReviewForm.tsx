@@ -30,6 +30,11 @@ type ReviewFormProps = {
   initialComment?: string;
 };
 
+const primaryBtnClassName =
+  "inline-flex items-center justify-center rounded-full bg-white px-10 py-3 text-sm font-semibold text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60";
+
+const secondaryBtnClassName =
+  "inline-flex items-center justify-center rounded-full border border-white/30 bg-white/10 px-10 py-3 text-sm font-semibold text-white transition hover:bg-white/15 disabled:opacity-60";
 export function ReviewForm({
   locale,
   productId,
@@ -48,12 +53,14 @@ export function ReviewForm({
 
   if (done) {
     return (
-      <div className="flex w-full flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 sm:p-5">
+      <div className="flex w-full flex-col gap-3 rounded-2xl border border-white/15 bg-white/10 p-4 sm:p-5">
         <RatingStars average={rating} />
         {commentDraft ? (
-          <p className="text-sm text-gray-700 whitespace-pre-wrap">{commentDraft}</p>
+          <p className="text-sm whitespace-pre-wrap text-white/70">
+            {commentDraft}
+          </p>
         ) : null}
-        <p className="text-sm text-gray-500">{labels.pending}</p>
+        <p className="text-sm text-white/50">{labels.pending}</p>
       </div>
     );
   }
@@ -89,7 +96,7 @@ export function ReviewForm({
         });
       }}
     >
-      <h3 className="text-xl font-bold text-gray-900 md:text-2xl">
+      <h3 className="font-big-fat-boii text-2xl font-normal tracking-[0.3px] text-white uppercase md:text-3xl">
         {labels.title}
       </h3>
 
@@ -101,7 +108,7 @@ export function ReviewForm({
       />
 
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-gray-900" htmlFor="comment">
+        <label className="text-sm font-medium text-white" htmlFor="comment">
           {labels.yourReviewLabel}
         </label>
         <textarea
@@ -114,17 +121,17 @@ export function ReviewForm({
           value={commentDraft}
           onChange={(event) => setCommentDraft(event.target.value)}
           placeholder={labels.placeholder}
-          className="min-h-[8rem] resize-y rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 placeholder:text-gray-400 disabled:opacity-60"
+          className="min-h-[8rem] resize-y rounded-2xl border border-white/20 bg-white px-4 py-3 text-base text-brand-forest placeholder:text-brand-forest/40 disabled:opacity-60"
         />
       </div>
 
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {error ? <p className="text-sm text-red-300">{error}</p> : null}
 
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="submit"
           disabled={pending || rating < 1 || commentDraft.trim().length === 0}
-          className="rounded-full bg-gray-900 px-8 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+          className={primaryBtnClassName}
         >
           {pending ? labels.submitting : labels.submit}
         </button>
@@ -132,7 +139,7 @@ export function ReviewForm({
           type="button"
           onClick={onCancel}
           disabled={pending}
-          className="rounded-full border border-gray-300 bg-white px-8 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-50 disabled:opacity-60"
+          className={secondaryBtnClassName}
         >
           {labels.cancel}
         </button>

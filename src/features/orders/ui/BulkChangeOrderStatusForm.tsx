@@ -130,24 +130,26 @@ export function BulkChangeOrderStatusForm({
 
   return (
     <div className="flex flex-col gap-4">
-      <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">{selectedCountLabel}</p>
-        <Button
-          type="button"
-          size="sm"
-          variant="danger"
-          disabled={isPending || selected.size === 0}
-          onClick={deleteSelected}
-        >
-          {isPending ? copy.common.deleting : copy.orders.bulk.deleteSelected}
-        </Button>
-        {error ? (
-          <p className="w-full text-sm text-red-700">{error}</p>
-        ) : null}
-        {message ? (
-          <p className="w-full text-sm text-green-700">{message}</p>
-        ) : null}
-      </Card>
+      {selected.size > 0 ? (
+        <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">{selectedCountLabel}</p>
+          <Button
+            type="button"
+            size="sm"
+            variant="danger"
+            disabled={isPending}
+            onClick={deleteSelected}
+          >
+            {isPending ? copy.common.deleting : copy.orders.bulk.deleteSelected}
+          </Button>
+          {error ? (
+            <p className="w-full text-sm text-red-700">{error}</p>
+          ) : null}
+          {message ? (
+            <p className="w-full text-sm text-green-700">{message}</p>
+          ) : null}
+        </Card>
+      ) : null}
 
       <Card className={ADMIN_TABLE_CARD}>
         <div className={ADMIN_TABLE_OUTER_SCROLL}>

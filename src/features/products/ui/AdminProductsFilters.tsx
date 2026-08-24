@@ -4,12 +4,10 @@ import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-
-const FILTER_INPUT =
-  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300";
 
 type AdminProductsFiltersProps = {
   total: number;
@@ -76,21 +74,21 @@ export function AdminProductsFilters({
         <input type="hidden" name="dir" value={dir} />
         <label>
           <span className={ADMIN_LABEL}>{copy.searchByTitleOrSlug}</span>
-          <input
+          <AdminSearchInput
             name="q"
             defaultValue={q ?? ""}
             placeholder={copy.searchByTitleOrSlugPlaceholder}
-            className={`${FILTER_INPUT} mt-1`}
+            className="mt-1"
             aria-label={copy.searchByTitleOrSlugAria}
           />
         </label>
         <label>
           <span className={ADMIN_LABEL}>{copy.searchBySku}</span>
-          <input
+          <AdminSearchInput
             name="sku"
             defaultValue={sku ?? ""}
             placeholder={copy.searchBySkuPlaceholder}
-            className={`${FILTER_INPUT} mt-1`}
+            className="mt-1"
             aria-label={copy.searchBySkuAria}
           />
         </label>

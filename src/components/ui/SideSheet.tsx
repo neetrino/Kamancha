@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -9,6 +10,9 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+
+import { useIsClient } from "@/lib/react/use-is-client";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 /** Must match `.animate-side-sheet-panel-*` duration in globals.css. */
 export const SIDE_SHEET_ANIMATION_MS = 300;
@@ -26,6 +30,8 @@ type SideSheetProps = {
   closeVariant?: "circle" | "edge-tab";
   /** Soften backdrop (cart-style). */
   backdropBlur?: boolean;
+  /** Overrides default black close control styles. */
+  closeButtonClassName?: string;
 };
 
 /**
@@ -42,41 +48,45 @@ export function SideSheet({
   zIndexClassName = "z-50",
   closeVariant = "circle",
   backdropBlur = false,
+  closeButtonClassName,
 }: SideSheetProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [displayChildren, setDisplayChildren] = useState(children);
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
   const exitDoneRef = useRef(false);
 
-  useEffect(() => {
-    setMounted(true);
+  const finishExit = useCallback((): void => {
+    if (exitDoneRef.current) return;
+    exitDoneRef.current = true;
+    setRendered(false);
+    setExiting(false);
   }, []);
 
   useEffect(() => {
     if (!open) return;
-    setDisplayChildren(children);
-    setDisplayAriaLabel(ariaLabel);
+    scheduleStateUpdate(setDisplayChildren, children);
+    scheduleStateUpdate(setDisplayAriaLabel, ariaLabel);
   }, [open, children, ariaLabel]);
 
   useEffect(() => {
     if (open) {
       exitDoneRef.current = false;
-      setExiting(false);
-      setRendered(true);
+      scheduleStateUpdate(setExiting, false);
+      scheduleStateUpdate(setRendered, true);
       return;
     }
 
     if (!rendered) return;
 
-    setExiting(true);
+    scheduleStateUpdate(setExiting, true);
     const timer = window.setTimeout(() => {
       finishExit();
     }, SIDE_SHEET_ANIMATION_MS);
 
     return () => window.clearTimeout(timer);
-  }, [open, rendered]);
+  }, [open, rendered, finishExit]);
 
   useEffect(() => {
     if (!rendered) return;
@@ -95,13 +105,6 @@ export function SideSheet({
     };
   }, [rendered, onClose]);
 
-  function finishExit(): void {
-    if (exitDoneRef.current) return;
-    exitDoneRef.current = true;
-    setRendered(false);
-    setExiting(false);
-  }
-
   function handlePanelAnimationEnd(
     event: AnimationEvent<HTMLDivElement>,
   ): void {
@@ -119,6 +122,15 @@ export function SideSheet({
     : "rounded-r-[var(--radius)]";
   const closePosition = isRight ? "right-full" : "left-full";
   const CloseChevron = isRight ? ChevronLeft : ChevronRight;
+  const closeRadius = isRight
+    ? "rounded-l-full rounded-r-none"
+    : "rounded-r-full rounded-l-none";
+  /** Peek under the panel; hover slides the tab fully out (BOS sheet). */
+  const closeTuckClass = isRight
+    ? "translate-x-1.5 hover:translate-x-0 focus-visible:translate-x-0"
+    : "-translate-x-1.5 hover:translate-x-0 focus-visible:translate-x-0";
+  const closeMotionClass =
+    "z-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
 
   const backdropClass = exiting
     ? "animate-sheet-backdrop-out"
@@ -154,11 +166,9 @@ export function SideSheet({
           <button
             type="button"
             onClick={onClose}
-            className={`absolute top-1/2 ${closePosition} z-10 flex h-[38px] w-10 -translate-y-1/2 items-center justify-center bg-gray-900 text-white transition-transform hover:scale-105 ${
-              isRight
-                ? "rounded-l-full rounded-r-none"
-                : "rounded-r-full rounded-l-none"
-            }`}
+            className={`absolute top-1/2 ${closePosition} flex h-[38px] w-10 -translate-y-1/2 items-center justify-center ${closeMotionClass} ${closeTuckClass} ${
+              closeButtonClassName ?? "bg-brand-forest text-white"
+            } ${closeRadius}`}
             aria-label="Close"
           >
             <CloseChevron className="h-4 w-4" strokeWidth={2.5} />
@@ -167,18 +177,17 @@ export function SideSheet({
           <button
             type="button"
             onClick={onClose}
-            className={`absolute top-5 ${closePosition} z-10 flex h-10 w-10 shrink-0 items-center justify-center bg-gray-900 text-white transition-colors hover:bg-black ${
-              isRight
-                ? "rounded-l-full rounded-r-none"
-                : "rounded-r-full rounded-l-none"
-            }`}
+            className={`absolute top-5 ${closePosition} flex h-10 w-10 shrink-0 items-center justify-center ${closeMotionClass} ${closeTuckClass} ${
+              closeButtonClassName ??
+              "bg-brand-forest text-white hover:opacity-90"
+            } ${closeRadius}`}
             aria-label="Close"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
           </button>
         )}
         <div
-          className={`flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${panelRadius}`}
+          className={`relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${panelRadius}`}
           onClick={(event) => event.stopPropagation()}
         >
           {displayChildren}

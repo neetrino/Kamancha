@@ -3,7 +3,12 @@ import "server-only";
 import { and, asc, eq, inArray, or } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { mediaAssets, products } from "@/db/schema";
+import {
+  mediaAssets,
+  productModifierLinks,
+  productModifiers,
+  products,
+} from "@/db/schema";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type { CatalogProduct } from "@/features/products/types";
 import type { Locale } from "@/lib/i18n/config";
@@ -15,7 +20,11 @@ function toCatalogProduct(
   imageUrl: string | null = null,
 ): Omit<
   CatalogProduct,
-  "priceAmount" | "compareAtAmount" | "discountPercent" | "listPriceAmount"
+  | "priceAmount"
+  | "compareAtAmount"
+  | "discountPercent"
+  | "listPriceAmount"
+  | "hasCustomizationOptions"
 > | null {
   const translation = product.translations[locale] ?? product.translations.hy;
   if (!translation) {
@@ -67,13 +76,37 @@ async function loadPrimaryProductImages(
   return map;
 }
 
+async function loadProductsWithCustomizationOptions(
+  productIds: string[],
+): Promise<Set<string>> {
+  if (productIds.length === 0) {
+    return new Set();
+  }
+
+  const rows = await getDb()
+    .selectDistinct({ productId: productModifierLinks.productId })
+    .from(productModifierLinks)
+    .innerJoin(
+      productModifiers,
+      eq(productModifierLinks.modifierId, productModifiers.id),
+    )
+    .where(
+      and(
+        inArray(productModifierLinks.productId, productIds),
+        eq(productModifiers.isActive, true),
+      ),
+    );
+
+  return new Set(rows.map((row) => row.productId));
+}
+
 /** Attaches primary image URLs and resolved sale prices to product rows. */
 export async function enrichCatalogProducts(
   rows: Array<typeof products.$inferSelect>,
   locale: Locale,
 ): Promise<CatalogProduct[]> {
   const productIds = rows.map((row) => row.id);
-  const [images, prices] = await Promise.all([
+  const [images, prices, customizable] = await Promise.all([
     loadPrimaryProductImages(productIds),
     resolveProductPrices(
       rows.map((row) => ({
@@ -82,6 +115,7 @@ export async function enrichCatalogProducts(
         compareAtAmount: row.compareAtAmount,
       })),
     ),
+    loadProductsWithCustomizationOptions(productIds),
   ]);
 
   return rows
@@ -100,6 +134,7 @@ export async function enrichCatalogProducts(
         priceAmount: resolved?.unitAmount ?? product.priceAmount,
         compareAtAmount: resolved?.compareAtAmount ?? null,
         discountPercent: resolved?.discountPercent ?? null,
+        hasCustomizationOptions: customizable.has(product.id),
       } satisfies CatalogProduct;
     })
     .filter((product): product is CatalogProduct => product !== null);

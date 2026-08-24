@@ -81,7 +81,25 @@ export const orders = pgTable(
     discountAmount: integer("discount_amount").notNull().default(0),
     taxAmount: integer("tax_amount").notNull().default(0),
     deliveryAmount: integer("delivery_amount").notNull().default(0),
+    /** Bonus points redeemed at checkout (1 point = 1 AMD). */
+    bonusRedeemedAmount: integer("bonus_redeemed_amount").notNull().default(0),
+    /** Bonus points earned when order reached DELIVERED (snapshot). */
+    bonusEarnedAmount: integer("bonus_earned_amount").notNull().default(0),
+    /** Gift card applied at checkout (no FK — avoids circular import with gift_cards). */
+    giftCardId: uuid("gift_card_id"),
+    giftCardCodeSnapshot: text("gift_card_code_snapshot"),
+    giftCardAmount: integer("gift_card_amount").notNull().default(0),
     totalAmount: integer("total_amount").notNull(),
+    /**
+     * Planned online portion of `totalAmount` (AMD).
+     * Full cash → 0; full online → total; group prepaid others count as online.
+     */
+    onlineAmount: integer("online_amount").notNull().default(0),
+    /**
+     * Planned cash-on-delivery portion of `totalAmount` (AMD).
+     * Must satisfy onlineAmount + cashAmount = totalAmount.
+     */
+    cashAmount: integer("cash_amount").notNull().default(0),
     shippingAddress: jsonb("shipping_address").$type<AddressSnapshot>().notNull(),
     billingAddress: jsonb("billing_address").$type<AddressSnapshot>().notNull(),
     promotionId: uuid("promotion_id").references(() => promotions.id, {
@@ -100,6 +118,8 @@ export const orders = pgTable(
     idempotencyKeyHash: text("idempotency_key_hash").notNull(),
     requestFingerprint: text("request_fingerprint").notNull(),
     locale: text("locale").notNull(),
+    /** Linked group order when this checkout finishes a խմբային պատվեր. */
+    groupOrderId: uuid("group_order_id"),
     correlationId: text("correlation_id"),
     placedAt: timestamp("placed_at", {
       withTimezone: true,
@@ -128,7 +148,26 @@ export const orders = pgTable(
       table.userId,
       table.status,
     ),
+    index("orders_group_order_idx").on(table.groupOrderId),
     check("orders_money_nonneg_chk", sql`${table.totalAmount} >= 0`),
+    check(
+      "orders_bonus_redeemed_nonneg_chk",
+      sql`${table.bonusRedeemedAmount} >= 0`,
+    ),
+    check(
+      "orders_bonus_earned_nonneg_chk",
+      sql`${table.bonusEarnedAmount} >= 0`,
+    ),
+    check(
+      "orders_gift_card_amount_nonneg_chk",
+      sql`${table.giftCardAmount} >= 0`,
+    ),
+    check("orders_online_amount_nonneg_chk", sql`${table.onlineAmount} >= 0`),
+    check("orders_cash_amount_nonneg_chk", sql`${table.cashAmount} >= 0`),
+    check(
+      "orders_payment_split_sum_chk",
+      sql`${table.onlineAmount} + ${table.cashAmount} = ${table.totalAmount}`,
+    ),
   ],
 );
 
@@ -153,11 +192,15 @@ export const orderItems = pgTable(
     taxAmount: integer("tax_amount").notNull().default(0),
     lineTotalAmount: integer("line_total_amount").notNull(),
     currency: text("currency").notNull().default("AMD"),
+    /** Group-order participant who selected this line (nullable for solo orders). */
+    groupOrderParticipantId: uuid("group_order_participant_id"),
+    participantNameSnapshot: text("participant_name_snapshot"),
     createdAt: createdAtColumn(),
   },
   (table) => [
     index("order_items_order_idx").on(table.orderId),
     index("order_items_product_idx").on(table.productId),
+    index("order_items_group_participant_idx").on(table.groupOrderParticipantId),
     check("order_items_qty_chk", sql`${table.quantity} > 0`),
   ],
 );
@@ -205,6 +248,7 @@ export const payments = pgTable(
     status: paymentStatusEnum("status").notNull().default("PENDING"),
     attemptNumber: integer("attempt_number").notNull().default(1),
     metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    groupOrderParticipantId: uuid("group_order_participant_id"),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -214,6 +258,7 @@ export const payments = pgTable(
       table.providerReference,
       table.status,
     ),
+    index("payments_group_participant_idx").on(table.groupOrderParticipantId),
     check("payments_amount_chk", sql`${table.amount} >= 0`),
     check("payments_attempt_chk", sql`${table.attemptNumber} > 0`),
   ],

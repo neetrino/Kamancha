@@ -1,20 +1,19 @@
 "use client";
 
+import { Send, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import {
-  ADMIN_LABEL,
-  ADMIN_SECTION_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { updateUserRoleAction } from "@/features/users/application/update-user";
 import {
   USER_ROLES,
   type UserRole,
 } from "@/features/users/domain/user-lifecycle";
+import { userRoleLabel } from "@/features/users/ui/user-labels";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type UpdateUserRoleFormProps = {
@@ -34,22 +33,32 @@ export function UpdateUserRoleForm({
 }: UpdateUserRoleFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const roleOptions = USER_ROLES.filter((role) => role !== currentRole);
-  const [role, setRole] = useState(roleOptions[0] ?? "");
+  const [role, setRole] = useState<UserRole>(currentRole);
   const [isPending, startTransition] = useTransition();
+  const labels = copy.users.roleLabels;
+
+  const roleOptions = USER_ROLES.map((item) => ({
+    value: item,
+    label: userRoleLabel(item, labels),
+  }));
 
   return (
-    <Card className="p-6">
+    <Card className="w-full p-5 sm:p-6 md:w-fit md:shrink-0">
+      <div className="flex items-center gap-4">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
+          <Shield className="h-5 w-5" aria-hidden />
+        </span>
+        <h2 className={ADMIN_SECTION_TITLE}>{copy.users.roleForm.title}</h2>
+      </div>
       <form
-        className="flex flex-col gap-4"
+        className="mt-4 flex flex-col gap-4"
         onSubmit={(event) => {
           event.preventDefault();
-
           startTransition(async () => {
             setError(null);
             const result = await updateUserRoleAction(locale, {
               userId,
-              role: role as UserRole,
+              role,
             });
             if (!result.ok) {
               setError(result.error.message);
@@ -59,30 +68,27 @@ export function UpdateUserRoleForm({
           });
         }}
       >
-        <h3 className={ADMIN_SECTION_TITLE}>{copy.users.roleForm.title}</h3>
-        <p className="text-sm text-gray-700">
-          {copy.common.current.replace("{value}", currentRole)}
-        </p>
-        <div>
-          <span className={ADMIN_LABEL}>{copy.users.roleForm.newRole}</span>
-          <SelectDropdown
-            name="role"
-            ariaLabel={copy.users.roleForm.newRoleAria}
+        <div className="flex flex-nowrap items-center gap-3">
+          <SegmentedControl
+            aria-label={copy.users.roleForm.newRoleAria}
             value={role}
-            options={roleOptions.map((item) => ({
-              label: item,
-              value: item,
-            }))}
+            options={roleOptions}
             disabled={disabled || isPending}
-            deferChange={false}
-            className="mt-1"
-            onValueChange={setRole}
+            onSelect={setRole}
           />
+          <Button
+            type="submit"
+            size="field"
+            disabled={disabled || isPending || role === currentRole}
+            className="gap-2"
+          >
+            <Send className="h-4 w-4" aria-hidden />
+            {isPending
+              ? copy.common.updating
+              : copy.users.roleForm.updateRole}
+          </Button>
         </div>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <Button type="submit" size="sm" disabled={disabled || isPending}>
-          {isPending ? copy.common.updating : copy.users.roleForm.updateRole}
-        </Button>
       </form>
     </Card>
   );

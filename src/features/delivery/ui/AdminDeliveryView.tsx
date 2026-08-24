@@ -26,6 +26,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 type AdminDeliveryViewCopy = {
   delivery: Dictionary["admin"]["delivery"];
   common: Dictionary["admin"]["common"];
+  confirm: Dictionary["admin"]["confirm"];
 };
 
 type AdminDeliveryViewProps = {
@@ -226,7 +227,10 @@ export function AdminDeliveryView({
               value={schedule}
               onChange={setSchedule}
               disabled={isPending}
+              locale={locale}
+              common={copy.common}
               copy={copy.delivery.schedule}
+              confirm={copy.confirm}
             />
           </div>
         </Card>
@@ -240,12 +244,13 @@ export function AdminDeliveryView({
             onImageUrlsChange={setImageUrls}
             disabled={isPending}
             copy={copy.delivery.cashChange}
+            confirm={copy.confirm}
+            saveAction={
+              <Button type="submit" disabled={isPending}>
+                {isPending ? copy.common.saving : copy.common.save}
+              </Button>
+            }
           />
-          <div className="mt-5">
-            <Button type="submit" disabled={isPending}>
-              {isPending ? copy.common.saving : copy.common.save}
-            </Button>
-          </div>
         </Card>
       </form>
     </section>

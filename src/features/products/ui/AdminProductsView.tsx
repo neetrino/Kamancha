@@ -66,7 +66,7 @@ export function AdminProductsView({
       <button
         type="button"
         onClick={openCreate}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-forest px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
       >
         <Plus className="h-4 w-4" aria-hidden />
         {copy.products.addNewProduct}
@@ -94,6 +94,7 @@ export function AdminProductsView({
           discount: copy.products.discount,
           modifiers: copy.products.modifiers,
           common: copy.common,
+          confirm: copy.confirm,
         }}
       />
     </>

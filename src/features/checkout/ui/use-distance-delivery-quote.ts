@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { quoteDistanceDeliveryAction } from "@/features/delivery/application/quote-distance-delivery";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 const ADDRESS_QUOTE_DEBOUNCE_MS = 600;
 
@@ -25,10 +26,10 @@ export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
   useEffect(() => {
     const trimmed = line1.trim();
     if (trimmed.length < 3) {
-      setDeliveryAmount(0);
-      setDistanceLabel(null);
-      setError(null);
-      setPending(false);
+      scheduleStateUpdate(setDeliveryAmount, 0);
+      scheduleStateUpdate(setDistanceLabel, null);
+      scheduleStateUpdate(setError, null);
+      scheduleStateUpdate(setPending, false);
       return;
     }
 

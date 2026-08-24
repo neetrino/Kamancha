@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "orders": "Orders",
+    "groupOrders": "Group orders",
     "products": "Products",
     "categories": "Categories",
     "delivery": "Delivery",
@@ -12,12 +13,11 @@
     "hero": "Hero",
     "blog": "Blog",
     "messages": "Messages",
-    "settings": "Settings"
+    "settings": "Settings",
+    "giftCards": "Gift cards"
   },
   "shell": {
-    "brandName": "White Shop",
-    "brandHomeTitle": "White Shop home",
-    "brandInitial": "W",
+    "brandName": "Kamancha",
     "menu": "Menu",
     "adminMenuAria": "Admin menu",
     "expandSidebar": "Expand sidebar",
@@ -35,10 +35,18 @@
     "deleting": "Deleting…",
     "remove": "Remove",
     "clear": "Clear",
+    "datePicker": {
+      "placeholder": "DD.MM.YYYY",
+      "dateTimePlaceholder": "DD.MM.YYYY HH:mm",
+      "today": "Today",
+      "time": "Time",
+      "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    },
     "search": "Search",
     "filter": "Filter",
     "apply": "Apply",
     "previous": "Previous",
+    "back": "Back",
     "next": "Next",
     "pageOf": "Page {page} / {totalPages}",
     "actions": "Actions",
@@ -73,6 +81,7 @@
     "archiveConfirmLabel": "Archive",
     "cancelLabel": "Cancel",
     "deleteEntity": "Are you sure you want to delete the {entity} \"{name}\"? This action cannot be undone.",
+    "deleteImage": "Are you sure you want to remove this image? This action cannot be undone.",
     "deleteSelectedOrders": "Are you sure you want to delete {count} selected order{plural}? This action cannot be undone.",
     "deleteSelectedProducts": "Are you sure you want to delete {label}? This action cannot be undone.",
     "deleteSelectedUsers": "Are you sure you want to delete {count} selected user{plural}? This anonymizes their accounts and cannot be undone.",
@@ -82,7 +91,10 @@
       "category": "category",
       "promoCode": "promo code",
       "slide": "slide",
-      "post": "post"
+      "post": "post",
+      "denomination": "denomination",
+      "closedDate": "closed date",
+      "modifier": "modifier"
     },
     "selectedProduct": "selected product",
     "selectedProducts": "{count} selected products"
@@ -184,6 +196,8 @@
       "paymentSection": "Payment",
       "method": "Method:",
       "amount": "Amount:",
+      "customerPays": "Customer pays:",
+      "prepareChange": "Prepare change:",
       "paymentStatus": "Status:",
       "items": "Items",
       "product": "Product",
@@ -251,6 +265,7 @@
     }
   },
   "products": {
+    "title": "Products",
     "addNewProduct": "Add New Product",
     "filters": {
       "totalProducts": "Total products: {total}",
@@ -534,12 +549,14 @@
     }
   },
   "coupons": {
-    "title": "Promo codes",
+    "title": "Coupons",
     "subtitle": "Create, edit, or remove discount codes for checkout.",
-    "addPromoCode": "Add Promo Code",
+    "addPromoCode": "Add coupon",
+    "codeCopied": "Code \"{code}\" copied",
     "empty": "No promo codes yet.",
     "table": {
       "code": "Code",
+      "copyCodeAria": "Copy code {code}",
       "type": "Type",
       "value": "Value",
       "usageLimit": "Usage limit",
@@ -576,6 +593,7 @@
     }
   },
   "users": {
+    "title": "Users",
     "breadcrumb": "Users",
     "searchPlaceholder": "Search by email, phone, name...",
     "searchAria": "Search users",
@@ -601,7 +619,13 @@
     "activateAria": "Activate {name}",
     "detail": {
       "role": "Role:",
+      "roleLabel": "Role",
       "status": "Status:",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "emailVerifiedLabel": "Email verified",
+      "lastLoginLabel": "Last login",
+      "createdLabel": "Created",
       "phone": "Phone: {phone}",
       "emailVerified": "Email verified: {value}",
       "emailVerifiedNo": "no",
@@ -612,6 +636,15 @@
       "unknownStatus": "Unknown status.",
       "recentOrders": "Recent orders",
       "noOrders": "No orders."
+    },
+    "roleLabels": {
+      "admin": "Admin",
+      "customer": "Customer"
+    },
+    "statusLabels": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "anonymized": "Anonymized"
     },
     "roleForm": {
       "title": "Role",
@@ -628,6 +661,7 @@
     }
   },
   "analytics": {
+    "title": "Analytics",
     "subtitle": "Track your business performance and statistics",
     "period": {
       "title": "Time Period",
@@ -767,6 +801,8 @@
     "all": "All",
     "filter": "Filter",
     "empty": "No messages match these filters.",
+    "sheetAria": "Message details",
+    "sheetTitle": "Message",
     "table": {
       "subject": "Subject",
       "from": "From",
@@ -774,13 +810,24 @@
       "received": "Received",
       "spamScore": "spam {score}"
     },
+    "statusLabels": {
+      "unread": "Unread",
+      "read": "Read",
+      "replied": "Replied",
+      "archived": "Archived"
+    },
     "detail": {
       "from": "From: {name}",
+      "fromLabel": "From",
       "email": "Email: {email}",
+      "emailLabel": "Email",
       "phone": "Phone: {phone}",
+      "phoneLabel": "Phone",
       "status": "Status:",
       "spamScore": "Spam score: {score}",
+      "spamScoreLabel": "Spam score",
       "received": "Received: {datetime} UTC",
+      "receivedLabel": "Received",
       "message": "Message",
       "unknownStatus": "Unknown status."
     },
@@ -790,6 +837,29 @@
       "newStatusAria": "New status",
       "updateStatus": "Update status"
     }
+  },
+  "groupOrders": {
+    "title": "Group orders",
+    "id": "ID",
+    "organizer": "Organizer",
+    "mode": "Mode",
+    "status": "Status",
+    "participants": "Participants",
+    "delivery": "Delivery",
+    "created": "Created",
+    "empty": "No group orders yet.",
+    "sheetAria": "Group order details",
+    "sheetTitle": "Group order",
+    "organizerLabel": "Organizer: {name}",
+    "invite": "Invite: {path}",
+    "deliveryTotal": "Delivery: {delivery} · Total: {total}",
+    "subtotalDeliveryFinal": "Subtotal {subtotal} · Delivery {delivery} · Final {final}",
+    "payment": "Payment: {status}",
+    "activity": "Activity",
+    "markPaid": "Mark paid",
+    "closeJoins": "Close joins",
+    "cancel": "Cancel group order",
+    "actionFailed": "Action failed."
   },
   "settings": {
     "title": "Store settings",
@@ -810,6 +880,46 @@
       "rubPerAmd": "RUB per 1 AMD",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Save exchange rates"
+    }
+  },
+  "giftCards": {
+    "title": "Gift cards",
+    "subtitle": "Issue, search, activate, and disable digital gift cards.",
+    "add": "Create gift card",
+    "empty": "No gift cards yet.",
+    "history": "Usage history",
+    "sheetAria": "Gift card details",
+    "sheetTitle": "Gift card",
+    "activate": "Activate",
+    "searchPlaceholder": "Search by code, purchaser, or recipient",
+    "statuses": {
+      "PENDING_PAYMENT": "Pending payment",
+      "ACTIVE": "Active",
+      "USED": "Used",
+      "EXPIRED": "Expired",
+      "DISABLED": "Disabled"
+    },
+    "table": {
+      "code": "Code",
+      "balance": "Balance",
+      "status": "Status",
+      "recipient": "Recipient",
+      "purchaser": "Purchaser",
+      "copyAria": "Copy {code}",
+      "resendAria": "Resend email",
+      "disableAria": "Disable gift card"
+    },
+    "drawer": {
+      "newTitle": "New gift card",
+      "newAria": "New gift card",
+      "amount": "Amount (AMD)",
+      "recipientName": "Recipient name",
+      "recipientEmail": "Recipient email",
+      "recipientPhone": "Recipient phone",
+      "purchaserName": "Purchaser / sender name",
+      "message": "Message",
+      "expiresOptional": "Expires (optional)",
+      "sendEmail": "Send email after activation"
     }
   }
 }

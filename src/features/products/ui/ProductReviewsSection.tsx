@@ -41,44 +41,23 @@ export function ProductReviewsSection({
   const isEmpty = aggregate.count === 0;
 
   return (
-    <section className="flex w-full flex-col gap-8">
+    <section className="flex w-full flex-col gap-8 border-t border-white/10 pt-10">
       <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-[minmax(10rem,14rem)_1fr] md:gap-12">
         <div className="flex flex-col gap-2">
-          <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
+          <h2 className="font-big-fat-boii text-2xl font-normal tracking-[0.3px] text-white uppercase md:text-3xl">
             {labels.reviews}
           </h2>
-          <p className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
+          <p className="text-4xl font-bold tracking-tight text-white md:text-5xl">
             {formatAverage(aggregate.average)}
           </p>
           <RatingStars average={aggregate.average} />
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-white/50">
             {labels.reviewCount.replace("{count}", String(aggregate.count))}
           </p>
         </div>
 
         <RatingDistribution aggregate={aggregate} />
       </div>
-
-      {reviews.length > 0 ? (
-        <ul className="flex w-full flex-col gap-3">
-          {reviews.map((review) => (
-            <li
-              key={review.id}
-              className="w-full rounded-lg border border-gray-200 bg-white p-4"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-medium text-gray-900">
-                  {review.authorName}
-                </p>
-                <RatingStars average={review.rating} size="sm" />
-              </div>
-              {review.comment ? (
-                <p className="mt-2 text-sm text-gray-600">{review.comment}</p>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      ) : null}
 
       <ProductWriteReviewCta
         locale={locale}
@@ -88,6 +67,7 @@ export function ProductReviewsSection({
         isSignedIn={isSignedIn}
         existingReviewId={reviewsView.existingReviewId}
         viewerReview={reviewsView.viewerReview}
+        reviews={reviews}
         showEmptyPrompt={isEmpty}
         labels={{
           writeReview: labels.writeReview,

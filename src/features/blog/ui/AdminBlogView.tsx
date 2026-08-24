@@ -9,10 +9,8 @@ import { Card } from "@/components/ui/Card";
 import {
   ConfirmDialog,
 } from "@/components/ui/ConfirmDialog";
-import {
-  ADMIN_INPUT,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteBlogPostAction } from "@/features/blog/application/manage-blog";
 import type { AdminBlogListItem } from "@/features/blog/application/queries";
@@ -93,32 +91,34 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
 
   return (
     <section>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.blog.title}</h1>
+      </div>
+
+      <div className="mb-4 flex items-center gap-3">
+        <AdminSearchInput
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={copy.blog.searchPlaceholder}
+          className="min-w-0 flex-1"
+          aria-label={copy.blog.searchAria}
+        />
         <Button
           type="button"
-          size="sm"
+          size="field"
           onClick={openCreate}
-          className="inline-flex items-center gap-1.5"
+          className="shrink-0 gap-1.5 rounded-2xl"
         >
           <Plus className="h-4 w-4" aria-hidden />
           {copy.blog.addPost}
         </Button>
       </div>
 
-      <input
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder={copy.blog.searchPlaceholder}
-        className={`${ADMIN_INPUT} mb-4`}
-        aria-label={copy.blog.searchAria}
-      />
-
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
-      <div className="space-y-3">
+      <div className="grid gap-3 md:grid-cols-2">
         {filtered.length === 0 ? (
-          <Card className="rounded-xl p-8">
+          <Card className="rounded-xl p-8 md:col-span-2">
             <p className="text-center text-sm text-gray-600">
               {posts.length === 0 ? copy.blog.empty : copy.blog.noMatch}
             </p>

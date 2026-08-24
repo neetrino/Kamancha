@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -20,7 +22,10 @@ type AdminDeliveryScheduleEditorProps = {
   value: DeliveryScheduleSettings;
   onChange: (value: DeliveryScheduleSettings) => void;
   disabled?: boolean;
+  locale: string;
+  common: Dictionary["admin"]["common"];
   copy: Dictionary["admin"]["delivery"]["schedule"];
+  confirm: Dictionary["admin"]["confirm"];
 };
 
 function toHHmm(value: string): string {
@@ -41,7 +46,7 @@ function withValidOpenClose(
   const openTime = toHHmm(patch.openTime ?? hours.openTime);
   const closeTime = toHHmm(patch.closeTime ?? hours.closeTime);
   const openMinutes = timeToMinutes(openTime);
-  let closeMinutes = timeToMinutes(closeTime);
+  const closeMinutes = timeToMinutes(closeTime);
 
   if (closeMinutes > openMinutes) {
     return { openTime, closeTime };
@@ -65,9 +70,15 @@ export function AdminDeliveryScheduleEditor({
   value,
   onChange,
   disabled = false,
+  locale,
+  common,
   copy,
+  confirm,
 }: AdminDeliveryScheduleEditorProps) {
   const [closedDraft, setClosedDraft] = useState("");
+  const [pendingClosedDate, setPendingClosedDate] = useState<string | null>(
+    null,
+  );
 
   const weekdayLabels: Record<IsoWeekday, string> = {
     1: copy.monday,
@@ -123,9 +134,9 @@ export function AdminDeliveryScheduleEditor({
         <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label>
-          <span className={ADMIN_LABEL}>{copy.slotLength}</span>
+      <div className="grid items-stretch gap-4 sm:grid-cols-2">
+        <label className="flex flex-col">
+          <span className={`${ADMIN_LABEL} flex-1`}>{copy.slotLength}</span>
           <input
             type="number"
             min={15}
@@ -142,8 +153,8 @@ export function AdminDeliveryScheduleEditor({
             }
           />
         </label>
-        <label>
-          <span className={ADMIN_LABEL}>{copy.bookableDaysAhead}</span>
+        <label className="flex flex-col">
+          <span className={`${ADMIN_LABEL} flex-1`}>{copy.bookableDaysAhead}</span>
           <input
             type="number"
             min={1}
@@ -227,13 +238,14 @@ export function AdminDeliveryScheduleEditor({
 
       <div>
         <span className={ADMIN_LABEL}>{copy.closedDates}</span>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <input
-            type="date"
+        <div className="mt-2 flex flex-wrap items-end gap-2">
+          <AdminDatePickerField
             value={closedDraft}
+            onChange={setClosedDraft}
             disabled={disabled}
-            className={ADMIN_INPUT}
-            onChange={(event) => setClosedDraft(event.target.value)}
+            locale={locale}
+            common={common}
+            className="min-w-[12rem] flex-1"
           />
           <button
             type="button"
@@ -257,14 +269,7 @@ export function AdminDeliveryScheduleEditor({
                   disabled={disabled}
                   className="text-gray-500 hover:text-red-700"
                   aria-label={copy.removeClosedDateAria.replace("{date}", date)}
-                  onClick={() =>
-                    onChange({
-                      ...value,
-                      closedDates: value.closedDates.filter(
-                        (entry) => entry !== date,
-                      ),
-                    })
-                  }
+                  onClick={() => setPendingClosedDate(date)}
                 >
                   ×
                 </button>
@@ -275,6 +280,31 @@ export function AdminDeliveryScheduleEditor({
           <p className="mt-2 text-xs text-gray-500">{copy.noClosedDates}</p>
         )}
       </div>
+
+      <ConfirmDialog
+        open={pendingClosedDate !== null}
+        title={confirm.deleteTitle}
+        description={
+          pendingClosedDate
+            ? confirm.deleteEntity
+                .replace("{entity}", confirm.entityLabels.closedDate)
+                .replace("{name}", pendingClosedDate)
+            : ""
+        }
+        confirmLabel={confirm.confirmLabel}
+        cancelLabel={confirm.cancelLabel}
+        onClose={() => setPendingClosedDate(null)}
+        onConfirm={() => {
+          if (!pendingClosedDate) return;
+          onChange({
+            ...value,
+            closedDates: value.closedDates.filter(
+              (entry) => entry !== pendingClosedDate,
+            ),
+          });
+          setPendingClosedDate(null);
+        }}
+      />
     </div>
   );
 }

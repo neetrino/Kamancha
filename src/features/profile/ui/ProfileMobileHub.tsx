@@ -1,23 +1,30 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, type ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronRight,
   LayoutDashboard,
   Lock,
   LogOut,
+  Mail,
   MapPin,
   Package,
+  Phone,
+  Gift,
   Trash2,
   User,
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { logoutAction } from "@/features/auth/logout-action";
+import { ProfileBonusIcon } from "@/features/profile/ui/ProfileBonusIcon";
+import { PROFILE_PILL_LIGHT } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { SessionUser } from "@/lib/auth/session";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type ProfileMobileHubProps = {
   locale: Locale;
@@ -33,18 +40,8 @@ type MenuItem = {
   icon: ReactNode;
   exact?: boolean;
   danger?: boolean;
-  iconTheme: "neutral" | "amber" | "sky";
 };
 
-const ICON_THEMES = {
-  neutral: { bg: "bg-gray-100", fg: "text-gray-800" },
-  amber: { bg: "bg-amber-50", fg: "text-amber-600" },
-  sky: { bg: "bg-sky-50", fg: "text-sky-600" },
-} as const;
-
-/**
- * MaMarie-style mobile profile hub: header card + chevron menu + logout CTA.
- */
 export function ProfileMobileHub({
   locale,
   user,
@@ -52,6 +49,7 @@ export function ProfileMobileHub({
   onOpenDashboard,
 }: ProfileMobileHubProps) {
   const pathname = usePathname() ?? "";
+  const router = useRouter();
   const logoutWithLocale = logoutAction.bind(null, locale);
   const displayName = `${user.firstName} ${user.lastName}`.trim();
   const hubHref = `/${locale}/profile`;
@@ -62,43 +60,53 @@ export function ProfileMobileHub({
       label: dictionary.dashboard,
       icon: <LayoutDashboard className="h-5 w-5" />,
       exact: true,
-      iconTheme: "neutral",
     },
     {
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-5 w-5" />,
-      iconTheme: "amber",
+    },
+    {
+      href: `/${locale}/profile/gift-cards`,
+      label: dictionary.giftCards,
+      icon: <Gift className="h-5 w-5" />,
     },
     {
       href: `/${locale}/profile/personal-information`,
       label: dictionary.personal,
       icon: <User className="h-5 w-5" />,
-      iconTheme: "sky",
     },
     {
       href: `/${locale}/profile/addresses`,
       label: dictionary.addresses,
       icon: <MapPin className="h-5 w-5" />,
-      iconTheme: "neutral",
     },
     {
       href: `/${locale}/profile/password`,
       label: dictionary.password,
       icon: <Lock className="h-5 w-5" />,
-      iconTheme: "amber",
     },
     {
       href: `/${locale}/profile/delete-account`,
       label: dictionary.deleteAccount,
       icon: <Trash2 className="h-5 w-5" />,
       danger: true,
-      iconTheme: "sky",
     },
   ];
 
   const mainItems = items.filter((item) => !item.danger);
   const dangerItem = items.find((item) => item.danger);
+
+  useEffect(() => {
+    router.prefetch(`/${locale}/profile`);
+    router.prefetch(`/${locale}/profile/orders`);
+    router.prefetch(`/${locale}/profile/bonuses`);
+    router.prefetch(`/${locale}/profile/gift-cards`);
+    router.prefetch(`/${locale}/profile/personal-information`);
+    router.prefetch(`/${locale}/profile/addresses`);
+    router.prefetch(`/${locale}/profile/password`);
+    router.prefetch(`/${locale}/profile/delete-account`);
+  }, [locale, router]);
 
   function isActive(item: MenuItem): boolean {
     if (item.exact) {
@@ -108,21 +116,22 @@ export function ProfileMobileHub({
   }
 
   function renderRow(item: MenuItem): ReactNode {
-    const theme = ICON_THEMES[item.iconTheme];
     const active = isActive(item);
     const content = (
       <>
         <span className="flex min-w-0 items-center gap-3">
           <span
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-              item.danger ? "bg-red-50 text-red-500" : `${theme.bg} ${theme.fg}`
+              item.danger
+                ? "bg-red-50 text-red-600"
+                : "bg-gray-100 text-brand-forest"
             }`}
           >
             {item.icon}
           </span>
           <span
-            className={`truncate text-base font-medium ${
-              item.danger ? "text-red-500" : "text-gray-800"
+            className={`truncate font-big-fat-boii text-base font-normal tracking-wide uppercase ${
+              item.danger ? "text-red-700" : "text-gray-900"
             }`}
           >
             {item.label}
@@ -130,7 +139,7 @@ export function ProfileMobileHub({
         </span>
         <ChevronRight
           className={`h-[18px] w-[18px] shrink-0 ${
-            item.danger ? "text-red-400" : "text-gray-400 opacity-80"
+            item.danger ? "text-red-400" : "text-gray-500 opacity-80"
           }`}
           aria-hidden
         />
@@ -144,7 +153,7 @@ export function ProfileMobileHub({
           type="button"
           onClick={onOpenDashboard}
           aria-current={active ? "page" : undefined}
-          className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50/80"
+          className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50"
         >
           {content}
         </button>
@@ -157,7 +166,7 @@ export function ProfileMobileHub({
           <AppLink
             href={item.href}
             prefetchPolicy="intent"
-            className="flex w-full items-center justify-between rounded-xl border border-red-200 bg-white px-3 py-3 text-left transition-colors hover:bg-red-50/60"
+            className="flex w-full items-center justify-between rounded-2xl border border-red-200 bg-red-50/60 px-3 py-3 text-left transition-colors hover:bg-red-50"
           >
             {content}
           </AppLink>
@@ -171,7 +180,7 @@ export function ProfileMobileHub({
         href={item.href}
         prefetchPolicy="intent"
         aria-current={active ? "page" : undefined}
-        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50/80"
+        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-gray-50"
       >
         {content}
       </AppLink>
@@ -179,46 +188,83 @@ export function ProfileMobileHub({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-4">
-      <section
-        className="rounded-[var(--radius)] bg-white px-4 py-5 shadow-sm ring-1 ring-gray-200/70"
-        aria-label={dictionary.title}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gray-900 text-base font-semibold text-white shadow-[0_0_0_3px_white]">
-            {user.firstName.slice(0, 1).toUpperCase()}
-            {user.lastName.slice(0, 1).toUpperCase()}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-xl font-bold leading-tight text-gray-900">
-              {displayName}
-            </p>
-            <p className="truncate text-sm leading-snug text-gray-500">
-              {user.email}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <nav
-        className="overflow-hidden rounded-[var(--radius)] bg-white py-1 shadow-sm ring-1 ring-gray-200/70"
-        aria-label={dictionary.title}
-      >
-        <div className="divide-y divide-gray-100">
-          {mainItems.map((item) => renderRow(item))}
-        </div>
-        {dangerItem ? renderRow(dangerItem) : null}
-      </nav>
-
-      <form action={logoutWithLocale}>
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center gap-2.5 rounded-[var(--radius)] bg-gray-900 py-3.5 text-base font-semibold text-white transition-opacity hover:opacity-90"
+    <Stagger
+      immediate
+      className="mx-auto flex w-full max-w-md flex-col gap-4"
+    >
+      <StaggerItem>
+        <section
+          className="overflow-hidden rounded-3xl bg-white px-4 py-5 shadow-sm"
+          aria-label={dictionary.title}
         >
-          <LogOut className="h-5 w-5 shrink-0" aria-hidden />
-          {dictionary.logout}
-        </button>
-      </form>
-    </div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-forest text-base font-semibold text-white">
+              {user.firstName.slice(0, 1).toUpperCase()}
+              {user.lastName.slice(0, 1).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-big-fat-boii text-xl font-normal leading-tight tracking-wide text-gray-900 uppercase">
+                {displayName}
+              </p>
+              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-600">
+                <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                <span className="truncate">{user.email}</span>
+              </p>
+              {user.phone ? (
+                <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-600">
+                  <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  <span className="truncate">{user.phone}</span>
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      </StaggerItem>
+
+      <StaggerItem>
+        <AppLink
+          href={`/${locale}/profile/bonuses`}
+          prefetchPolicy="intent"
+          className="flex items-center justify-between gap-3 overflow-hidden rounded-3xl bg-white px-4 py-3.5 shadow-sm transition-colors hover:bg-gray-50"
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <ProfileBonusIcon className="h-7 w-7 shrink-0 text-brand-forest" />
+            <span className="truncate font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
+              {dictionary.bonuses}
+            </span>
+          </span>
+          <span className="flex shrink-0 items-center gap-2">
+            <span className="font-big-fat-boii text-lg font-normal tracking-wide text-brand-forest">
+              {formatMoneyAmount(user.bonusBalance, "AMD", locale)}
+            </span>
+            <ChevronRight
+              className="h-[18px] w-[18px] text-gray-500 opacity-80"
+              aria-hidden
+            />
+          </span>
+        </AppLink>
+      </StaggerItem>
+
+      <StaggerItem>
+        <nav
+          className="overflow-hidden rounded-3xl bg-white py-1 shadow-sm"
+          aria-label={dictionary.title}
+        >
+          <div className="divide-y divide-gray-100">
+            {mainItems.map((item) => renderRow(item))}
+          </div>
+          {dangerItem ? <div>{renderRow(dangerItem)}</div> : null}
+        </nav>
+      </StaggerItem>
+
+      <StaggerItem>
+        <form action={logoutWithLocale}>
+          <button type="submit" className={`${PROFILE_PILL_LIGHT} w-full gap-2.5`}>
+            <LogOut className="h-5 w-5 shrink-0" aria-hidden />
+            {dictionary.logout}
+          </button>
+        </form>
+      </StaggerItem>
+    </Stagger>
   );
 }

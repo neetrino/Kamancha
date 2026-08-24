@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { IconDropdown } from "@/components/ui/IconDropdown";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import type { Currency } from "@/lib/money/currency";
 import {
@@ -15,17 +16,57 @@ import {
 
 type CurrencySwitcherProps = {
   currency: Currency;
+  availableCurrencies?: readonly Currency[];
   label: string;
   menuPlacement?: "bottom" | "top";
+  /** Inline AMD / USD / RUB control (mobile burger). */
+  variant?: "dropdown" | "segmented";
 };
 
 export function CurrencySwitcher({
   currency,
+  availableCurrencies = currencies,
   label,
   menuPlacement = "bottom",
+  variant = "dropdown",
 }: CurrencySwitcherProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [activeCurrency, setActiveCurrency] = useState(currency);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setActiveCurrency(currency);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [currency]);
+
+  if (availableCurrencies.length <= 1) {
+    return null;
+  }
+
+  if (variant === "segmented") {
+    return (
+      <SegmentedControl
+        aria-label={label}
+        value={activeCurrency}
+        size="sm"
+        fullWidth
+        disabled={pending}
+        options={availableCurrencies.map((item) => ({
+          value: item,
+          label: item,
+        }))}
+        onSelect={(item) => {
+          setActiveCurrency(item);
+          startTransition(async () => {
+            await setCurrencyAction(item);
+            router.refresh();
+          });
+        }}
+      />
+    );
+  }
 
   return (
     <IconDropdown
@@ -43,7 +84,7 @@ export function CurrencySwitcher({
         </span>
       )}
     >
-      {currencies.map((item) => {
+      {availableCurrencies.map((item) => {
         const selected = item === currency;
 
         return (

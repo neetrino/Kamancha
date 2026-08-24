@@ -1,47 +1,91 @@
 "use client";
 
-import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
-import { formatMoneyAmount } from "@/lib/money/format";
-import type { Locale } from "@/lib/i18n/config";
+import Image from "next/image";
+
+import {
+  CASH_CHANGE_NONE,
+  CHECKOUT_CASH_CHANGE_GRID_CLASS,
+  CHECKOUT_CASH_CHANGE_HINT_CLASS,
+  CHECKOUT_CASH_CHANGE_NONE_CLASS,
+  CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS,
+  CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS,
+  CHECKOUT_CASH_CHANGE_OPTION_BASE_CLASS,
+  CHECKOUT_CASH_CHANGE_OPTION_DEFAULT_CLASS,
+  CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS,
+  CHECKOUT_CASH_CHANGE_SECTION_CLASS,
+  CHECKOUT_CASH_CHANGE_TITLE_CLASS,
+  type CashChangeSelection,
+} from "@/features/checkout/ui/checkout-cash-change-assets";
+import {
+  computeCashChangeDue,
+  type CashChangeDenominationView,
+} from "@/features/delivery/domain/cash-change";
 
 type CashChangePickerLabels = {
   title: string;
   hint: string;
-  ariaLabel: string;
+  noneLabel: string;
+  dueLabel: string;
 };
 
 type CashChangePickerProps = {
   options: CashChangeDenominationView[];
-  value: number | null;
-  onChange: (amount: number) => void;
+  value: CashChangeSelection;
+  onChange: (value: CashChangeSelection) => void;
   disabled?: boolean;
-  locale: Locale;
+  payableTotal: number;
+  dueFormatted: string | null;
   labels: CashChangePickerLabels;
 };
+
+function optionClass(selected: boolean): string {
+  return `${CHECKOUT_CASH_CHANGE_OPTION_BASE_CLASS} ${
+    selected
+      ? CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS
+      : CHECKOUT_CASH_CHANGE_OPTION_DEFAULT_CLASS
+  }`;
+}
 
 export function CashChangePicker({
   options,
   value,
   onChange,
   disabled = false,
-  locale,
+  payableTotal,
+  dueFormatted,
   labels,
 }: CashChangePickerProps) {
-  if (options.length === 0) {
-    return null;
-  }
+  const visibleOptions = options.filter(
+    (option) => computeCashChangeDue(option.amount, payableTotal) != null,
+  );
 
   return (
-    <fieldset className="mt-4" disabled={disabled}>
-      <legend className="text-sm font-medium text-gray-900">{labels.title}</legend>
-      <p className="mt-1 text-sm text-gray-600">{labels.hint}</p>
+    <div className={CHECKOUT_CASH_CHANGE_SECTION_CLASS}>
+      <h3 className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_TITLE_CLASS}`}>
+        {labels.title}
+      </h3>
+      <p className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_HINT_CLASS}`}>
+        {labels.hint}
+      </p>
       <div
-        className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4"
+        className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_GRID_CLASS}`}
         role="radiogroup"
-        aria-label={labels.ariaLabel}
+        aria-label={labels.title}
       >
-        {options.map((option) => {
+        <button
+          type="button"
+          role="radio"
+          aria-checked={value === CASH_CHANGE_NONE}
+          disabled={disabled}
+          className={`${optionClass(value === CASH_CHANGE_NONE)} ${CHECKOUT_CASH_CHANGE_NONE_CLASS}`}
+          onClick={() => onChange(CASH_CHANGE_NONE)}
+        >
+          <span className="relative z-[2]">{labels.noneLabel}</span>
+        </button>
+        {visibleOptions.map((option) => {
           const selected = value === option.amount;
+          const src = option.imageUrl || null;
+
           return (
             <button
               key={option.id}
@@ -49,34 +93,31 @@ export function CashChangePicker({
               role="radio"
               aria-checked={selected}
               disabled={disabled}
+              className={`${optionClass(selected)} ${CHECKOUT_CASH_CHANGE_NOTE_BUTTON_CLASS}`}
               onClick={() => onChange(option.amount)}
-              className={`flex flex-col items-center gap-2 rounded-2xl border px-3 py-3 text-center transition-colors ${
-                selected
-                  ? "border-gray-900 bg-gray-50 ring-1 ring-gray-900"
-                  : "border-gray-200 bg-white hover:border-gray-300"
-              } disabled:cursor-not-allowed disabled:opacity-50`}
             >
-              <span className="flex h-14 w-full items-center justify-center overflow-hidden rounded-lg bg-gray-50">
-                {option.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- CDN/local media URL
-                  <img
-                    src={option.imageUrl}
-                    alt=""
-                    className="h-full w-full object-contain"
-                  />
-                ) : (
-                  <span className="text-lg font-semibold text-gray-700">
-                    {Math.round(option.amount / 1000)}k
-                  </span>
-                )}
-              </span>
-              <span className="text-sm font-medium text-gray-900">
-                {formatMoneyAmount(option.amount, "AMD", locale)}
-              </span>
+              {src ? (
+                <Image
+                  src={src}
+                  alt={`${option.amount} AMD`}
+                  fill
+                  className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS}`}
+                  sizes="(max-width: 743px) 45vw, (max-width: 1023px) 28vw, 140px"
+                />
+              ) : (
+                <span className="relative z-[2] px-1.5 text-center font-big-fat-boii text-[11px] font-normal leading-snug tracking-wide text-brand-forest uppercase sm:text-sm">
+                  {option.amount}
+                </span>
+              )}
             </button>
           );
         })}
       </div>
-    </fieldset>
+      {dueFormatted ? (
+        <p className="relative z-[2] mt-4 text-sm font-semibold text-brand-forest">
+          {labels.dueLabel.replace("{amount}", dueFormatted)}
+        </p>
+      ) : null}
+    </div>
   );
 }

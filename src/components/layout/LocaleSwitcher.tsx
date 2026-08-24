@@ -1,10 +1,13 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { IconDropdown } from "@/components/ui/IconDropdown";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { skipNextHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
 
@@ -12,7 +15,22 @@ type LocaleSwitcherProps = {
   locale: Locale;
   label: string;
   menuPlacement?: "bottom" | "top";
+  /** Inline EN / РУС / ՀԱՅ control (mobile burger). */
+  variant?: "dropdown" | "segmented";
 };
+
+const localeShortLabels: Record<Locale, string> = {
+  en: "EN",
+  ru: "РУС",
+  hy: "ՀԱՅ",
+};
+
+/** Display order for segmented control: EN / РУС / ՀԱՅ. */
+const segmentedLocales: readonly Locale[] = ["en", "ru", "hy"];
+
+function isHomePath(pathname: string, locale: Locale): boolean {
+  return pathname === `/${locale}` || pathname === `/${locale}/`;
+}
 
 function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
   const segments = pathname.split("/");
@@ -28,8 +46,54 @@ export function LocaleSwitcher({
   locale,
   label,
   menuPlacement = "bottom",
+  variant = "dropdown",
 }: LocaleSwitcherProps) {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? `/${locale}`;
+  const router = useRouter();
+  const [activeLocale, setActiveLocale] = useState(locale);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setActiveLocale(locale);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [locale]);
+
+  if (variant === "segmented") {
+    return (
+      <SegmentedControl
+        aria-label={label}
+        value={activeLocale}
+        size="sm"
+        fullWidth
+        options={segmentedLocales.map((item) => ({
+          value: item,
+          label: localeShortLabels[item],
+          href: replaceLocaleInPath(pathname, item),
+        }))}
+        renderOption={({ option, selected, className }) => (
+          <AppLink
+            href={option.href ?? `/${option.value}`}
+            hrefLang={option.value}
+            prefetchPolicy="intent"
+            aria-current={selected ? "page" : undefined}
+            className={className}
+            onClick={() => {
+              setActiveLocale(option.value);
+              if (isHomePath(pathname, locale)) {
+                skipNextHomeMotion();
+              }
+            }}
+            onMouseEnter={() => {
+              router.prefetch(option.href ?? `/${option.value}`);
+            }}
+          >
+            {option.label}
+          </AppLink>
+        )}
+      />
+    );
+  }
 
   return (
     <IconDropdown

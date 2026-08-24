@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/Card";
 import {
   ConfirmDialog,
 } from "@/components/ui/ConfirmDialog";
-import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   ADMIN_BADGE,
 } from "@/features/admin/ui/status-badge";
@@ -137,11 +137,11 @@ export function AdminUsersView({
   return (
     <section>
       <form method="get" className="mb-4 flex flex-wrap gap-3">
-        <input
+        <AdminSearchInput
           name="q"
           defaultValue={q ?? ""}
           placeholder={copy.users.searchPlaceholder}
-          className={`${ADMIN_INPUT} min-w-[220px] flex-1`}
+          className="min-w-[220px] flex-1"
           aria-label={copy.users.searchAria}
         />
         {role ? <input type="hidden" name="role" value={role} /> : null}
@@ -180,27 +180,29 @@ export function AdminUsersView({
 
       {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
 
-      <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
-        <p className="text-sm text-gray-700">
-          {copy.common.selectedCount
-            .replace("{count}", String(selected.size))
-            .replace("{entity}", selected.size === 1
-              ? copy.common.entitySingular.user
-              : copy.common.entitySingular.users)}
-        </p>
-        <Button
-          type="button"
-          size="sm"
-          variant="danger"
-          disabled={isPending || selected.size === 0}
-          onClick={() => {
-            if (selected.size === 0) return;
-            setConfirmOpen(true);
-          }}
-        >
-          {copy.users.deleteSelected}
-        </Button>
-      </Card>
+      {selected.size > 0 ? (
+        <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 p-4">
+          <p className="text-sm text-gray-700">
+            {copy.common.selectedCount
+              .replace("{count}", String(selected.size))
+              .replace(
+                "{entity}",
+                selected.size === 1
+                  ? copy.common.entitySingular.user
+                  : copy.common.entitySingular.users,
+              )}
+          </p>
+          <Button
+            type="button"
+            size="sm"
+            variant="danger"
+            disabled={isPending}
+            onClick={() => setConfirmOpen(true)}
+          >
+            {copy.users.deleteSelected}
+          </Button>
+        </Card>
+      ) : null}
 
       <Card className={ADMIN_TABLE_CARD}>
         {users.length === 0 ? (
@@ -237,8 +239,8 @@ export function AdminUsersView({
                     user.status === "ACTIVE" || user.status === "SUSPENDED";
 
                   return (
-                    <tr key={user.id} className={ADMIN_TABLE_ROW}>
-                      <td className={ADMIN_TABLE_TD_CHECK}>
+                    <tr key={user.id} className={`${ADMIN_TABLE_ROW} group relative`}>
+                      <td className={`${ADMIN_TABLE_TD_CHECK} relative z-10`}>
                         <input
                           type="checkbox"
                           className={ADMIN_TABLE_CHECKBOX}
@@ -251,9 +253,9 @@ export function AdminUsersView({
                       <td className={ADMIN_TABLE_TD}>
                         <Link
                           href={`/${locale}/admin/users/${user.id}`}
-                          className="block min-w-[160px]"
+                          className="block min-w-[160px] after:absolute after:inset-0"
                         >
-                          <p className="font-medium text-gray-900 hover:underline">
+                          <p className="relative z-10 font-medium text-gray-900 group-hover:underline">
                             {displayName(user)}
                           </p>
                           <p className="truncate text-xs text-gray-400">
@@ -283,7 +285,7 @@ export function AdminUsersView({
                           {user.role.toLowerCase()}
                         </span>
                       </td>
-                      <td className={ADMIN_TABLE_TD_CENTER}>
+                      <td className={`${ADMIN_TABLE_TD_CENTER} relative z-10`}>
                         <button
                           type="button"
                           role="switch"

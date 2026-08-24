@@ -1,11 +1,11 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
-import { CashChangePicker } from "@/features/checkout/ui/CashChangePicker";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
+import type { CheckoutPaymentOption } from "@/features/checkout/ui/CheckoutPaymentMethodOption";
+import type { CashChangeSelection } from "@/features/checkout/ui/checkout-cash-change-assets";
 import { DeliverySlotPicker } from "@/features/checkout/ui/DeliverySlotPicker";
 import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
@@ -13,7 +13,16 @@ import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-s
 import type { Locale } from "@/lib/i18n/config";
 
 const FIELD_CLASS =
-  "h-11 w-full rounded-2xl border border-gray-200 px-4 text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300 disabled:bg-gray-50";
+  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-500 hover:border-gray-300 focus:border-gray-400 disabled:bg-gray-50";
+
+const FIELD_LABEL_CLASS =
+  "flex flex-col gap-1.5 text-sm font-medium text-white/80";
+
+const SECTION_CLASS =
+  "liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
+
+const SECTION_TITLE_CLASS =
+  "relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase";
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -38,21 +47,14 @@ type CheckoutDetailsLabels = {
   mapResolving: string;
   calculatingDelivery: string;
   scheduleTitle: string;
-  schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
   cashChangeTitle: string;
   cashChangeHint: string;
-  cashChangeAria: string;
-};
-
-type PaymentOption = {
-  id: CheckoutPaymentMethod;
-  name: string;
-  description: string;
-  logoSrc: string | null;
+  cashChangeNone: string;
+  cashChangeDue: string;
 };
 
 type CheckoutDetailsSectionsProps = {
@@ -63,20 +65,23 @@ type CheckoutDetailsSectionsProps = {
   deliverySlot: SelectedDeliverySlot | null;
   onDeliverySlotChange: (value: SelectedDeliverySlot | null) => void;
   cashChangeOptions: CashChangeDenominationView[];
-  cashChangeAmount: number | null;
-  onCashChangeAmountChange: (amount: number) => void;
+  cashChangeAmount: CashChangeSelection;
+  onCashChangeAmountChange: (value: CashChangeSelection) => void;
+  payableTotal: number;
+  cashChangeDueFormatted: string | null;
   line1: string;
   onLine1Change: (value: string) => void;
   deliveryQuotePending: boolean;
   deliveryQuoteError: string | null;
-  deliveryQuoteHint: string | null;
   paymentMethod: CheckoutPaymentMethod;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
-  paymentOptions: PaymentOption[];
+  paymentOptions: CheckoutPaymentOption[];
   defaultFirstName: string;
   defaultLastName: string;
   defaultEmail: string;
   defaultPhone: string;
+  addressLocked?: boolean;
+  prepaidNotice?: { title: string; hint: string } | null;
 };
 
 export function CheckoutDetailsSections({
@@ -89,11 +94,12 @@ export function CheckoutDetailsSections({
   cashChangeOptions,
   cashChangeAmount,
   onCashChangeAmountChange,
+  payableTotal,
+  cashChangeDueFormatted,
   line1,
   onLine1Change,
   deliveryQuotePending,
   deliveryQuoteError,
-  deliveryQuoteHint,
   paymentMethod,
   onPaymentMethodChange,
   paymentOptions,
@@ -101,16 +107,18 @@ export function CheckoutDetailsSections({
   defaultLastName,
   defaultEmail,
   defaultPhone,
+  addressLocked = false,
+  prepaidNotice = null,
 }: CheckoutDetailsSectionsProps) {
   return (
-    <div className="space-y-6 lg:col-span-2">
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
+    <div className="space-y-6">
+      <section className={SECTION_CLASS}>
+        <h2 className={SECTION_TITLE_CLASS}>
           {labels.contactInformation}
         </h2>
-        <div className="space-y-4">
+        <div className="relative z-[2] space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.firstName}
               <input
                 name="firstName"
@@ -121,7 +129,7 @@ export function CheckoutDetailsSections({
                 autoComplete="given-name"
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.lastName}
               <input
                 name="lastName"
@@ -134,7 +142,7 @@ export function CheckoutDetailsSections({
             </label>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.email}
               <input
                 name="contactEmail"
@@ -146,7 +154,7 @@ export function CheckoutDetailsSections({
                 autoComplete="email"
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.phone}
               <input
                 name="contactPhone"
@@ -160,15 +168,15 @@ export function CheckoutDetailsSections({
             </label>
           </div>
         </div>
-      </Card>
+      </section>
 
-      <Card className="rounded-2xl border border-gray-200/80 p-6 shadow-none">
-        <h2 className="mb-6 text-xl font-semibold text-gray-900">
+      <section className={SECTION_CLASS} id="checkout-shipping-address">
+        <h2 className={SECTION_TITLE_CLASS}>
           {labels.shippingAddress}
         </h2>
-        <div className="space-y-4">
+        <div className="relative z-[2] space-y-4">
           <div className="space-y-1.5">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-white/80">
               {labels.address}
             </span>
             <div className="flex items-start gap-2">
@@ -179,11 +187,12 @@ export function CheckoutDetailsSections({
                   value={line1}
                   onValueChange={onLine1Change}
                   placeholder={labels.addressPlaceholder}
-                  disabled={pending}
+                  disabled={pending || addressLocked}
                   className={FIELD_CLASS}
                   languageCode={locale}
                 />
               </div>
+              {addressLocked ? null : (
               <AddressMapPicker
                 addressValue={line1}
                 disabled={pending}
@@ -197,10 +206,11 @@ export function CheckoutDetailsSections({
                   resolving: labels.mapResolving,
                 }}
               />
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.floor}
               <input
                 name="floor"
@@ -209,7 +219,7 @@ export function CheckoutDetailsSections({
                 className={FIELD_CLASS}
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
+            <label className={FIELD_LABEL_CLASS}>
               {labels.intercomCode}
               <input
                 name="intercomCode"
@@ -227,40 +237,33 @@ export function CheckoutDetailsSections({
             locale={locale}
             labels={{
               title: labels.scheduleTitle,
-              pickDate: labels.schedulePickDate,
               pickTime: labels.schedulePickTime,
               noSlots: labels.scheduleNoSlots,
               prevMonth: labels.schedulePrevMonth,
               nextMonth: labels.scheduleNextMonth,
             }}
           />
-          {paymentMethod === "cash_on_delivery" ? (
-            <CashChangePicker
-              options={cashChangeOptions}
-              value={cashChangeAmount}
-              onChange={onCashChangeAmountChange}
-              disabled={pending}
-              locale={locale}
-              labels={{
-                title: labels.cashChangeTitle,
-                hint: labels.cashChangeHint,
-                ariaLabel: labels.cashChangeAria,
-              }}
-            />
-          ) : null}
         </div>
         {deliveryQuotePending ? (
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="relative z-[2] mt-2 text-sm text-gray-500">
             {labels.calculatingDelivery}
           </p>
         ) : null}
         {deliveryQuoteError ? (
-          <p className="mt-2 text-sm text-red-700">{deliveryQuoteError}</p>
+          <p className="relative z-[2] mt-2 text-sm font-bold text-white">
+            {deliveryQuoteError}
+          </p>
         ) : null}
-        {!deliveryQuotePending && !deliveryQuoteError && deliveryQuoteHint ? (
-          <p className="mt-2 text-sm text-gray-600">{deliveryQuoteHint}</p>
-        ) : null}
-      </Card>
+      </section>
+
+      {prepaidNotice ? (
+        <section className={SECTION_CLASS}>
+          <h2 className={SECTION_TITLE_CLASS}>{prepaidNotice.title}</h2>
+          <p className="relative z-[2] text-sm text-white">
+            {prepaidNotice.hint}
+          </p>
+        </section>
+      ) : null}
 
       <CheckoutPaymentMethods
         title={labels.paymentMethod}
@@ -268,6 +271,17 @@ export function CheckoutDetailsSections({
         value={paymentMethod}
         onChange={onPaymentMethodChange}
         disabled={pending}
+        cashChangeOptions={cashChangeOptions}
+        cashChangeValue={cashChangeAmount}
+        onCashChangeChange={onCashChangeAmountChange}
+        cashChangeLabels={{
+          title: labels.cashChangeTitle,
+          hint: labels.cashChangeHint,
+          noneLabel: labels.cashChangeNone,
+          dueLabel: labels.cashChangeDue,
+        }}
+        payableTotal={payableTotal}
+        cashChangeDueFormatted={cashChangeDueFormatted}
       />
     </div>
   );

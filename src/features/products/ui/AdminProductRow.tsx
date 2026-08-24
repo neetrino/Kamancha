@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { Copy, Pencil, Star, Trash2 } from "lucide-react";
 
 import {
   ADMIN_TABLE_ROW,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TD_CHECK,
   ADMIN_TABLE_CHECKBOX,
 } from "@/features/admin/ui/admin-table-classes";
@@ -62,12 +64,14 @@ export function AdminProductRow({
       </td>
       <td className={ADMIN_TABLE_TD}>
         <div className="flex min-w-[200px] items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded bg-gray-100">
+          <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded bg-gray-100">
             {product.imageUrl ? (
-              <img
+              <Image
                 src={product.imageUrl}
                 alt=""
-                className="h-full w-full object-cover"
+                fill
+                unoptimized
+                className="object-cover"
               />
             ) : (
               <span className="text-[10px] text-gray-400">{copy.common.na}</span>
@@ -104,7 +108,7 @@ export function AdminProductRow({
             : copy.common.none}
         </span>
       </td>
-      <td className={ADMIN_TABLE_TD}>
+      <td className={ADMIN_TABLE_TD_CENTER}>
         <button
           type="button"
           disabled={disabled}
@@ -119,8 +123,8 @@ export function AdminProductRow({
           />
         </button>
       </td>
-      <td className={ADMIN_TABLE_TD}>
-        <div className="flex items-center gap-1">
+      <td className={ADMIN_TABLE_TD_CENTER}>
+        <div className="inline-flex items-center justify-center gap-1">
           <button
             type="button"
             onClick={onEdit}
@@ -166,7 +170,7 @@ export function AdminProductRow({
           </button>
         </div>
       </td>
-      <td className={ADMIN_TABLE_TD}>
+      <td className={ADMIN_TABLE_TD_CENTER}>
         <span className="text-xs text-gray-500">{createdLabel}</span>
       </td>
     </tr>

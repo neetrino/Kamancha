@@ -1,10 +1,16 @@
 import "server-only";
 
-import { and, asc, eq, isNotNull, isNull, or } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNotNull, isNull, or } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 
 import { getDb } from "@/db/client";
-import { categories, mediaAssets, type LocaleTranslation } from "@/db/schema";
+import {
+  categories,
+  mediaAssets,
+  productCategories,
+  products,
+  type LocaleTranslation,
+} from "@/db/schema";
 import {
   CACHE_TAGS,
   PUBLIC_CACHE_REVALIDATE_SECONDS,
@@ -17,6 +23,7 @@ export type StorefrontCategoryCard = {
   title: string;
   slug: string;
   imageUrl: string | null;
+  productCount: number;
 };
 
 function translationFor(
@@ -71,6 +78,30 @@ async function loadStorefrontCategories(
     images.set(media.categoryId, mediaPublicUrl(media.objectKey));
   }
 
+  const categoryIds = rows.map((row) => row.id);
+  const productCounts = new Map<string, number>();
+  if (categoryIds.length > 0) {
+    const countRows = await getDb()
+      .select({
+        categoryId: productCategories.categoryId,
+        productCount: count(products.id),
+      })
+      .from(productCategories)
+      .innerJoin(products, eq(products.id, productCategories.productId))
+      .where(
+        and(
+          inArray(productCategories.categoryId, categoryIds),
+          eq(products.status, "ACTIVE"),
+          isNull(products.deletedAt),
+        ),
+      )
+      .groupBy(productCategories.categoryId);
+
+    for (const row of countRows) {
+      productCounts.set(row.categoryId, Number(row.productCount));
+    }
+  }
+
   return rows
     .map((row) => {
       const translation = translationFor(row.translations, locale);
@@ -84,6 +115,7 @@ async function loadStorefrontCategories(
         title: translation.title,
         slug,
         imageUrl: images.get(row.id) ?? null,
+        productCount: productCounts.get(row.id) ?? 0,
       } satisfies StorefrontCategoryCard;
     })
     .filter((item): item is StorefrontCategoryCard => item !== null);
@@ -95,7 +127,7 @@ export async function listStorefrontCategories(
 ): Promise<StorefrontCategoryCard[]> {
   return unstable_cache(
     async () => loadStorefrontCategories(locale),
-    ["storefront-categories", locale],
+    ["storefront-categories-v2", locale],
     {
       tags: [CACHE_TAGS.categories],
       revalidate: PUBLIC_CACHE_REVALIDATE_SECONDS,

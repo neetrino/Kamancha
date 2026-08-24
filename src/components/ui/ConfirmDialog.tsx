@@ -8,6 +8,9 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+import { useIsClient } from "@/lib/react/use-is-client";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+
 /** Keep mounted through exit keyframes (Mobee dialog out is 280ms; fallback 320ms). */
 const CONFIRM_DIALOG_EXIT_MS = 320;
 
@@ -44,7 +47,7 @@ export function ConfirmDialog({
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [displayTitle, setDisplayTitle] = useState(title);
@@ -53,27 +56,23 @@ export function ConfirmDialog({
   const [displayCancelLabel, setDisplayCancelLabel] = useState(cancelLabel);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
     if (!open) return;
-    setDisplayTitle(title);
-    setDisplayDescription(description);
-    setDisplayConfirmLabel(confirmLabel);
-    setDisplayCancelLabel(cancelLabel);
+    scheduleStateUpdate(setDisplayTitle, title);
+    scheduleStateUpdate(setDisplayDescription, description);
+    scheduleStateUpdate(setDisplayConfirmLabel, confirmLabel);
+    scheduleStateUpdate(setDisplayCancelLabel, cancelLabel);
   }, [open, title, description, confirmLabel, cancelLabel]);
 
   useEffect(() => {
     if (open) {
-      setExiting(false);
-      setRendered(true);
+      scheduleStateUpdate(setExiting, false);
+      scheduleStateUpdate(setRendered, true);
       return;
     }
 
     if (!rendered) return;
 
-    setExiting(true);
+    scheduleStateUpdate(setExiting, true);
     const timer = window.setTimeout(() => {
       setRendered(false);
       setExiting(false);

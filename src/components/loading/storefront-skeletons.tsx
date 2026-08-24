@@ -73,7 +73,7 @@ export function BlogPostSkeleton() {
 export function CartCheckoutSkeleton() {
   return (
     <div
-      className={`${pulse} flex max-w-2xl flex-col gap-4`}
+      className={`checkout-page ${pulse} flex max-w-2xl flex-col gap-4`}
       aria-busy="true"
       aria-live="polite"
     >
@@ -82,24 +82,6 @@ export function CartCheckoutSkeleton() {
       <Block className="h-20 w-full rounded-lg" />
       <Block className="h-20 w-full rounded-lg" />
       <Block className="h-12 w-48 rounded-full" />
-    </div>
-  );
-}
-
-export function ProfileContentSkeleton() {
-  return (
-    <div className={`${pulse} space-y-8`} aria-busy="true" aria-live="polite">
-      <div className="space-y-2">
-        <Block className="h-8 w-56" />
-        <Block className="h-4 w-40" />
-      </div>
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Block className="h-24 rounded-2xl" />
-        <Block className="h-24 rounded-2xl" />
-        <Block className="h-24 rounded-2xl" />
-        <Block className="h-24 rounded-2xl" />
-      </div>
-      <Block className="h-64 w-full rounded-2xl" />
     </div>
   );
 }

@@ -1,64 +1,128 @@
-import type { ReactNode } from "react";
-import { Mail, MapPin, Phone } from "lucide-react";
+"use client";
 
+import { useMemo, type ReactNode } from "react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
+
+import { Stagger, StaggerItem, scrollRevealViewport } from "@/components/ui/RevealMotion";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ContactInfoProps = {
   copy: Dictionary["contact"];
 };
 
-function InfoBlock({
+type ContactPillItem = {
+  id: string;
+  icon: ReactNode;
+  href?: string;
+  content: ReactNode;
+};
+
+const PILL_CLASS =
+  "flex min-h-16 items-center gap-3 rounded-[70px] bg-white py-2 pr-5 pl-2.5 text-left max-[743px]:w-full max-[743px]:max-w-none min-[744px]:w-fit min-[744px]:max-w-[min(100%,calc(100vw-2.5rem))]";
+
+const ICON_WRAP_CLASS =
+  "flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white";
+
+const HOURS_TIME_CLASS = "text-[#b08a5a]";
+
+const STAGGER_PROPS = {
+  amount: scrollRevealViewport.amount,
+  viewportMargin: scrollRevealViewport.viewportMargin,
+  stagger: 0.08,
+} as const;
+
+function ContactPill({
   icon,
-  title,
   children,
+  href,
 }: {
   icon: ReactNode;
-  title: string;
   children: ReactNode;
+  href?: string;
 }) {
+  const inner = (
+    <>
+      <span className={ICON_WRAP_CLASS}>{icon}</span>
+      <span className="min-w-0 text-[15px] leading-4 font-medium tracking-[-0.3px] text-[#0a0a0a]">
+        {children}
+      </span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        className={`${PILL_CLASS} transition-opacity hover:opacity-90`}
+      >
+        {inner}
+      </a>
+    );
+  }
+
+  return <div className={PILL_CLASS}>{inner}</div>;
+}
+
+function buildContactPills(copy: Dictionary["contact"]): ContactPillItem[] {
+  return [
+    {
+      id: "hours",
+      icon: <Clock className="size-[22px]" strokeWidth={1.75} />,
+      content: (
+        <>
+          {copy.hoursEverydayLabel}{" "}
+          <span className={HOURS_TIME_CLASS}>{copy.hoursEverydayTime}</span>
+        </>
+      ),
+    },
+    {
+      id: "phone",
+      icon: <Phone className="size-[22px]" strokeWidth={1.75} />,
+      href: `tel:${copy.storePhone.replace(/\s/g, "")}`,
+      content: copy.storePhone,
+    },
+    {
+      id: "email",
+      icon: <Mail className="size-[22px]" strokeWidth={1.75} />,
+      href: `mailto:${copy.storeEmail}`,
+      content: <span className="break-all min-[744px]:break-normal">{copy.storeEmail}</span>,
+    },
+    {
+      id: "address-1",
+      icon: <MapPin className="size-[22px]" strokeWidth={1.75} />,
+      content: copy.storeAddress,
+    },
+    {
+      id: "address-2",
+      icon: <MapPin className="size-[22px]" strokeWidth={1.75} />,
+      content: copy.storeAddress2,
+    },
+  ];
+}
+
+function ContactPillRow({ item }: { item: ContactPillItem }) {
   return (
-    <div>
-      <div className="mb-3 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-700">
-          {icon}
-        </div>
-        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-      </div>
-      {children}
-    </div>
+    <StaggerItem className="w-full min-[744px]:w-auto">
+      <ContactPill icon={item.icon} href={item.href}>
+        {item.content}
+      </ContactPill>
+    </StaggerItem>
   );
 }
 
 export function ContactInfo({ copy }: ContactInfoProps) {
+  const pills = useMemo(() => buildContactPills(copy), [copy]);
+
   return (
-    <div className="space-y-8">
-      <InfoBlock icon={<Phone className="h-6 w-6" />} title={copy.callTitle}>
-        <p className="mb-2 text-gray-600">{copy.callDescription}</p>
-        <a
-          href={`tel:${copy.storePhone}`}
-          className="font-medium text-orange-500 transition-colors hover:text-orange-600"
-        >
-          {copy.storePhone}
-        </a>
-      </InfoBlock>
-
-      <InfoBlock icon={<Mail className="h-6 w-6" />} title={copy.writeTitle}>
-        <p className="mb-2 text-gray-600">{copy.writeDescription}</p>
-        <a
-          href={`mailto:${copy.storeEmail}`}
-          className="font-medium text-orange-500 transition-colors hover:text-orange-600"
-        >
-          {copy.emailLabel} {copy.storeEmail}
-        </a>
-      </InfoBlock>
-
-      <InfoBlock icon={<MapPin className="h-6 w-6" />} title={copy.hqTitle}>
-        <div className="mb-2 space-y-1 text-gray-600">
-          <p>{copy.hoursWeekdays}</p>
-          <p>{copy.hoursSaturday}</p>
-        </div>
-        <p className="font-medium text-orange-500">{copy.storeAddress}</p>
-      </InfoBlock>
+    <div data-node-id="267:221" className="w-full">
+      <Stagger
+        className="flex w-full flex-col gap-3 min-[744px]:flex-row min-[744px]:flex-wrap min-[744px]:items-stretch min-[744px]:justify-center min-[744px]:gap-4"
+        {...STAGGER_PROPS}
+      >
+        {pills.map((item) => (
+          <ContactPillRow key={item.id} item={item} />
+        ))}
+      </Stagger>
     </div>
   );
 }

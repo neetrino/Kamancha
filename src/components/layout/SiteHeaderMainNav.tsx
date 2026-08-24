@@ -1,11 +1,15 @@
 import { AccountControls } from "@/components/layout/AccountControls";
+import { BrandLogo } from "@/components/layout/BrandLogo";
+import { GroupOrderHeaderButton } from "@/components/layout/GroupOrderHeaderButton";
+import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
 import {
-  SITE_HEADER_ACTIONS_RAIL,
+  SITE_HEADER_ICON_RAIL,
   SITE_HEADER_INNER,
 } from "@/components/layout/site-header-classes";
-import { AppLink } from "@/components/ui/AppLink";
+import { SiteHeaderNavLinks } from "@/components/layout/SiteHeaderNavLinks";
 import { CartDrawer } from "@/features/cart/ui/CartDrawer";
 import { HeaderSearch } from "@/features/products/ui/HeaderSearch";
 import { WishlistHeaderLink } from "@/features/wishlist/ui/WishlistHeaderLink";
@@ -29,8 +33,49 @@ type SiteHeaderMainNavProps = {
   wishlistCount: number;
 };
 
-function navLinkClassName(): string {
-  return "rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-gray-900";
+type SiteHeaderIconRailProps = {
+  locale: Locale;
+  currency: Currency;
+  dictionary: Dictionary;
+  user: SessionUser | null;
+  cartItemCount: number;
+  wishlistCount: number;
+};
+
+function SiteHeaderIconRail({
+  locale,
+  currency,
+  dictionary,
+  user,
+  cartItemCount,
+  wishlistCount,
+}: SiteHeaderIconRailProps) {
+  return (
+    <div className={SITE_HEADER_ICON_RAIL}>
+      <CartDrawer
+        locale={locale}
+        currency={currency}
+        dictionary={dictionary}
+        itemCount={cartItemCount}
+        tone="onDark"
+      />
+      <WishlistHeaderLink
+        locale={locale}
+        label={dictionary.nav.wishlist}
+        count={wishlistCount}
+        tone="onDark"
+      />
+      <AccountControls
+        locale={locale}
+        loginLabel={dictionary.header.login}
+        logoutLabel={dictionary.header.logout}
+        profileLabel={dictionary.header.profile}
+        adminLabel={dictionary.header.admin}
+        user={user}
+        tone="onDark"
+      />
+    </div>
+  );
 }
 
 function headerSearchLabels(
@@ -53,6 +98,10 @@ function headerSearchLabels(
   };
 }
 
+/**
+ * Kamancha storefront header (Figma 22:393):
+ * logo, nav, search | centered icon rail | language switcher.
+ */
 export function SiteHeaderMainNav({
   locale,
   currency,
@@ -65,81 +114,105 @@ export function SiteHeaderMainNav({
   const searchLabels = headerSearchLabels(dictionary.header);
 
   return (
-    <header className="relative z-40 border-b border-gray-200/80 bg-gradient-to-b from-gray-50 to-white shadow-sm backdrop-blur-sm">
+    <header className="relative z-40 bg-transparent text-white" data-node-id="22:393">
       <div className={SITE_HEADER_INNER}>
-        <div className="flex flex-wrap items-center gap-2 py-4 sm:gap-4 md:py-3">
-          <div className="flex w-full items-center justify-between md:w-auto md:justify-start md:gap-0">
-            <AppLink
-              href={`/${locale}`}
-              prefetchPolicy="intent"
-              className="text-lg font-semibold tracking-tight text-gray-900"
-            >
-              {dictionary.brand}
-            </AppLink>
+        <div className="relative flex min-h-12 items-center xl:min-h-[65px]">
+          <BrandLogo locale={locale} brandName={dictionary.brand} />
 
-          <div className="flex items-center gap-2 md:hidden">
-            <HeaderSearch
-              locale={locale}
-              currency={currency}
-              labels={searchLabels}
-            />
-            <LocaleCurrencySwitcher
-              locale={locale}
-              currency={currency}
-              currencyLabel={dictionary.header.currency}
-              languageLabel={dictionary.header.language}
-            />
-            <MobileNavDrawer
-              locale={locale}
-              dictionary={dictionary}
-              navItems={navItems}
-            />
-          </div>
+          {/* Nav centered in the free space between logo and search */}
+          <div className="hidden min-w-0 flex-1 items-center justify-center px-4 xl:flex">
+            <SiteHeaderNavLinks locale={locale} items={navItems} />
           </div>
 
-          <nav
-            aria-label="Primary"
-            className="order-3 hidden w-full items-center justify-center gap-1 md:order-none md:flex md:flex-1"
-          >
-            {navItems.map((item) => (
-              <AppLink
-                key={item.href}
-                href={item.href}
-                prefetchPolicy="intent"
-                className={navLinkClassName()}
+          <div className="ml-auto flex min-w-0 items-center self-center xl:ml-0">
+            {/* Desktop: search | icons | language | group order */}
+            <div className="hidden h-12 items-center gap-4 xl:flex">
+              <HeaderSearch
+                locale={locale}
+                currency={currency}
+                labels={searchLabels}
+                variant="responsive"
+                tone="onDark"
+              />
+
+              <SiteHeaderIconRail
+                locale={locale}
+                currency={currency}
+                dictionary={dictionary}
+                user={user}
+                cartItemCount={cartItemCount}
+                wishlistCount={wishlistCount}
+              />
+
+              <LocaleCurrencySwitcher
+                locale={locale}
+                currency={currency}
+                currencyLabel={dictionary.header.currency}
+                languageLabel={dictionary.header.language}
+                tone="onDark"
+              />
+
+              <GroupOrderHeaderButton
+                locale={locale}
+                label={dictionary.nav.groupOrder}
+                labels={dictionary.groupOrder}
+                defaultName={
+                  user
+                    ? [user.firstName, user.lastName].filter(Boolean).join(" ")
+                    : ""
+                }
+              />
+            </div>
+
+            {/* Below xl: home-style menu + account pill */}
+            <div className="flex items-center self-center xl:hidden">
+              <div
+                className="flex h-14 w-[113px] items-center justify-between rounded-[28px] bg-white pr-[2.5px] pl-3"
+                data-mobile-header-pill
+                data-node-id="181:504"
               >
-                {item.label}
-              </AppLink>
-            ))}
-          </nav>
-
-          <div
-            className={`${SITE_HEADER_ACTIONS_RAIL} ml-auto hidden justify-center gap-2 md:flex`}
-          >
-            <HeaderSearch
-              locale={locale}
-              currency={currency}
-              labels={searchLabels}
-            />
-            <AccountControls
-              locale={locale}
-              loginLabel={dictionary.header.login}
-              logoutLabel={dictionary.header.logout}
-              profileLabel={dictionary.header.profile}
-              adminLabel={dictionary.header.admin}
-              user={user}
-            />
-            <WishlistHeaderLink
-              locale={locale}
-              label={dictionary.nav.wishlist}
-              count={wishlistCount}
-            />
-            <CartDrawer
-              locale={locale}
-              currency={currency}
-              dictionary={dictionary}
-              itemCount={cartItemCount}
-            />
+                <MobileNavDrawer
+                  locale={locale}
+                  dictionary={dictionary}
+                  navItems={navItems}
+                  forestTrigger
+                  triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
+                  panelFooter={
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="min-w-0 space-y-2">
+                        <span className="text-xs font-medium tracking-wide text-gray-500">
+                          {dictionary.header.language}
+                        </span>
+                        <LocaleSwitcher
+                          locale={locale}
+                          label={dictionary.header.language}
+                          variant="segmented"
+                        />
+                      </div>
+                      <div className="min-w-0 space-y-2">
+                        <span className="text-xs font-medium tracking-wide text-gray-500">
+                          {dictionary.header.currency}
+                        </span>
+                        <CurrencySwitcher
+                          currency={currency}
+                          label={dictionary.header.currency}
+                          variant="segmented"
+                        />
+                      </div>
+                    </div>
+                  }
+                />
+                <AccountControls
+                  locale={locale}
+                  loginLabel={dictionary.header.login}
+                  logoutLabel={dictionary.header.logout}
+                  profileLabel={dictionary.header.profile}
+                  adminLabel={dictionary.header.admin}
+                  user={user}
+                  tone="pill"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,63 +1,66 @@
-import Image from "next/image";
-
-import { AppLink } from "@/components/ui/AppLink";
-
-type CategoryItem = {
-  id: string;
-  title: string;
-  href: string;
-  imageUrl: string | null;
-};
+import {
+  HomeCategoryCard,
+  type HomeCategoryCardItem,
+} from "@/features/home/ui/HomeCategoryCard";
+import {
+  HOME_HORIZONTAL_SCROLL,
+  HomeReveal,
+  HomeStagger,
+  HomeStaggerItem,
+} from "@/features/home/ui/home-motion";
 
 type HomeCategoriesProps = {
   title: string;
+  productCountLabel: string;
   emptyLabel: string;
-  categories: readonly CategoryItem[];
+  categories: readonly HomeCategoryCardItem[];
 };
 
+/**
+ * Home categories — Figma title 22:205 + row 22:209.
+ * Full-bleed scroll row; cards keep Figma size (376×135).
+ */
 export function HomeCategories({
   title,
+  productCountLabel,
   emptyLabel,
   categories,
 }: HomeCategoriesProps) {
   return (
-    <section className="bg-white py-14">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h2 className="mb-8 text-3xl font-bold text-gray-900 md:text-4xl">
+    <section className="relative z-[1] pt-10 pb-6 sm:pt-12 md:pt-14">
+      <HomeReveal>
+        <h2
+          data-node-id="22:205"
+          className="mb-10 text-center font-big-fat-boii text-[40px] leading-[1.05] font-normal text-white sm:mb-11 sm:text-[48px] md:mb-[42px] md:text-[58px] md:leading-[60px]"
+        >
           {title}
         </h2>
+      </HomeReveal>
 
-        {categories.length === 0 ? (
-          <p className="text-gray-600">{emptyLabel}</p>
-        ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {categories.map((category) => (
-              <AppLink
-                key={category.id}
-                href={category.href}
-                prefetchPolicy="intent"
-                className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100"
-              >
-                {category.imageUrl ? (
-                  <Image
-                    src={category.imageUrl}
-                    alt={category.title}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover transition duration-500 group-hover:scale-105"
+      {categories.length === 0 ? (
+        <p className="px-5 text-center text-white/70">{emptyLabel}</p>
+      ) : (
+        <div
+          data-node-id="22:209"
+          className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2"
+        >
+          <div className={HOME_HORIZONTAL_SCROLL}>
+            <HomeStagger
+              className="inline-flex gap-[19px] px-16 pb-4 pt-5"
+              stagger={0.07}
+            >
+              {categories.map((category) => (
+                <HomeStaggerItem key={category.id} className="shrink-0" y={0}>
+                  <HomeCategoryCard
+                    category={category}
+                    productCountLabel={productCountLabel}
                   />
-                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
-                <span className="absolute inset-x-0 bottom-0 p-4 text-base font-semibold text-white sm:text-lg">
-                  {category.title}
-                </span>
-              </AppLink>
-            ))}
+                </HomeStaggerItem>
+              ))}
+            </HomeStagger>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }

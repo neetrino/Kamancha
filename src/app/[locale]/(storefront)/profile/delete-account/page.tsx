@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { DeleteAccountForm } from "@/features/profile/ui/DeleteAccountForm";
-import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -17,7 +16,6 @@ export default async function DeleteAccountPage({
     notFound();
   }
 
-  await requireUser(locale);
   const dictionary = getDictionary(locale);
   const copy = dictionary.profile.deleteAccountForm;
 

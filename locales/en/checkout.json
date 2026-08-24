@@ -46,10 +46,12 @@
     "selectSlot": "Please select a delivery date and time"
   },
   "cashChange": {
-    "title": "Need change from",
-    "hint": "Select the banknote you will pay with so the courier can bring change.",
+    "title": "CHANGE",
+    "hint": "Tap the banknote you will pay with so we can prepare the change.",
     "aria": "Cash change denomination",
-    "select": "Please select the banknote you will pay with"
+    "select": "Please select the banknote you will pay with",
+    "none": "No change needed",
+    "due": "Your change is {amount}"
   },
   "shipping": {
     "storePickup": "Store Pickup",
@@ -64,11 +66,20 @@
   },
   "payment": {
     "cashOnDelivery": "Cash on Delivery",
+    "cashShort": "Cash",
     "cashOnDeliveryDescription": "Pay cash when you receive your order",
     "idram": "Idram",
     "idramDescription": "Pay with Idram wallet or card",
+    "card": "By card",
+    "cardDescription": "Pay with Visa, Mastercard or ArCa card",
     "arca": "ArCa",
     "arcaDescription": "Pay with ArCa card"
+  },
+  "groupPrepaid": {
+    "title": "Group order payments",
+    "hint": "Other participants already paid their share.",
+    "othersPaid": "Already paid",
+    "youPay": "You pay"
   },
   "coupon": {
     "title": "Have a coupon?",
@@ -81,6 +92,7 @@
     "discount": "Discount",
     "shipping": "Shipping",
     "tax": "Tax",
+    "change": "Change",
     "total": "Total"
   },
   "buttons": {

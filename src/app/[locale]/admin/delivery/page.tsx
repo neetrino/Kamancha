@@ -35,7 +35,11 @@ export default async function AdminDeliveryPage({
       locale={locale}
       settings={settings}
       initialImageUrls={initialImageUrls}
-      copy={{ delivery: dict.admin.delivery, common: dict.admin.common }}
+      copy={{
+        delivery: dict.admin.delivery,
+        common: dict.admin.common,
+        confirm: dict.admin.confirm,
+      }}
     />
   );
 }

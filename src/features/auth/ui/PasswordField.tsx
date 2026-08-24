@@ -3,8 +3,10 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-const fieldClassName =
-  "h-10 w-full rounded-lg border border-gray-200 px-3 pr-10 text-gray-900 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200";
+import {
+  AUTH_LABEL_CLASS,
+  authFieldClassName,
+} from "@/features/auth/ui/auth-form-styles";
 
 type PasswordFieldProps = {
   name: string;
@@ -12,6 +14,10 @@ type PasswordFieldProps = {
   showPasswordLabel: string;
   hidePasswordLabel: string;
   autoComplete: string;
+  disabled?: boolean;
+  markRequired?: boolean;
+  defaultValue?: string;
+  invalid?: boolean;
 };
 
 export function PasswordField({
@@ -20,23 +26,39 @@ export function PasswordField({
   showPasswordLabel,
   hidePasswordLabel,
   autoComplete,
+  disabled = false,
+  markRequired = false,
+  defaultValue = "",
+  invalid = false,
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
 
   return (
-    <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-      {label}
+    <label className={AUTH_LABEL_CLASS}>
+      <span className="mb-2 block">
+        {label}
+        {markRequired ? (
+          <span className="text-brand-forest" aria-hidden>
+            {" "}
+            *
+          </span>
+        ) : null}
+      </span>
       <span className="relative block">
         <input
           required
           name={name}
           type={visible ? "text" : "password"}
           autoComplete={autoComplete}
-          className={fieldClassName}
+          disabled={disabled}
+          defaultValue={defaultValue}
+          aria-invalid={invalid || undefined}
+          aria-required={markRequired || undefined}
+          className={`${authFieldClassName(invalid)} pr-11`}
         />
         <button
           type="button"
-          className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-gray-500 transition hover:text-gray-800"
+          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-brand-forest/70 transition hover:text-brand-forest"
           aria-label={visible ? hidePasswordLabel : showPasswordLabel}
           aria-pressed={visible}
           onClick={() => setVisible((current) => !current)}

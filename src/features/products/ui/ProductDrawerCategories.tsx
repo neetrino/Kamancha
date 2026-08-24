@@ -203,7 +203,7 @@ export function ProductDrawerCategories({
               type="button"
               disabled={disabled || isPending || !newTitle.trim()}
               onClick={createCategory}
-              className="rounded-lg bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+              className="rounded-lg bg-brand-forest px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isPending ? copy.adding : copy.add}
             </button>

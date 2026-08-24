@@ -1,4 +1,5 @@
 import type { Currency } from "@/lib/money/currency";
+import { currencySymbols } from "@/lib/money/currency";
 import { getCurrencyMeta } from "@/lib/money/currency-meta";
 
 /** Narrow no-break space — stable across Node and browsers (unlike Intl hy/AMD). */
@@ -26,12 +27,13 @@ function formatMajorAmount(major: number, fractionDigits: number): string {
   return `${sign}${grouped}`;
 }
 
-/** Formats an integer minor-unit amount with a stable currency code suffix. */
+/** Formats an integer minor-unit amount with a stable currency symbol suffix. */
 export function formatMoneyAmount(
   amount: bigint | number,
   currency: Currency,
-  _locale: string,
+  locale: string,
 ): string {
+  void locale;
   const meta = getCurrencyMeta(currency);
   const raw = typeof amount === "bigint" ? Number(amount) : amount;
 
@@ -40,5 +42,5 @@ export function formatMoneyAmount(
   }
 
   const major = raw / 10 ** meta.scale;
-  return `${formatMajorAmount(major, meta.fractionDigits)} ${currency}`;
+  return `${formatMajorAmount(major, meta.fractionDigits)} ${currencySymbols[currency]}`;
 }

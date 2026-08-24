@@ -10,6 +10,7 @@ import {
   ConfirmDialog,
   deleteConfirmDescription,
 } from "@/components/ui/ConfirmDialog";
+import { Toast } from "@/components/ui/Toast";
 import {
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
@@ -66,6 +67,15 @@ export function AdminCouponsView({ locale, coupons, copy }: AdminCouponsViewProp
     id: string;
     code: string;
   } | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  function copyCode(code: string): void {
+    void navigator.clipboard.writeText(code).then(() => {
+      setToastMessage(
+        copy.coupons.codeCopied.replace("{code}", code),
+      );
+    });
+  }
 
   function openCreate(): void {
     setEditingCoupon(null);
@@ -160,9 +170,23 @@ export function AdminCouponsView({ locale, coupons, copy }: AdminCouponsViewProp
                 {coupons.map((promo) => (
                   <tr key={promo.id} className={ADMIN_TABLE_ROW}>
                     <td className={ADMIN_TABLE_TD}>
-                      <span className="font-medium text-gray-900">
-                        {promo.code}
-                      </span>
+                      {promo.code ? (
+                        <button
+                          type="button"
+                          className="w-full text-left font-medium text-gray-900 underline-offset-2 transition-colors hover:text-brand-forest hover:underline"
+                          aria-label={copy.coupons.table.copyCodeAria.replace(
+                            "{code}",
+                            promo.code,
+                          )}
+                          onClick={() => {
+                            if (promo.code) copyCode(promo.code);
+                          }}
+                        >
+                          {promo.code}
+                        </button>
+                      ) : (
+                        <span className="text-gray-400">{copy.common.none}</span>
+                      )}
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
                       {promo.discountType === "PERCENTAGE"
@@ -282,6 +306,12 @@ export function AdminCouponsView({ locale, coupons, copy }: AdminCouponsViewProp
           if (!isPending) setPendingDelete(null);
         }}
         onConfirm={confirmDelete}
+      />
+
+      <Toast
+        open={toastMessage != null}
+        message={toastMessage ?? ""}
+        onClose={() => setToastMessage(null)}
       />
     </section>
   );

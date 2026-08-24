@@ -3,17 +3,21 @@
 import { Calendar } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { AdminDateTimePickerField } from "@/features/admin/ui/AdminDateTimePickerField";
 import type {
   ProductDiscountDraft,
   ProductDiscountType,
 } from "@/features/products/types/product-discount";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type ProductDrawerDiscountProps = {
   value: ProductDiscountDraft | null;
   disabled?: boolean;
   onChange: (next: ProductDiscountDraft | null) => void;
+  locale: string;
+  common: Dictionary["admin"]["common"];
   copy: Dictionary["admin"]["products"]["discount"];
 };
 
@@ -36,6 +40,8 @@ export function ProductDrawerDiscount({
   value,
   disabled = false,
   onChange,
+  locale,
+  common,
   copy,
 }: ProductDrawerDiscountProps) {
   const [scheduleOpen, setScheduleOpen] = useState(false);
@@ -54,10 +60,13 @@ export function ProductDrawerDiscount({
   const hasSchedule = Boolean(startsAt || endsAt);
 
   useEffect(() => {
-    setType(value?.type ?? "PERCENTAGE");
-    setAmount(value?.value != null && value.value > 0 ? String(value.value) : "");
-    setStartsAt(value?.startsAt ?? null);
-    setEndsAt(value?.endsAt ?? null);
+    scheduleStateUpdate(setType, value?.type ?? "PERCENTAGE");
+    scheduleStateUpdate(
+      setAmount,
+      value?.value != null && value.value > 0 ? String(value.value) : "",
+    );
+    scheduleStateUpdate(setStartsAt, value?.startsAt ?? null);
+    scheduleStateUpdate(setEndsAt, value?.endsAt ?? null);
   }, [value]);
 
   useEffect(() => {
@@ -163,7 +172,7 @@ export function ProductDrawerDiscount({
         <ul
           id={typeListId}
           role="listbox"
-          className="absolute left-0 z-20 mt-1 w-28 overflow-hidden rounded-xl bg-gray-800 py-1 text-sm text-white shadow-lg"
+          className="absolute left-0 z-20 mt-1 w-28 overflow-hidden rounded-xl bg-gray-800 py-1 text-sm text-white"
         >
           {(
             [
@@ -192,38 +201,38 @@ export function ProductDrawerDiscount({
       {scheduleOpen ? (
         <div
           id={scheduleId}
-          className="absolute right-0 z-20 mt-2 w-[min(100%,20rem)] space-y-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-lg"
+          className="absolute right-0 z-20 mt-2 w-[min(100%,20rem)] space-y-3 rounded-2xl border border-gray-200 bg-white p-3"
         >
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-gray-600">
               {copy.starts}
             </span>
-            <input
-              type="datetime-local"
-              disabled={disabled}
+            <AdminDateTimePickerField
               value={toLocalInput(startsAt)}
-              onChange={(event) => {
-                const next = fromLocalInput(event.target.value);
+              onChange={(local) => {
+                const next = fromLocalInput(local);
                 setStartsAt(next);
                 emit(type, amount, next, endsAt);
               }}
-              className={ADMIN_INPUT}
+              disabled={disabled}
+              locale={locale}
+              common={common}
             />
           </label>
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-gray-600">
               {copy.ends}
             </span>
-            <input
-              type="datetime-local"
-              disabled={disabled}
+            <AdminDateTimePickerField
               value={toLocalInput(endsAt)}
-              onChange={(event) => {
-                const next = fromLocalInput(event.target.value);
+              onChange={(local) => {
+                const next = fromLocalInput(local);
                 setEndsAt(next);
                 emit(type, amount, startsAt, next);
               }}
-              className={ADMIN_INPUT}
+              disabled={disabled}
+              locale={locale}
+              common={common}
             />
           </label>
           {hasSchedule ? (

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 
-import { Card } from "@/components/ui/Card";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
 import { createOrderAction } from "@/features/checkout/create-order";
@@ -15,9 +14,19 @@ import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProducts
 import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
 import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
-import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
+import {
+  CASH_CHANGE_NONE,
+  type CashChangeSelection,
+} from "@/features/checkout/ui/checkout-cash-change-assets";
+import {
+  computeCashChangeDue,
+  type CashChangeDenominationView,
+} from "@/features/delivery/domain/cash-change";
 import type { Locale } from "@/lib/i18n/config";
 import { formatMoneyAmount } from "@/lib/money/format";
+
+const CHECKOUT_PAGE_TITLE =
+  "mb-8 font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px] md:leading-[1.1]";
 
 type CheckoutLabels = {
   title: string;
@@ -49,22 +58,22 @@ type CheckoutLabels = {
   enterDeliveryAddress: string;
   calculatingDelivery: string;
   scheduleTitle: string;
-  schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
   scheduleNextMonth: string;
   selectDeliverySlot: string;
-  selectCashChange: string;
   cashChangeTitle: string;
   cashChangeHint: string;
-  cashChangeAria: string;
+  cashChangeNone: string;
+  cashChangeDue: string;
   cashOnDelivery: string;
   cashOnDeliveryDescription: string;
+  cashShort: string;
   idram: string;
   idramDescription: string;
-  arca: string;
-  arcaDescription: string;
+  card: string;
+  cardDescription: string;
   couponTitle: string;
   couponPlaceholder: string;
   couponApply: string;
@@ -72,12 +81,16 @@ type CheckoutLabels = {
   discount: string;
   subtotal: string;
   shipping: string;
-  tax: string;
+  change: string;
   total: string;
   placeOrder: string;
   processing: string;
   continueShopping: string;
   cartEmpty: string;
+  groupPrepaidTitle: string;
+  groupPrepaidHint: string;
+  groupPrepaidOthersPaid: string;
+  groupPrepaidYouPay: string;
 };
 
 type CheckoutFormProps = {
@@ -94,6 +107,9 @@ type CheckoutFormProps = {
   deliverySchedule: DeliveryScheduleSettings;
   cashChangeOptions: CashChangeDenominationView[];
   hasItems: boolean;
+  splitOthersPrepaid?: boolean;
+  othersPrepaidAmount?: number;
+  lockedDeliveryAmount?: number | null;
 };
 
 export function CheckoutForm({
@@ -110,6 +126,9 @@ export function CheckoutForm({
   deliverySchedule,
   cashChangeOptions,
   hasItems,
+  splitOthersPrepaid = false,
+  othersPrepaidAmount = 0,
+  lockedDeliveryAmount = null,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
@@ -117,8 +136,11 @@ export function CheckoutForm({
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
     null,
   );
-  const [cashChangeAmount, setCashChangeAmount] = useState<number | null>(null);
-  const deliveryQuote = useDistanceDeliveryQuote(line1);
+  const [cashChangeAmount, setCashChangeAmount] =
+    useState<CashChangeSelection>(CASH_CHANGE_NONE);
+  const deliveryQuote = useDistanceDeliveryQuote(
+    lockedDeliveryAmount != null ? "" : line1,
+  );
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
@@ -136,27 +158,28 @@ export function CheckoutForm({
       {
         id: "cash_on_delivery" as const,
         name: labels.cashOnDelivery,
+        shortName: labels.cashShort,
         description: labels.cashOnDeliveryDescription,
-        logoSrc: null,
       },
       {
         id: "idram" as const,
         name: labels.idram,
+        shortName: labels.idram,
         description: labels.idramDescription,
-        logoSrc: "/assets/payments/idram.svg",
       },
       {
         id: "arca" as const,
-        name: labels.arca,
-        description: labels.arcaDescription,
-        logoSrc: "/assets/payments/arca.svg",
+        name: labels.card,
+        shortName: labels.card,
+        description: labels.cardDescription,
       },
     ],
     [
-      labels.arca,
-      labels.arcaDescription,
+      labels.card,
+      labels.cardDescription,
       labels.cashOnDelivery,
       labels.cashOnDeliveryDescription,
+      labels.cashShort,
       labels.idram,
       labels.idramDescription,
     ],
@@ -166,22 +189,42 @@ export function CheckoutForm({
     return formatMoneyAmount(amount, "AMD", locale);
   }
 
-  const shippingAmount = deliveryQuote.deliveryAmount;
-  const totalAmount =
+  const shippingAmount =
+    lockedDeliveryAmount ?? deliveryQuote.deliveryAmount;
+  const merchandiseTotal =
     Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
-
-  const shippingFormatted = deliveryQuote.pending
-    ? labels.calculatingDelivery
-    : deliveryQuote.error
-      ? labels.enterDeliveryAddress
-      : deliveryQuote.distanceLabel
-        ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
-        : labels.enterDeliveryAddress;
-
-  const deliveryQuoteHint =
-    deliveryQuote.distanceLabel && !deliveryQuote.error
-      ? `${deliveryQuote.distanceLabel} · ${formatMoney(shippingAmount)}`
+  const prepaidApplied = splitOthersPrepaid ? othersPrepaidAmount : 0;
+  const totalAmount = Math.max(0, merchandiseTotal - prepaidApplied);
+  const selectedCashChange: CashChangeSelection =
+    cashChangeAmount !== CASH_CHANGE_NONE &&
+    computeCashChangeDue(cashChangeAmount, totalAmount) != null
+      ? cashChangeAmount
+      : CASH_CHANGE_NONE;
+  const cashChangeDue =
+    paymentMethod === "cash_on_delivery" &&
+    selectedCashChange !== CASH_CHANGE_NONE
+      ? computeCashChangeDue(selectedCashChange, totalAmount)
       : null;
+  const cashChangeDueFormatted =
+    cashChangeDue != null ? formatMoney(cashChangeDue) : null;
+
+  const needsDeliveryAddress =
+    lockedDeliveryAmount == null &&
+    !deliveryQuote.pending &&
+    (deliveryQuote.error != null || !deliveryQuote.distanceLabel);
+
+  const shippingFormatted =
+    lockedDeliveryAmount != null
+      ? formatMoney(lockedDeliveryAmount)
+      : deliveryQuote.pending
+        ? labels.calculatingDelivery
+        : deliveryQuote.distanceLabel && !deliveryQuote.error
+          ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
+          : "—";
+
+  const shippingAddressPrompt = needsDeliveryAddress
+    ? labels.enterDeliveryAddress
+    : null;
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -220,17 +263,17 @@ export function CheckoutForm({
 
   if (!hasItems) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
-        <Card className="rounded-2xl border border-gray-200/80 p-6 text-center shadow-none">
-          <p className="mb-4 text-gray-600">{labels.cartEmpty}</p>
+      <div className="checkout-page mx-auto max-w-7xl px-0 py-12">
+        <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
+        <div className="liquid-glass isolate overflow-hidden rounded-2xl p-6 text-center">
+          <p className="relative z-[2] mb-4 text-gray-700">{labels.cartEmpty}</p>
           <Link
             href={productsHref}
-            className="inline-flex h-11 items-center justify-center rounded-xl bg-gray-900 px-4 text-sm font-medium text-white hover:bg-gray-800"
+            className="relative z-[2] inline-flex h-11 items-center justify-center rounded-xl bg-gray-900 px-4 text-sm font-medium text-white hover:bg-gray-800"
           >
             {labels.continueShopping}
           </Link>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -241,9 +284,10 @@ export function CheckoutForm({
     setError(null);
 
     if (
-      deliveryQuote.pending ||
-      deliveryQuote.error ||
-      !deliveryQuote.distanceLabel
+      lockedDeliveryAmount == null &&
+      (deliveryQuote.pending ||
+        deliveryQuote.error ||
+        !deliveryQuote.distanceLabel)
     ) {
       setError(labels.enterDeliveryAddress);
       return;
@@ -251,15 +295,6 @@ export function CheckoutForm({
 
     if (!deliverySlot) {
       setError(labels.selectDeliverySlot);
-      return;
-    }
-
-    if (
-      paymentMethod === "cash_on_delivery" &&
-      cashChangeOptions.length > 0 &&
-      cashChangeAmount == null
-    ) {
-      setError(labels.selectCashChange);
       return;
     }
 
@@ -280,8 +315,9 @@ export function CheckoutForm({
         scheduledDeliveryStart: deliverySlot.startTime,
         scheduledDeliveryEnd: deliverySlot.endTime,
         cashChangeAmount:
-          paymentMethod === "cash_on_delivery"
-            ? (cashChangeAmount ?? undefined)
+          paymentMethod === "cash_on_delivery" &&
+          selectedCashChange !== CASH_CHANGE_NONE
+            ? selectedCashChange
             : undefined,
         couponCode: appliedCouponCode ?? undefined,
       });
@@ -297,8 +333,8 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900">{labels.title}</h1>
+    <div className="checkout-page mx-auto max-w-7xl px-0 py-12">
+      <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
 
       <CheckoutProductsInOrder
         products={orderProducts}
@@ -306,11 +342,12 @@ export function CheckoutForm({
         itemsOneLabel={labels.itemsOne}
         itemsManyLabel={labels.itemsMany}
         removeItemLabel={labels.removeItem}
+        locale={locale}
         onCartChanged={clearAppliedCoupon}
       />
 
       <form onSubmit={onSubmit}>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]">
           <CheckoutDetailsSections
             labels={labels}
             locale={locale}
@@ -319,18 +356,32 @@ export function CheckoutForm({
             deliverySlot={deliverySlot}
             onDeliverySlotChange={setDeliverySlot}
             cashChangeOptions={cashChangeOptions}
-            cashChangeAmount={cashChangeAmount}
+            cashChangeAmount={selectedCashChange}
             onCashChangeAmountChange={setCashChangeAmount}
+            payableTotal={totalAmount}
+            cashChangeDueFormatted={cashChangeDueFormatted}
             line1={line1}
             onLine1Change={setLine1}
-            deliveryQuotePending={deliveryQuote.pending}
-            deliveryQuoteError={deliveryQuote.error}
-            deliveryQuoteHint={deliveryQuoteHint}
+            deliveryQuotePending={
+              lockedDeliveryAmount != null ? false : deliveryQuote.pending
+            }
+            deliveryQuoteError={
+              lockedDeliveryAmount != null ? null : deliveryQuote.error
+            }
+            addressLocked={lockedDeliveryAmount != null}
+            prepaidNotice={
+              splitOthersPrepaid
+                ? {
+                    title: labels.groupPrepaidTitle,
+                    hint: `${labels.groupPrepaidHint} ${labels.groupPrepaidOthersPaid}: ${formatMoney(prepaidApplied)}. ${labels.groupPrepaidYouPay}: ${formatMoney(totalAmount)}.`,
+                  }
+                : null
+            }
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
               setPaymentMethod(method);
-              if (method !== "cash_on_delivery") {
-                setCashChangeAmount(null);
+              if (method === "cash_on_delivery") {
+                setCashChangeAmount(CASH_CHANGE_NONE);
               }
             }}
             paymentOptions={paymentOptions}
@@ -349,14 +400,15 @@ export function CheckoutForm({
             discountLabel={labels.discount}
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}
-            taxLabel={labels.tax}
+            changeLabel={labels.change}
             totalLabel={labels.total}
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
-            taxFormatted={formatMoney(0)}
+            shippingAddressPrompt={shippingAddressPrompt}
             discountFormatted={
               discountAmount > 0 ? formatMoney(discountAmount) : null
             }
+            changeFormatted={cashChangeDueFormatted}
             totalFormatted={formatMoney(totalAmount)}
             couponDraft={couponDraft}
             onCouponDraftChange={onCouponDraftChange}

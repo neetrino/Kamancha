@@ -1,30 +1,17 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import {
-  ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
   ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
-import {
-  ADMIN_TABLE,
-  ADMIN_TABLE_CARD,
-  ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
-  ADMIN_TABLE_STATE_INSET,
-  ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TD_CENTER,
-  ADMIN_TABLE_TH,
-  ADMIN_TABLE_TH_CENTER,
-  ADMIN_TABLE_THEAD,
-} from "@/features/admin/ui/admin-table-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { listAdminContactMessages } from "@/features/contact/application/queries";
+import { AdminMessagesView } from "@/features/contact/ui/AdminMessagesView";
 import { CONTACT_STATUSES } from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
 import { isLocale } from "@/lib/i18n/config";
@@ -44,13 +31,15 @@ function firstParam(
   return value;
 }
 
-function contactStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "UNREAD") return "bg-blue-100 text-blue-800";
-  if (normalized === "READ") return "bg-yellow-100 text-yellow-800";
-  if (normalized === "REPLIED") return "bg-green-100 text-green-800";
-  if (normalized === "ARCHIVED") return "bg-gray-100 text-gray-800";
-  return "bg-gray-100 text-gray-800";
+function buildMessagesQuery(
+  filters: { q?: string; status?: string; page: number },
+  page: number,
+): string {
+  const params = new URLSearchParams();
+  if (filters.q) params.set("q", filters.q);
+  if (filters.status) params.set("status", filters.status);
+  params.set("page", String(page));
+  return params.toString();
 }
 
 export default async function AdminMessagesPage({
@@ -99,11 +88,10 @@ export default async function AdminMessagesPage({
         <form method="get" className="flex flex-wrap items-end gap-3">
           <label className="min-w-[180px] flex-1">
             <span className={ADMIN_LABEL}>{t.search}</span>
-            <input
+            <AdminSearchInput
               name="q"
               defaultValue={filters.q ?? ""}
               placeholder={t.searchPlaceholder}
-              className={ADMIN_INPUT}
             />
           </label>
           <label className="min-w-[140px]">
@@ -121,84 +109,28 @@ export default async function AdminMessagesPage({
               ))}
             </select>
           </label>
-          <Button type="submit" size="sm">
+          <Button type="submit" size="field">
             {t.filter}
           </Button>
         </form>
       </Card>
 
-      <Card className={ADMIN_TABLE_CARD}>
-        {rows.length === 0 ? (
-          <p className={`${ADMIN_TABLE_STATE_INSET} text-sm text-gray-600`}>
-            {t.empty}
-          </p>
-        ) : (
-          <div className={ADMIN_TABLE_OUTER_SCROLL}>
-            <table className={ADMIN_TABLE}>
-              <thead className={ADMIN_TABLE_THEAD}>
-                <tr>
-                  <th className={ADMIN_TABLE_TH}>{t.table.subject}</th>
-                  <th className={ADMIN_TABLE_TH}>{t.table.from}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{t.table.status}</th>
-                  <th className={ADMIN_TABLE_TH}>{t.table.received}</th>
-                </tr>
-              </thead>
-              <tbody className={ADMIN_TABLE_TBODY}>
-                {rows.map((message) => (
-                  <tr key={message.id} className={ADMIN_TABLE_ROW}>
-                    <td className={ADMIN_TABLE_TD}>
-                      <Link
-                        href={`/${locale}/admin/messages/${message.id}`}
-                        className="font-medium text-gray-900 hover:underline"
-                      >
-                        {message.subject}
-                      </Link>
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <p className="text-sm text-gray-900">{message.name}</p>
-                      <p className="text-xs text-gray-500">{message.email}</p>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span
-                        className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
-                      >
-                        {message.status}
-                      </span>
-                      {message.spamScore !== null ? (
-                        <p className="mt-1 text-xs text-gray-500">
-                          {t.table.spamScore.replace(
-                            "{score}",
-                            String(message.spamScore),
-                          )}
-                        </p>
-                      ) : null}
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span className="text-xs text-gray-500">
-                        {message.createdAt
-                          .toISOString()
-                          .slice(0, 16)
-                          .replace("T", " ")}{" "}
-                        {dictionary.admin.common.utc}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      <AdminMessagesView
+        locale={locale}
+        rows={rows}
+        copy={dictionary.admin}
+      />
 
-      {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
-          <span>
-            {dictionary.admin.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-        </nav>
-      ) : null}
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={t.title}
+        previousLabel={dictionary.admin.common.previous}
+        nextLabel={dictionary.admin.common.next}
+        pageOfLabel={dictionary.admin.common.pageOf}
+        prevHref={`/${locale}/admin/messages?${buildMessagesQuery(filters, filters.page - 1)}`}
+        nextHref={`/${locale}/admin/messages?${buildMessagesQuery(filters, filters.page + 1)}`}
+      />
     </section>
   );
 }

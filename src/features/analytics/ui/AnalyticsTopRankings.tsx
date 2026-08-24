@@ -1,6 +1,7 @@
 import { Package, ShoppingBag, Tag, TrendingUp } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
+import { DASHBOARD_CARD_LIFT } from "@/features/admin/ui/DashboardStatsGrid";
 import type {
   AnalyticsTopCategory,
   AnalyticsTopProduct,
@@ -56,7 +57,7 @@ export function AnalyticsTopRankings({
           {products.map((product, index) => (
             <div
               key={product.productId}
-              className="flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/40 p-3"
+              className={`flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/40 p-3 ${DASHBOARD_CARD_LIFT}`}
             >
               <RankBadge rank={index + 1} tone="amber" />
               <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
@@ -119,7 +120,7 @@ export function AnalyticsTopRankings({
           {categories.map((category, index) => (
             <div
               key={category.categoryId}
-              className="flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50/40 p-3"
+              className={`flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50/40 p-3 ${DASHBOARD_CARD_LIFT}`}
             >
               <RankBadge rank={index + 1} tone="violet" />
               <div className="min-w-0 flex-1">

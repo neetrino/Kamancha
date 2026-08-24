@@ -4,6 +4,7 @@ import { MapPin, X } from "lucide-react";
 import { useEffect, useRef, useState, type AnimationEvent } from "react";
 import { createPortal } from "react-dom";
 
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { getMapPickerConfigAction } from "@/features/delivery/application/get-map-picker-config";
 import { reverseGeocodeAddressAction } from "@/features/delivery/application/reverse-geocode-address";
 import {
@@ -198,20 +199,20 @@ export function AddressMapPicker({
             >
               <button
                 type="button"
-                className={`absolute inset-0 cursor-pointer bg-black/40 ${backdropClass}`}
+                className={`absolute inset-0 cursor-pointer bg-black/35 backdrop-blur-[8px] ${backdropClass}`}
                 aria-label={labels.cancel}
                 disabled={resolving}
                 onClick={closePicker}
               />
               <div
-                className={`relative z-[1] flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
+                className={`liquid-glass relative z-[1] flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl ${panelClass}`}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
                 <MapPickerHeader labels={labels} onClose={closePicker} resolving={resolving} />
-                <div className="relative min-h-[320px] flex-1 bg-gray-100 sm:min-h-[420px]">
+                <div className="relative z-[2] mx-5 min-h-[320px] flex-1 overflow-hidden rounded-2xl ring-1 ring-white/40 sm:min-h-[420px]">
                   <div ref={mapElementRef} className="absolute inset-0" />
                   {loading ? (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/70 text-sm text-gray-600">
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/45 text-sm text-gray-800 backdrop-blur-sm">
                       …
                     </div>
                   ) : null}
@@ -222,7 +223,6 @@ export function AddressMapPicker({
                   resolving={resolving}
                   address={picked?.formattedAddress ?? ""}
                   canConfirm={Boolean(picked) && !resolving}
-                  onCancel={closePicker}
                   onConfirm={onConfirm}
                 />
               </div>
@@ -296,19 +296,19 @@ function MapPickerHeader({
   resolving: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 py-4">
+    <div className="relative z-[2] flex items-start justify-between gap-3 px-5 py-4">
       <div>
         <h2
           id="address-map-picker-title"
-          className="text-lg font-semibold text-gray-900"
+          className="font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase"
         >
           {labels.title}
         </h2>
-        <p className="mt-1 text-sm text-gray-600">{labels.hint}</p>
+        <p className="mt-1 text-sm text-white">{labels.hint}</p>
       </div>
       <button
         type="button"
-        className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/40 text-gray-800 transition hover:bg-white/60 disabled:opacity-50"
         aria-label={labels.cancel}
         disabled={resolving}
         onClick={onClose}
@@ -325,7 +325,6 @@ function MapPickerFooter({
   resolving,
   address,
   canConfirm,
-  onCancel,
   onConfirm,
 }: {
   labels: AddressMapPickerLabels;
@@ -333,33 +332,22 @@ function MapPickerFooter({
   resolving: boolean;
   address: string;
   canConfirm: boolean;
-  onCancel: () => void;
   onConfirm: () => void;
 }) {
   return (
-    <div className="space-y-3 border-t border-gray-100 px-5 py-4">
+    <div className="relative z-[2] space-y-3 px-5 py-4">
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      <p className="min-h-5 text-sm text-gray-700">
+      <p className="min-h-5 text-sm font-bold text-white">
         {resolving ? labels.resolving : address}
       </p>
-      <div className="flex flex-wrap items-center justify-end gap-3">
-        <button
-          type="button"
-          disabled={resolving}
-          onClick={onCancel}
-          className="inline-flex h-10 items-center justify-center rounded-full border border-gray-200 bg-white px-5 text-sm font-medium text-gray-800 hover:bg-gray-50 disabled:opacity-50"
-        >
-          {labels.cancel}
-        </button>
-        <button
-          type="button"
-          disabled={!canConfirm}
-          onClick={onConfirm}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-gray-900 px-5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
-        >
-          {labels.confirm}
-        </button>
-      </div>
+      <KamanchaPillButton
+        type="button"
+        variant="light"
+        label={labels.confirm}
+        disabled={!canConfirm}
+        onClick={onConfirm}
+        className="max-w-none sm:max-w-none"
+      />
     </div>
   );
 }

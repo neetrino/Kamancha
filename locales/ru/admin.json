@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "Панель управления",
     "orders": "Заказы",
+    "groupOrders": "Групповые заказы",
     "products": "Товары",
     "categories": "Категории",
     "delivery": "Доставка",
@@ -12,12 +13,11 @@
     "hero": "Баннеры",
     "blog": "Блог",
     "messages": "Сообщения",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "giftCards": "Подарочные карты"
   },
   "shell": {
-    "brandName": "White Shop",
-    "brandHomeTitle": "Главная White Shop",
-    "brandInitial": "W",
+    "brandName": "Kamancha",
     "menu": "Меню",
     "adminMenuAria": "Меню администратора",
     "expandSidebar": "Развернуть боковую панель",
@@ -35,10 +35,18 @@
     "deleting": "Удаление…",
     "remove": "Убрать",
     "clear": "Очистить",
+    "datePicker": {
+      "placeholder": "ДД.ММ.ГГГГ",
+      "dateTimePlaceholder": "ДД.ММ.ГГГГ ЧЧ:ММ",
+      "today": "Сегодня",
+      "time": "Время",
+      "weekdaysShort": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    },
     "search": "Поиск",
     "filter": "Фильтр",
     "apply": "Применить",
     "previous": "Назад",
+    "back": "Назад",
     "next": "Далее",
     "pageOf": "Страница {page} / {totalPages}",
     "actions": "Действия",
@@ -73,6 +81,7 @@
     "archiveConfirmLabel": "Архивировать",
     "cancelLabel": "Отмена",
     "deleteEntity": "Удалить {entity} «{name}»? Это действие нельзя отменить.",
+    "deleteImage": "Удалить это изображение? Это действие нельзя отменить.",
     "deleteSelectedOrders": "Удалить {count} выбранных заказ{plural}? Это действие нельзя отменить.",
     "deleteSelectedProducts": "Удалить {label}? Это действие нельзя отменить.",
     "deleteSelectedUsers": "Удалить {count} выбранных пользовател{plural}? Их учётные записи будут анонимизированы, и это действие нельзя отменить.",
@@ -82,7 +91,10 @@
       "category": "категорию",
       "promoCode": "промокод",
       "slide": "слайд",
-      "post": "публикацию"
+      "post": "публикацию",
+      "denomination": "номинал",
+      "closedDate": "закрытый день",
+      "modifier": "модификатор"
     },
     "selectedProduct": "выбранный товар",
     "selectedProducts": "{count} выбранных товаров"
@@ -184,6 +196,8 @@
       "paymentSection": "Оплата",
       "method": "Способ:",
       "amount": "Сумма:",
+      "customerPays": "Клиент платит:",
+      "prepareChange": "Подготовить сдачу:",
       "paymentStatus": "Статус:",
       "items": "Товары",
       "product": "Товар",
@@ -251,6 +265,7 @@
     }
   },
   "products": {
+    "title": "Товары",
     "addNewProduct": "Добавить новый товар",
     "filters": {
       "totalProducts": "Всего товаров: {total}",
@@ -534,12 +549,14 @@
     }
   },
   "coupons": {
-    "title": "Промокоды",
+    "title": "Купоны",
     "subtitle": "Создавайте, редактируйте и удаляйте коды скидок для оформления заказа.",
-    "addPromoCode": "Добавить промокод",
+    "addPromoCode": "Добавить купон",
+    "codeCopied": "Код «{code}» скопирован",
     "empty": "Промокодов пока нет.",
     "table": {
       "code": "Код",
+      "copyCodeAria": "Скопировать код {code}",
       "type": "Тип",
       "value": "Значение",
       "usageLimit": "Лимит использования",
@@ -576,6 +593,7 @@
     }
   },
   "users": {
+    "title": "Пользователи",
     "breadcrumb": "Пользователи",
     "searchPlaceholder": "Поиск по email, телефону, имени…",
     "searchAria": "Поиск пользователей",
@@ -601,7 +619,13 @@
     "activateAria": "Активировать {name}",
     "detail": {
       "role": "Роль:",
+      "roleLabel": "Роль",
       "status": "Статус:",
+      "emailLabel": "Email",
+      "phoneLabel": "Телефон",
+      "emailVerifiedLabel": "Email подтверждён",
+      "lastLoginLabel": "Последний вход",
+      "createdLabel": "Создан",
       "phone": "Телефон: {phone}",
       "emailVerified": "Email подтверждён: {value}",
       "emailVerifiedNo": "нет",
@@ -612,6 +636,15 @@
       "unknownStatus": "Неизвестный статус.",
       "recentOrders": "Последние заказы",
       "noOrders": "Заказов нет."
+    },
+    "roleLabels": {
+      "admin": "Админ",
+      "customer": "Клиент"
+    },
+    "statusLabels": {
+      "active": "Активен",
+      "suspended": "Приостановлен",
+      "anonymized": "Анонимизирован"
     },
     "roleForm": {
       "title": "Роль",
@@ -628,6 +661,7 @@
     }
   },
   "analytics": {
+    "title": "Аналитика",
     "subtitle": "Отслеживайте эффективность и статистику бизнеса",
     "period": {
       "title": "Период времени",
@@ -767,6 +801,8 @@
     "all": "Все",
     "filter": "Фильтр",
     "empty": "Нет сообщений, соответствующих этим фильтрам.",
+    "sheetAria": "Детали сообщения",
+    "sheetTitle": "Сообщение",
     "table": {
       "subject": "Тема",
       "from": "От кого",
@@ -774,13 +810,24 @@
       "received": "Получено",
       "spamScore": "спам {score}"
     },
+    "statusLabels": {
+      "unread": "Непрочитано",
+      "read": "Прочитано",
+      "replied": "Отвечено",
+      "archived": "В архиве"
+    },
     "detail": {
       "from": "От: {name}",
+      "fromLabel": "От",
       "email": "Email: {email}",
+      "emailLabel": "Email",
       "phone": "Телефон: {phone}",
+      "phoneLabel": "Телефон",
       "status": "Статус:",
       "spamScore": "Оценка спама: {score}",
+      "spamScoreLabel": "Оценка спама",
       "received": "Получено: {datetime} UTC",
+      "receivedLabel": "Получено",
       "message": "Сообщение",
       "unknownStatus": "Неизвестный статус."
     },
@@ -790,6 +837,29 @@
       "newStatusAria": "Новый статус",
       "updateStatus": "Обновить статус"
     }
+  },
+  "groupOrders": {
+    "title": "Групповые заказы",
+    "id": "ID",
+    "organizer": "Организатор",
+    "mode": "Режим",
+    "status": "Статус",
+    "participants": "Участники",
+    "delivery": "Доставка",
+    "created": "Создан",
+    "empty": "Групповых заказов пока нет.",
+    "sheetAria": "Детали группового заказа",
+    "sheetTitle": "Групповой заказ",
+    "organizerLabel": "Организатор: {name}",
+    "invite": "Приглашение: {path}",
+    "deliveryTotal": "Доставка: {delivery} · Итого: {total}",
+    "subtotalDeliveryFinal": "Подытог {subtotal} · Доставка {delivery} · Итого {final}",
+    "payment": "Оплата: {status}",
+    "activity": "Активность",
+    "markPaid": "Отметить как оплачено",
+    "closeJoins": "Закрыть присоединение",
+    "cancel": "Отменить групповой заказ",
+    "actionFailed": "Не удалось выполнить действие."
   },
   "settings": {
     "title": "Настройки магазина",
@@ -810,6 +880,46 @@
       "rubPerAmd": "RUB за 1 AMD",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Сохранить курсы валют"
+    }
+  },
+  "giftCards": {
+    "title": "Подарочные карты",
+    "subtitle": "Выпускайте, ищите, активируйте и отключайте цифровые подарочные карты.",
+    "add": "Создать карту",
+    "empty": "Подарочных карт пока нет.",
+    "history": "История использования",
+    "sheetAria": "Детали подарочной карты",
+    "sheetTitle": "Подарочная карта",
+    "activate": "Активировать",
+    "searchPlaceholder": "Поиск по коду, покупателю или получателю",
+    "statuses": {
+      "PENDING_PAYMENT": "Ожидает оплаты",
+      "ACTIVE": "Активна",
+      "USED": "Использована",
+      "EXPIRED": "Истекла",
+      "DISABLED": "Отключена"
+    },
+    "table": {
+      "code": "Код",
+      "balance": "Баланс",
+      "status": "Статус",
+      "recipient": "Получатель",
+      "purchaser": "Покупатель",
+      "copyAria": "Копировать {code}",
+      "resendAria": "Отправить email снова",
+      "disableAria": "Отключить карту"
+    },
+    "drawer": {
+      "newTitle": "Новая подарочная карта",
+      "newAria": "Новая подарочная карта",
+      "amount": "Сумма (AMD)",
+      "recipientName": "Имя получателя",
+      "recipientEmail": "Email получателя",
+      "recipientPhone": "Телефон получателя",
+      "purchaserName": "Имя покупателя / отправителя",
+      "message": "Сообщение",
+      "expiresOptional": "Срок (необязательно)",
+      "sendEmail": "Отправить email после активации"
     }
   }
 }

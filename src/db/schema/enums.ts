@@ -42,6 +42,29 @@ export const stockMovementReasonEnum = pgEnum("stock_movement_reason", [
   "IMPORT",
 ]);
 
+export const bonusTransactionTypeEnum = pgEnum("bonus_transaction_type", [
+  "EARN",
+  "REDEEM",
+  "REVERSAL_EARN",
+  "REVERSAL_REDEEM",
+  "EXPIRE",
+]);
+
+export const giftCardStatusEnum = pgEnum("gift_card_status", [
+  "PENDING_PAYMENT",
+  "ACTIVE",
+  "USED",
+  "EXPIRED",
+  "DISABLED",
+]);
+
+export const giftCardTransactionTypeEnum = pgEnum("gift_card_transaction_type", [
+  "ISSUE",
+  "REDEEM",
+  "REVERSAL",
+  "ADJUST",
+]);
+
 export const blogPostStatusEnum = pgEnum("blog_post_status", [
   "DRAFT",
   "PUBLISHED",
@@ -113,4 +136,57 @@ export const outboxStatusEnum = pgEnum("outbox_status", [
 export const productModifierKindEnum = pgEnum("product_modifier_kind", [
   "ADDITION",
   "EXCEPTION",
+]);
+
+export const groupOrderStatusEnum = pgEnum("group_order_status", [
+  "OPEN",
+  "LOCKED",
+  "AWAITING_PAYMENTS",
+  "CHECKOUT",
+  "PAID",
+  "PREPARING",
+  "COMPLETED",
+  "EXPIRED",
+  "CANCELLED",
+]);
+
+export const groupOrderPaymentModeEnum = pgEnum("group_order_payment_mode", [
+  "ORGANIZER_PAYS_ALL",
+  "SPLIT_PER_PARTICIPANT",
+]);
+
+export const groupOrderParticipantRoleEnum = pgEnum(
+  "group_order_participant_role",
+  ["ORGANIZER", "PARTICIPANT"],
+);
+
+export const groupOrderParticipantStatusEnum = pgEnum(
+  "group_order_participant_status",
+  ["ACTIVE", "REMOVED", "LEFT"],
+);
+
+export const groupOrderParticipantPaymentStatusEnum = pgEnum(
+  "group_order_participant_payment_status",
+  [
+    "NOT_REQUIRED",
+    "PENDING",
+    "PAID",
+    "FAILED",
+    "REFUNDED",
+    "MARKED_RECEIVED",
+  ],
+);
+
+export const groupOrderEventTypeEnum = pgEnum("group_order_event_type", [
+  "STATUS_CHANGE",
+  "PARTICIPANT_JOINED",
+  "PARTICIPANT_REMOVED",
+  "PARTICIPANT_LEFT",
+  "ITEMS_CHANGED",
+  "ITEMS_READY",
+  "SPEND_LIMIT_CHANGED",
+  "JOINS_CLOSED",
+  "PAYMENT_STATUS",
+  "NOTE",
+  "ADMIN_ACTION",
 ]);

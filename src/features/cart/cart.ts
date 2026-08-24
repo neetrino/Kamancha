@@ -297,9 +297,10 @@ export async function removeItem(itemId: string): Promise<void> {
   await revalidateCartPaths();
 }
 
-/** Invalidates storefront cart views after durable cart mutations. */
+/** Invalidates cart/checkout pages after durable cart mutations.
+ * Header badges stay local — skip layout revalidate for snappy add-to-cart.
+ */
 export async function revalidateCartPaths(): Promise<void> {
   revalidatePath("/[locale]/cart", "page");
   revalidatePath("/[locale]/checkout", "page");
-  revalidatePath("/", "layout");
 }

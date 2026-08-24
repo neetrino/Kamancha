@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useState, useTransition } from "react";
 
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   ADMIN_INPUT,
 } from "@/features/admin/ui/admin-form-classes";
@@ -14,6 +15,7 @@ import {
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ModifiersCopy = Dictionary["admin"]["products"]["modifiers"];
+type ConfirmCopy = Dictionary["admin"]["confirm"];
 
 type ProductDrawerModifiersProps = {
   locale: string;
@@ -23,6 +25,7 @@ type ProductDrawerModifiersProps = {
   onLibraryChange: (next: ProductModifierOption[]) => void;
   onSelectedChange: (next: string[]) => void;
   copy: ModifiersCopy;
+  confirm: ConfirmCopy;
 };
 
 type ColumnKind = "ADDITION" | "EXCEPTION";
@@ -35,6 +38,7 @@ export function ProductDrawerModifiers({
   onLibraryChange,
   onSelectedChange,
   copy,
+  confirm,
 }: ProductDrawerModifiersProps) {
   return (
     <div className="space-y-3">
@@ -57,6 +61,7 @@ export function ProductDrawerModifiers({
           selectedIds={selectedIds}
           disabled={disabled}
           copy={copy}
+          confirm={confirm}
           onLibraryChange={onLibraryChange}
           onSelectedChange={onSelectedChange}
         />
@@ -71,6 +76,7 @@ export function ProductDrawerModifiers({
           selectedIds={selectedIds}
           disabled={disabled}
           copy={copy}
+          confirm={confirm}
           onLibraryChange={onLibraryChange}
           onSelectedChange={onSelectedChange}
         />
@@ -90,6 +96,7 @@ function ModifierColumn({
   selectedIds,
   disabled,
   copy,
+  confirm,
   onLibraryChange,
   onSelectedChange,
 }: {
@@ -103,12 +110,17 @@ function ModifierColumn({
   selectedIds: string[];
   disabled: boolean;
   copy: ModifiersCopy;
+  confirm: ConfirmCopy;
   onLibraryChange: (next: ProductModifierOption[]) => void;
   onSelectedChange: (next: string[]) => void;
 }) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [pending, startTransition] = useTransition();
   const rows = library.filter((row) => row.kind === kind && row.isActive);
   const selectedSet = new Set(selectedIds);
@@ -212,7 +224,9 @@ function ModifierColumn({
               <button
                 type="button"
                 disabled={disabled || pending}
-                onClick={() => handleRemove(row.id)}
+                onClick={() =>
+                  setPendingDelete({ id: row.id, name: row.name })
+                }
                 className="rounded p-1 text-red-500 transition hover:bg-red-50 disabled:opacity-40"
                 aria-label={copy.removeAria.replace("{name}", row.name)}
               >
@@ -260,6 +274,30 @@ function ModifierColumn({
         </button>
         {error ? <p className="text-xs text-red-600">{error}</p> : null}
       </div>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title={confirm.deleteTitle}
+        description={
+          pendingDelete
+            ? confirm.deleteEntity
+                .replace("{entity}", confirm.entityLabels.modifier)
+                .replace("{name}", pendingDelete.name)
+            : ""
+        }
+        confirmLabel={confirm.confirmLabel}
+        cancelLabel={confirm.cancelLabel}
+        isPending={pending}
+        onClose={() => {
+          if (!pending) setPendingDelete(null);
+        }}
+        onConfirm={() => {
+          if (!pendingDelete) return;
+          const id = pendingDelete.id;
+          setPendingDelete(null);
+          handleRemove(id);
+        }}
+      />
     </div>
   );
 }

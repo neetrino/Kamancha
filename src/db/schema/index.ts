@@ -7,6 +7,11 @@ export {
   type TranslationsJson,
 } from "@/db/schema/catalog";
 export { stockMovements } from "@/db/schema/inventory";
+export { bonusTransactions } from "@/db/schema/bonuses";
+export {
+  giftCardTransactions,
+  giftCards,
+} from "@/db/schema/gift-cards";
 export {
   addresses,
   sessions,
@@ -62,6 +67,13 @@ export {
   auditLogs,
   outboxEvents,
 } from "@/db/schema/system";
+export {
+  groupOrderEvents,
+  groupOrderItemModifiers,
+  groupOrderItems,
+  groupOrderParticipants,
+  groupOrders,
+} from "@/db/schema/group-orders";
 export {
   CANONICAL_TABLE_COUNT,
   CANONICAL_TABLES,

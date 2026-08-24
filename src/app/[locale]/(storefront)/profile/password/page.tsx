@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
 import { ChangePasswordForm } from "@/features/profile/ui/ChangePasswordForm";
-import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -15,7 +14,6 @@ export default async function PasswordPage({ params }: PasswordPageProps) {
     notFound();
   }
 
-  await requireUser(locale);
   const dictionary = getDictionary(locale);
   const copy = dictionary.profile.passwordForm;
 

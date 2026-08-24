@@ -1,8 +1,8 @@
 {
-  "brand": "White-Shop",
+  "brand": "Kamancha",
   "nav": {
     "home": "Գլխավոր",
-    "products": "Ապրանքներ",
+    "products": "Մենյու",
     "shop": "Խանութ",
     "blog": "Բլոգ",
     "cart": "Զամբյուղ",
@@ -12,7 +12,9 @@
     "openMenu": "Բացել մենյուն",
     "closeMenu": "Փակել մենյուն",
     "navigation": "Նավիգացիա",
-    "shopNow": "Գնել հիմա"
+    "shopNow": "Գնել հիմա",
+    "groupOrder": "Խմբային պատվեր",
+    "policy": "Քաղաքականություն"
   },
   "header": {
     "language": "Լեզու",
@@ -24,20 +26,35 @@
     "createAccount": "Գրանցվել",
     "search": "Որոնում",
     "searchClose": "Փակել որոնումը",
-    "searchPlaceholder": "Որոնել ապրանքներ…",
+    "searchPlaceholder": "Որոնել",
     "searchIdle": "Գրեք ապրանքի անունը",
     "searchEmpty": "Ապրանքներ չեն գտնվել",
     "searchViewAll": "Տեսնել բոլոր արդյունքները"
   },
   "footer": {
-    "shop": "Խանութ",
-    "description": "Պրոֆեսիոնալ առցանց խանութ ամենօրյա գնումների համար։",
-    "quickLinks": "Արագ հղումներ",
-    "legal": "Իրավական",
+    "tagline": "«Հայկական խոհանոց, երաժշտություն եւ հյուրընկալություն՝ նոր հնչողությամբ»։",
+    "navigationTitle": "Նավիգացիա",
+    "menu": "Մենյու",
+    "about": "Մեր մասին",
+    "specialOffers": "Հատուկ առաջարկներ",
+    "gallery": "Պատկերասրահ",
+    "contact": "Կապ",
+    "supportTitle": "Աջակցություն",
+    "shippingReturns": "Առաքում և Վերադարձ",
+    "terms": "Պայմաններ և դրույթներ",
     "privacyPolicy": "Գաղտնիության քաղաքականություն",
-    "terms": "Պայմաններ",
-    "contactInfo": "Կապի տվյալներ",
-    "followUs": "Հետևեք մեզ",
-    "copyright": "Copyright © {year} Neetrino IT Company. All Rights Reserved."
+    "faq": "Հաճախ տրվող հարցեր",
+    "contactTitle": "Կոնտակտ",
+    "address": "Թումանյան 23, Երևան",
+    "address2": "Սարյան 8, Երևան",
+    "phone": "095 711700",
+    "email": "kamancharest@gmail.com",
+    "hours": "Ամեն օր: 10:00-00:00",
+    "copyrightBefore": "Copyright © {year} | Բոլոր իրավունքները պաշտպանված են | Ստեղծվել է",
+    "copyrightCompany": "Neetrino IT Company",
+    "copyrightAfter": "կողմից",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "tiktok": "TikTok"
   }
 }

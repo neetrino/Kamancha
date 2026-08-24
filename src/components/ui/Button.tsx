@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonSize = "sm" | "md" | "lg" | "field";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
@@ -11,7 +11,7 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const VARIANT_STYLES: Record<ButtonVariant, string> = {
   primary:
-    "bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-900",
+    "bg-brand-forest text-white hover:opacity-90 focus:ring-brand-forest",
   secondary:
     "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 focus:ring-gray-500",
   outline:
@@ -26,6 +26,7 @@ const SIZE_STYLES: Record<ButtonSize, string> = {
   sm: "px-3 py-1.5 text-sm",
   md: "px-4 py-2 text-base",
   lg: "px-6 py-3 text-lg",
+  field: "inline-flex h-11 items-center justify-center px-4 py-0 text-sm",
 };
 
 export function Button({

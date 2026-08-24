@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { ClearFocusOnEscape } from "@/components/layout/ClearFocusOnEscape";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 
 type LocaleLayoutProps = {
@@ -24,7 +25,8 @@ export default async function LocaleLayout({
   const locale: Locale = rawLocale;
 
   return (
-    <div lang={locale} className="flex min-h-dvh flex-1 flex-col bg-gray-50">
+    <div lang={locale} className="flex min-h-dvh flex-1 flex-col bg-brand-forest">
+      <ClearFocusOnEscape />
       {children}
     </div>
   );

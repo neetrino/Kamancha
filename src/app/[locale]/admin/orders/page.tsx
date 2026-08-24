@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { listAdminOrders } from "@/features/orders/application/queries";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
@@ -93,31 +93,16 @@ export default async function AdminOrdersPage({
 
       <AdminOrdersView locale={locale} orders={rows} copy={copy} />
 
-      {totalPages > 1 ? (
-        <nav className="mt-4 flex items-center gap-3 text-sm text-gray-700">
-          {filters.page > 1 ? (
-            <Link
-              href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
-              className="font-medium hover:underline"
-            >
-              {copy.common.previous}
-            </Link>
-          ) : null}
-          <span>
-            {copy.common.pageOf
-              .replace("{page}", String(filters.page))
-              .replace("{totalPages}", String(totalPages))}
-          </span>
-          {filters.page < totalPages ? (
-            <Link
-              href={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
-              className="font-medium hover:underline"
-            >
-              {copy.common.next}
-            </Link>
-          ) : null}
-        </nav>
-      ) : null}
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={copy.orders.title}
+        previousLabel={copy.common.previous}
+        nextLabel={copy.common.next}
+        pageOfLabel={copy.common.pageOf}
+        prevHref={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
+        nextHref={`/${locale}/admin/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
+      />
     </section>
   );
 }

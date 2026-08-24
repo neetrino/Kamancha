@@ -5,12 +5,10 @@ import { flushSync } from "react-dom";
 
 import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-
-const FILTER_SEARCH =
-  "h-11 min-w-0 flex-1 rounded-2xl border border-gray-200 bg-white px-4 text-sm text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-300";
 
 type AdminOrdersFiltersProps = {
   total: number;
@@ -69,7 +67,8 @@ export function AdminOrdersFilters({
           value={statusValue}
           allLabel={f.allStatuses}
           options={orderStatusFilters}
-          className="w-[180px] shrink-0"
+          className="shrink-0"
+          fitContent
           onValueChange={applyStatus}
         />
         <SelectDropdown
@@ -78,14 +77,15 @@ export function AdminOrdersFilters({
           value={paymentValue}
           allLabel={f.allPaymentStatuses}
           options={paymentStatusFilters}
-          className="w-[200px] shrink-0"
+          className="shrink-0"
+          fitContent
           onValueChange={applyPayment}
         />
-        <input
+        <AdminSearchInput
           name="q"
           defaultValue={q ?? ""}
           placeholder={f.searchPlaceholder}
-          className={FILTER_SEARCH}
+          className="min-w-0 flex-1"
           aria-label={f.searchAria}
         />
       </form>

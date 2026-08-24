@@ -11,6 +11,7 @@ import {
   addressIdSchema,
 } from "@/features/profile/schemas/address";
 import { requireUser } from "@/lib/auth/policies";
+import type { SessionUser } from "@/lib/auth/session";
 import { createId } from "@/lib/id";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
@@ -38,8 +39,12 @@ async function clearDefaultFlags(
     );
 }
 
+function addressPhoneFromProfile(user: SessionUser): string {
+  return user.phone?.trim() ?? "";
+}
+
 /**
- * Creates a customer address. Recipient name comes from the profile; phone from the form.
+ * Creates a customer address. Recipient name and phone come from the profile.
  * First address (or explicit default) becomes the default shipping/billing address.
  */
 export async function createCustomerAddressAction(
@@ -78,7 +83,7 @@ export async function createCustomerAddressAction(
         userId: user.id,
         recipientFirstName: user.firstName,
         recipientLastName: user.lastName,
-        phone: parsed.data.phone,
+        phone: addressPhoneFromProfile(user),
         countryCode: "AM",
         city: parsed.data.city,
         line1: parsed.data.line1,
@@ -97,7 +102,7 @@ export async function createCustomerAddressAction(
 }
 
 /**
- * Updates an owned address. Keeps recipient name synced from the profile; phone from the form.
+ * Updates an owned address. Keeps recipient name and phone synced from the profile.
  */
 export async function updateCustomerAddressAction(
   locale: string,
@@ -143,7 +148,7 @@ export async function updateCustomerAddressAction(
         .set({
           recipientFirstName: user.firstName,
           recipientLastName: user.lastName,
-          phone: parsed.data.phone,
+          phone: addressPhoneFromProfile(user),
           city: parsed.data.city,
           line1: parsed.data.line1,
           isDefaultShipping: parsed.data.isDefault,

@@ -1,8 +1,27 @@
 import type { NextConfig } from "next";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+
+/**
+ * LAN IPs so a phone can load `/_next` assets from http://<lan-ip>:<port>.
+ * Next.js otherwise blocks those origins in development.
+ */
+function lanDevOrigins(): string[] {
+  const hosts = new Set<string>(["localhost", "127.0.0.1", "[::1]", "*.local"]);
+
+  for (const addrs of Object.values(os.networkInterfaces())) {
+    for (const addr of addrs ?? []) {
+      if (!addr.internal && addr.family === "IPv4") {
+        hosts.add(addr.address);
+      }
+    }
+  }
+
+  return [...hosts];
+}
 
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -69,6 +88,7 @@ function buildImageRemotePatterns(): NonNullable<
 }
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: lanDevOrigins(),
   turbopack: {
     root: projectRoot,
   },

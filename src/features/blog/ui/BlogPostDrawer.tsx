@@ -3,8 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
+import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -22,6 +24,7 @@ import {
 } from "@/features/blog/domain/blog-rules";
 import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type LocaleDraft = {
   title: string;
@@ -113,38 +116,54 @@ export function BlogPostDrawer({
     () => post?.coverUrl ?? null,
   );
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
+  const [pendingRemoveImage, setPendingRemoveImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function clearImage(): void {
+    setImageFile(null);
+    setImagePreview((current) => {
+      if (current?.startsWith("blob:")) {
+        URL.revokeObjectURL(current);
+      }
+      return null;
+    });
+    if (isEdit && post?.coverUrl) {
+      setRemoveExistingImage(true);
+    }
+    setPendingRemoveImage(false);
+  }
 
   useEffect(() => {
     if (!open) return;
 
     if (post) {
-      setActiveLocale(
+      scheduleStateUpdate(
+        setActiveLocale,
         (locales.find((loc) => post.translations[loc]?.title) as
           | Locale
           | undefined) ?? "en",
       );
-      setDrafts(draftsFromTranslations(post.translations));
-      setStatus(post.status);
-      setPublishedAt(post.publishedAt ?? "");
-      setImageFile(null);
-      setImagePreview(post.coverUrl ?? null);
-      setRemoveExistingImage(false);
-      setError(null);
+      scheduleStateUpdate(setDrafts, draftsFromTranslations(post.translations));
+      scheduleStateUpdate(setStatus, post.status);
+      scheduleStateUpdate(setPublishedAt, post.publishedAt ?? "");
+      scheduleStateUpdate(setImageFile, null);
+      scheduleStateUpdate(setImagePreview, post.coverUrl ?? null);
+      scheduleStateUpdate(setRemoveExistingImage, false);
+      scheduleStateUpdate(setError, null);
     } else {
-      setActiveLocale("en");
-      setDrafts({
+      scheduleStateUpdate(setActiveLocale, "en");
+      scheduleStateUpdate(setDrafts, {
         hy: emptyDraft(),
         en: emptyDraft(),
         ru: emptyDraft(),
       });
-      setStatus("DRAFT");
-      setPublishedAt("");
-      setImageFile(null);
-      setImagePreview(null);
-      setRemoveExistingImage(false);
-      setError(null);
+      scheduleStateUpdate(setStatus, "DRAFT");
+      scheduleStateUpdate(setPublishedAt, "");
+      scheduleStateUpdate(setImageFile, null);
+      scheduleStateUpdate(setImagePreview, null);
+      scheduleStateUpdate(setRemoveExistingImage, false);
+      scheduleStateUpdate(setError, null);
     }
   }, [open, post]);
 
@@ -236,7 +255,7 @@ export function BlogPostDrawer({
                       onClick={() => setActiveLocale(loc)}
                       className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
                         selected
-                          ? "bg-gray-900 text-white"
+                          ? "bg-brand-forest text-white"
                           : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -302,12 +321,12 @@ export function BlogPostDrawer({
               <div className="space-y-4">
                 <label className="block">
                   <span className={ADMIN_LABEL}>{copy.blog.drawer.publicationDate}</span>
-                  <input
-                    type="date"
+                  <AdminDatePickerField
                     value={publishedAt}
-                    onChange={(event) => setPublishedAt(event.target.value)}
-                    className={ADMIN_INPUT}
+                    onChange={setPublishedAt}
                     disabled={isPending}
+                    locale={locale}
+                    common={copy.common}
                   />
                   <span className="mt-1 block text-xs text-gray-500">
                     {copy.blog.drawer.publicationDateHint}
@@ -370,18 +389,7 @@ export function BlogPostDrawer({
                   <button
                     type="button"
                     disabled={isPending}
-                    onClick={() => {
-                      setImageFile(null);
-                      setImagePreview((current) => {
-                        if (current?.startsWith("blob:")) {
-                          URL.revokeObjectURL(current);
-                        }
-                        return null;
-                      });
-                      if (isEdit && post?.coverUrl) {
-                        setRemoveExistingImage(true);
-                      }
-                    }}
+                    onClick={() => setPendingRemoveImage(true)}
                     className="text-sm font-medium text-gray-600 hover:text-red-600"
                   >
                     {copy.blog.drawer.remove}
@@ -410,6 +418,15 @@ export function BlogPostDrawer({
             </Button>
           </div>
         </form>
+      <ConfirmDialog
+        open={pendingRemoveImage}
+        title={copy.confirm.deleteTitle}
+        description={copy.confirm.deleteImage}
+        confirmLabel={copy.confirm.confirmLabel}
+        cancelLabel={copy.confirm.cancelLabel}
+        onClose={() => setPendingRemoveImage(false)}
+        onConfirm={clearImage}
+      />
     </SideSheet>
   );
 }

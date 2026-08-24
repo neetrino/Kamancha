@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { Reveal, Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
 import { getCatalogPriceBounds } from "@/features/products/application/catalog-price-bounds";
 import {
@@ -8,8 +9,11 @@ import {
   parseCatalogSearchParams,
 } from "@/features/products/application/catalog-search-params";
 import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
+import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
 import { CatalogControls } from "@/features/products/ui/CatalogControls";
+import { CatalogPageHeader } from "@/features/products/ui/CatalogPageHeader";
 import { ProductCard } from "@/features/products/ui/ProductCard";
+import { getProductAverageRatings } from "@/features/reviews/application/queries";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
@@ -23,6 +27,20 @@ type ProductsPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+function catalogGridMotionKey(filters: CatalogFilters): string {
+  return [
+    filters.category ?? "all",
+    filters.sort,
+    String(filters.page),
+    filters.q ?? "",
+    filters.minPrice ?? "",
+    filters.maxPrice ?? "",
+    filters.onSale ? "sale" : "",
+    filters.newArrivals ? "new" : "",
+    filters.inStock ? "stock" : "",
+  ].join(":");
+}
 
 export default async function ProductsPage({
   params,
@@ -49,7 +67,13 @@ export default async function ProductsPage({
   const categories = categoryOptions.map((category) => ({
     slug: category.slug,
     title: category.title,
+    productCount: category.productCount,
   }));
+
+  const allProductsCount = categories.reduce(
+    (sum, category) => sum + category.productCount,
+    0,
+  );
 
   let catalog = await listCatalogProducts(rawLocale, filters, currency);
   const totalPages = Math.max(1, Math.ceil(catalog.total / catalog.pageSize));
@@ -60,9 +84,11 @@ export default async function ProductsPage({
   }
 
   const { products } = catalog;
-  const [wishlistIds, formatPrice] = await Promise.all([
-    getWishlistProductIds(products.map((product) => product.id)),
+  const productIds = products.map((product) => product.id);
+  const [wishlistIds, formatPrice, ratings] = await Promise.all([
+    getWishlistProductIds(productIds),
     createDisplayPriceFormatter(rawLocale, currency),
+    getProductAverageRatings(productIds),
   ]);
 
   const priced = products.map((product) => {
@@ -76,126 +102,133 @@ export default async function ProductsPage({
       product,
       price,
       compareAtFormatted: compareAt?.formatted ?? null,
+      rating: ratings.get(product.id) ?? null,
     };
   });
 
   const pageHref = (targetPage: number) =>
     catalogHref(rawLocale, filters, { page: targetPage });
 
+  const resultsLabel =
+    catalog.total === 1
+      ? catalogCopy.resultsCountOne
+      : catalogCopy.resultsCount.replace("{count}", String(catalog.total));
+
   return (
     <section className="flex flex-col gap-6">
-      <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-        {catalogCopy.title}
-      </h1>
+      <CatalogPageHeader
+        heading={catalogCopy.heading}
+        resultsLabel={resultsLabel}
+      />
 
       <CatalogControls
         locale={rawLocale}
         currency={currency}
         filters={filters}
         categories={categories}
+        allProductsCount={allProductsCount}
         priceBounds={priceBounds}
-        total={catalog.total}
         labels={{
           filters: catalogCopy.filters,
           openFilters: catalogCopy.openFilters,
           clearFilters: catalogCopy.clearFilters,
-          searchLabel: catalogCopy.searchLabel,
-          searchPlaceholder: catalogCopy.searchPlaceholder,
           categoryLabel: catalogCopy.categoryLabel,
           allCategories: catalogCopy.allCategories,
           priceLabel: catalogCopy.priceLabel,
-          availabilityLabel: catalogCopy.availabilityLabel,
-          inStockOnly: catalogCopy.inStockOnly,
           onSaleOnly: catalogCopy.onSaleOnly,
+          newArrivalsOnly: catalogCopy.newArrivalsOnly,
           sortLabel: catalogCopy.sortLabel,
           sortNewest: catalogCopy.sortNewest,
           sortPriceAsc: catalogCopy.sortPriceAsc,
           sortPriceDesc: catalogCopy.sortPriceDesc,
           sortPopular: catalogCopy.sortPopular,
-          removeFilter: catalogCopy.removeFilter,
-          chipSearch: catalogCopy.chipSearch,
-          chipCategory: catalogCopy.chipCategory,
-          chipPrice: catalogCopy.chipPrice,
-          chipPriceMin: catalogCopy.chipPriceMin,
-          chipPriceMax: catalogCopy.chipPriceMax,
-          chipInStock: catalogCopy.chipInStock,
-          chipOnSale: catalogCopy.chipOnSale,
-          resultsCount: catalogCopy.resultsCount,
-          resultsCountOne: catalogCopy.resultsCountOne,
         }}
       >
         {priced.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {catalogCopy.emptyTitle}
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              {catalogCopy.emptyDescription}
-            </p>
-          </div>
+          <Reveal immediate y={16}>
+            <div className="rounded-[37px] border border-dashed border-white/20 bg-white/5 px-6 py-16 text-center">
+              <h2 className="text-lg font-semibold text-white">
+                {catalogCopy.emptyTitle}
+              </h2>
+              <p className="mt-2 text-sm text-white/60">
+                {catalogCopy.emptyDescription}
+              </p>
+            </div>
+          </Reveal>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
-            {priced.map(({ product, price, compareAtFormatted }, index) => (
-              <ProductCard
-                key={product.id}
-                href={`/${rawLocale}/products/${product.translation.slug}`}
-                title={product.translation.title}
-                priceFormatted={price.formatted}
-                compareAtFormatted={compareAtFormatted}
-                discountPercent={product.discountPercent}
-                imageUrl={product.imageUrl}
-                inStock={product.stockOnHand > 0}
-                priority={index < 4}
-                locale={rawLocale}
-                productId={product.id}
-                inWishlist={wishlistIds.has(product.id)}
-                isSignedIn={Boolean(user)}
-                wishlistLabel={dictionary.nav.wishlist}
-                addToCartLabel={dictionary.product.addToCart}
-              />
+          <Stagger
+            key={catalogGridMotionKey(filters)}
+            className="grid grid-cols-2 justify-items-stretch gap-3 sm:gap-5 min-[744px]:grid-cols-3"
+            stagger={0.06}
+            immediate
+          >
+            {priced.map(({ product, price, compareAtFormatted, rating }, index) => (
+              <StaggerItem key={product.id} className="min-w-0 w-full">
+                <ProductCard
+                  href={`/${rawLocale}/products/${product.translation.slug}`}
+                  title={product.translation.title}
+                  priceFormatted={price.formatted}
+                  compareAtFormatted={compareAtFormatted}
+                  discountPercent={product.discountPercent}
+                  discountOffLabel={dictionary.home.discountOff}
+                  rating={rating}
+                  imageUrl={product.imageUrl}
+                  inStock={product.stockOnHand > 0}
+                  priority={index < 2}
+                  locale={rawLocale}
+                  productId={product.id}
+                  inWishlist={wishlistIds.has(product.id)}
+                  isSignedIn={Boolean(user)}
+                  wishlistLabel={dictionary.nav.wishlist}
+                  addToCartLabel={dictionary.product.addToCart}
+                  requiresCustomization={product.hasCustomizationOptions}
+                  layout="catalog"
+                  className="w-full"
+                />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
 
         {totalPages > 1 ? (
-          <nav
-            aria-label={catalogCopy.paginationLabel}
-            className="mt-8 flex items-center justify-center gap-4"
-          >
-            {filters.page > 1 ? (
-              <AppLink
-                href={pageHref(filters.page - 1)}
-                prefetchPolicy="intent"
-                scroll={false}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                {catalogCopy.previousPage}
-              </AppLink>
-            ) : (
-              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-gray-300">
-                {catalogCopy.previousPage}
+          <Reveal immediate delay={0.18} y={16}>
+            <nav
+              aria-label={catalogCopy.paginationLabel}
+              className="mt-8 flex items-center justify-center gap-4"
+            >
+              {filters.page > 1 ? (
+                <AppLink
+                  href={pageHref(filters.page - 1)}
+                  prefetchPolicy="intent"
+                  className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  {catalogCopy.previousPage}
+                </AppLink>
+              ) : (
+                <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
+                  {catalogCopy.previousPage}
+                </span>
+              )}
+              <span className="text-sm text-white/60">
+                {catalogCopy.pageStatus
+                  .replace("{page}", String(filters.page))
+                  .replace("{total}", String(totalPages))}
               </span>
-            )}
-            <span className="text-sm text-gray-600">
-              {catalogCopy.pageStatus
-                .replace("{page}", String(filters.page))
-                .replace("{total}", String(totalPages))}
-            </span>
-            {filters.page < totalPages ? (
-              <AppLink
-                href={pageHref(filters.page + 1)}
-                prefetchPolicy="intent"
-                scroll={false}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                {catalogCopy.nextPage}
-              </AppLink>
-            ) : (
-              <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-gray-300">
-                {catalogCopy.nextPage}
-              </span>
-            )}
-          </nav>
+              {filters.page < totalPages ? (
+                <AppLink
+                  href={pageHref(filters.page + 1)}
+                  prefetchPolicy="intent"
+                  className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10"
+                >
+                  {catalogCopy.nextPage}
+                </AppLink>
+              ) : (
+                <span className="rounded-lg border border-transparent px-4 py-2 text-sm text-white/30">
+                  {catalogCopy.nextPage}
+                </span>
+              )}
+            </nav>
+          </Reveal>
         ) : null}
       </CatalogControls>
     </section>

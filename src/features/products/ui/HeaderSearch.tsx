@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -12,6 +13,7 @@ import {
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
 
+import { SITE_HEADER_SEARCH_PILL } from "@/components/layout/site-header-classes";
 import { AppLink } from "@/components/ui/AppLink";
 import { catalogHref } from "@/features/products/application/catalog-search-params";
 import {
@@ -20,6 +22,9 @@ import {
 } from "@/features/products/application/search-header-products-action";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 const SEARCH_EXIT_MS = 320;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -38,19 +43,33 @@ type HeaderSearchProps = {
   locale: Locale;
   currency: Currency;
   labels: HeaderSearchLabels;
+  /**
+   * `pill` — Figma desktop field.
+   * `icon` — compact control.
+   * `responsive` — icon below `lg`, pill from `lg` up.
+   */
+  variant?: "icon" | "pill" | "responsive";
+  /** Icon button color on dark header. */
+  tone?: "default" | "onDark";
 };
 
 /**
- * Header search icon + centered popup with live product name results.
+ * Header search control + centered popup with live product name results.
  */
-export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
+export function HeaderSearch({
+  locale,
+  currency,
+  labels,
+  variant = "icon",
+  tone = "default",
+}: HeaderSearchProps) {
   const titleId = useId();
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const requestIdRef = useRef(0);
 
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [query, setQuery] = useState("");
@@ -59,26 +78,31 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
   const [searchedQuery, setSearchedQuery] = useState("");
   const [pending, startTransition] = useTransition();
 
-  useEffect(() => {
-    setMounted(true);
+  const finishExit = useCallback((): void => {
+    setRendered(false);
+    setExiting(false);
+    setQuery("");
+    setProducts([]);
+    setTotal(0);
+    setSearchedQuery("");
   }, []);
 
   useEffect(() => {
     if (open) {
-      setExiting(false);
-      setRendered(true);
+      scheduleStateUpdate(setExiting, false);
+      scheduleStateUpdate(setRendered, true);
       return;
     }
 
     if (!rendered) return;
 
-    setExiting(true);
+    scheduleStateUpdate(setExiting, true);
     const timer = window.setTimeout(() => {
       finishExit();
     }, SEARCH_EXIT_MS);
 
     return () => window.clearTimeout(timer);
-  }, [open, rendered]);
+  }, [open, rendered, finishExit]);
 
   useEffect(() => {
     if (!rendered || exiting) return;
@@ -110,9 +134,6 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     const trimmed = query.trim();
     if (trimmed.length < MIN_QUERY_LENGTH) {
       requestIdRef.current += 1;
-      setProducts([]);
-      setTotal(0);
-      setSearchedQuery("");
       return;
     }
 
@@ -138,15 +159,6 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     setOpen(false);
   }
 
-  function finishExit(): void {
-    setRendered(false);
-    setExiting(false);
-    setQuery("");
-    setProducts([]);
-    setTotal(0);
-    setSearchedQuery("");
-  }
-
   function handlePanelAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) return;
     if (!event.animationName.includes("confirm-dialog-panel-out")) return;
@@ -160,26 +172,62 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
     ? "animate-confirm-dialog-panel-out"
     : "animate-confirm-dialog-panel-in";
 
-  const showIdle = searchedQuery.length === 0 && !pending;
+  const trimmedQuery = query.trim();
+  const queryTooShort = trimmedQuery.length < MIN_QUERY_LENGTH;
+  const displayProducts = queryTooShort ? [] : products;
+  const displayTotal = queryTooShort ? 0 : total;
+  const displaySearchedQuery = queryTooShort ? "" : searchedQuery;
+
+  const showIdle = displaySearchedQuery.length === 0 && !pending;
   const showEmpty =
-    searchedQuery.length > 0 && products.length === 0 && !pending;
+    displaySearchedQuery.length > 0 && displayProducts.length === 0 && !pending;
   const viewAllHref = catalogHref(locale, {
-    q: searchedQuery || query.trim(),
+    q: displaySearchedQuery || trimmedQuery,
     sort: "newest",
     page: 1,
-    pageSize: 24,
+    pageSize: 30,
   });
+
+  const iconToneClass =
+    tone === "onDark"
+      ? "text-white hover:text-white/90"
+      : "text-gray-700 hover:text-gray-900";
+
+  const showPill = variant === "pill" || variant === "responsive";
+  const showIcon = variant === "icon" || variant === "responsive";
+  const pillClass =
+    variant === "responsive"
+      ? `hidden md:flex ${SITE_HEADER_SEARCH_PILL}`
+      : `flex ${SITE_HEADER_SEARCH_PILL}`;
+  const iconClass =
+    variant === "responsive"
+      ? `relative inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-150 md:hidden ${iconToneClass}`
+      : `relative inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors duration-150 ${iconToneClass}`;
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={labels.open}
-        className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg text-gray-700 transition-colors duration-150 hover:text-gray-900"
-      >
-        <Search className="h-5 w-5" aria-hidden="true" />
-      </button>
+      {showPill ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={labels.open}
+          className={pillClass}
+        >
+          <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="leading-6">{labels.placeholder}</span>
+        </button>
+      ) : null}
+
+      {showIcon ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={labels.open}
+          className={iconClass}
+        >
+          <Search className="h-5 w-5" aria-hidden="true" />
+        </button>
+      ) : null}
 
       {mounted && rendered
         ? createPortal(
@@ -191,7 +239,7 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
             >
               <button
                 type="button"
-                className={`absolute inset-0 cursor-pointer bg-black/40 ${backdropClass}`}
+                className={`absolute inset-0 cursor-pointer bg-black/30 backdrop-blur-md ${backdropClass}`}
                 aria-label={labels.close}
                 onClick={closePopup}
               />
@@ -199,123 +247,123 @@ export function HeaderSearch({ locale, currency, labels }: HeaderSearchProps) {
                 className={`relative z-[1] flex max-h-[min(70vh,560px)] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
-                <div className="flex items-center gap-2 border-b border-gray-100 px-4 py-3">
-                  <Search
-                    className="h-5 w-5 shrink-0 text-gray-400"
-                    aria-hidden="true"
-                  />
-                  <label htmlFor={inputId} className="sr-only" id={titleId}>
-                    {labels.open}
-                  </label>
-                  <input
-                    ref={inputRef}
-                    id={inputId}
-                    type="text"
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder={labels.placeholder}
-                    autoComplete="off"
-                    className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-400"
-                  />
-                  <button
-                    type="button"
-                    onClick={closePopup}
-                    aria-label={labels.close}
-                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900"
-                  >
-                    <X className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                </div>
-
-                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-                  {showIdle ? (
-                    <p className="px-5 py-8 text-center text-sm text-gray-500">
-                      {labels.idle}
-                    </p>
-                  ) : null}
-
-                  {pending && products.length === 0 ? (
-                    <div className="space-y-3 px-4 py-4" aria-hidden="true">
-                      {Array.from({ length: 4 }).map((_, index) => (
-                        <div
-                          key={index}
-                          className="flex animate-pulse items-center gap-3"
-                        >
-                          <div className="h-14 w-14 rounded-lg bg-gray-100" />
-                          <div className="flex-1 space-y-2">
-                            <div className="h-3 w-3/4 rounded bg-gray-100" />
-                            <div className="h-3 w-1/3 rounded bg-gray-100" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  {showEmpty ? (
-                    <p className="px-5 py-8 text-center text-sm text-gray-500">
-                      {labels.empty}
-                    </p>
-                  ) : null}
-
-                  {products.length > 0 ? (
-                    <ul
-                      className={`divide-y divide-gray-100 ${pending ? "opacity-70" : ""}`}
+                <div className="flex min-h-0 flex-1 flex-col">
+                  <div className="flex items-center gap-2 border-b border-gray-200 px-4 py-3">
+                    <Search
+                      className="h-5 w-5 shrink-0 text-gray-400"
+                      aria-hidden="true"
+                    />
+                    <label htmlFor={inputId} className="sr-only" id={titleId}>
+                      {labels.open}
+                    </label>
+                    <input
+                      ref={inputRef}
+                      id={inputId}
+                      type="text"
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder={labels.placeholder}
+                      autoComplete="off"
+                      className="min-w-0 flex-1 bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={closePopup}
+                      aria-label={labels.close}
+                      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-800 transition-colors hover:bg-gray-200"
                     >
-                      {products.map((product) => (
-                        <li key={product.id}>
-                          <AppLink
-                            href={product.href}
-                            prefetchPolicy="intent"
-                            onClick={closePopup}
-                            className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
+                      <X className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                  </div>
+
+                  <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                    {showIdle ? (
+                      <p className="px-5 py-8 text-center text-sm text-gray-500">
+                        {labels.idle}
+                      </p>
+                    ) : null}
+
+                    {pending && displayProducts.length === 0 ? (
+                      <div className="space-y-3 px-4 py-4" aria-hidden="true">
+                        {Array.from({ length: 4 }).map((_, index) => (
+                          <div
+                            key={index}
+                            className="flex animate-pulse items-center gap-3"
                           >
-                            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                              {product.imageUrl ? (
+                            <div className="h-14 w-14 rounded-lg bg-gray-100" />
+                            <div className="flex-1 space-y-2">
+                              <div className="h-3 w-3/4 rounded bg-gray-100" />
+                              <div className="h-3 w-1/3 rounded bg-gray-100" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {showEmpty ? (
+                      <p className="px-5 py-8 text-center text-sm text-gray-500">
+                        {labels.empty}
+                      </p>
+                    ) : null}
+
+                    {displayProducts.length > 0 ? (
+                      <ul
+                        className={`divide-y divide-gray-100 ${pending ? "opacity-70" : ""}`}
+                      >
+                        {displayProducts.map((product) => (
+                          <li key={product.id}>
+                            <AppLink
+                              href={product.href}
+                              prefetchPolicy="intent"
+                              onClick={closePopup}
+                              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
+                            >
+                              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                                 <Image
-                                  src={product.imageUrl}
+                                  src={STOREFRONT_PRODUCT_PHOTO}
                                   alt=""
                                   fill
                                   sizes="56px"
                                   className="object-cover"
                                 />
-                              ) : null}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-medium text-gray-900">
-                                {product.title}
-                              </p>
-                              <p className="mt-0.5 text-sm text-gray-600">
-                                {product.compareAtFormatted ? (
-                                  <>
-                                    <span className="mr-2 text-gray-400 line-through">
-                                      {product.compareAtFormatted}
-                                    </span>
-                                    <span>{product.priceFormatted}</span>
-                                  </>
-                                ) : (
-                                  product.priceFormatted
-                                )}
-                              </p>
-                            </div>
-                          </AppLink>
-                        </li>
-                      ))}
-                    </ul>
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-medium text-gray-900">
+                                  {product.title}
+                                </p>
+                                <p className="mt-0.5 text-sm text-gray-600">
+                                  {product.compareAtFormatted ? (
+                                    <>
+                                      <span className="mr-2 text-gray-400 line-through">
+                                        {product.compareAtFormatted}
+                                      </span>
+                                      <span>{product.priceFormatted}</span>
+                                    </>
+                                  ) : (
+                                    product.priceFormatted
+                                  )}
+                                </p>
+                              </div>
+                            </AppLink>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+
+                  {displaySearchedQuery && displayTotal > displayProducts.length ? (
+                    <div className="border-t border-gray-200 px-4 py-3">
+                      <AppLink
+                        href={viewAllHref}
+                        prefetchPolicy="intent"
+                        onClick={closePopup}
+                        className="block text-center text-sm font-medium text-gray-900 transition-colors hover:text-gray-600"
+                      >
+                        {labels.viewAll}
+                      </AppLink>
+                    </div>
                   ) : null}
                 </div>
-
-                {searchedQuery && total > products.length ? (
-                  <div className="border-t border-gray-100 px-4 py-3">
-                    <AppLink
-                      href={viewAllHref}
-                      prefetchPolicy="intent"
-                      onClick={closePopup}
-                      className="block text-center text-sm font-medium text-gray-900 transition-colors hover:text-gray-600"
-                    >
-                      {labels.viewAll}
-                    </AppLink>
-                  </div>
-                ) : null}
               </div>
             </div>,
             document.body,

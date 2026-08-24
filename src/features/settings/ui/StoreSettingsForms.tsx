@@ -40,10 +40,10 @@ export function StoreSettingsForms({
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
       {message ? <p className="text-sm text-green-700">{message}</p> : null}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
-      <Card className="p-6">
+      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
+      <Card className="flex h-full flex-col p-6">
         <form
-          className="flex flex-col gap-4"
+          className="flex h-full flex-col gap-4"
           onSubmit={(event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
@@ -102,15 +102,17 @@ export function StoreSettingsForms({
               disabled={isPending}
             />
           </label>
-          <Button type="submit" size="sm" disabled={isPending}>
-            {copy.settings.identity.saveIdentity}
-          </Button>
+          <div className="mt-auto">
+            <Button type="submit" size="field" disabled={isPending}>
+              {copy.settings.identity.saveIdentity}
+            </Button>
+          </div>
         </form>
       </Card>
 
-      <Card className="p-6">
+      <Card className="flex h-full flex-col p-6">
         <form
-          className="flex flex-col gap-4"
+          className="flex h-full flex-col gap-4"
           onSubmit={(event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
@@ -171,9 +173,11 @@ export function StoreSettingsForms({
               required
             />
           </label>
-          <Button type="submit" size="sm" disabled={isPending}>
-            {copy.settings.exchangeRates.saveExchangeRates}
-          </Button>
+          <div className="mt-auto">
+            <Button type="submit" size="field" disabled={isPending}>
+              {copy.settings.exchangeRates.saveExchangeRates}
+            </Button>
+          </div>
         </form>
       </Card>
       </div>

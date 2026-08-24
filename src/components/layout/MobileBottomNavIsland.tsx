@@ -17,9 +17,14 @@ type MobileBottomNavIslandProps = {
 function MobileBottomNavFallback() {
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 h-[calc(3.5rem+env(safe-area-inset-bottom))] border-t border-gray-200 bg-white md:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex h-[calc(63px+0.75rem+env(safe-area-inset-bottom))] justify-center pb-[max(0.75rem,env(safe-area-inset-bottom))] xl:hidden"
       aria-hidden="true"
-    />
+    >
+      <div className="flex w-[339px] max-w-[calc(100%-3rem)] items-center gap-[9px]">
+        <div className="h-[63px] min-w-0 flex-1 rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
+        <div className="size-[63px] shrink-0 rounded-full bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
+      </div>
+    </div>
   );
 }
 
@@ -28,10 +33,10 @@ async function MobileBottomNavAsync({
   currency,
   dictionary,
 }: MobileBottomNavIslandProps) {
-  const [user, cartItemCount, wishlistCount] = await Promise.all([
-    getCurrentUser(),
+  const [cartItemCount, wishlistCount, user] = await Promise.all([
     getCartItemCount(),
     getWishlistCount(),
+    getCurrentUser(),
   ]);
 
   return (
@@ -41,7 +46,9 @@ async function MobileBottomNavAsync({
       dictionary={dictionary}
       cartItemCount={cartItemCount}
       wishlistCount={wishlistCount}
-      isSignedIn={Boolean(user)}
+      groupOrderDefaultName={
+        user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : ""
+      }
     />
   );
 }
