@@ -22,6 +22,8 @@ type CheckoutPaymentMethodOptionProps = {
   disabled: boolean;
   onSelect: (method: CheckoutPaymentMethod) => void;
   cardBadgeSize?: "mobile" | "desktop";
+  /** Stack card description under payment icons (group-order pay). */
+  cardDescriptionBelowIcons?: boolean;
 };
 
 function optionClass(selected: boolean): string {
@@ -42,9 +44,12 @@ export function CheckoutPaymentMethodOption({
   disabled,
   onSelect,
   cardBadgeSize = "mobile",
+  cardDescriptionBelowIcons = false,
 }: CheckoutPaymentMethodOptionProps) {
   const isCardMethod = option.id === "arca";
   const useExpandedCardLayout = isCardMethod && cardBadgeSize === "desktop";
+  const useStackedCardDescription =
+    isCardMethod && cardDescriptionBelowIcons;
   const icons = (
     <CheckoutPaymentMethodIcons
       methodId={option.id}
@@ -64,7 +69,15 @@ export function CheckoutPaymentMethodOption({
           disabled={disabled}
           className="relative z-[2] self-center"
         />
-        {useExpandedCardLayout ? (
+        {useStackedCardDescription ? (
+          <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
+            <span className="font-medium text-gray-900">{option.shortName}</span>
+            {icons}
+            <div className={`hidden xl:block ${descriptionClass(selected)}`}>
+              {option.description}
+            </div>
+          </div>
+        ) : useExpandedCardLayout ? (
           <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-2">
             <span className="font-medium text-gray-900">{option.shortName}</span>
             {icons}

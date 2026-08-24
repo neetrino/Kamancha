@@ -15,7 +15,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
 const PAGE_TITLE =
-  "font-big-fat-boii text-[58px] leading-[1.1] font-normal tracking-wide text-white uppercase whitespace-nowrap sm:text-[32px]";
+  "font-big-fat-boii text-[28px] leading-[1.1] font-normal tracking-wide text-white uppercase whitespace-nowrap sm:text-[32px]";
 
 const PAGE_SUBTITLE = "mt-2 text-base leading-relaxed text-white/70";
 
@@ -122,6 +122,7 @@ export function GroupOrderPayClient({
                 option={option}
                 selected={provider === option.id}
                 disabled={pending}
+                cardDescriptionBelowIcons={option.id === "arca"}
                 onSelect={(method) => setProvider(method as CheckoutOnlineProvider)}
               />
             ))}
