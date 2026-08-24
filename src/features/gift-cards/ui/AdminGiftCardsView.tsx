@@ -7,6 +7,7 @@ import { Check, Copy, Mail, Plus, Power } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
@@ -19,7 +20,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
@@ -41,6 +44,7 @@ type AdminGiftCardsViewProps = {
   locale: string;
   cards: GiftCardListItem[];
   presets: number[];
+  q?: string;
   copy: AdminGiftCardsViewCopy;
 };
 
@@ -48,6 +52,7 @@ export function AdminGiftCardsView({
   locale,
   cards,
   presets,
+  q,
   copy,
 }: AdminGiftCardsViewProps) {
   const router = useRouter();
@@ -73,19 +78,30 @@ export function AdminGiftCardsView({
 
   return (
     <section>
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className={ADMIN_PAGE_TITLE}>{copy.giftCards.title}</h1>
-          <p className={ADMIN_PAGE_SUBTITLE}>{copy.giftCards.subtitle}</p>
-        </div>
+      <div className="mb-4">
+        <h1 className={ADMIN_PAGE_TITLE}>{copy.giftCards.title}</h1>
+        <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{copy.giftCards.subtitle}</p>
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <form method="get" className="min-w-0 flex-1">
+          <AdminSearchInput
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder={copy.giftCards.searchPlaceholder}
+            aria-label={copy.giftCards.searchPlaceholder}
+          />
+        </form>
         <Button
           type="button"
+          size="field"
+          className="shrink-0 gap-2 whitespace-nowrap"
           onClick={() => {
             setDrawerKey((key) => key + 1);
             setDrawerOpen(true);
           }}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4 shrink-0" aria-hidden />
           {copy.giftCards.add}
         </Button>
       </div>
@@ -110,7 +126,7 @@ export function AdminGiftCardsView({
                 <th className={ADMIN_TABLE_TH}>
                   {copy.giftCards.table.purchaser}
                 </th>
-                <th className={ADMIN_TABLE_TH}>{copy.common.actions}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.common.actions}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
@@ -154,8 +170,8 @@ export function AdminGiftCardsView({
                         {card.purchaserEmail ?? "—"}
                       </div>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <div className="flex flex-wrap gap-1">
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <div className="inline-flex flex-wrap items-center justify-center gap-1">
                         <Button
                           type="button"
                           variant="secondary"

@@ -47,24 +47,11 @@ export default async function AdminGiftCardsPage({
 
   return (
     <>
-      <form className="mb-4 flex gap-2" method="get">
-        <input
-          name="q"
-          defaultValue={q ?? ""}
-          placeholder={dict.admin.giftCards.searchPlaceholder}
-          className="h-10 min-w-0 flex-1 rounded-lg border border-gray-200 px-3 text-sm"
-        />
-        <button
-          type="submit"
-          className="h-10 rounded-lg bg-gray-900 px-4 text-sm font-medium text-white"
-        >
-          {dict.admin.common.search}
-        </button>
-      </form>
       <AdminGiftCardsView
         locale={locale}
         cards={items}
         presets={settings.presets}
+        q={q}
         copy={{
           giftCards: dict.admin.giftCards,
           common: dict.admin.common,
