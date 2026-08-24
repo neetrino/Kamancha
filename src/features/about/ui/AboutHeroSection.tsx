@@ -17,9 +17,9 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
       data-node-id="362:289"
       className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible"
     >
-      <div className="relative mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:min-h-[780px] lg:px-[63px]">
-        <div className="relative z-[1] max-w-[777px] pt-2 pb-8 sm:pt-4 lg:pt-[72px] lg:pb-32">
-          <h1 className="font-big-fat-boii text-[clamp(36px,5.3vw,76px)] leading-[1.05] font-normal text-[#e5e2e1] uppercase">
+      <div className="relative mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:min-h-[1180px] lg:px-[63px]">
+        <div className="relative z-[1] max-w-[777px] pt-2 pb-8 sm:pt-4 lg:pt-[108px] lg:pb-32">
+          <h1 className="font-big-fat-boii text-[clamp(36px,5.2vw,68px)] leading-[1.05] font-normal text-[#e5e2e1] uppercase lg:whitespace-nowrap">
             {copy.title}
           </h1>
 
@@ -43,18 +43,18 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
           </p>
         </div>
 
-        {/* Figma 362:282 — 933×1877, object-bottom, overflows right by 55px at 1440 */}
+        {/* Hero portrait — 887×1774, title aligned with head via lg:pt-[108px] */}
         <div
           data-node-id="362:282"
-          className="relative mx-auto mt-2 aspect-[933/1877] w-full max-w-[420px] sm:max-w-[480px] lg:pointer-events-none lg:absolute lg:top-0 lg:right-[-55px] lg:mx-0 lg:mt-0 lg:aspect-auto lg:h-[min(130vh,1877px)] lg:w-[933px] lg:max-w-none"
+          className="relative mx-auto mt-2 aspect-[887/1774] w-full max-w-[820px] sm:max-w-[960px] lg:pointer-events-none lg:absolute lg:-top-[100px] lg:right-[-355px] lg:z-0 lg:mx-0 lg:mt-0 lg:aspect-auto lg:h-[min(215vh,2840px)] lg:w-[1480px] lg:max-w-none"
         >
           <Image
             src={ABOUT_HERO_IMAGE}
             alt={copy.heroImageAlt}
             fill
             priority
-            sizes="(max-width: 1024px) 90vw, 933px"
-            className="object-contain object-bottom"
+            sizes="(max-width: 1024px) 95vw, 1480px"
+            className="object-contain object-bottom lg:object-top"
           />
         </div>
       </div>

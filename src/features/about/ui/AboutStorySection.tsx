@@ -30,7 +30,7 @@ function AboutStoryMobile({ copy }: AboutStorySectionProps) {
       </div>
 
       <div className="flex flex-col gap-5 text-[#222]">
-        <h2 className="font-big-fat-boii text-[28px] leading-[1.1] font-normal uppercase sm:text-[32px]">
+        <h2 className="font-big-fat-boii text-[clamp(22px,6.5vw,32px)] leading-[1.1] font-normal uppercase sm:whitespace-nowrap">
           {copy.title}
         </h2>
         <HomeDiamondMark tone="forest" className="h-[18px] w-[54px]" />
@@ -80,7 +80,7 @@ function AboutStoryDesktop({ copy }: AboutStorySectionProps) {
 
       <h2
         data-node-id="362:296"
-        className="absolute top-[113px] left-[654px] w-[651px] font-big-fat-boii text-[36px] leading-[24px] font-normal text-[#222] uppercase"
+        className="absolute top-[113px] left-[654px] w-auto max-w-none font-big-fat-boii text-[32px] leading-[24px] font-normal whitespace-nowrap text-[#222] uppercase"
       >
         {copy.title}
       </h2>
@@ -136,7 +136,7 @@ export function AboutStorySection({ copy }: AboutStorySectionProps) {
   return (
     <section
       data-node-id="362:284"
-      className="relative left-1/2 z-[1] mt-6 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible sm:mt-10 lg:mt-0"
+      className="relative left-1/2 z-[2] -mt-28 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible sm:-mt-40 lg:-mt-[420px]"
     >
       <div className="w-full overflow-visible rounded-[30px] bg-white pb-10 sm:rounded-[40px] sm:pb-12 lg:rounded-[50px] lg:pb-10">
         <AboutStoryMobile copy={copy} />
