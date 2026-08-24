@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 
+import { HOME_HORIZONTAL_SCROLL } from "@/features/home/ui/home-motion";
 import {
   HomeMobileCategoryStage,
   type HomeMobileCategorySlide,
@@ -89,7 +90,7 @@ export function HomeMobileCategories({
     <section className="relative z-[1] overflow-x-clip pt-6 pb-0">
       <div
         data-node-id="196:205"
-        className="overflow-x-auto px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className={`${HOME_HORIZONTAL_SCROLL} px-6`}
       >
         <div className="flex w-max items-center gap-2">
           {categories.map((category, categoryIndex) => {

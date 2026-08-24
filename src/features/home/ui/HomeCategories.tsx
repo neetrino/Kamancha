@@ -5,6 +5,7 @@ import {
   HomeReveal,
   HomeStagger,
   HomeStaggerItem,
+  HOME_HORIZONTAL_SCROLL,
 } from "@/features/home/ui/home-motion";
 import { BRAND_ORNAMENT_SRC } from "@/lib/brand/assets";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
@@ -91,13 +92,13 @@ export function HomeCategories({
           data-node-id="22:209"
           className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2"
         >
-          <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className={HOME_HORIZONTAL_SCROLL}>
             <HomeStagger
               className="inline-flex gap-[19px] px-16 py-4"
               stagger={0.07}
             >
               {categories.map((category) => (
-                <HomeStaggerItem key={category.id} className="shrink-0">
+                <HomeStaggerItem key={category.id} className="shrink-0" y={0}>
                   <AppLink
                     href={category.href}
                     prefetchPolicy="intent"

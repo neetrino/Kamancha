@@ -3,6 +3,7 @@ import {
   HomeReveal,
   HomeStagger,
   HomeStaggerItem,
+  HOME_HORIZONTAL_SCROLL,
 } from "@/features/home/ui/home-motion";
 import { HomeSectionHeading } from "@/features/home/ui/HomeSectionHeading";
 import { ProductCard } from "@/features/products/ui/ProductCard";
@@ -92,7 +93,7 @@ export function HomeMobileProductSection({
       ) : (
         <>
           <div className="relative left-1/2 mt-4 w-screen max-w-[100vw] -translate-x-1/2">
-            <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className={HOME_HORIZONTAL_SCROLL}>
               <HomeStagger
                 className="inline-flex gap-[13px] px-2.5 py-3"
                 stagger={0.08}
@@ -101,6 +102,7 @@ export function HomeMobileProductSection({
                   <HomeStaggerItem
                     key={product.id}
                     className="w-[214px] shrink-0"
+                    y={0}
                   >
                     <ProductCard
                       href={product.href}

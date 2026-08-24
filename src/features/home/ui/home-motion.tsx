@@ -15,6 +15,13 @@ import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 /** Soft ease — scroll reveals on the home page. */
 export const homeEaseOut = revealEaseOut;
 
+/**
+ * Horizontal product/category rows — contain overscroll so vertical page scroll
+ * is not captured; pan-x keeps cards from blocking vertical gestures.
+ */
+export const HOME_HORIZONTAL_SCROLL =
+  "overflow-x-auto overflow-y-hidden overscroll-x-contain touch-pan-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+
 type HomeRevealProps = ComponentProps<typeof Reveal>;
 
 /**
@@ -40,9 +47,7 @@ export function HomeReveal({
 
 type HomeStaggerProps = ComponentProps<typeof Stagger>;
 
-/**
- * Parent for staggered scroll reveals. Pair with `HomeStaggerItem`.
- */
+/** Parent for staggered scroll reveals. Pair with `HomeStaggerItem`. */
 export function HomeStagger({
   enabled,
   amount = scrollRevealViewport.amount,

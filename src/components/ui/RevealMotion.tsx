@@ -149,21 +149,23 @@ export function Stagger({
 type StaggerItemProps = {
   children: ReactNode;
   className?: string;
+  /** Vertical offset for the reveal (0 = fade only, e.g. horizontal card rows). */
+  y?: number;
   enabled?: boolean;
-};
-
-const staggerItem = {
-  hidden: { opacity: 0, y: 26 },
-  show: { opacity: 1, y: 0 },
 };
 
 /** Child of `Stagger`. */
 export function StaggerItem({
   children,
   className,
+  y = 26,
   enabled = true,
 }: StaggerItemProps) {
   const play = usePlayReveal(enabled);
+  const staggerItem = {
+    hidden: { opacity: 0, y },
+    show: { opacity: 1, y: 0 },
+  };
 
   return (
     <motion.div
