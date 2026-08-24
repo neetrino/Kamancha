@@ -5,6 +5,7 @@
   "outOfStock": "Out of stock",
   "quantity": "Quantity",
   "addToCart": "Add to cart",
+  "addToCartShort": "Add",
   "adding": "Adding…",
   "added": "Added to cart.",
   "addError": "Unable to add this product to the cart.",

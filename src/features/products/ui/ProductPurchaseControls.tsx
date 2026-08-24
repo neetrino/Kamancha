@@ -27,6 +27,7 @@ type ProductPurchaseControlsProps = {
     decreaseQuantity: string;
     increaseQuantity: string;
     addToCart: string;
+    addToCartShort: string;
     adding: string;
     outOfStock: string;
     added: string;
@@ -183,7 +184,7 @@ export function ProductPurchaseControls({
           ) : null}
         </div>
 
-        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-3">
+        <div className="flex w-full min-w-0 flex-nowrap items-center gap-3">
           <div className="inline-flex h-[52px] w-[144px] shrink-0 items-center overflow-hidden rounded-[50px] bg-white/10">
             <button
               type="button"
@@ -216,7 +217,7 @@ export function ProductPurchaseControls({
             type="button"
             disabled={disabled}
             onClick={handleAdd}
-            className="inline-flex h-14 min-w-0 max-w-full items-center gap-2.5 rounded-[50px] bg-white px-5 text-base font-semibold text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50 sm:gap-3 sm:px-7"
+            className="inline-flex h-[52px] min-w-0 flex-1 items-center justify-center gap-2.5 rounded-[50px] bg-white px-4 text-base font-semibold text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50 sm:shrink-0 sm:flex-none sm:gap-3 sm:px-7"
           >
             <Image
               src={CART_PLUS_SRC}
@@ -226,7 +227,10 @@ export function ProductPurchaseControls({
               className="shrink-0"
               aria-hidden
             />
-            <span className="truncate">
+            <span className="truncate sm:hidden">
+              {disabled ? labels.outOfStock : labels.addToCartShort}
+            </span>
+            <span className="hidden truncate sm:inline">
               {disabled ? labels.outOfStock : labels.addToCart}
             </span>
           </button>

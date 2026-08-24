@@ -98,12 +98,12 @@ export function ProductDetailView({
             </span>
           </nav>
 
-          <div className="flex min-w-0 flex-wrap items-start gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
             <h1 className="font-big-fat-boii text-[clamp(32px,5vw,58px)] leading-[1.05] font-normal tracking-[0.5px] text-white uppercase">
               {product.translation.title}
             </h1>
             <span
-              className={`mt-2 inline-flex items-center gap-1 rounded-[40px] px-2.5 py-1 text-base leading-[27px] ${
+              className={`inline-flex shrink-0 items-center gap-1 rounded-[40px] px-2.5 py-1 text-base leading-[27px] ${
                 inStock
                   ? "bg-[rgba(34,34,34,0.53)] text-white/90"
                   : "bg-black/40 text-white/70"
@@ -174,6 +174,7 @@ export function ProductDetailView({
               decreaseQuantity: dictionary.cartDrawer.decreaseQuantity,
               increaseQuantity: dictionary.cartDrawer.increaseQuantity,
               addToCart: labels.addToCart,
+              addToCartShort: labels.addToCartShort,
               adding: labels.adding,
               outOfStock: labels.outOfStock,
               added: labels.added,
