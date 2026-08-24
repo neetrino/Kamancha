@@ -243,7 +243,7 @@ export function GroupOrderPageClient({
 
   return (
     <div
-      className={`mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 ${pending ? "opacity-70" : ""}`}
+      className={`group-order-page mx-auto max-w-7xl px-0 py-8 ${pending ? "opacity-70" : ""}`}
     >
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -254,10 +254,11 @@ export function GroupOrderPageClient({
             {labels.status}: {view.status}
           </p>
         </div>
-        <div className="w-full max-w-[280px] shrink-0 sm:max-w-[316px]">
+        <div className="w-full shrink-0 sm:max-w-[316px]">
           <KamanchaPillButton
             href={`/${locale}/products`}
             label={labels.browseMenu}
+            className="max-w-none w-full sm:max-w-[316px]"
           />
         </div>
       </div>
@@ -265,14 +266,10 @@ export function GroupOrderPageClient({
       <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
       <div className="space-y-6">
       <section className="liquid-glass isolate overflow-hidden rounded-3xl p-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className={BLOCK_TITLE}>{labels.inviteLink}</p>
-            <p className="mt-1 truncate text-xs text-white">
-              {view.invitePath}
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-wrap justify-end gap-2">
+        <div className="flex flex-col gap-3">
+          <p className={BLOCK_TITLE}>{labels.inviteLink}</p>
+          <p className="truncate text-xs text-white">{view.invitePath}</p>
+          <div className="flex flex-wrap justify-end gap-2">
             <button
               type="button"
               className={GLASS_PILL_BUTTON}

@@ -617,8 +617,9 @@ html {
     padding-bottom: 6rem;
   }
 
-  /* Checkout — Grill.am mobile inset (single 1.25rem; no double px from layout + form). */
-  .storefront-main:has(.checkout-page) {
+  /* Checkout + group order — Grill.am mobile inset (single 1.25rem; no double px). */
+  .storefront-main:has(.checkout-page),
+  .storefront-main:has(.group-order-page) {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
