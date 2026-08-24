@@ -233,7 +233,7 @@ export function LocaleCurrencySwitcher({
           }`}
           style={{ transitionDuration: `${DROPDOWN_ANIMATION_MS}ms` }}
         >
-          <div className="flex w-max overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-lg">
+          <div className="flex w-max overflow-hidden rounded-xl border border-gray-100 bg-white py-2">
             <div className="w-max border-r border-gray-100">
               <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
                 {languageLabel}

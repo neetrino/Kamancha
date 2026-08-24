@@ -257,7 +257,7 @@ function SelectDropdownMenu({
           id={listId}
           role="listbox"
           aria-label={ariaLabel}
-          className="max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2 shadow-lg"
+          className="max-h-72 overflow-y-auto rounded-2xl border border-gray-100 bg-white py-2"
         >
           {allLabel !== undefined ? (
             <SelectDropdownOptionRow

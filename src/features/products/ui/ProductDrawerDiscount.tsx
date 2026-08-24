@@ -168,7 +168,7 @@ export function ProductDrawerDiscount({
         <ul
           id={typeListId}
           role="listbox"
-          className="absolute left-0 z-20 mt-1 w-28 overflow-hidden rounded-xl bg-gray-800 py-1 text-sm text-white shadow-lg"
+          className="absolute left-0 z-20 mt-1 w-28 overflow-hidden rounded-xl bg-gray-800 py-1 text-sm text-white"
         >
           {(
             [
@@ -197,7 +197,7 @@ export function ProductDrawerDiscount({
       {scheduleOpen ? (
         <div
           id={scheduleId}
-          className="absolute right-0 z-20 mt-2 w-[min(100%,20rem)] space-y-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-lg"
+          className="absolute right-0 z-20 mt-2 w-[min(100%,20rem)] space-y-3 rounded-2xl border border-gray-200 bg-white p-3"
         >
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-gray-600">

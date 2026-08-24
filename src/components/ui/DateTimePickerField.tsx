@@ -71,7 +71,7 @@ export function DateTimePickerField({
         disabled={disabled}
         value={time}
         onChange={(event) => updateTime(event.target.value)}
-        className="h-10 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-gray-300"
+        className="h-10 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition-colors hover:border-gray-300 focus:border-gray-300"
       />
     </label>
   );

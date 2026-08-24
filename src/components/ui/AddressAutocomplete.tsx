@@ -186,7 +186,7 @@ export function AddressAutocomplete({
         <ul
           id={listId}
           role="listbox"
-          className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-2xl border border-gray-200 bg-white py-1 shadow-lg"
+          className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-2xl border border-gray-200 bg-white py-1"
         >
           {suggestions.map((suggestion, index) => {
             const active = index === highlightIndex;

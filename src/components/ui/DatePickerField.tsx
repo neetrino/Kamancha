@@ -232,7 +232,7 @@ export function DatePickerField({
           ref={panelRef}
           role="dialog"
           aria-label={labels.placeholder}
-          className={`absolute left-0 z-50 w-[min(100%,20rem)] rounded-xl border border-gray-200 bg-white p-3 shadow-lg ${
+          className={`absolute left-0 z-50 w-[min(100%,20rem)] rounded-xl border border-gray-200 bg-white p-3 ${
             placement === "top"
               ? "bottom-[calc(100%+0.5rem)]"
               : "top-[calc(100%+0.5rem)]"
