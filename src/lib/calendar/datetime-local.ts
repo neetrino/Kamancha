@@ -5,8 +5,8 @@ export function splitDateTimeLocal(value: string): { date: string; time: string 
   if (!value.trim()) {
     return { date: "", time: "00:00" };
   }
-  const [date, time = "00:00"] = value.split("T");
-  return { date, time: time.slice(0, 5) };
+  const [datePart, time = "00:00"] = value.split("T");
+  return { date: datePart ?? "", time: time.slice(0, 5) };
 }
 
 export function combineDateTimeLocal(date: string, time: string): string {

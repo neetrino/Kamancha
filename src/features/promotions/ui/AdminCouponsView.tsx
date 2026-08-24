@@ -178,7 +178,9 @@ export function AdminCouponsView({ locale, coupons, copy }: AdminCouponsViewProp
                             "{code}",
                             promo.code,
                           )}
-                          onClick={() => copyCode(promo.code)}
+                          onClick={() => {
+                            if (promo.code) copyCode(promo.code);
+                          }}
                         >
                           {promo.code}
                         </button>

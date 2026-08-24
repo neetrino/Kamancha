@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  useCallback,
   useEffect,
   useId,
   useRef,
@@ -22,6 +23,8 @@ import {
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 const SEARCH_EXIT_MS = 320;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -66,7 +69,7 @@ export function HeaderSearch({
   const requestIdRef = useRef(0);
 
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [query, setQuery] = useState("");
@@ -75,26 +78,31 @@ export function HeaderSearch({
   const [searchedQuery, setSearchedQuery] = useState("");
   const [pending, startTransition] = useTransition();
 
-  useEffect(() => {
-    setMounted(true);
+  const finishExit = useCallback((): void => {
+    setRendered(false);
+    setExiting(false);
+    setQuery("");
+    setProducts([]);
+    setTotal(0);
+    setSearchedQuery("");
   }, []);
 
   useEffect(() => {
     if (open) {
-      setExiting(false);
-      setRendered(true);
+      scheduleStateUpdate(setExiting, false);
+      scheduleStateUpdate(setRendered, true);
       return;
     }
 
     if (!rendered) return;
 
-    setExiting(true);
+    scheduleStateUpdate(setExiting, true);
     const timer = window.setTimeout(() => {
       finishExit();
     }, SEARCH_EXIT_MS);
 
     return () => window.clearTimeout(timer);
-  }, [open, rendered]);
+  }, [open, rendered, finishExit]);
 
   useEffect(() => {
     if (!rendered || exiting) return;
@@ -126,9 +134,6 @@ export function HeaderSearch({
     const trimmed = query.trim();
     if (trimmed.length < MIN_QUERY_LENGTH) {
       requestIdRef.current += 1;
-      setProducts([]);
-      setTotal(0);
-      setSearchedQuery("");
       return;
     }
 
@@ -154,15 +159,6 @@ export function HeaderSearch({
     setOpen(false);
   }
 
-  function finishExit(): void {
-    setRendered(false);
-    setExiting(false);
-    setQuery("");
-    setProducts([]);
-    setTotal(0);
-    setSearchedQuery("");
-  }
-
   function handlePanelAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) return;
     if (!event.animationName.includes("confirm-dialog-panel-out")) return;
@@ -176,14 +172,20 @@ export function HeaderSearch({
     ? "animate-confirm-dialog-panel-out"
     : "animate-confirm-dialog-panel-in";
 
-  const showIdle = searchedQuery.length === 0 && !pending;
+  const trimmedQuery = query.trim();
+  const queryTooShort = trimmedQuery.length < MIN_QUERY_LENGTH;
+  const displayProducts = queryTooShort ? [] : products;
+  const displayTotal = queryTooShort ? 0 : total;
+  const displaySearchedQuery = queryTooShort ? "" : searchedQuery;
+
+  const showIdle = displaySearchedQuery.length === 0 && !pending;
   const showEmpty =
-    searchedQuery.length > 0 && products.length === 0 && !pending;
+    displaySearchedQuery.length > 0 && displayProducts.length === 0 && !pending;
   const viewAllHref = catalogHref(locale, {
-    q: searchedQuery || query.trim(),
+    q: displaySearchedQuery || trimmedQuery,
     sort: "newest",
     page: 1,
-    pageSize: 24,
+    pageSize: 30,
   });
 
   const iconToneClass =
@@ -281,7 +283,7 @@ export function HeaderSearch({
                       </p>
                     ) : null}
 
-                    {pending && products.length === 0 ? (
+                    {pending && displayProducts.length === 0 ? (
                       <div className="space-y-3 px-4 py-4" aria-hidden="true">
                         {Array.from({ length: 4 }).map((_, index) => (
                           <div
@@ -304,11 +306,11 @@ export function HeaderSearch({
                       </p>
                     ) : null}
 
-                    {products.length > 0 ? (
+                    {displayProducts.length > 0 ? (
                       <ul
                         className={`divide-y divide-gray-100 ${pending ? "opacity-70" : ""}`}
                       >
-                        {products.map((product) => (
+                        {displayProducts.map((product) => (
                           <li key={product.id}>
                             <AppLink
                               href={product.href}
@@ -349,7 +351,7 @@ export function HeaderSearch({
                     ) : null}
                   </div>
 
-                  {searchedQuery && total > products.length ? (
+                  {displaySearchedQuery && displayTotal > displayProducts.length ? (
                     <div className="border-t border-gray-200 px-4 py-3">
                       <AppLink
                         href={viewAllHref}

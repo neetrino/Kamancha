@@ -16,6 +16,8 @@ import { createGroupOrderAction } from "@/features/group-orders/actions";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 /** Match ConfirmDialog / profile popup exit (globals.css). */
 const MODAL_EXIT_MS = 320;
@@ -45,7 +47,7 @@ export function CreateGroupOrderModal({
 }: CreateGroupOrderModalProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [paymentMode, setPaymentMode] =
@@ -55,21 +57,17 @@ export function CreateGroupOrderModal({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
     if (open) {
-      setExiting(false);
-      setRendered(true);
-      setName(defaultName);
-      setSpendLimit("");
-      setPaymentMode("ORGANIZER_PAYS_ALL");
-      setError(null);
+      scheduleStateUpdate(setExiting, false);
+      scheduleStateUpdate(setRendered, true);
+      scheduleStateUpdate(setName, defaultName);
+      scheduleStateUpdate(setSpendLimit, "");
+      scheduleStateUpdate(setPaymentMode, "ORGANIZER_PAYS_ALL");
+      scheduleStateUpdate(setError, null);
       return;
     }
     if (!rendered) return;
-    setExiting(true);
+    scheduleStateUpdate(setExiting, true);
     const timer = window.setTimeout(() => {
       setRendered(false);
       setExiting(false);

@@ -12,6 +12,7 @@ import { ProfileMobileHub } from "@/features/profile/ui/ProfileMobileHub";
 import { ProfileMobileTabSheet } from "@/features/profile/ui/ProfileMobileTabSheet";
 import { ProfilePageReveal } from "@/features/profile/ui/ProfilePageReveal";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 import type { Locale } from "@/lib/i18n/config";
 import type { SessionUser } from "@/lib/auth/session";
 
@@ -57,8 +58,8 @@ export function ProfileMobileShell({
 
   useEffect(() => {
     if (isHub) {
-      setHubSheetOpen(false);
-      setClosingToHub(false);
+      scheduleStateUpdate(setHubSheetOpen, false);
+      scheduleStateUpdate(setClosingToHub, false);
     }
   }, [isHub, pathname]);
 

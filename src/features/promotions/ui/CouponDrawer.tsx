@@ -19,6 +19,7 @@ import {
 import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
 import type { DiscountType } from "@/features/promotions/domain/promotion-rules";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type CouponDrawerCoupon = Pick<
   AdminPromotionListItem,
@@ -74,25 +75,27 @@ export function CouponDrawer({
     if (!open) return;
 
     if (coupon) {
-      setName(coupon.code ?? "");
-      setCode(coupon.code ?? "");
-      setDiscountType(
+      scheduleStateUpdate(setName, coupon.code ?? "");
+      scheduleStateUpdate(setCode, coupon.code ?? "");
+      scheduleStateUpdate(
+        setDiscountType,
         coupon.discountType === "FIXED" ? "FIXED" : "PERCENTAGE",
       );
-      setValue(String(coupon.discountValue));
-      setQuantity(
+      scheduleStateUpdate(setValue, String(coupon.discountValue));
+      scheduleStateUpdate(
+        setQuantity,
         coupon.totalUsageLimit != null ? String(coupon.totalUsageLimit) : "",
       );
-      setExpiresAt(toDateTimeLocal(coupon.endsAt));
-      setError(null);
+      scheduleStateUpdate(setExpiresAt, toDateTimeLocal(coupon.endsAt));
+      scheduleStateUpdate(setError, null);
     } else {
-      setName("");
-      setCode("");
-      setDiscountType("PERCENTAGE");
-      setValue("10");
-      setQuantity("1");
-      setExpiresAt("");
-      setError(null);
+      scheduleStateUpdate(setName, "");
+      scheduleStateUpdate(setCode, "");
+      scheduleStateUpdate(setDiscountType, "PERCENTAGE");
+      scheduleStateUpdate(setValue, "10");
+      scheduleStateUpdate(setQuantity, "1");
+      scheduleStateUpdate(setExpiresAt, "");
+      scheduleStateUpdate(setError, null);
     }
   }, [open, coupon]);
 

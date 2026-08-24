@@ -10,6 +10,7 @@ import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import { clearActiveFocus } from "@/lib/dom/clear-active-focus";
 import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 const ZOOM_SRC = "/assets/brand/product/zoom-in.svg";
 
@@ -71,7 +72,7 @@ export function ProductGallery({
   );
   const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
   const [zoomed, setZoomed] = useState(false);
-  const [portalReady, setPortalReady] = useState(false);
+  const portalReady = useIsClient();
   const selectedIndex = Math.max(
     0,
     galleryImages.findIndex((image) => image.id === selectedId),
@@ -96,10 +97,6 @@ export function ProductGallery({
     setZoomed(false);
     clearActiveFocus();
   }
-
-  useEffect(() => {
-    setPortalReady(true);
-  }, []);
 
   useEffect(() => {
     if (!zoomed) return;

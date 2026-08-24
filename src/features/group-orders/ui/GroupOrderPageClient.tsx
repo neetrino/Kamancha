@@ -109,7 +109,6 @@ export function GroupOrderPageClient({
   needsJoin,
 }: GroupOrderPageClientProps) {
   const router = useRouter();
-  const view = initialView;
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -128,20 +127,22 @@ export function GroupOrderPageClient({
     null,
   );
 
-  const isOrganizer = view?.currentParticipantRole === "ORGANIZER";
-  const canEdit = view?.status === "OPEN";
-  const currentParticipant = view?.participants.find(
-    (participant) => participant.id === view.currentParticipantId,
-  );
-  const iAmReady = currentParticipant?.itemsReady ?? false;
-
-  if (!view) {
+  if (!initialView) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
         <p className="text-lg font-semibold text-white">{labels.notFound}</p>
       </div>
     );
   }
+
+  const view = initialView;
+
+  const isOrganizer = view.currentParticipantRole === "ORGANIZER";
+  const canEdit = view.status === "OPEN";
+  const currentParticipant = view.participants.find(
+    (participant) => participant.id === view.currentParticipantId,
+  );
+  const iAmReady = currentParticipant?.itemsReady ?? false;
 
   if (needsJoin && !view.currentParticipantId) {
     return (

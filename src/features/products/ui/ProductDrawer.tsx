@@ -27,6 +27,7 @@ import {
 } from "@/features/products/ui/ProductDrawerImages";
 import { ProductDrawerModifiers } from "@/features/products/ui/ProductDrawerModifiers";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type ProductDrawerProduct = Pick<
   AdminProductListItem,
@@ -109,17 +110,18 @@ export function ProductDrawer({
   useEffect(() => {
     if (!open) return;
 
-    setCategories(initialCategories);
-    setModifierLibrary(initialModifierLibrary);
+    scheduleStateUpdate(setCategories, initialCategories);
+    scheduleStateUpdate(setModifierLibrary, initialModifierLibrary);
     if (product) {
-      setTitle(product.title);
-      setSlug(product.slug);
-      setDescription(product.description);
-      setImages(imagesFromProduct(product));
-      setRemovedImageIds([]);
-      setCategoryIds(product.categoryIds);
-      setModifierIds(product.modifierIds);
-      setDiscount(
+      scheduleStateUpdate(setTitle, product.title);
+      scheduleStateUpdate(setSlug, product.slug);
+      scheduleStateUpdate(setDescription, product.description);
+      scheduleStateUpdate(setImages, imagesFromProduct(product));
+      scheduleStateUpdate(setRemovedImageIds, []);
+      scheduleStateUpdate(setCategoryIds, product.categoryIds);
+      scheduleStateUpdate(setModifierIds, product.modifierIds);
+      scheduleStateUpdate(
+        setDiscount,
         product.discount
           ? {
               type: product.discount.type,
@@ -133,23 +135,23 @@ export function ProductDrawer({
             }
           : null,
       );
-      setPriceAmount(String(product.priceAmount));
-      setSku(product.sku);
-      setStockOnHand(String(product.stockOnHand));
-      setError(null);
+      scheduleStateUpdate(setPriceAmount, String(product.priceAmount));
+      scheduleStateUpdate(setSku, product.sku);
+      scheduleStateUpdate(setStockOnHand, String(product.stockOnHand));
+      scheduleStateUpdate(setError, null);
     } else {
-      setTitle("");
-      setSlug("");
-      setDescription("");
-      setImages([]);
-      setRemovedImageIds([]);
-      setCategoryIds([]);
-      setModifierIds([]);
-      setDiscount(null);
-      setPriceAmount("");
-      setSku("");
-      setStockOnHand("");
-      setError(null);
+      scheduleStateUpdate(setTitle, "");
+      scheduleStateUpdate(setSlug, "");
+      scheduleStateUpdate(setDescription, "");
+      scheduleStateUpdate(setImages, []);
+      scheduleStateUpdate(setRemovedImageIds, []);
+      scheduleStateUpdate(setCategoryIds, []);
+      scheduleStateUpdate(setModifierIds, []);
+      scheduleStateUpdate(setDiscount, null);
+      scheduleStateUpdate(setPriceAmount, "");
+      scheduleStateUpdate(setSku, "");
+      scheduleStateUpdate(setStockOnHand, "");
+      scheduleStateUpdate(setError, null);
     }
   }, [open, product, initialCategories, initialModifierLibrary]);
 

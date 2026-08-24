@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { ADMIN_INPUT } from "@/features/admin/ui/admin-form-classes";
 import { setGlobalDiscountAction } from "@/features/promotions/application/manage-discounts";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 const QUICK_PERCENTS = [10, 20, 30, 50] as const;
 
@@ -37,8 +38,11 @@ export function GlobalDiscountCard({
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    setValue(initialPercent != null ? String(initialPercent) : "");
-    setSaved(initialPercent);
+    scheduleStateUpdate(
+      setValue,
+      initialPercent != null ? String(initialPercent) : "",
+    );
+    scheduleStateUpdate(setSaved, initialPercent);
   }, [initialPercent]);
 
   function parseInput(): number | null | "invalid" {

@@ -61,7 +61,6 @@ export function ProductCard({
   categoryLabel = null,
   rating = null,
   discountOffLabel = "{percent}% Off",
-  imageUrl: _imageUrl,
   inStock,
   priority = false,
   locale,
@@ -140,7 +139,7 @@ export function ProductCard({
           aria-hidden
           data-node-id="103:2591"
         >
-          <img
+          <Image
             src={DIVIDER_SRC}
             alt=""
             width={44}
@@ -198,7 +197,7 @@ export function ProductCard({
           className={`relative flex shrink-0 flex-col items-end ${ui.metaCol}`}
         >
           <div data-node-id="22:242" className="flex items-center gap-0.5">
-            <img
+            <Image
               src={STAR_SRC}
               alt=""
               width={starPx}

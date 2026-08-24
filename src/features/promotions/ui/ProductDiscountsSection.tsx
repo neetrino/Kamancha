@@ -10,6 +10,7 @@ import type { DiscountBoardProduct } from "@/features/promotions/application/dis
 import { upsertTargetDiscountAction } from "@/features/promotions/application/manage-discounts";
 import { currencySymbols, isCurrency } from "@/lib/money/currency";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 const PAGE_SIZE = 15;
 
@@ -61,7 +62,7 @@ export function ProductDiscountsSection({
   );
 
   useEffect(() => {
-    setDrafts(draftsFromProducts(products));
+    scheduleStateUpdate(setDrafts, draftsFromProducts(products));
   }, [products]);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);

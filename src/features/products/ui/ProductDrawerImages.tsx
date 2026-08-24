@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useState } from "react";
 import { X } from "lucide-react";
 
@@ -111,9 +112,12 @@ export function ProductDrawerImages({
               key={image.key}
               className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50"
             >
-              <img
+              <Image
                 src={image.previewUrl}
                 alt=""
+                width={200}
+                height={200}
+                unoptimized
                 className="aspect-square w-full object-cover"
               />
               <div className="flex items-center justify-between gap-2 px-2 py-2">

@@ -17,6 +17,7 @@ import {
   parseYmd,
 } from "@/lib/calendar/calendar-grid";
 import { formatYmdForDisplay } from "@/lib/calendar/format-date-display";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 export type DatePickerFieldLabels = {
   placeholder: string;
@@ -124,8 +125,8 @@ export function DatePickerField({
   useEffect(() => {
     if (!value) return;
     const parts = parseYmd(value);
-    setViewYear(parts.year);
-    setViewMonth(parts.monthIndex);
+    scheduleStateUpdate(setViewYear, parts.year);
+    scheduleStateUpdate(setViewMonth, parts.monthIndex);
   }, [value]);
 
   useEffect(() => {
@@ -143,7 +144,7 @@ export function DatePickerField({
 
   useLayoutEffect(() => {
     if (!open) {
-      setPlacement("bottom");
+      scheduleStateUpdate(setPlacement, "bottom");
       return;
     }
 

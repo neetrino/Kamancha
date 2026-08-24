@@ -3,13 +3,14 @@
 import { Calendar } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
-import { ADMIN_INPUT, ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import { AdminDateTimePickerField } from "@/features/admin/ui/AdminDateTimePickerField";
 import type {
   ProductDiscountDraft,
   ProductDiscountType,
 } from "@/features/products/types/product-discount";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type ProductDrawerDiscountProps = {
   value: ProductDiscountDraft | null;
@@ -59,10 +60,13 @@ export function ProductDrawerDiscount({
   const hasSchedule = Boolean(startsAt || endsAt);
 
   useEffect(() => {
-    setType(value?.type ?? "PERCENTAGE");
-    setAmount(value?.value != null && value.value > 0 ? String(value.value) : "");
-    setStartsAt(value?.startsAt ?? null);
-    setEndsAt(value?.endsAt ?? null);
+    scheduleStateUpdate(setType, value?.type ?? "PERCENTAGE");
+    scheduleStateUpdate(
+      setAmount,
+      value?.value != null && value.value > 0 ? String(value.value) : "",
+    );
+    scheduleStateUpdate(setStartsAt, value?.startsAt ?? null);
+    scheduleStateUpdate(setEndsAt, value?.endsAt ?? null);
   }, [value]);
 
   useEffect(() => {

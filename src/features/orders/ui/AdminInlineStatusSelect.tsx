@@ -33,6 +33,7 @@ import {
   paymentStatusLabel,
   type PaymentStatus,
 } from "@/features/orders/domain/payment-status";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type MenuPosition = {
   top: number;
@@ -70,7 +71,7 @@ export function AdminInlineStatusSelect({
   const menuId = useId();
 
   useEffect(() => {
-    setDisplayValue(value);
+    scheduleStateUpdate(setDisplayValue, value);
   }, [value]);
 
   useEffect(() => {
@@ -83,7 +84,7 @@ export function AdminInlineStatusSelect({
 
   useEffect(() => {
     if (open) {
-      setMounted(true);
+      scheduleStateUpdate(setMounted, true);
       return;
     }
     const timer = setTimeout(() => setMounted(false), DROPDOWN_ANIMATION_MS);
@@ -118,7 +119,7 @@ export function AdminInlineStatusSelect({
 
   useLayoutEffect(() => {
     if (!open && !mounted) {
-      setMenuPosition(null);
+      scheduleStateUpdate(setMenuPosition, null);
       return;
     }
     updateMenuPosition();

@@ -11,6 +11,7 @@ import {
 import type { DiscountBoardCategory } from "@/features/promotions/application/discounts-board";
 import { saveCategoryDiscountsAction } from "@/features/promotions/application/manage-discounts";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 const PAGE_SIZE = 5;
 
@@ -55,7 +56,8 @@ export function CategoryDiscountsSection({
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    setDrafts(
+    scheduleStateUpdate(
+      setDrafts,
       Object.fromEntries(
         categories.map((category) => [
           category.id,

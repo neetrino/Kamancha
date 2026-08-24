@@ -73,17 +73,15 @@ export async function registerAction(
     );
   }
 
-  const {
-    password,
-    confirmPassword: _confirmPassword,
-    acceptTerms: _acceptTerms,
-    ...registration
-  } = parsed.data;
+  const { password, firstName, lastName, email, phone } = parsed.data;
   const [user] = await getDb()
     .insert(users)
     .values({
       id: createId(),
-      ...registration,
+      firstName,
+      lastName,
+      email,
+      phone,
       passwordHash: await hashPassword(password),
       passwordUpdatedAt: new Date(),
       termsAcceptedAt: new Date(),

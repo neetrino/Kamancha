@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   type PointerEvent as ReactPointerEvent,
   type RefObject,
@@ -59,9 +60,12 @@ export function useProfileMobileSheetDrag({
   const onDismissRef = useRef(onDismiss);
   const onSnapBackRef = useRef(onSnapBack);
   const onOffsetChangeRef = useRef(onOffsetChange);
-  onDismissRef.current = onDismiss;
-  onSnapBackRef.current = onSnapBack;
-  onOffsetChangeRef.current = onOffsetChange;
+
+  useLayoutEffect(() => {
+    onDismissRef.current = onDismiss;
+    onSnapBackRef.current = onSnapBack;
+    onOffsetChangeRef.current = onOffsetChange;
+  });
 
   const clearSessions = useCallback(() => {
     activeDragRef.current = null;

@@ -95,7 +95,7 @@ const MONTH_NAMES: Record<string, readonly string[]> = {
 };
 
 function monthLabel(year: number, monthIndex: number, locale: string): string {
-  const months = MONTH_NAMES[locale] ?? MONTH_NAMES.en;
+  const months = MONTH_NAMES[locale] ?? MONTH_NAMES.en ?? [];
   const month = months[monthIndex] ?? months[0] ?? "";
   return `${month} ${year}`;
 }

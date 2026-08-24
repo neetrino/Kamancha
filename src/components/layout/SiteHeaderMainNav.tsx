@@ -33,6 +33,51 @@ type SiteHeaderMainNavProps = {
   wishlistCount: number;
 };
 
+type SiteHeaderIconRailProps = {
+  locale: Locale;
+  currency: Currency;
+  dictionary: Dictionary;
+  user: SessionUser | null;
+  cartItemCount: number;
+  wishlistCount: number;
+};
+
+function SiteHeaderIconRail({
+  locale,
+  currency,
+  dictionary,
+  user,
+  cartItemCount,
+  wishlistCount,
+}: SiteHeaderIconRailProps) {
+  return (
+    <div className={SITE_HEADER_ICON_RAIL}>
+      <CartDrawer
+        locale={locale}
+        currency={currency}
+        dictionary={dictionary}
+        itemCount={cartItemCount}
+        tone="onDark"
+      />
+      <WishlistHeaderLink
+        locale={locale}
+        label={dictionary.nav.wishlist}
+        count={wishlistCount}
+        tone="onDark"
+      />
+      <AccountControls
+        locale={locale}
+        loginLabel={dictionary.header.login}
+        logoutLabel={dictionary.header.logout}
+        profileLabel={dictionary.header.profile}
+        adminLabel={dictionary.header.admin}
+        user={user}
+        tone="onDark"
+      />
+    </div>
+  );
+}
+
 function headerSearchLabels(
   header: Dictionary["header"],
 ): {
@@ -68,35 +113,6 @@ export function SiteHeaderMainNav({
 }: SiteHeaderMainNavProps) {
   const searchLabels = headerSearchLabels(dictionary.header);
 
-  function IconRail() {
-    return (
-      <div className={SITE_HEADER_ICON_RAIL}>
-        <CartDrawer
-          locale={locale}
-          currency={currency}
-          dictionary={dictionary}
-          itemCount={cartItemCount}
-          tone="onDark"
-        />
-        <WishlistHeaderLink
-          locale={locale}
-          label={dictionary.nav.wishlist}
-          count={wishlistCount}
-          tone="onDark"
-        />
-        <AccountControls
-          locale={locale}
-          loginLabel={dictionary.header.login}
-          logoutLabel={dictionary.header.logout}
-          profileLabel={dictionary.header.profile}
-          adminLabel={dictionary.header.admin}
-          user={user}
-          tone="onDark"
-        />
-      </div>
-    );
-  }
-
   return (
     <header className="relative z-40 bg-transparent text-white" data-node-id="22:393">
       <div className={SITE_HEADER_INNER}>
@@ -119,7 +135,14 @@ export function SiteHeaderMainNav({
                 tone="onDark"
               />
 
-              <IconRail />
+              <SiteHeaderIconRail
+                locale={locale}
+                currency={currency}
+                dictionary={dictionary}
+                user={user}
+                cartItemCount={cartItemCount}
+                wishlistCount={wishlistCount}
+              />
 
               <LocaleCurrencySwitcher
                 locale={locale}

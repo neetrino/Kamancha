@@ -17,6 +17,8 @@ import { HeaderMenuIcon } from "@/components/layout/storefront-nav-icons";
 import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 const MENU_TRANSITION_MS = 320;
 const MENU_GAP_PX = 8;
@@ -71,7 +73,7 @@ export function MobileNavDrawer({
   const pillPlaceholderRef = useRef<HTMLDivElement | null>(null);
 
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [panelTopPx, setPanelTopPx] = useState(72);
@@ -151,23 +153,23 @@ export function MobileNavDrawer({
     clearExitTimer();
     measurePanelTop();
     renderedRef.current = true;
-    setRendered(true);
-    setExpanded(false);
+    scheduleStateUpdate(setRendered, true);
+    scheduleStateUpdate(setExpanded, false);
     requestAnimationFrame(() => {
       elevateHeaderPill();
       measurePanelTop();
       requestAnimationFrame(() => {
-        setExpanded(true);
+        scheduleStateUpdate(setExpanded, true);
       });
     });
   }, [clearExitTimer, elevateHeaderPill, measurePanelTop]);
 
   const closeMenu = useCallback(() => {
     clearExitTimer();
-    setExpanded(false);
+    scheduleStateUpdate(setExpanded, false);
     exitTimerRef.current = window.setTimeout(() => {
       renderedRef.current = false;
-      setRendered(false);
+      scheduleStateUpdate(setRendered, false);
       exitTimerRef.current = null;
       requestAnimationFrame(() => {
         restoreHeaderPill();
@@ -180,17 +182,20 @@ export function MobileNavDrawer({
   }, []);
 
   useEffect(() => {
-    setMounted(true);
     return () => clearExitTimer();
   }, [clearExitTimer]);
 
   useEffect(() => {
     if (open) {
-      openMenu();
+      queueMicrotask(() => {
+        openMenu();
+      });
       return;
     }
     if (!renderedRef.current) return;
-    closeMenu();
+    queueMicrotask(() => {
+      closeMenu();
+    });
   }, [open, openMenu, closeMenu]);
 
   useEffect(() => {
@@ -204,7 +209,7 @@ export function MobileNavDrawer({
   }, []);
 
   useEffect(() => {
-    setOpen(false);
+    scheduleStateUpdate(setOpen, false);
   }, [pathname]);
 
   useEffect(() => {

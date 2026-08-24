@@ -8,6 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { DROPDOWN_ANIMATION_MS } from "@/components/ui/SelectDropdown";
 import { skipNextHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import { setCurrencyAction } from "@/features/preferences/set-currency-action";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 import type { Locale } from "@/lib/i18n/config";
 import { localeLabels, locales } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -101,11 +102,11 @@ export function LocaleCurrencySwitcher({
 
   useEffect(() => {
     if (open) {
-      setRendered(true);
-      setEntered(false);
+      scheduleStateUpdate(setRendered, true);
+      scheduleStateUpdate(setEntered, false);
       let frame2 = 0;
       const frame1 = requestAnimationFrame(() => {
-        frame2 = requestAnimationFrame(() => setEntered(true));
+        frame2 = requestAnimationFrame(() => scheduleStateUpdate(setEntered, true));
       });
       return () => {
         cancelAnimationFrame(frame1);
@@ -113,8 +114,11 @@ export function LocaleCurrencySwitcher({
       };
     }
 
-    setEntered(false);
-    const timer = setTimeout(() => setRendered(false), DROPDOWN_ANIMATION_MS);
+    scheduleStateUpdate(setEntered, false);
+    const timer = setTimeout(
+      () => scheduleStateUpdate(setRendered, false),
+      DROPDOWN_ANIMATION_MS,
+    );
     return () => clearTimeout(timer);
   }, [open]);
 
@@ -123,12 +127,16 @@ export function LocaleCurrencySwitcher({
 
     function handlePointerDown(event: MouseEvent): void {
       if (!rootRef.current?.contains(event.target as Node)) {
-        closeMenu();
+        clearCloseTimer();
+        setOpen(false);
       }
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") closeMenu();
+      if (event.key === "Escape") {
+        clearCloseTimer();
+        setOpen(false);
+      }
     }
 
     document.addEventListener("mousedown", handlePointerDown);

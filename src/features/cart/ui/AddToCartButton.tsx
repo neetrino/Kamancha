@@ -1,6 +1,7 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -46,7 +47,7 @@ function AddToCartGlyph({
 
   if (icon === "cart-mobile") {
     return (
-      <img
+      <Image
         src={CART_MOBILE_SRC}
         alt=""
         width={24}
@@ -60,7 +61,7 @@ function AddToCartGlyph({
   if (icon === "cart-plus") {
     return (
       <>
-        <img
+        <Image
           src={CART_MOBILE_SRC}
           alt=""
           width={24}
@@ -68,7 +69,7 @@ function AddToCartGlyph({
           className={`size-6 sm:hidden ${addedClass}`}
           aria-hidden
         />
-        <img
+        <Image
           src={CART_PLUS_SRC}
           alt=""
           width={30}

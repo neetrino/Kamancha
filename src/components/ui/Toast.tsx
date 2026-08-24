@@ -1,12 +1,16 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
   type AnimationEvent,
 } from "react";
 import { createPortal } from "react-dom";
+
+import { useIsClient } from "@/lib/react/use-is-client";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 const DEFAULT_TOAST_DURATION_MS = 2500;
 
@@ -27,24 +31,31 @@ export function Toast({
   onClose,
   durationMs = DEFAULT_TOAST_DURATION_MS,
 }: ToastProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [displayMessage, setDisplayMessage] = useState(message);
   const exitDoneRef = useRef(false);
   const renderedRef = useRef(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const finishExit = useCallback((): void => {
+    if (exitDoneRef.current) {
+      return;
+    }
+    exitDoneRef.current = true;
+    renderedRef.current = false;
+    setRendered(false);
+    setExiting(false);
+    onClose();
+  }, [onClose]);
 
   useEffect(() => {
     if (open) {
       exitDoneRef.current = false;
-      setExiting(false);
-      setRendered(true);
+      scheduleStateUpdate(setExiting, false);
+      scheduleStateUpdate(setRendered, true);
       renderedRef.current = true;
-      setDisplayMessage(message);
+      scheduleStateUpdate(setDisplayMessage, message);
 
       const exitTimer = window.setTimeout(() => {
         setExiting(true);
@@ -54,20 +65,9 @@ export function Toast({
     }
 
     if (renderedRef.current) {
-      setExiting(true);
+      scheduleStateUpdate(setExiting, true);
     }
   }, [open, message, durationMs]);
-
-  function finishExit(): void {
-    if (exitDoneRef.current) {
-      return;
-    }
-    exitDoneRef.current = true;
-    renderedRef.current = false;
-    setRendered(false);
-    setExiting(false);
-    onClose();
-  }
 
   function handleAnimationEnd(event: AnimationEvent<HTMLDivElement>): void {
     if (event.target !== event.currentTarget) {
@@ -85,7 +85,7 @@ export function Toast({
     }
     const timer = window.setTimeout(finishExit, TOAST_ANIMATION_MS);
     return () => window.clearTimeout(timer);
-  }, [exiting]);
+  }, [exiting, finishExit]);
 
   if (!mounted || !rendered || typeof document === "undefined") {
     return null;

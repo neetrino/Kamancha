@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type AnimationEvent,
@@ -12,6 +13,8 @@ import {
 import { createPortal } from "react-dom";
 
 import { useProfileMobileSheetDrag } from "@/features/profile/ui/use-profile-mobile-sheet-drag";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 /** Must match `.animate-bottom-sheet-panel-*` duration in globals.css. */
 export const PROFILE_MOBILE_TAB_SHEET_MS = 300;
@@ -40,7 +43,7 @@ export function ProfileMobileTabSheet({
   ariaLabel,
   children,
 }: ProfileMobileTabSheetProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [phase, setPhase] = useState<MotionPhase>("enter");
   const [isDragging, setIsDragging] = useState(false);
@@ -55,8 +58,11 @@ export function ProfileMobileTabSheet({
   const exitNotifiedRef = useRef(false);
   const onExitedRef = useRef(onExited);
   const onCloseRef = useRef(onClose);
-  onExitedRef.current = onExited;
-  onCloseRef.current = onClose;
+
+  useLayoutEffect(() => {
+    onExitedRef.current = onExited;
+    onCloseRef.current = onClose;
+  });
 
   const finishExit = useCallback(() => {
     if (exitNotifiedRef.current) return;
@@ -119,17 +125,16 @@ export function ProfileMobileTabSheet({
 
   const renderedRef = useRef(false);
   const phaseRef = useRef<MotionPhase>("enter");
-  renderedRef.current = rendered;
-  phaseRef.current = phase;
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useLayoutEffect(() => {
+    renderedRef.current = rendered;
+    phaseRef.current = phase;
+  });
 
   useEffect(() => {
     if (!open) return;
-    setDisplayChildren(children);
-    setDisplayAriaLabel(ariaLabel);
+    scheduleStateUpdate(setDisplayChildren, children);
+    scheduleStateUpdate(setDisplayAriaLabel, ariaLabel);
   }, [open, children, ariaLabel]);
 
   useEffect(() => {
@@ -146,10 +151,10 @@ export function ProfileMobileTabSheet({
   useEffect(() => {
     if (open) {
       exitNotifiedRef.current = false;
-      setIsDragging(false);
-      setDragBackdropOpacity(null);
-      setPhase("enter");
-      setRendered(true);
+      scheduleStateUpdate(setIsDragging, false);
+      scheduleStateUpdate(setDragBackdropOpacity, null);
+      scheduleStateUpdate(setPhase, "enter");
+      scheduleStateUpdate(setRendered, true);
       const panel = panelRef.current;
       if (panel) {
         panel.style.transition = "";
@@ -168,7 +173,7 @@ export function ProfileMobileTabSheet({
       return () => window.clearTimeout(timer);
     }
 
-    setPhase("exit");
+    scheduleStateUpdate(setPhase, "exit");
     const timer = window.setTimeout(() => {
       finishExit();
     }, PROFILE_MOBILE_TAB_SHEET_MS);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
@@ -27,7 +27,7 @@ type AnalyticsPeriodCardProps = {
   copy: Dictionary["admin"];
 };
 
-export function AnalyticsPeriodCard({
+function AnalyticsPeriodCardForm({
   locale,
   from,
   to,
@@ -44,11 +44,6 @@ export function AnalyticsPeriodCard({
   const selectedPreset: AnalyticsPeriodPreset = forceCustom
     ? "custom"
     : preset;
-
-  useEffect(() => {
-    setCustomFrom(from);
-    setCustomTo(to);
-  }, [from, to]);
 
   const presetLabel = (p: AnalyticsPeriodPreset): string => {
     const map: Record<AnalyticsPeriodPreset, string> = {
@@ -166,5 +161,14 @@ export function AnalyticsPeriodCard({
         ) : null}
       </div>
     </Card>
+  );
+}
+
+export function AnalyticsPeriodCard(props: AnalyticsPeriodCardProps) {
+  return (
+    <AnalyticsPeriodCardForm
+      key={`${props.from}-${props.to}-${props.preset}`}
+      {...props}
+    />
   );
 }

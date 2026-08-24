@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 
 import {
   changePasswordAction,
@@ -42,12 +42,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
   const action = changePasswordAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [values, setValues] = useState(emptyForm);
-
-  useEffect(() => {
-    if (state.success) {
-      setValues(emptyForm);
-    }
-  }, [state.success]);
+  const formKey = state.success ? "reset" : "active";
 
   return (
     <section className={PROFILE_SECTION}>
@@ -56,6 +51,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
       </div>
 
       <form
+        key={formKey}
         action={formAction}
         className="relative z-[2] mx-auto max-w-xl space-y-6 xl:mx-0 xl:max-w-2xl"
       >

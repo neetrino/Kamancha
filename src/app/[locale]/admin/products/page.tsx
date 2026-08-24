@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AdminPagination } from "@/features/admin/ui/AdminPagination";

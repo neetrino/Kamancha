@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -9,6 +10,9 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+
+import { useIsClient } from "@/lib/react/use-is-client";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 /** Must match `.animate-side-sheet-panel-*` duration in globals.css. */
 export const SIDE_SHEET_ANIMATION_MS = 300;
@@ -46,40 +50,43 @@ export function SideSheet({
   backdropBlur = false,
   closeButtonClassName,
 }: SideSheetProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [exiting, setExiting] = useState(false);
   const [displayChildren, setDisplayChildren] = useState(children);
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
   const exitDoneRef = useRef(false);
 
-  useEffect(() => {
-    setMounted(true);
+  const finishExit = useCallback((): void => {
+    if (exitDoneRef.current) return;
+    exitDoneRef.current = true;
+    setRendered(false);
+    setExiting(false);
   }, []);
 
   useEffect(() => {
     if (!open) return;
-    setDisplayChildren(children);
-    setDisplayAriaLabel(ariaLabel);
+    scheduleStateUpdate(setDisplayChildren, children);
+    scheduleStateUpdate(setDisplayAriaLabel, ariaLabel);
   }, [open, children, ariaLabel]);
 
   useEffect(() => {
     if (open) {
       exitDoneRef.current = false;
-      setExiting(false);
-      setRendered(true);
+      scheduleStateUpdate(setExiting, false);
+      scheduleStateUpdate(setRendered, true);
       return;
     }
 
     if (!rendered) return;
 
-    setExiting(true);
+    scheduleStateUpdate(setExiting, true);
     const timer = window.setTimeout(() => {
       finishExit();
     }, SIDE_SHEET_ANIMATION_MS);
 
     return () => window.clearTimeout(timer);
-  }, [open, rendered]);
+  }, [open, rendered, finishExit]);
 
   useEffect(() => {
     if (!rendered) return;
@@ -97,13 +104,6 @@ export function SideSheet({
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [rendered, onClose]);
-
-  function finishExit(): void {
-    if (exitDoneRef.current) return;
-    exitDoneRef.current = true;
-    setRendered(false);
-    setExiting(false);
-  }
 
   function handlePanelAnimationEnd(
     event: AnimationEvent<HTMLDivElement>,

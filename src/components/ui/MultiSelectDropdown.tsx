@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 
 import { DROPDOWN_ANIMATION_MS } from "@/components/ui/SelectDropdown";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 export type MultiSelectOption = {
   label: string;
@@ -46,7 +47,7 @@ export function MultiSelectDropdown({
 
   useEffect(() => {
     if (open) {
-      setElevated(true);
+      scheduleStateUpdate(setElevated, true);
       return;
     }
     const timer = setTimeout(() => setElevated(false), DROPDOWN_ANIMATION_MS);

@@ -24,6 +24,7 @@ import {
 } from "@/features/blog/domain/blog-rules";
 import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 type LocaleDraft = {
   title: string;
@@ -137,31 +138,32 @@ export function BlogPostDrawer({
     if (!open) return;
 
     if (post) {
-      setActiveLocale(
+      scheduleStateUpdate(
+        setActiveLocale,
         (locales.find((loc) => post.translations[loc]?.title) as
           | Locale
           | undefined) ?? "en",
       );
-      setDrafts(draftsFromTranslations(post.translations));
-      setStatus(post.status);
-      setPublishedAt(post.publishedAt ?? "");
-      setImageFile(null);
-      setImagePreview(post.coverUrl ?? null);
-      setRemoveExistingImage(false);
-      setError(null);
+      scheduleStateUpdate(setDrafts, draftsFromTranslations(post.translations));
+      scheduleStateUpdate(setStatus, post.status);
+      scheduleStateUpdate(setPublishedAt, post.publishedAt ?? "");
+      scheduleStateUpdate(setImageFile, null);
+      scheduleStateUpdate(setImagePreview, post.coverUrl ?? null);
+      scheduleStateUpdate(setRemoveExistingImage, false);
+      scheduleStateUpdate(setError, null);
     } else {
-      setActiveLocale("en");
-      setDrafts({
+      scheduleStateUpdate(setActiveLocale, "en");
+      scheduleStateUpdate(setDrafts, {
         hy: emptyDraft(),
         en: emptyDraft(),
         ru: emptyDraft(),
       });
-      setStatus("DRAFT");
-      setPublishedAt("");
-      setImageFile(null);
-      setImagePreview(null);
-      setRemoveExistingImage(false);
-      setError(null);
+      scheduleStateUpdate(setStatus, "DRAFT");
+      scheduleStateUpdate(setPublishedAt, "");
+      scheduleStateUpdate(setImageFile, null);
+      scheduleStateUpdate(setImagePreview, null);
+      scheduleStateUpdate(setRemoveExistingImage, false);
+      scheduleStateUpdate(setError, null);
     }
   }, [open, post]);
 
