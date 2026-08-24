@@ -43,7 +43,7 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
     >
       <div className="relative mx-auto w-full max-w-[1440px] xl:min-h-[1180px]">
         <div
-          className={`${SITE_HEADER_INNER} relative z-[1] pt-2 pb-8 sm:pt-4 xl:pt-[108px] xl:pb-32`}
+          className={`${SITE_HEADER_INNER} relative z-[1] pt-2 pb-10 sm:pt-4 sm:pb-12 min-[744px]:max-xl:px-12 min-[834px]:max-xl:px-16 min-[1024px]:max-xl:px-20 xl:pt-[108px] xl:pb-32`}
         >
           <Stagger
             className="max-w-[777px]"
@@ -84,10 +84,10 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
           </Stagger>
         </div>
 
-        {/* Figma 362:282 — cropped 887×1774, object-bottom, overflows right by 55px at 1440 */}
+        {/* Figma 362:282 — desktop only; hidden on mobile storefront. */}
         <motion.div
           data-node-id="362:282"
-          className="relative mx-auto -mt-4 w-full max-w-[420px] sm:max-w-[480px] xl:pointer-events-none xl:absolute xl:-top-[100px] xl:right-[-55px] xl:z-0 xl:mx-0 xl:mt-0 xl:w-[887px] xl:max-w-none"
+          className="relative mx-auto hidden w-full max-w-[420px] sm:max-w-[480px] xl:pointer-events-none xl:absolute xl:-top-[100px] xl:right-[-55px] xl:z-0 xl:mx-0 xl:mt-0 xl:block xl:w-[887px] xl:max-w-none"
           initial={playMotion ? { opacity: 0, x: "12%" } : false}
           animate={{ opacity: 1, x: 0 }}
           transition={sideTransition}

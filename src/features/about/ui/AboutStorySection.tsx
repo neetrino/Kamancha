@@ -27,33 +27,36 @@ const springCard: Transition = {
   mass: 0.95,
 };
 
+/**
+ * Mobile story — dress on white panel above copy; rug at the bottom.
+ */
 function AboutStoryMobile({ copy, playMotion }: AboutStorySectionProps & { playMotion: boolean }) {
   return (
     <Stagger
-      className="px-5 py-10 sm:px-8 sm:py-12 xl:hidden"
+      className="flex flex-col px-5 pb-8 pt-6 sm:px-8 sm:pb-10 sm:pt-8 min-[744px]:px-12 min-[834px]:px-16 min-[1024px]:px-20 xl:hidden"
       amount={scrollRevealViewport.amount}
       viewportMargin={scrollRevealViewport.viewportMargin}
       stagger={0.08}
       enabled={playMotion}
     >
-      <StaggerItem className="relative -mt-16 mb-8">
+      <StaggerItem className="relative z-[3] mx-auto -mt-24 w-full max-w-[280px] sm:-mt-28 sm:max-w-[320px]">
         <div
           data-node-id="362:295"
-          className="relative mx-auto aspect-[480/680] w-full max-w-[480px] overflow-hidden rounded-[20px]"
+          className="relative aspect-[480/680] w-full overflow-hidden rounded-[20px]"
         >
           <Image
             src={ABOUT_DRESS_IMAGE}
             alt={copy.dressImageAlt}
             fill
-            sizes="90vw"
+            sizes="(max-width: 640px) 72vw, 320px"
             className="rounded-[20px] object-cover"
           />
         </div>
       </StaggerItem>
 
-      <StaggerItem>
+      <StaggerItem className="mt-8">
         <div className="flex flex-col gap-5 text-[#222]">
-          <h2 className="font-big-fat-boii text-[clamp(22px,6.5vw,32px)] leading-[1.1] font-normal uppercase sm:whitespace-nowrap">
+          <h2 className="font-big-fat-boii text-[clamp(22px,6.5vw,32px)] leading-[1.1] font-normal uppercase">
             {copy.title}
           </h2>
           <HomeDiamondMark tone="forest" className="h-[18px] w-[54px]" />
@@ -62,15 +65,18 @@ function AboutStoryMobile({ copy, playMotion }: AboutStorySectionProps & { playM
         </div>
       </StaggerItem>
 
-      <StaggerItem>
-        <div className="mt-10 flex flex-col gap-5">
+      <StaggerItem className="mt-8">
+        <div className="flex flex-col gap-5">
           <HomeDiamondMark tone="forest" className="h-[18px] w-[54px]" />
           <p className="text-[16px] leading-[26px] text-[#222]">{copy.intro}</p>
         </div>
       </StaggerItem>
 
-      <StaggerItem className="relative mx-auto mt-8 aspect-[531/389] w-full max-w-[531px] isolate overflow-hidden rounded-[20px]">
-        <div data-node-id="362:358" className="relative size-full">
+      <StaggerItem className="mx-auto mt-8 w-full max-w-[531px]">
+        <div
+          data-node-id="362:358"
+          className="relative aspect-[531/389] w-full overflow-hidden rounded-[20px]"
+        >
           <Image
             src={ABOUT_RUG_IMAGE}
             alt={copy.rugImageAlt}
@@ -189,10 +195,10 @@ export function AboutStorySection({ copy }: AboutStorySectionProps) {
   return (
     <section
       data-node-id="362:284"
-      className="relative left-1/2 z-[2] -mt-28 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible sm:-mt-40 xl:-mt-[420px]"
+      className="relative left-1/2 z-[2] mt-16 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible sm:mt-20 xl:-mt-[420px]"
     >
       <motion.div
-        className="w-full overflow-visible rounded-[30px] bg-white pb-10 sm:rounded-[40px] sm:pb-12 xl:rounded-[50px] xl:pb-10"
+        className="relative w-full overflow-visible rounded-[30px] bg-white pb-10 sm:rounded-[40px] sm:pb-12 xl:rounded-[50px] xl:pb-10"
         initial={playMotion ? { opacity: 0, y: 36 } : false}
         animate={{ opacity: 1, y: 0 }}
         transition={panelTransition}
