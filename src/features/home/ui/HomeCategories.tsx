@@ -1,11 +1,11 @@
 import Image from "next/image";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { HorizontalWheelScrollArea } from "@/components/ui/HorizontalWheelScrollArea";
 import {
   HomeReveal,
   HomeStagger,
   HomeStaggerItem,
-  HOME_HORIZONTAL_SCROLL,
 } from "@/features/home/ui/home-motion";
 import { BRAND_ORNAMENT_SRC } from "@/lib/brand/assets";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
@@ -92,7 +92,7 @@ export function HomeCategories({
           data-node-id="22:209"
           className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2"
         >
-          <div className={HOME_HORIZONTAL_SCROLL}>
+          <HorizontalWheelScrollArea>
             <HomeStagger
               className="inline-flex gap-[19px] px-16 py-4"
               stagger={0.07}
@@ -132,7 +132,7 @@ export function HomeCategories({
                 </HomeStaggerItem>
               ))}
             </HomeStagger>
-          </div>
+          </HorizontalWheelScrollArea>
         </div>
       )}
     </section>
