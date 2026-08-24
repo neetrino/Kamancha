@@ -12,7 +12,6 @@ import {
   Package,
   Phone,
   Gift,
-  Sparkles,
   Trash2,
   User,
 } from "lucide-react";
@@ -21,11 +20,11 @@ import { AppLink } from "@/components/ui/AppLink";
 import { Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { logoutAction } from "@/features/auth/logout-action";
 import { ProfileBonusIcon } from "@/features/profile/ui/ProfileBonusIcon";
-import { formatProfileBonusBalance } from "@/features/profile/ui/format-profile-bonus-balance";
 import { PROFILE_PILL_LIGHT } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { SessionUser } from "@/lib/auth/session";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type ProfileMobileHubProps = {
   locale: Locale;
@@ -66,11 +65,6 @@ export function ProfileMobileHub({
       href: `/${locale}/profile/orders`,
       label: dictionary.orders,
       icon: <Package className="h-5 w-5" />,
-    },
-    {
-      href: `/${locale}/profile/bonuses`,
-      label: dictionary.bonuses,
-      icon: <Sparkles className="h-5 w-5" />,
     },
     {
       href: `/${locale}/profile/gift-cards`,
@@ -222,19 +216,33 @@ export function ProfileMobileHub({
                   <span className="truncate">{user.phone}</span>
                 </p>
               ) : null}
-              <p className="flex items-center gap-1.5 truncate text-sm leading-snug text-gray-600">
-                <ProfileBonusIcon className="h-4 w-4 shrink-0" />
-                <span className="truncate">
-                  {formatProfileBonusBalance(
-                    user.bonusBalance,
-                    locale,
-                    dictionary.bonusesLabel,
-                  )}
-                </span>
-              </p>
             </div>
           </div>
         </section>
+      </StaggerItem>
+
+      <StaggerItem>
+        <AppLink
+          href={`/${locale}/profile/bonuses`}
+          prefetchPolicy="intent"
+          className="flex items-center justify-between gap-3 overflow-hidden rounded-3xl bg-white px-4 py-3.5 shadow-sm transition-colors hover:bg-gray-50"
+        >
+          <span className="flex min-w-0 items-center gap-3">
+            <ProfileBonusIcon className="h-7 w-7 shrink-0 text-brand-forest" />
+            <span className="truncate font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
+              {dictionary.bonuses}
+            </span>
+          </span>
+          <span className="flex shrink-0 items-center gap-2">
+            <span className="font-big-fat-boii text-lg font-normal tracking-wide text-brand-forest">
+              {formatMoneyAmount(user.bonusBalance, "AMD", locale)}
+            </span>
+            <ChevronRight
+              className="h-[18px] w-[18px] text-gray-500 opacity-80"
+              aria-hidden
+            />
+          </span>
+        </AppLink>
       </StaggerItem>
 
       <StaggerItem>
