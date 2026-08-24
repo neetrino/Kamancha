@@ -15,7 +15,6 @@ export type HomeCategoryCardItem = {
 type HomeCategoryCardProps = {
   category: HomeCategoryCardItem;
   productCountLabel: string;
-  variant: "desktop" | "tablet";
 };
 
 function formatProductCount(template: string, count: number): string {
@@ -57,48 +56,16 @@ function CategoryLeafOrnaments() {
   );
 }
 
-/**
- * Shared home category card — full Figma size on desktop, compact cell on tablet.
- */
+/** Figma home category card 22:210 — 376×135 desktop row. */
 export function HomeCategoryCard({
   category,
   productCountLabel,
-  variant,
 }: HomeCategoryCardProps) {
   const photo = category.imageUrl ?? STOREFRONT_PRODUCT_PHOTO;
   const countLabel = formatProductCount(
     productCountLabel,
     category.productCount,
   );
-
-  if (variant === "tablet") {
-    return (
-      <AppLink
-        href={category.href}
-        prefetchPolicy="intent"
-        className="relative flex h-[104px] w-full min-w-0 items-center overflow-hidden rounded-[16px] bg-white transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-      >
-        <div className="relative ml-1 h-[96px] w-[38%] max-w-[92px] shrink-0 overflow-hidden rounded-[14px]">
-          <Image
-            src={photo}
-            alt=""
-            fill
-            sizes="92px"
-            className="object-cover object-center"
-          />
-        </div>
-
-        <div className="flex min-w-0 flex-1 flex-col justify-center px-2 pr-2.5">
-          <span className="line-clamp-2 text-[13px] leading-[1.2] font-semibold text-[rgba(34,34,34,0.9)]">
-            {category.title}
-          </span>
-          <span className="mt-1 text-[12px] leading-4 text-black/55">
-            {countLabel}
-          </span>
-        </div>
-      </AppLink>
-    );
-  }
 
   return (
     <AppLink

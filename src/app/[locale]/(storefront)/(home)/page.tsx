@@ -9,7 +9,6 @@ import { HomeMobileCategories } from "@/features/home/ui/HomeMobileCategories";
 import { HomeMobileProductSection } from "@/features/home/ui/HomeMobileProductSection";
 import { HomePageChrome } from "@/features/home/ui/HomePageChrome";
 import { HomeOurStory } from "@/features/home/ui/HomeOurStory";
-import { HomeTabletCategories } from "@/features/home/ui/HomeTabletCategories";
 import {
   getDiscountedProducts,
   getFeaturedProducts,
@@ -117,25 +116,15 @@ async function HomeBelowFold({
   return (
     <>
       <div className="lg:hidden pb-8">
-        <div className="min-[744px]:hidden">
-          <HomeMobileCategories
-            productCountLabel={dictionary.home.categoryProductCount}
-            emptyLabel={dictionary.home.emptyCategories}
-            viewAllLabel={dictionary.home.viewAll}
-            viewAllHref={`/${locale}/products`}
-            previousLabel={dictionary.home.previousCategory}
-            nextLabel={dictionary.home.nextCategory}
-            categories={categoryItems}
-          />
-        </div>
-        <div className="hidden min-[744px]:block">
-          <HomeTabletCategories
-            title={dictionary.home.categoriesTitle}
-            productCountLabel={dictionary.home.categoryProductCount}
-            emptyLabel={dictionary.home.emptyCategories}
-            categories={categoryItems}
-          />
-        </div>
+        <HomeMobileCategories
+          productCountLabel={dictionary.home.categoryProductCount}
+          emptyLabel={dictionary.home.emptyCategories}
+          viewAllLabel={dictionary.home.viewAll}
+          viewAllHref={`/${locale}/products`}
+          previousLabel={dictionary.home.previousCategory}
+          nextLabel={dictionary.home.nextCategory}
+          categories={categoryItems}
+        />
         <HomeMobileProductSection
           locale={locale}
           title={dictionary.home.featuredTitle}
@@ -150,6 +139,7 @@ async function HomeBelowFold({
           isSignedIn={Boolean(user)}
           products={featuredCards}
           overlayPlate
+          tabletSheet="white"
         />
         <HomeMobileProductSection
           locale={locale}
@@ -164,6 +154,7 @@ async function HomeBelowFold({
           discountOffLabel={dictionary.home.discountOff}
           isSignedIn={Boolean(user)}
           products={discountedCards}
+          tabletSheet="forest"
         />
       </div>
 

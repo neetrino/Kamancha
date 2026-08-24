@@ -54,7 +54,6 @@ export function HomeCategories({
                   <HomeCategoryCard
                     category={category}
                     productCountLabel={productCountLabel}
-                    variant="desktop"
                   />
                 </HomeStaggerItem>
               ))}
