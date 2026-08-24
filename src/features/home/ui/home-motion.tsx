@@ -5,6 +5,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import {
   Reveal,
+  scrollRevealViewport,
   Stagger,
   StaggerItem,
   revealEaseOut,
@@ -20,9 +21,21 @@ type HomeRevealProps = ComponentProps<typeof Reveal>;
  * Scroll-into-view fade + rise for home sections.
  * Honors prefers-reduced-motion and locale-swap skip.
  */
-export function HomeReveal({ enabled, ...rest }: HomeRevealProps) {
+export function HomeReveal({
+  enabled,
+  amount = scrollRevealViewport.amount,
+  viewportMargin = scrollRevealViewport.viewportMargin,
+  ...rest
+}: HomeRevealProps) {
   const playMotion = usePlayHomeMotion();
-  return <Reveal enabled={playMotion && (enabled ?? true)} {...rest} />;
+  return (
+    <Reveal
+      enabled={playMotion && (enabled ?? true)}
+      amount={amount}
+      viewportMargin={viewportMargin}
+      {...rest}
+    />
+  );
 }
 
 type HomeStaggerProps = ComponentProps<typeof Stagger>;
@@ -30,9 +43,21 @@ type HomeStaggerProps = ComponentProps<typeof Stagger>;
 /**
  * Parent for staggered scroll reveals. Pair with `HomeStaggerItem`.
  */
-export function HomeStagger({ enabled, ...rest }: HomeStaggerProps) {
+export function HomeStagger({
+  enabled,
+  amount = scrollRevealViewport.amount,
+  viewportMargin = scrollRevealViewport.viewportMargin,
+  ...rest
+}: HomeStaggerProps) {
   const playMotion = usePlayHomeMotion();
-  return <Stagger enabled={playMotion && (enabled ?? true)} {...rest} />;
+  return (
+    <Stagger
+      enabled={playMotion && (enabled ?? true)}
+      amount={amount}
+      viewportMargin={viewportMargin}
+      {...rest}
+    />
+  );
 }
 
 type HomeStaggerItemProps = ComponentProps<typeof StaggerItem>;

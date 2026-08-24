@@ -14,7 +14,7 @@ export function HomeSectionHeading({
   figmaNodeId,
 }: HomeSectionHeadingProps) {
   return (
-    <HomeReveal immediate>
+    <HomeReveal>
       <div className="flex flex-col items-center gap-2">
         <HomeDiamondMark />
         <h2

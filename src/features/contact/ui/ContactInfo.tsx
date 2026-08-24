@@ -3,8 +3,7 @@
 import type { ReactNode } from "react";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
-import { Stagger, StaggerItem } from "@/components/ui/RevealMotion";
-import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
+import { Stagger, StaggerItem, scrollRevealViewport } from "@/components/ui/RevealMotion";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ContactInfoProps = {
@@ -49,54 +48,53 @@ function ContactPill({
 }
 
 export function ContactInfo({ copy }: ContactInfoProps) {
-  const playMotion = usePlayHomeMotion();
   const telHref = `tel:${copy.storePhone.replace(/\s/g, "")}`;
 
   return (
     <div data-node-id="267:221">
-    <Stagger
-      className="flex flex-wrap items-stretch justify-center gap-4"
-      enabled={playMotion}
-      amount={0.35}
-      stagger={0.08}
-    >
-      <StaggerItem enabled={playMotion}>
-        <ContactPill icon={<Clock className="size-[22px]" strokeWidth={1.75} />}>
-          {copy.hoursEverydayLabel}{" "}
-          <span className={HOURS_TIME_CLASS}>{copy.hoursEverydayTime}</span>
-        </ContactPill>
-      </StaggerItem>
+      <Stagger
+        className="flex flex-wrap items-stretch justify-center gap-4"
+        amount={scrollRevealViewport.amount}
+        viewportMargin={scrollRevealViewport.viewportMargin}
+        stagger={0.08}
+      >
+        <StaggerItem>
+          <ContactPill icon={<Clock className="size-[22px]" strokeWidth={1.75} />}>
+            {copy.hoursEverydayLabel}{" "}
+            <span className={HOURS_TIME_CLASS}>{copy.hoursEverydayTime}</span>
+          </ContactPill>
+        </StaggerItem>
 
-      <StaggerItem enabled={playMotion}>
-        <ContactPill
-          icon={<Phone className="size-[22px]" strokeWidth={1.75} />}
-          href={telHref}
-        >
-          {copy.storePhone}
-        </ContactPill>
-      </StaggerItem>
+        <StaggerItem>
+          <ContactPill
+            icon={<Phone className="size-[22px]" strokeWidth={1.75} />}
+            href={telHref}
+          >
+            {copy.storePhone}
+          </ContactPill>
+        </StaggerItem>
 
-      <StaggerItem enabled={playMotion}>
-        <ContactPill
-          icon={<Mail className="size-[22px]" strokeWidth={1.75} />}
-          href={`mailto:${copy.storeEmail}`}
-        >
-          <span className="break-all">{copy.storeEmail}</span>
-        </ContactPill>
-      </StaggerItem>
+        <StaggerItem>
+          <ContactPill
+            icon={<Mail className="size-[22px]" strokeWidth={1.75} />}
+            href={`mailto:${copy.storeEmail}`}
+          >
+            <span className="break-all">{copy.storeEmail}</span>
+          </ContactPill>
+        </StaggerItem>
 
-      <StaggerItem enabled={playMotion}>
-        <ContactPill icon={<MapPin className="size-[22px]" strokeWidth={1.75} />}>
-          {copy.storeAddress}
-        </ContactPill>
-      </StaggerItem>
+        <StaggerItem>
+          <ContactPill icon={<MapPin className="size-[22px]" strokeWidth={1.75} />}>
+            {copy.storeAddress}
+          </ContactPill>
+        </StaggerItem>
 
-      <StaggerItem enabled={playMotion}>
-        <ContactPill icon={<MapPin className="size-[22px]" strokeWidth={1.75} />}>
-          {copy.storeAddress2}
-        </ContactPill>
-      </StaggerItem>
-    </Stagger>
+        <StaggerItem>
+          <ContactPill icon={<MapPin className="size-[22px]" strokeWidth={1.75} />}>
+            {copy.storeAddress2}
+          </ContactPill>
+        </StaggerItem>
+      </Stagger>
     </div>
   );
 }

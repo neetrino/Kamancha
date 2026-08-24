@@ -19,7 +19,7 @@ export function HomeMobilePromo({
   headlineAfter,
 }: HomeMobilePromoProps) {
   return (
-    <HomeReveal immediate>
+    <HomeReveal>
       <section className="relative z-[1] px-6 pt-2" data-node-id="196:213">
         <div className="relative overflow-hidden rounded-[21px] bg-white">
           <div className="relative z-[1] max-w-[62%] py-[27px] pl-[19px] pr-2">

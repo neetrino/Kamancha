@@ -72,7 +72,7 @@ export function HomeMobileCategoryStage({
         </div>
       </div>
 
-      <HomeReveal immediate className="relative z-[1]">
+      <HomeReveal className="relative z-[1]">
         <HomeMobilePlateWheel
           current={current}
           prev={prev}

@@ -96,7 +96,6 @@ export function HomeMobileProductSection({
               <HomeStagger
                 className="inline-flex gap-[13px] px-2.5 py-3"
                 stagger={0.08}
-                immediate
               >
                 {products.map((product, index) => (
                   <HomeStaggerItem
@@ -132,7 +131,7 @@ export function HomeMobileProductSection({
             </div>
           </div>
 
-          <HomeReveal immediate delay={0.12} className="mt-6 flex justify-center">
+          <HomeReveal delay={0.12} className="mt-6 flex justify-center">
             <KamanchaPillButton
               href={viewAllHref}
               label={viewAllLabel}

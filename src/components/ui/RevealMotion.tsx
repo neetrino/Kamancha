@@ -14,6 +14,12 @@ export const revealEaseOut: Transition = {
   ease: [0.22, 1, 0.36, 1],
 };
 
+/** Scroll-in threshold — element must enter the viewport (no early root margin). */
+export const scrollRevealViewport = {
+  amount: 0.2,
+  viewportMargin: "0px 0px -8% 0px",
+} as const;
+
 type RevealProps = {
   children: ReactNode;
   className?: string;
@@ -22,6 +28,8 @@ type RevealProps = {
   x?: number;
   once?: boolean;
   amount?: number;
+  /** IntersectionObserver root margin (default is generous for legacy sections). */
+  viewportMargin?: string;
   /** Play on mount instead of waiting for the viewport. */
   immediate?: boolean;
   /**
@@ -54,6 +62,7 @@ export function Reveal({
   x = 0,
   once = true,
   amount = 0.01,
+  viewportMargin = "40% 0px 40% 0px",
   immediate = false,
   fade = true,
   enabled = true,
@@ -75,7 +84,7 @@ export function Reveal({
       whileInView={play && !immediate ? shown : undefined}
       viewport={
         play && !immediate
-          ? { once, amount, margin: "40% 0px 40% 0px" }
+          ? { once, amount, margin: viewportMargin }
           : undefined
       }
       transition={play ? { ...revealEaseOut, delay } : undefined}
@@ -91,6 +100,7 @@ type StaggerProps = {
   className?: string;
   stagger?: number;
   amount?: number;
+  viewportMargin?: string;
   immediate?: boolean;
   enabled?: boolean;
 };
@@ -103,6 +113,7 @@ export function Stagger({
   className,
   stagger = 0.09,
   amount = 0.01,
+  viewportMargin = "40% 0px 40% 0px",
   immediate = false,
   enabled = true,
 }: StaggerProps) {
@@ -116,7 +127,7 @@ export function Stagger({
       whileInView={play && !immediate ? "show" : undefined}
       viewport={
         play && !immediate
-          ? { once: true, amount, margin: "40% 0px 40% 0px" }
+          ? { once: true, amount, margin: viewportMargin }
           : undefined
       }
       variants={

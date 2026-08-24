@@ -61,7 +61,6 @@ export function HomeOurStory({
           delay={0.12}
           y={48}
           x={32}
-          amount={0.08}
           className="pointer-events-none absolute top-[-8%] right-0 z-0 hidden md:block"
           aria-hidden
           data-node-id="22:186"
