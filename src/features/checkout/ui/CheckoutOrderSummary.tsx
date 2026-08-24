@@ -11,6 +11,15 @@ const SUMMARY_FALLBACK_TOP_PX = 140;
 const SUMMARY_ALERT_PILL_CLASS =
   "mb-4 w-full rounded-full bg-white px-4 py-3 text-center text-sm font-medium leading-snug text-red-600";
 
+const CHECKOUT_COUPON_GLASS_CLASS =
+  "relative z-[2] mb-6 liquid-glass isolate overflow-hidden rounded-xl p-4";
+
+const CHECKOUT_COUPON_INPUT_MOBILE_CLASS =
+  "h-11 w-full rounded-[15px] border border-gray-200 bg-white px-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:bg-gray-50";
+
+const CHECKOUT_COUPON_APPLY_MOBILE_CLASS =
+  "h-9 shrink-0 rounded-[15px] border border-gray-200 bg-white px-4 text-sm font-medium text-gray-900 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50";
+
 function useSummaryStickyTop(): number {
   const [top, setTop] = useState(SUMMARY_FALLBACK_TOP_PX);
 
@@ -105,9 +114,21 @@ export function CheckoutOrderSummary({
           {title}
         </h2>
 
-        <div className="relative z-[2] mb-6 liquid-glass isolate overflow-hidden rounded-xl p-4">
-          <p className="relative z-[2] mb-3 text-sm text-white/80">{couponTitle}</p>
-          <div className="relative z-[2] flex gap-2">
+        <div className={CHECKOUT_COUPON_GLASS_CLASS}>
+          <div className="relative z-[2] lg:hidden">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-sm text-white/80">{couponTitle}</p>
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                className={CHECKOUT_COUPON_APPLY_MOBILE_CLASS}
+                disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
+                onClick={onApplyCoupon}
+              >
+                {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
+              </Button>
+            </div>
             <input
               type="text"
               name="couponCodeDraft"
@@ -122,21 +143,44 @@ export function CheckoutOrderSummary({
               placeholder={couponPlaceholder}
               autoComplete="off"
               disabled={isSubmitting || isApplyingCoupon}
-              className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              className={CHECKOUT_COUPON_INPUT_MOBILE_CLASS}
             />
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              className="h-11 shrink-0 rounded-lg border-gray-200 bg-white px-4 text-sm text-gray-900 hover:bg-gray-50"
-              disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
-              onClick={onApplyCoupon}
-            >
-              {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
-            </Button>
           </div>
+
+          <div className="relative z-[2] hidden lg:block">
+            <p className="mb-3 text-sm text-white/80">{couponTitle}</p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                name="couponCodeDraft"
+                value={couponDraft}
+                onChange={(event) => onCouponDraftChange(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    onApplyCoupon();
+                  }
+                }}
+                placeholder={couponPlaceholder}
+                autoComplete="off"
+                disabled={isSubmitting || isApplyingCoupon}
+                className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                className="h-11 shrink-0 rounded-lg border-gray-200 bg-white px-4 text-sm text-gray-900 hover:bg-gray-50"
+                disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
+                onClick={onApplyCoupon}
+              >
+                {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
+              </Button>
+            </div>
+          </div>
+
           {couponError ? (
-            <p className={`${SUMMARY_ALERT_PILL_CLASS} mt-2`} role="alert">
+            <p className={`${SUMMARY_ALERT_PILL_CLASS} relative z-[2] mt-2`} role="alert">
               {couponError}
             </p>
           ) : null}
