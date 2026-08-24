@@ -31,9 +31,9 @@ export function CheckoutSuccessView({
       <h1 className={PAGE_TITLE}>{labels.title}</h1>
 
       <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-8 text-center sm:px-8 sm:py-10">
-        <div className="relative z-[2] mx-auto mb-5 flex size-16 items-center justify-center rounded-full bg-brand-forest sm:size-20">
+        <div className="relative z-[2] mx-auto mb-5 flex size-16 items-center justify-center rounded-full bg-white sm:size-20">
           <Check
-            className="size-8 text-white sm:size-10"
+            className="size-8 text-brand-forest sm:size-10"
             strokeWidth={2.5}
             aria-hidden
           />
@@ -42,7 +42,7 @@ export function CheckoutSuccessView({
         <p className="relative z-[2] font-big-fat-boii text-2xl font-normal tracking-wide text-white uppercase sm:text-3xl">
           {orderNumber}
         </p>
-        <p className="relative z-[2] mt-4 text-sm leading-relaxed text-gray-700 sm:text-base">
+        <p className="relative z-[2] mt-4 text-sm leading-relaxed text-white sm:text-base">
           {labels.body.replace("{orderNumber}", orderNumber)}
         </p>
 
