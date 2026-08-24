@@ -39,6 +39,9 @@ import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 const GLASS_PILL_BUTTON =
   "inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
 
+const GLASS_ACTION_BUTTON =
+  "inline-flex items-center justify-center rounded-[15px] bg-white px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
+
 const PILL_FULL = "max-w-none sm:max-w-none";
 
 const BLOCK_TITLE =
@@ -262,7 +265,7 @@ export function GroupOrderPageClient({
       <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
       <div className="space-y-6">
       <section className="liquid-glass isolate overflow-hidden rounded-3xl p-4">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className={BLOCK_TITLE}>{labels.inviteLink}</p>
             <p className="mt-1 truncate text-xs text-white">
@@ -304,7 +307,7 @@ export function GroupOrderPageClient({
               </span>
             </label>
             <div className="flex flex-wrap gap-2">
-              <div className="flex min-w-[8rem] flex-1 items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
+              <div className="flex min-w-[8rem] flex-1 items-center gap-2 rounded-[15px] border border-gray-200 bg-gray-50 px-3 py-2">
                 <span className="text-sm text-gray-500" aria-hidden>
                   ֏
                 </span>
@@ -319,7 +322,7 @@ export function GroupOrderPageClient({
               </div>
               <button
                 type="button"
-                className={GLASS_PILL_BUTTON}
+                className={GLASS_ACTION_BUTTON}
                 onClick={() =>
                   run(async () =>
                     updateSpendLimitAction({

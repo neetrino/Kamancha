@@ -28,12 +28,12 @@ export function ActiveGroupOrderBanner({
   return (
     <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-3 sm:px-6 lg:px-8">
       <div className="liquid-glass isolate overflow-hidden rounded-2xl px-4 py-2.5">
-        <div className="relative z-[2] flex flex-wrap items-center justify-between gap-2 text-sm text-white">
+        <div className="relative z-[2] flex flex-col gap-2 text-sm text-white sm:flex-row sm:items-center sm:justify-between">
           <p className="inline-flex items-center gap-2 font-medium">
             <Users className="h-4 w-4 shrink-0" aria-hidden />
             {labels.activeSessionBanner.replace("{name}", organizerDisplayName)}
           </p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-end gap-3">
             <AppLink
               href={`/${locale}/group-orders/${inviteToken}`}
               prefetchPolicy="intent"
