@@ -146,7 +146,7 @@ export function CreateGroupOrderModal({
     <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
       <button
         type="button"
-        className={`absolute inset-0 cursor-pointer bg-black/40 disabled:cursor-not-allowed ${backdropClass}`}
+        className={`absolute inset-0 cursor-pointer bg-black/30 backdrop-blur-md disabled:cursor-not-allowed ${backdropClass}`}
         aria-label={labels.close}
         disabled={pending}
         onClick={() => {

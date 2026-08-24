@@ -46,8 +46,8 @@ function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
 
 function optionClassName(selected: boolean): string {
   return selected
-    ? "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm font-semibold text-gray-900 bg-gray-100 transition-colors"
-    : "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900";
+    ? "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm font-semibold text-brand-forest bg-gray-100 transition-colors"
+    : "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm text-gray-500 transition-colors hover:bg-gray-50 hover:text-brand-forest";
 }
 
 /**
