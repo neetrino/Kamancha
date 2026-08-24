@@ -164,16 +164,14 @@ export function AdminGiftCardsView({
                 </tr>
               ) : (
                 cards.map((card) => (
-                  <tr key={card.id} className={ADMIN_TABLE_ROW}>
+                  <tr
+                    key={card.id}
+                    className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+                    onClick={() => openDetail(card.id)}
+                  >
                     <td className={ADMIN_TABLE_TD}>
                       <span className="font-mono text-xs tracking-wide">
-                        <button
-                          type="button"
-                          className="underline-offset-2 hover:underline"
-                          onClick={() => openDetail(card.id)}
-                        >
-                          {card.code}
-                        </button>
+                        {card.code}
                       </span>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
@@ -197,7 +195,10 @@ export function AdminGiftCardsView({
                         {card.purchaserEmail ?? "—"}
                       </div>
                     </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
+                    <td
+                      className={ADMIN_TABLE_TD_CENTER}
+                      onClick={(event) => event.stopPropagation()}
+                    >
                       <div className="inline-flex flex-wrap items-center justify-center gap-1">
                         <Button
                           type="button"

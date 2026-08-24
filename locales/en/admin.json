@@ -545,9 +545,11 @@
     "title": "Coupons",
     "subtitle": "Create, edit, or remove discount codes for checkout.",
     "addPromoCode": "Add coupon",
+    "codeCopied": "Code \"{code}\" copied",
     "empty": "No promo codes yet.",
     "table": {
       "code": "Code",
+      "copyCodeAria": "Copy code {code}",
       "type": "Type",
       "value": "Value",
       "usageLimit": "Usage limit",

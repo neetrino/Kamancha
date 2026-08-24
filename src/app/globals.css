@@ -199,6 +199,44 @@ html {
   }
 }
 
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.animate-toast-in {
+  animation: 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards toast-in;
+}
+
+.animate-toast-out {
+  animation: 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards toast-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-toast-in,
+  .animate-toast-out {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}
+
 /* Sheets — identical duration + easing for open and close */
 @keyframes sheet-backdrop-in {
   from {

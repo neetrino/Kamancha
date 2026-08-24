@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Calendar,
+  Gift,
+  ShoppingBag,
+  Wallet,
+} from "lucide-react";
+import type { ReactNode } from "react";
+
 import { SideSheet } from "@/components/ui/SideSheet";
 import type { GiftCardDetail } from "@/features/gift-cards/application/queries";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -42,6 +50,26 @@ function formatDateTime(
     return "—";
   }
   return `${date.toISOString().slice(0, 16).replace("T", " ")} ${utcLabel}`;
+}
+
+type DetailRowProps = {
+  icon: ReactNode;
+  label: string;
+  children: ReactNode;
+};
+
+function DetailRow({ icon, label, children }: DetailRowProps) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
+        {icon}
+      </span>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-brand-forest">{label}</p>
+        <div className="mt-0.5 text-sm text-gray-900">{children}</div>
+      </div>
+    </div>
+  );
 }
 
 export function GiftCardDetailSheet({
@@ -88,36 +116,34 @@ export function GiftCardDetailSheet({
 
         {!isLoading && detail ? (
           <div className="space-y-6">
-            <dl className="grid gap-4 rounded-2xl border border-gray-200 bg-white p-4 sm:grid-cols-2">
-              <div>
-                <dt className="text-xs text-gray-500">{giftCards.table.balance}</dt>
-                <dd className="text-sm font-medium text-gray-900">
-                  {formatMoneyAmount(detail.balanceAmount, "AMD", locale)} /{" "}
-                  {formatMoneyAmount(detail.initialAmount, "AMD", locale)}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-500">{giftCards.table.recipient}</dt>
-                <dd className="text-sm text-gray-900">
-                  {detail.recipientName} · {detail.recipientEmail}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-500">{giftCards.table.purchaser}</dt>
-                <dd className="text-sm text-gray-900">
-                  {detail.purchaserName}
-                  {detail.purchaserEmail ? ` · ${detail.purchaserEmail}` : ""}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-500">
-                  {giftCards.drawer.expiresOptional}
-                </dt>
-                <dd className="text-sm text-gray-900">
-                  {formatDateOnly(detail.expiresAt, common.none)}
-                </dd>
-              </div>
-            </dl>
+            <div className="space-y-4 rounded-2xl border border-gray-200 bg-white p-4">
+              <DetailRow
+                icon={<Wallet className="h-4 w-4" aria-hidden />}
+                label={giftCards.table.balance}
+              >
+                {formatMoneyAmount(detail.balanceAmount, "AMD", locale)} /{" "}
+                {formatMoneyAmount(detail.initialAmount, "AMD", locale)}
+              </DetailRow>
+              <DetailRow
+                icon={<Gift className="h-4 w-4" aria-hidden />}
+                label={giftCards.table.recipient}
+              >
+                {detail.recipientName} · {detail.recipientEmail}
+              </DetailRow>
+              <DetailRow
+                icon={<ShoppingBag className="h-4 w-4" aria-hidden />}
+                label={giftCards.table.purchaser}
+              >
+                {detail.purchaserName}
+                {detail.purchaserEmail ? ` · ${detail.purchaserEmail}` : ""}
+              </DetailRow>
+              <DetailRow
+                icon={<Calendar className="h-4 w-4" aria-hidden />}
+                label={giftCards.drawer.expiresOptional}
+              >
+                {formatDateOnly(detail.expiresAt, common.none)}
+              </DetailRow>
+            </div>
 
             <div>
               <h3 className="mb-3 text-base font-semibold text-gray-900">
