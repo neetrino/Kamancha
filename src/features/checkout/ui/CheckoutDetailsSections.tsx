@@ -259,7 +259,7 @@ export function CheckoutDetailsSections({
       {prepaidNotice ? (
         <section className={SECTION_CLASS}>
           <h2 className={SECTION_TITLE_CLASS}>{prepaidNotice.title}</h2>
-          <p className="relative z-[2] text-sm text-gray-700">
+          <p className="relative z-[2] text-sm text-white">
             {prepaidNotice.hint}
           </p>
         </section>

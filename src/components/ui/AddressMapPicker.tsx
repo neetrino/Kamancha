@@ -337,7 +337,7 @@ function MapPickerFooter({
   return (
     <div className="relative z-[2] space-y-3 px-5 py-4">
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      <p className="min-h-5 text-sm text-gray-800">
+      <p className="min-h-5 text-sm font-bold text-white">
         {resolving ? labels.resolving : address}
       </p>
       <KamanchaPillButton
