@@ -18,9 +18,10 @@ export const homeEaseOut = revealEaseOut;
 /**
  * Horizontal product/category rows — contain overscroll so vertical page scroll
  * is not captured; pan-x keeps cards from blocking vertical gestures.
+ * `overflow-y-clip` avoids a stray vertical scrollbar track on the right.
  */
 export const HOME_HORIZONTAL_SCROLL =
-  "overflow-x-auto overflow-y-hidden overscroll-x-contain touch-pan-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+  "overflow-x-auto overflow-y-clip overscroll-x-contain touch-pan-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:size-0";
 
 type HomeRevealProps = ComponentProps<typeof Reveal>;
 

@@ -1,9 +1,9 @@
-import { HorizontalWheelScrollArea } from "@/components/ui/HorizontalWheelScrollArea";
 import {
   HomeCategoryCard,
   type HomeCategoryCardItem,
 } from "@/features/home/ui/HomeCategoryCard";
 import {
+  HOME_HORIZONTAL_SCROLL,
   HomeReveal,
   HomeStagger,
   HomeStaggerItem,
@@ -44,9 +44,9 @@ export function HomeCategories({
           data-node-id="22:209"
           className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2"
         >
-          <HorizontalWheelScrollArea>
+          <div className={HOME_HORIZONTAL_SCROLL}>
             <HomeStagger
-              className="inline-flex gap-[19px] px-16 py-4"
+              className="inline-flex gap-[19px] px-16 pb-4 pt-5"
               stagger={0.07}
             >
               {categories.map((category) => (
@@ -58,7 +58,7 @@ export function HomeCategories({
                 </HomeStaggerItem>
               ))}
             </HomeStagger>
-          </HorizontalWheelScrollArea>
+          </div>
         </div>
       )}
     </section>
