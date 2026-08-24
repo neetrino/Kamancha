@@ -40,7 +40,7 @@ type ProductCardProps = {
    * `fixed` — Figma 300×419 (home desktop).
    * `fluid` — fills grid cell (wishlist 5-up).
    * `compact` — Figma mobile 214×302 (home rails).
-   * `catalog` — Figma 103:3029 menu card (2-col mobile, 300px from sm).
+   * `catalog` — Figma 103:3029 menu card (mobile below lg; 3-col from 744px on tablet).
    */
   layout?: ProductCardLayout;
 };
@@ -134,7 +134,7 @@ export function ProductCard({
 
       {compact ? null : (
         <div
-          className={`relative z-[1] mx-auto hidden h-11 w-[276px] max-w-[calc(100%-24px)] shrink-0 overflow-visible md:block ${
+          className={`relative z-[1] mx-auto hidden h-11 w-[276px] max-w-[calc(100%-24px)] shrink-0 overflow-visible lg:block ${
             fluid ? "mt-1" : "mt-2"
           }`}
           aria-hidden
@@ -155,7 +155,7 @@ export function ProductCard({
       >
         <div
           className={`flex min-w-0 flex-1 flex-col ${
-            compact ? "gap-1.5" : catalog ? "gap-2.5 sm:gap-0" : ""
+            compact ? "gap-1.5" : catalog ? "gap-2.5 lg:gap-0" : ""
           }`}
         >
           <h3 className={`truncate font-medium text-[#222] ${ui.title}`}>
@@ -177,7 +177,7 @@ export function ProductCard({
               compact
                 ? "gap-1"
                 : catalog
-                  ? "gap-2 sm:mt-0.5 sm:gap-px"
+                  ? "gap-2 lg:mt-0.5 lg:gap-px"
                   : `gap-px ${fluid ? "mt-0.5" : "mt-1"}`
             }`}
           >

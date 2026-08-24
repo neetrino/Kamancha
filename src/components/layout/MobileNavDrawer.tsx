@@ -334,7 +334,7 @@ export function MobileNavDrawer({
 
       {mounted && rendered
         ? createPortal(
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button
                 type="button"
                 aria-label={dictionary.nav.closeMenu}

@@ -1,13 +1,13 @@
 /** Figma 173:143 scrolled header chrome — frosted green bar, rounded bottom. */
 export const SITE_HEADER_SCROLLED_SURFACE =
-  "rounded-b-[28px] bg-[linear-gradient(180deg,rgba(20,37,20,0.66)_0%,rgba(40,95,42,0.48)_100%)] backdrop-blur-[10px] md:rounded-b-[40px]";
+  "rounded-b-[28px] bg-[linear-gradient(180deg,rgba(20,37,20,0.66)_0%,rgba(40,95,42,0.48)_100%)] backdrop-blur-[10px] lg:rounded-b-[40px]";
 
 /** Figma 173:143 pale gradient rim along L/R/bottom edge. */
 export const SITE_HEADER_SCROLLED_STROKE = "site-header-scrolled-stroke";
 
 /** Figma 22:393 header content width (page inset ≈ 54px on 1440). */
 export const SITE_HEADER_INNER =
-  "mx-auto w-full max-w-[1332px] px-4 md:px-[18px]";
+  "mx-auto w-full max-w-[1332px] px-4 lg:px-[18px]";
 
 /** Icon rail: cart + wishlist + account — nudged slightly below / left of optical center. */
 export const SITE_HEADER_ICON_RAIL =

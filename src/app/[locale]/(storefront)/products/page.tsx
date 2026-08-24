@@ -158,12 +158,12 @@ export default async function ProductsPage({
         ) : (
           <Stagger
             key={catalogGridMotionKey(filters)}
-            className="grid grid-cols-2 justify-items-stretch gap-3 sm:justify-items-center sm:gap-5 xl:grid-cols-3"
+            className="grid grid-cols-2 justify-items-stretch gap-3 sm:gap-5 min-[744px]:grid-cols-3"
             stagger={0.06}
             immediate
           >
             {priced.map(({ product, price, compareAtFormatted, rating }, index) => (
-              <StaggerItem key={product.id} className="min-w-0 w-full sm:max-w-[300px]">
+              <StaggerItem key={product.id} className="min-w-0 w-full">
                 <ProductCard
                   href={`/${rawLocale}/products/${product.translation.slug}`}
                   title={product.translation.title}
