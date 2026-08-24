@@ -47,6 +47,13 @@ const PILL_FULL = "max-w-none sm:max-w-none";
 const BLOCK_TITLE =
   "font-big-fat-boii text-base font-normal tracking-wide text-white uppercase";
 
+const SECTION_TITLE =
+  "font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase lg:text-base";
+
+/** Long settings labels — one line on narrow mobile viewports. */
+const SETTINGS_FIELD_TITLE =
+  "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase whitespace-nowrap lg:text-base lg:tracking-wide lg:leading-normal lg:whitespace-normal";
+
 const PRODUCT_THUMB_PX = 96;
 const PRODUCT_THUMB_RADIUS_PX = 16;
 const PRODUCT_CARD_MIN_PX = 200;
@@ -292,13 +299,13 @@ export function GroupOrderPageClient({
 
       {isOrganizer && canEdit ? (
         <section>
-          <h2 className="mb-3 font-big-fat-boii text-base font-normal tracking-wide text-white uppercase">
+          <h2 className={`mb-3 ${SECTION_TITLE}`}>
             {labels.settingsTitle}
           </h2>
           <div className="space-y-5 liquid-glass isolate overflow-hidden rounded-3xl p-4">
           <div className="space-y-2">
             <label className="block">
-              <span className={BLOCK_TITLE}>{labels.spendLimitFieldLabel}</span>
+              <span className={SETTINGS_FIELD_TITLE}>{labels.spendLimitFieldLabel}</span>
               <span className="mt-0.5 block text-xs leading-relaxed text-white">
                 {labels.spendLimitFieldHint}
               </span>
@@ -338,7 +345,7 @@ export function GroupOrderPageClient({
 
           <div className="space-y-2 border-t border-white/40 pt-4">
             <label className="block">
-              <span className={BLOCK_TITLE}>{labels.deliveryFieldLabel}</span>
+              <span className={SECTION_TITLE}>{labels.deliveryFieldLabel}</span>
               <span className="mt-0.5 block text-xs leading-relaxed text-white">
                 {labels.deliveryFieldHint}
               </span>
@@ -431,7 +438,7 @@ export function GroupOrderPageClient({
       ) : null}
 
       <section>
-        <h2 className="mb-3 font-big-fat-boii text-base font-normal tracking-wide text-white uppercase">
+        <h2 className={`mb-3 ${SECTION_TITLE}`}>
           {labels.participants}
         </h2>
         <ul className="space-y-4">
