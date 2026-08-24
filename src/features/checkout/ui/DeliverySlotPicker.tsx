@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import {
@@ -99,6 +100,9 @@ function monthLabel(year: number, monthIndex: number, locale: string): string {
   return `${month} ${year}`;
 }
 
+const MONTH_NAV_BUTTON =
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-sm";
+
 /**
  * Calendar + time-slot picker for checkout delivery scheduling.
  */
@@ -190,9 +194,11 @@ export function DeliverySlotPicker({
                 type="button"
                 disabled={disabled || !canPrev}
                 onClick={() => shiftMonth(-1)}
-                className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
+                aria-label={labels.prevMonth}
+                className={MONTH_NAV_BUTTON}
               >
-                {labels.prevMonth}
+                <ChevronLeft className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">{labels.prevMonth}</span>
               </button>
               <p className="text-base font-medium text-gray-900">
                 {monthLabel(viewYear, viewMonth, locale)}
@@ -201,9 +207,11 @@ export function DeliverySlotPicker({
                 type="button"
                 disabled={disabled || !canNext}
                 onClick={() => shiftMonth(1)}
-                className="rounded-xl border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40"
+                aria-label={labels.nextMonth}
+                className={MONTH_NAV_BUTTON}
               >
-                {labels.nextMonth}
+                <ChevronRight className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">{labels.nextMonth}</span>
               </button>
             </div>
 
