@@ -1,19 +1,35 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { Button } from "@/components/ui/Button";
-import { completeParticipantCardPaymentAction } from "@/features/group-orders/actions";
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import type { CheckoutOnlineProvider } from "@/features/checkout/domain/payment-methods";
+import {
+  CheckoutPaymentMethodOption,
+  type CheckoutPaymentOption,
+} from "@/features/checkout/ui/CheckoutPaymentMethodOption";
+import { completeParticipantCardPaymentAction } from "@/features/group-orders/actions";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+
+const PAGE_TITLE =
+  "font-big-fat-boii text-[58px] leading-[1.1] font-normal tracking-wide text-white uppercase whitespace-nowrap sm:text-[32px]";
+
+const PAGE_SUBTITLE = "mt-2 text-base leading-relaxed text-white/70";
+
+const PILL_FULL = "max-w-none sm:max-w-none";
+
+type CheckoutPaymentLabels = Pick<
+  Dictionary["checkout"]["payment"],
+  "card" | "cardDescription" | "idram" | "idramDescription"
+>;
 
 type GroupOrderPayClientProps = {
   locale: Locale;
   labels: Dictionary["groupOrder"];
+  checkoutPaymentLabels: CheckoutPaymentLabels;
   inviteToken: string;
   displayName: string;
   amountFormatted: string;
@@ -24,6 +40,7 @@ type GroupOrderPayClientProps = {
 export function GroupOrderPayClient({
   locale,
   labels,
+  checkoutPaymentLabels,
   inviteToken,
   displayName,
   amountFormatted,
@@ -37,133 +54,118 @@ export function GroupOrderPayClient({
 
   const backHref = `/${locale}/group-orders/${inviteToken}`;
 
+  const paymentOptions = useMemo<CheckoutPaymentOption[]>(
+    () => [
+      {
+        id: "arca",
+        name: checkoutPaymentLabels.card,
+        shortName: checkoutPaymentLabels.card,
+        description: checkoutPaymentLabels.cardDescription,
+      },
+      {
+        id: "idram",
+        name: checkoutPaymentLabels.idram,
+        shortName: checkoutPaymentLabels.idram,
+        description: checkoutPaymentLabels.idramDescription,
+      },
+    ],
+    [checkoutPaymentLabels],
+  );
+
   if (alreadyPaid || amount <= 0) {
     return (
-      <div className="mx-auto max-w-md px-4 py-10">
-        <div className="liquid-glass isolate overflow-hidden rounded-3xl p-6 text-center">
-          <h1 className="text-xl font-bold text-emerald-950">
+      <div className="group-order-page mx-auto max-w-lg px-0 py-8">
+        <div className="liquid-glass isolate overflow-hidden rounded-3xl p-6 text-center sm:p-8">
+          <h1 className={PAGE_TITLE}>
             {labels.payAlreadyPaidTitle}
           </h1>
-          <p className="mt-2 text-sm text-emerald-800">
+          <p className="mt-3 text-sm leading-relaxed text-white/70">
             {labels.payAlreadyPaidHint}
           </p>
-          <AppLink
-            href={backHref}
-            className="mt-5 inline-flex rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white"
-          >
-            {labels.payBackToGroup}
-          </AppLink>
+          <div className="mt-6 flex justify-center">
+            <KamanchaPillButton
+              href={backHref}
+              label={labels.payBackToGroup}
+              className={PILL_FULL}
+            />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-10">
-      <div className="liquid-glass isolate overflow-hidden rounded-3xl p-6">
-        <h1 className="text-xl font-bold text-gray-900">{labels.payTitle}</h1>
-        <p className="mt-2 text-sm text-gray-500">
+    <div className="group-order-page mx-auto max-w-lg px-0 py-8">
+      <header className="mb-6">
+        <h1 className={PAGE_TITLE}>{labels.payTitle}</h1>
+        <p className={PAGE_SUBTITLE}>
           {labels.payDescription.replace("{name}", displayName)}
         </p>
+      </header>
 
-        <p className="mt-5 text-3xl font-bold tabular-nums text-gray-900">
+      <section className="liquid-glass isolate overflow-hidden rounded-3xl p-5 sm:p-6">
+        <p className="font-big-fat-boii text-3xl font-normal tracking-wide text-white tabular-nums sm:text-4xl">
           {amountFormatted}
         </p>
-        <p className="mt-1 text-xs text-gray-500">{labels.payAmountHint}</p>
+        <p className="mt-2 text-xs leading-relaxed text-white/60">
+          {labels.payAmountHint}
+        </p>
 
-        <fieldset className="mt-6 space-y-3">
-          <legend className="text-sm font-medium text-gray-900">
+        <fieldset className="mt-6">
+          <legend className="mb-3 block text-sm font-medium text-white">
             {labels.paySelectProvider}
           </legend>
-          {(
-            [
-              {
-                id: "arca" as const,
-                name: labels.payArca,
-                description: labels.payArcaDescription,
-                logo: "/assets/payments/arca.svg",
-              },
-              {
-                id: "idram" as const,
-                name: labels.payIdram,
-                description: labels.payIdramDescription,
-                logo: "/assets/payments/idram.svg",
-              },
-            ] as const
-          ).map((option) => (
-            <label
-              key={option.id}
-              className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-3 transition ${
-                provider === option.id
-                  ? "border-gray-900 bg-gray-50 ring-1 ring-gray-900"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
-            >
-              <input
-                type="radio"
-                name="provider"
-                value={option.id}
-                checked={provider === option.id}
-                onChange={() => setProvider(option.id)}
-                className="sr-only"
+          <div className="space-y-3">
+            {paymentOptions.map((option) => (
+              <CheckoutPaymentMethodOption
+                key={option.id}
+                option={option}
+                selected={provider === option.id}
+                disabled={pending}
+                onSelect={(method) => setProvider(method as CheckoutOnlineProvider)}
               />
-              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
-                <Image
-                  src={option.logo}
-                  alt=""
-                  width={36}
-                  height={36}
-                  className="object-contain"
-                />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-sm font-semibold text-gray-900">
-                  {option.name}
-                </span>
-                <span className="block text-xs text-gray-500">
-                  {option.description}
-                </span>
-              </span>
-            </label>
-          ))}
+            ))}
+          </div>
         </fieldset>
 
         {error ? (
-          <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p className="mt-4 rounded-2xl border border-red-300/40 bg-red-950/30 px-3 py-2 text-sm text-red-100">
             {error}
           </p>
         ) : null}
 
-        <Button
-          type="button"
-          className="mt-6 w-full rounded-full"
-          disabled={pending}
-          onClick={() => {
-            setError(null);
-            startTransition(async () => {
-              const result = await completeParticipantCardPaymentAction({
-                inviteToken,
-                provider,
+        <div className="mt-6">
+          <KamanchaPillButton
+            type="button"
+            variant="light"
+            label={pending ? labels.payProcessing : labels.payConfirm}
+            className={PILL_FULL}
+            disabled={pending}
+            onClick={() => {
+              setError(null);
+              startTransition(async () => {
+                const result = await completeParticipantCardPaymentAction({
+                  inviteToken,
+                  provider,
+                });
+                if (!result.ok) {
+                  setError(result.error ?? labels.errorGeneric);
+                  return;
+                }
+                router.push(backHref);
+                router.refresh();
               });
-              if (!result.ok) {
-                setError(result.error ?? labels.errorGeneric);
-                return;
-              }
-              router.push(backHref);
-              router.refresh();
-            });
-          }}
-        >
-          {pending ? labels.payProcessing : labels.payConfirm}
-        </Button>
+            }}
+          />
+        </div>
 
         <AppLink
           href={backHref}
-          className="mt-3 block text-center text-sm text-gray-500 underline-offset-2 hover:underline"
+          className="mt-4 block text-center text-sm text-white/70 underline-offset-2 transition-colors hover:text-white hover:underline"
         >
           {labels.payBackToGroup}
         </AppLink>
-      </div>
+      </section>
     </div>
   );
 }

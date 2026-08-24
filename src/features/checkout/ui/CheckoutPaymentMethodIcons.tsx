@@ -72,11 +72,14 @@ function CheckoutCashIcon({ sizePx }: { sizePx: number }) {
 type CheckoutPaymentMethodIconsProps = {
   methodId: CheckoutPaymentMethod;
   mobileCardFramed?: boolean;
+  /** Use checkout desktop badge sizing at all breakpoints (group-order pay). */
+  cardBadgeSize?: "mobile" | "desktop";
 };
 
 export function CheckoutPaymentMethodIcons({
   methodId,
   mobileCardFramed = false,
+  cardBadgeSize = "mobile",
 }: CheckoutPaymentMethodIconsProps) {
   if (methodId === "cash_on_delivery") {
     return (
@@ -132,13 +135,20 @@ export function CheckoutPaymentMethodIcons({
     );
   }
 
-  return <CheckoutCardPaymentBadges mobileCardFramed={mobileCardFramed} />;
+  return (
+    <CheckoutCardPaymentBadges
+      mobileCardFramed={mobileCardFramed}
+      size={cardBadgeSize === "desktop" ? "desktop" : "responsive"}
+    />
+  );
 }
 
 function CheckoutCardPaymentBadges({
   mobileCardFramed,
+  size = "responsive",
 }: {
   mobileCardFramed: boolean;
+  size?: "responsive" | "desktop";
 }) {
   const mobileFramedBoxSize = getCheckoutCardBadgeFramedBoxSize(
     CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_MOBILE_PX,
@@ -151,6 +161,32 @@ function CheckoutCardPaymentBadges({
     CHECKOUT_PAYMENT_CARD_BADGE_BOX_HEIGHT_PX,
   );
   const badges = getCheckoutCardBadges();
+  const desktopBadges = (
+    <div
+      className={
+        size === "desktop"
+          ? "flex w-full max-w-full flex-nowrap items-center justify-start"
+          : "hidden shrink-0 flex-nowrap items-center justify-start xl:flex"
+      }
+      style={{ gap: CHECKOUT_PAYMENT_CARD_BADGES_GAP_PX }}
+    >
+      {badges.map((badge) => (
+        <CheckoutPaymentBadge
+          key={badge.alt}
+          badge={badge}
+          logoHeightPx={CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_PX}
+          radiusPx={CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX}
+          paddingPx={CHECKOUT_PAYMENT_CARD_BADGE_PADDING_PX}
+          framed
+          framedBoxSize={desktopFramedBoxSize}
+        />
+      ))}
+    </div>
+  );
+
+  if (size === "desktop") {
+    return desktopBadges;
+  }
 
   return (
     <>
@@ -170,22 +206,7 @@ function CheckoutCardPaymentBadges({
           />
         ))}
       </div>
-      <div
-        className="hidden shrink-0 flex-nowrap items-center justify-start xl:flex"
-        style={{ gap: CHECKOUT_PAYMENT_CARD_BADGES_GAP_PX }}
-      >
-        {badges.map((badge) => (
-          <CheckoutPaymentBadge
-            key={badge.alt}
-            badge={badge}
-            logoHeightPx={CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_PX}
-            radiusPx={CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX}
-            paddingPx={CHECKOUT_PAYMENT_CARD_BADGE_PADDING_PX}
-            framed
-            framedBoxSize={desktopFramedBoxSize}
-          />
-        ))}
-      </div>
+      {desktopBadges}
     </>
   );
 }

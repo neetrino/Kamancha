@@ -35,6 +35,7 @@ export default async function GroupOrderPayPage({ params }: PageProps) {
     <GroupOrderPayClient
       locale={locale}
       labels={dictionary.groupOrder}
+      checkoutPaymentLabels={dictionary.checkout.payment}
       inviteToken={inviteToken}
       displayName={context.displayName}
       amountFormatted={context.amountFormatted}

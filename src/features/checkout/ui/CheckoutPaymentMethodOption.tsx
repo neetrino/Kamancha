@@ -21,6 +21,7 @@ type CheckoutPaymentMethodOptionProps = {
   selected: boolean;
   disabled: boolean;
   onSelect: (method: CheckoutPaymentMethod) => void;
+  cardBadgeSize?: "mobile" | "desktop";
 };
 
 function optionClass(selected: boolean): string {
@@ -40,12 +41,15 @@ export function CheckoutPaymentMethodOption({
   selected,
   disabled,
   onSelect,
+  cardBadgeSize = "mobile",
 }: CheckoutPaymentMethodOptionProps) {
   const isCardMethod = option.id === "arca";
+  const useExpandedCardLayout = isCardMethod && cardBadgeSize === "desktop";
   const icons = (
     <CheckoutPaymentMethodIcons
       methodId={option.id}
       mobileCardFramed={isCardMethod}
+      cardBadgeSize={cardBadgeSize}
     />
   );
 
@@ -60,17 +64,26 @@ export function CheckoutPaymentMethodOption({
           disabled={disabled}
           className="relative z-[2] self-center"
         />
-        <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-1.5 xl:hidden">
-          <span className="font-medium text-gray-900">{option.shortName}</span>
-          {icons}
-        </div>
-        <div className="relative z-[2] hidden min-w-0 flex-1 items-center gap-3 xl:flex xl:gap-4">
-          <div className="flex shrink-0 items-center">{icons}</div>
-          <div className="min-w-0">
-            <div className="font-medium text-gray-900">{option.name}</div>
-            <div className={descriptionClass(selected)}>{option.description}</div>
+        {useExpandedCardLayout ? (
+          <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-2">
+            <span className="font-medium text-gray-900">{option.shortName}</span>
+            {icons}
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-1.5 xl:hidden">
+              <span className="font-medium text-gray-900">{option.shortName}</span>
+              {icons}
+            </div>
+            <div className="relative z-[2] hidden min-w-0 flex-1 items-center gap-3 xl:flex xl:gap-4">
+              <div className="flex shrink-0 items-center">{icons}</div>
+              <div className="min-w-0">
+                <div className="font-medium text-gray-900">{option.name}</div>
+                <div className={descriptionClass(selected)}>{option.description}</div>
+              </div>
+            </div>
+          </>
+        )}
       </label>
     );
   }
