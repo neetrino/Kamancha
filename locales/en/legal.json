@@ -1,0 +1,314 @@
+{
+  "lastUpdatedLabel": "Last updated:",
+  "hubTitle": "Policies",
+  "hubIntro": "Read our store policies. Tap a policy to view the full text.",
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "23 July 2026",
+    "intro": "By visiting the website kamancha.am (hereinafter referred to as the “Website”) and making purchases, you automatically consent to the collection, processing, and use of your personal data.",
+    "introParagraphs": [
+      "By “Personal Data,” we mean any information that allows or may allow us to directly or indirectly identify your identity, such as your name, surname, address, email, phone number, and other data (hereinafter referred to as “Data”).",
+      "In this Privacy Policy, “we,” “us,” and “our” refer to the Website (for more information, please visit the “About Us” section), while “you,” “your,” and “yours” refer to any individual who visits the Website or uses our services."
+    ],
+    "sections": [
+      {
+        "heading": "1. Collected Data",
+        "paragraphs": ["We may collect the following types of information:"],
+        "bullets": [
+          "Contact information – name, surname, address, phone number, email address",
+          "Purchase information – products purchased, payment methods",
+          "Technical information – device type, browser, operating system",
+          "Cookies and tracking technologies – for website usage analysis"
+        ]
+      },
+      {
+        "heading": "2. Use of Data",
+        "paragraphs": [
+          "Collected data is never sold or provided to third parties for marketing purposes. It is used only for the following purposes:"
+        ],
+        "bullets": [
+          "Processing and shipping orders",
+          "Providing user support",
+          "Improving website functionality",
+          "Complying with legal requirements"
+        ]
+      },
+      {
+        "heading": "3. Data Retention Periods",
+        "paragraphs": ["Your personal data is stored as follows:"],
+        "bullets": [
+          "User account data – as long as the account is active",
+          "Purchase history – 5 years (to comply with tax and accounting regulations)",
+          "Marketing data – 2 years or until the user opts out"
+        ]
+      },
+      {
+        "heading": "4. Data Security",
+        "paragraphs": [
+          "We implement appropriate technical and organizational measures to ensure the protection of your data, including:"
+        ],
+        "bullets": [
+          "SSL encryption – to secure payment and personal data transmission",
+          "Access control – limited access to personal data",
+          "Regular audits – to detect potential security vulnerabilities"
+        ]
+      },
+      {
+        "heading": "5. Sharing Data with Third Parties",
+        "paragraphs": ["We do not sell or provide your data to third parties, except for:"],
+        "bullets": [
+          "Shipping services – to ensure order delivery",
+          "Payment systems – for secure payment processing",
+          "Law enforcement authorities – in cases required by law"
+        ],
+        "closingParagraphs": [
+          "All third parties are obligated to protect your data and cannot use it for other purposes."
+        ]
+      },
+      {
+        "heading": "6. User Rights",
+        "paragraphs": ["You have the right to:"],
+        "bullets": [
+          "Receive a copy of your personal data",
+          "Edit or delete your data (through our website settings or customer support)",
+          "Opt out of marketing emails (via the “unsubscribe” link in each email)",
+          "Request that your data is not processed for specific purposes, except in cases required by law"
+        ]
+      },
+      {
+        "heading": "7. Cookies Usage",
+        "paragraphs": ["Our website uses cookies to optimize user experience. We use:"],
+        "bullets": [
+          "Functional cookies – to ensure proper website operation",
+          "Analytical cookies – to understand user behavior and improve the website",
+          "Marketing cookies (only with your consent) – to provide more relevant advertisements"
+        ],
+        "closingParagraphs": [
+          "You can change your preferences at any time by managing cookies in your browser."
+        ]
+      },
+      {
+        "heading": "8. Policy Changes",
+        "paragraphs": [
+          "We reserve the right to make legally permitted changes to this page and the above sections. Updates will be posted on the Website."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "lastUpdated": "23 July 2026",
+    "intro": "Please read the terms governing the use of kamancha.am.",
+    "sections": [
+      {
+        "heading": "1. General Provisions",
+        "paragraphs": [
+          "1.1. These Terms and Conditions govern the use of the kamancha.am website (hereinafter referred to as the “Website”).",
+          "1.2. By accessing or using the Website, you agree to these Terms.",
+          "1.3. If you do not agree to any part of these Terms, please do not use the Website.",
+          "1.4. The Website reserves the right to modify these Terms without prior notice. Changes become effective upon their publication on the Website.",
+          "1.5. Continued use of the Website implies acceptance of the updated Terms."
+        ]
+      },
+      {
+        "heading": "2. Key Definitions",
+        "paragraphs": ["The following definitions apply in these Terms:"],
+        "bullets": [
+          "Website – The online platform kamancha.am offering services, content, and various functionalities.",
+          "User – Any individual or legal entity accessing or using the Website.",
+          "Services – All products, services, content, and tools available via the Website.",
+          "Content – Any text, images, videos, audio, or other materials available on the Website.",
+          "Intellectual Property – Website name, logo, texts, software, and other elements protected by copyright or trademark law.",
+          "Transaction – Any purchase, service registration, or other contractual agreement on the Website."
+        ]
+      },
+      {
+        "heading": "3. User Obligations",
+        "paragraphs": ["3.1. The User agrees to:"],
+        "bullets": [
+          "Use the Website only for lawful purposes.",
+          "Not interfere with the Website’s technical operation.",
+          "Not distribute viruses, malware, or any harmful code.",
+          "Not attempt to illegally access Website servers or data.",
+          "Not publish or distribute illegal, offensive, defamatory, or hate-inducing content."
+        ],
+        "closingParagraphs": [
+          "3.2. The Website reserves the right to block any User who violates these Terms."
+        ]
+      },
+      {
+        "heading": "4. Limitation of Liability",
+        "paragraphs": [
+          "4.1. The Website is provided “as is” without any warranties.",
+          "4.2. The Website is not responsible for:"
+        ],
+        "bullets": [
+          "Any errors or technical malfunctions.",
+          "Incorrect or false information entered by Users.",
+          "Damages resulting from third-party interactions with the Website.",
+          "The accuracy, reliability, or timeliness of the content provided."
+        ],
+        "closingParagraphs": [
+          "4.3. The Website is not liable for indirect damages, including lost revenue or data loss."
+        ]
+      },
+      {
+        "heading": "5. Intellectual Property",
+        "paragraphs": [
+          "5.1. All materials on the Website, including texts, images, logos, and software, belong to the Website or its rightful owners.",
+          "5.2. Copying, distributing, selling, or using any content without prior written permission is strictly prohibited.",
+          "5.3. The User has no right to use the Website’s trademark or domain name without written permission."
+        ]
+      },
+      {
+        "heading": "6. Payments and Refunds",
+        "paragraphs": [
+          "6.1. If the Website offers paid services, payments must be made under the specified conditions.",
+          "6.2. The Website may change prices or payment terms without prior notice.",
+          "6.3. If applicable, refund policies will be outlined separately on the Website."
+        ]
+      },
+      {
+        "heading": "7. Dispute Resolution",
+        "paragraphs": [
+          "7.1. These Terms are governed by the laws of the Republic of Armenia.",
+          "7.2. All disputes should first be resolved through negotiations.",
+          "7.3. If negotiations fail, disputes will be handled in the competent courts of Armenia."
+        ]
+      },
+      {
+        "heading": "8. Force Majeure",
+        "paragraphs": [
+          "8.1. The Website is not responsible for failure or delay in fulfilling obligations due to force majeure circumstances, including:"
+        ],
+        "bullets": [
+          "Natural disasters (earthquakes, floods, fires, etc.).",
+          "Governmental restrictions or prohibitions.",
+          "Military conflicts, terrorism, or civil unrest.",
+          "Technical failures beyond the Website’s control."
+        ]
+      },
+      {
+        "heading": "9. Privacy and Data Protection",
+        "paragraphs": [
+          "9.1. The Website commits to protecting user data in accordance with the Privacy Policy.",
+          "9.2. The Website may collect and process user data for legal purposes.",
+          "9.3. The Website reserves the right to disclose user data to authorities as required by law."
+        ]
+      }
+    ]
+  },
+  "refund": {
+    "title": "Return and Refund Policy",
+    "lastUpdated": "23 July 2026",
+    "intro": "Grill.am is committed to ensuring that every order reaches the customer in proper quality and complete condition. Since the products offered on the website are food products, returns and refunds are handled in accordance with food safety and hygiene requirements.",
+    "sections": [
+      {
+        "heading": "1. General Return and Exchange Conditions",
+        "paragraphs": [
+          "Food products delivered in proper quality and in accordance with the confirmed order are not eligible for return or exchange.",
+          "A return, replacement, or refund may be considered if:"
+        ],
+        "bullets": [
+          "the delivered item does not match the confirmed order,",
+          "one or more ordered items are missing,",
+          "the delivered product is damaged, incomplete, or of unsatisfactory quality,",
+          "the product or its packaging was damaged during delivery."
+        ]
+      },
+      {
+        "heading": "2. Reporting an Issue",
+        "paragraphs": [
+          "Please report any issue as soon as possible after receiving the order. To help us review the case promptly, please provide:"
+        ],
+        "bullets": [
+          "the order number,",
+          "a short description of the issue,",
+          "photos of the product and packaging, where possible."
+        ],
+        "closingParagraphs": [
+          "Each case is reviewed individually. Where appropriate, Grill.am may offer a replacement, delivery of the missing item, or a full or partial refund."
+        ]
+      },
+      {
+        "heading": "3. Refunds",
+        "paragraphs": [
+          "If a refund is approved, it will be issued using the same payment method used for the original purchase.",
+          "For card or online payments, the refund may take up to 7 business days, depending on the bank or payment provider procedures.",
+          "The delivery fee is refundable only if the issue was caused by Grill.am or the delivery service."
+        ]
+      },
+      {
+        "heading": "4. Order Changes or Cancellation",
+        "paragraphs": [
+          "An order may be changed or canceled before preparation begins.",
+          "Once preparation has started or the order has been handed over to the delivery service, changing or canceling the order may no longer be possible. Please contact us as soon as possible in such cases."
+        ]
+      },
+      {
+        "heading": "5. Non-Returnable or Non-Exchangeable Products",
+        "paragraphs": [],
+        "bullets": [
+          "food products delivered in proper quality and in accordance with the confirmed order,",
+          "opened or partially consumed products where no quality issue exists,",
+          "products damaged or spoiled due to improper storage by the customer,",
+          "custom-made orders that comply with the confirmed order details."
+        ]
+      },
+      {
+        "heading": "6. Damaged, Incorrect, or Incomplete Orders",
+        "paragraphs": [
+          "If you receive a damaged, incorrect, or incomplete order, please contact Grill.am immediately. We will review the situation as quickly as possible and offer an appropriate solution."
+        ]
+      }
+    ]
+  },
+  "delivery": {
+    "title": "Delivery Terms",
+    "lastUpdated": "23 July 2026",
+    "intro": "Grill.am aims to deliver your order quickly, safely, and in proper packaging. The main delivery terms are outlined below.",
+    "sections": [
+      {
+        "heading": "1. Delivery Timeframes",
+        "paragraphs": [],
+        "bullets": [
+          "Delivery time depends on the order size, current workload, and delivery address.",
+          "Orders are usually delivered within 30–45 minutes.",
+          "In case of a possible delay, a Grill.am operator will contact you in advance."
+        ]
+      },
+      {
+        "heading": "2. Delivery Arrangements",
+        "paragraphs": [
+          "Order delivery is organized under the following conditions:"
+        ],
+        "bullets": [
+          "Delivery is carried out by Grill.am or its partner courier services.",
+          "The customer must provide a correct address and an active phone number."
+        ]
+      },
+      {
+        "heading": "3. Receiving Your Order",
+        "paragraphs": [],
+        "bullets": [
+          "When receiving the order, please check that the items, quantities, and packaging are correct and intact.",
+          "If an item is incorrect, missing, damaged, or of inadequate quality, please contact us as soon as possible."
+        ]
+      },
+      {
+        "heading": "4. Possible Delays",
+        "paragraphs": [
+          "Despite our efforts, delivery may occasionally be delayed due to:"
+        ],
+        "bullets": [
+          "Adverse weather conditions",
+          "Traffic or transportation issues",
+          "Holiday periods or high workload"
+        ],
+        "closingParagraphs": [
+          "Incorrect or incomplete delivery and contact information may also cause delays. In such cases, we will inform you as soon as possible."
+        ]
+      }
+    ]
+  }
+}

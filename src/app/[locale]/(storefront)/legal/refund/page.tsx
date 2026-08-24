@@ -6,9 +6,9 @@ import {
 type PageProps = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
-  return generateLegalMetadata(params, "privacy");
+  return generateLegalMetadata(params, "refund");
 }
 
-export default async function PrivacyPage({ params }: PageProps) {
-  return <LegalPolicyPage params={params} policy="privacy" />;
+export default async function RefundPolicyPage({ params }: PageProps) {
+  return <LegalPolicyPage params={params} policy="refund" />;
 }

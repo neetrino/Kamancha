@@ -270,6 +270,9 @@ export function MobileNavDrawer({
 
   const homeHref = `/${locale}`;
   const productsHref = `/${locale}/products`;
+  const legalHref = `/${locale}/legal`;
+  const legalActive =
+    pathname === legalHref || pathname.startsWith(`${legalHref}/`);
   const drawerNavItems = navItems.filter(
     (item) =>
       item.href !== homeHref &&
@@ -377,17 +380,23 @@ export function MobileNavDrawer({
                           href={item.href}
                           prefetchPolicy="intent"
                           aria-current={active ? "page" : undefined}
-                          className={`rounded-xl px-1 py-3.5 font-big-fat-boii text-lg transition-colors ${
-                            active
-                              ? "text-gray-900"
-                              : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                          }`}
+                          className="rounded-xl px-1 py-3.5 font-big-fat-boii text-lg text-brand-forest transition-colors hover:bg-gray-50"
                           onClick={() => setOpen(false)}
                         >
                           {item.label}
                         </AppLink>
                       );
                     })}
+
+                    <AppLink
+                      href={legalHref}
+                      prefetchPolicy="intent"
+                      aria-current={legalActive ? "page" : undefined}
+                      className="rounded-xl px-1 py-3.5 font-big-fat-boii text-lg text-brand-forest transition-colors hover:bg-gray-50"
+                      onClick={() => setOpen(false)}
+                    >
+                      {dictionary.nav.policy}
+                    </AppLink>
                   </div>
 
                   {panelFooter ? (
