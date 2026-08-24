@@ -145,6 +145,7 @@ export function SiteHeaderMainNav({
             <div className="flex items-center self-center md:hidden">
               <div
                 className="flex h-14 w-[113px] items-center justify-between rounded-[28px] bg-white pr-[2.5px] pl-3"
+                data-mobile-header-pill
                 data-node-id="181:504"
               >
                 <MobileNavDrawer
@@ -152,7 +153,7 @@ export function SiteHeaderMainNav({
                   dictionary={dictionary}
                   navItems={navItems}
                   forestTrigger
-                  triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center overflow-hidden text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
+                  triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
                   panelFooter={
                     <div className="grid grid-cols-2 gap-3">
                       <div className="min-w-0 space-y-2">
