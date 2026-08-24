@@ -2,7 +2,7 @@
 
 export const CHECKOUT_PAYMENT_VISA_SRC = "/assets/payments/checkout/visa.webp";
 export const CHECKOUT_PAYMENT_MASTERCARD_SRC =
-  "/assets/payments/checkout/mastercard.webp";
+  "/assets/payments/checkout/mastercard-classic.webp";
 export const CHECKOUT_PAYMENT_ARCA_SRC = "/assets/payments/checkout/arca.webp";
 export const CHECKOUT_PAYMENT_IDRAM_SRC = "/assets/payments/checkout/idram.webp";
 
@@ -69,8 +69,8 @@ export const CHECKOUT_CARD_PAYMENT_BADGES: CheckoutCardPaymentBadge[] = [
   {
     alt: "Mastercard",
     src: CHECKOUT_PAYMENT_MASTERCARD_SRC,
-    sourceWidthPx: 567,
-    sourceHeightPx: 440,
+    sourceWidthPx: 1012,
+    sourceHeightPx: 607,
     innerLogoScale: CHECKOUT_PAYMENT_MASTERCARD_INNER_LOGO_SCALE,
   },
   {
