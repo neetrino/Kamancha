@@ -542,9 +542,9 @@
     }
   },
   "coupons": {
-    "title": "Promo codes",
+    "title": "Coupons",
     "subtitle": "Create, edit, or remove discount codes for checkout.",
-    "addPromoCode": "Add Promo Code",
+    "addPromoCode": "Add coupon",
     "empty": "No promo codes yet.",
     "table": {
       "code": "Code",
