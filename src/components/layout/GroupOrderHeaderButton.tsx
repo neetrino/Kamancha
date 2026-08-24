@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import {
@@ -22,6 +23,11 @@ type GroupOrderHeaderButtonProps = {
   icon?: ReactNode;
 };
 
+function isGroupOrderPath(pathname: string, locale: Locale): boolean {
+  const base = `/${locale}/group-orders`;
+  return pathname === base || pathname.startsWith(`${base}/`);
+}
+
 /**
  * Storefront group-order CTA. Opens the create-group-order modal.
  */
@@ -36,10 +42,16 @@ export function GroupOrderHeaderButton({
   icon,
 }: GroupOrderHeaderButtonProps) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname() ?? "";
+  const routeActive = isGroupOrderPath(pathname, locale);
+  const iconActive = open || routeActive;
   const toneClass =
     tone === "onLight"
       ? SITE_HEADER_GROUP_ORDER_ON_LIGHT
       : SITE_HEADER_GROUP_ORDER;
+  const triggerClassName = icon
+    ? `${className} group`
+    : `${toneClass} ${className}`;
 
   return (
     <>
@@ -49,12 +61,22 @@ export function GroupOrderHeaderButton({
           onClick?.();
           setOpen(true);
         }}
-        className={icon ? className : `${toneClass} ${className}`}
+        className={triggerClassName}
         aria-label={icon ? label : undefined}
         aria-haspopup="dialog"
         aria-expanded={open}
       >
-        {icon ?? label}
+        {icon ? (
+          <span
+            className={`inline-flex transition-opacity ${
+              iconActive ? "opacity-100" : "opacity-70 group-hover:opacity-100"
+            }`}
+          >
+            {icon}
+          </span>
+        ) : (
+          label
+        )}
       </button>
       <CreateGroupOrderModal
         open={open}

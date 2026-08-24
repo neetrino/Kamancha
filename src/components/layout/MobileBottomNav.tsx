@@ -267,7 +267,7 @@ export function MobileBottomNav({
           label={dictionary.nav.groupOrder}
           labels={dictionary.groupOrder}
           defaultName={groupOrderDefaultName}
-          className="flex size-[63px] shrink-0 items-center justify-center rounded-full bg-white text-brand-forest shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-90 touch-manipulation"
+          className="flex size-[63px] shrink-0 items-center justify-center rounded-full bg-white text-brand-forest shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] touch-manipulation"
           icon={<NavGroupIcon className="h-[26px] w-[30px]" />}
         />
       </div>
