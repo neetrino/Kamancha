@@ -677,6 +677,14 @@ html {
     border-radius: 0;
   }
 
+  /* White inner cards on the white sheet need a clearer edge. */
+  .profile-mobile-tab-sheet-scroll .profile-inner-card {
+    border-color: rgb(229 231 235);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.08),
+      0 1px 2px -1px rgb(0 0 0 / 0.06);
+  }
+
   .profile-mobile-tab-sheet-scroll .profile-pill-light {
     background-color: var(--brand-forest);
     color: #ffffff;
