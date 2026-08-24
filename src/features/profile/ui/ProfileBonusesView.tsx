@@ -13,6 +13,7 @@ import {
   PROFILE_PAGE_TITLE,
   PROFILE_SECTION,
   PROFILE_SECTION_TITLE,
+  PROFILE_STATUS_BADGE,
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -41,6 +42,17 @@ type ProfileBonusesViewProps = {
 
 function typeLabel(type: string, labels: Record<string, string>): string {
   return labels[type] ?? type;
+}
+
+function earnExpiryBadgeLabel(
+  expiresAt: string | null,
+  copy: Dictionary["profile"]["bonusesPage"],
+  locale: Locale,
+): string {
+  if (!expiresAt) {
+    return copy.noExpiry;
+  }
+  return copy.expires.replace("{date}", formatShortDate(expiresAt, locale));
 }
 
 export function ProfileBonusesView({
@@ -116,9 +128,16 @@ export function ProfileBonusesView({
                     key={row.id}
                     className={`${PROFILE_INNER_CARD} flex h-full min-w-0 flex-col p-4 sm:p-5`}
                   >
-                    <p className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-                      {typeLabel(row.type, copy.types)}
-                    </p>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="min-w-0 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+                        {typeLabel(row.type, copy.types)}
+                      </p>
+                      {row.type === "EARN" ? (
+                        <span className={`${PROFILE_STATUS_BADGE} shrink-0 normal-case`}>
+                          {earnExpiryBadgeLabel(row.expiresAt, copy, locale)}
+                        </span>
+                      ) : null}
+                    </div>
                     <p
                       className={
                         positive
@@ -134,16 +153,6 @@ export function ProfileBonusesView({
 
                     <div className="space-y-1.5 text-xs text-gray-500">
                       <p>{formatShortDateTime(row.createdAt, locale)}</p>
-                      {row.type === "EARN" ? (
-                        <p>
-                          {row.expiresAt
-                            ? copy.expires.replace(
-                                "{date}",
-                                formatShortDate(row.expiresAt, locale),
-                              )
-                            : copy.noExpiry}
-                        </p>
-                      ) : null}
                     </div>
 
                     {row.orderNumber ? (
