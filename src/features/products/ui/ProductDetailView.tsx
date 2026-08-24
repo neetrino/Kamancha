@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { SITE_HEADER_INNER } from "@/components/layout/site-header-classes";
+import { SITE_HEADER_INNER, STOREFRONT_TABLET_INSET_X } from "@/components/layout/site-header-classes";
 import { ProductGallery } from "@/features/products/ui/ProductGallery";
 import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
 import type { ProductDetail } from "@/features/products/types";
@@ -45,7 +45,7 @@ export function ProductDetailView({
 
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
-      <article className={`${SITE_HEADER_INNER} flex flex-col gap-12 md:gap-16`}>
+      <article className={`${SITE_HEADER_INNER} ${STOREFRONT_TABLET_INSET_X} flex flex-col gap-12 md:gap-16`}>
       <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:justify-between">
         <ProductGallery
           images={product.images}

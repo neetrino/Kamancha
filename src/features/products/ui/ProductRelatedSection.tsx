@@ -1,3 +1,4 @@
+import { STOREFRONT_TABLET_INSET_X } from "@/components/layout/site-header-classes";
 import { Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import type { ProductCardLayout } from "@/features/products/ui/product-card-layout";
@@ -159,7 +160,7 @@ function RelatedMobileRail({
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 xl:hidden">
       <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <Stagger
-          className="inline-flex gap-[13px] px-2.5 py-3"
+          className={`inline-flex gap-[13px] px-2.5 py-3 ${STOREFRONT_TABLET_INSET_X}`}
           stagger={0.08}
           immediate
         >

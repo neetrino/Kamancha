@@ -9,6 +9,10 @@ export const SITE_HEADER_SCROLLED_STROKE = "site-header-scrolled-stroke";
 export const SITE_HEADER_INNER =
   "mx-auto w-full max-w-[1332px] px-4 xl:px-[18px]";
 
+/** Wider horizontal inset on tablet (744px–1279px); use with `SITE_HEADER_INNER`. */
+export const STOREFRONT_TABLET_INSET_X =
+  "min-[744px]:max-xl:px-12 min-[834px]:max-xl:px-16 min-[1024px]:max-xl:px-20";
+
 /** Icon rail: cart + wishlist + account — nudged slightly below / left of optical center. */
 export const SITE_HEADER_ICON_RAIL =
   "flex h-12 shrink-0 -translate-x-px translate-y-1 items-center gap-3";
