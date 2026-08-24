@@ -1,20 +1,42 @@
-import Image from "next/image";
+"use client";
 
+import Image from "next/image";
+import { motion, type Transition } from "motion/react";
+
+import {
+  Stagger,
+  StaggerItem,
+  scrollRevealViewport,
+} from "@/components/ui/RevealMotion";
 import {
   ABOUT_DRESS_IMAGE,
   ABOUT_RUG_IMAGE,
 } from "@/features/about/content/about-assets";
 import { HomeDiamondMark } from "@/features/home/ui/HomeDiamondMark";
+import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AboutStorySectionProps = {
   copy: Dictionary["about"];
 };
 
-function AboutStoryMobile({ copy }: AboutStorySectionProps) {
+const springCard: Transition = {
+  type: "spring",
+  stiffness: 55,
+  damping: 18,
+  mass: 0.95,
+};
+
+function AboutStoryMobile({ copy, playMotion }: AboutStorySectionProps & { playMotion: boolean }) {
   return (
-    <div className="px-5 py-10 sm:px-8 sm:py-12 lg:hidden">
-      <div className="relative -mt-16 mb-8">
+    <Stagger
+      className="px-5 py-10 sm:px-8 sm:py-12 lg:hidden"
+      amount={scrollRevealViewport.amount}
+      viewportMargin={scrollRevealViewport.viewportMargin}
+      stagger={0.08}
+      enabled={playMotion}
+    >
+      <StaggerItem className="relative -mt-16 mb-8">
         <div
           data-node-id="362:295"
           className="relative mx-auto aspect-[480/680] w-full max-w-[480px] overflow-hidden rounded-[20px]"
@@ -27,121 +49,157 @@ function AboutStoryMobile({ copy }: AboutStorySectionProps) {
             className="rounded-[20px] object-cover"
           />
         </div>
-      </div>
+      </StaggerItem>
 
-      <div className="flex flex-col gap-5 text-[#222]">
-        <h2 className="font-big-fat-boii text-[clamp(22px,6.5vw,32px)] leading-[1.1] font-normal uppercase sm:whitespace-nowrap">
-          {copy.title}
-        </h2>
-        <HomeDiamondMark tone="forest" className="h-[18px] w-[54px]" />
-        <p className="text-[16px] leading-[26px]">{copy.intro}</p>
-        <p className="text-[16px] leading-[26px]">{copy.introSecond}</p>
-      </div>
+      <StaggerItem>
+        <div className="flex flex-col gap-5 text-[#222]">
+          <h2 className="font-big-fat-boii text-[clamp(22px,6.5vw,32px)] leading-[1.1] font-normal uppercase sm:whitespace-nowrap">
+            {copy.title}
+          </h2>
+          <HomeDiamondMark tone="forest" className="h-[18px] w-[54px]" />
+          <p className="text-[16px] leading-[26px]">{copy.intro}</p>
+          <p className="text-[16px] leading-[26px]">{copy.introSecond}</p>
+        </div>
+      </StaggerItem>
 
-      <div className="mt-10 flex flex-col gap-5">
-        <HomeDiamondMark tone="forest" className="h-[18px] w-[54px]" />
-        <p className="text-[16px] leading-[26px] text-[#222]">{copy.intro}</p>
-      </div>
+      <StaggerItem>
+        <div className="mt-10 flex flex-col gap-5">
+          <HomeDiamondMark tone="forest" className="h-[18px] w-[54px]" />
+          <p className="text-[16px] leading-[26px] text-[#222]">{copy.intro}</p>
+        </div>
+      </StaggerItem>
 
-      <div
-        data-node-id="362:358"
-        className="relative mx-auto mt-8 aspect-[531/389] w-full max-w-[531px] isolate overflow-hidden rounded-[20px]"
-      >
-        <Image
-          src={ABOUT_RUG_IMAGE}
-          alt={copy.rugImageAlt}
-          fill
-          sizes="90vw"
-          className="object-cover object-center"
-        />
-      </div>
-    </div>
+      <StaggerItem className="relative mx-auto mt-8 aspect-[531/389] w-full max-w-[531px] isolate overflow-hidden rounded-[20px]">
+        <div data-node-id="362:358" className="relative size-full">
+          <Image
+            src={ABOUT_RUG_IMAGE}
+            alt={copy.rugImageAlt}
+            fill
+            sizes="90vw"
+            className="object-cover object-center"
+          />
+        </div>
+      </StaggerItem>
+    </Stagger>
   );
 }
 
 /**
  * About story panel — Figma 362:284 absolute layout at 1440px.
  */
-function AboutStoryDesktop({ copy }: AboutStorySectionProps) {
+function AboutStoryDesktop({
+  copy,
+  playMotion,
+}: AboutStorySectionProps & { playMotion: boolean }) {
   return (
-    <div className="relative mx-auto hidden min-h-[1040px] w-full max-w-[1440px] lg:block">
-      <div
-        data-node-id="362:295"
+    <Stagger
+      className="relative mx-auto hidden min-h-[1040px] w-full max-w-[1440px] lg:block"
+      amount={scrollRevealViewport.amount}
+      viewportMargin={scrollRevealViewport.viewportMargin}
+      stagger={0.08}
+      enabled={playMotion}
+    >
+      <StaggerItem
         className="absolute top-[-79px] left-[111px] h-[680px] w-[480px] overflow-hidden rounded-[20px]"
+        y={32}
       >
-        <Image
-          src={ABOUT_DRESS_IMAGE}
-          alt={copy.dressImageAlt}
-          fill
-          sizes="480px"
-          className="rounded-[20px] object-cover"
-        />
-      </div>
+        <div data-node-id="362:295" className="relative size-full">
+          <Image
+            src={ABOUT_DRESS_IMAGE}
+            alt={copy.dressImageAlt}
+            fill
+            sizes="480px"
+            className="rounded-[20px] object-cover"
+          />
+        </div>
+      </StaggerItem>
 
-      <h2
-        data-node-id="362:296"
-        className="absolute top-[113px] left-[654px] w-auto max-w-none font-big-fat-boii text-[32px] leading-[24px] font-normal whitespace-nowrap text-[#222] uppercase"
+      <StaggerItem
+        className="absolute top-[113px] left-[654px] w-auto max-w-none"
+        y={22}
       >
-        {copy.title}
-      </h2>
+        <h2
+          data-node-id="362:296"
+          className="font-big-fat-boii text-[32px] leading-[24px] font-normal whitespace-nowrap text-[#222] uppercase"
+        >
+          {copy.title}
+        </h2>
+      </StaggerItem>
 
-      <HomeDiamondMark
-        tone="forest"
+      <StaggerItem
         className="absolute top-[190px] left-[654px] h-[18px] w-[54px]"
-      />
+        y={18}
+      >
+        <HomeDiamondMark tone="forest" className="size-full" />
+      </StaggerItem>
 
-      <p
-        data-node-id="362:297"
+      <StaggerItem
         className="absolute top-[231px] left-[654px] w-[651px] text-[16px] leading-[26px] text-[#222]"
+        y={24}
       >
-        {copy.intro}
-      </p>
+        <p data-node-id="362:297">{copy.intro}</p>
+      </StaggerItem>
 
-      <p
-        data-node-id="362:298"
+      <StaggerItem
         className="absolute top-[414px] left-[654px] w-[651px] text-[16px] leading-[26px] text-[#222]"
+        y={24}
       >
-        {copy.introSecond}
-      </p>
+        <p data-node-id="362:298">{copy.introSecond}</p>
+      </StaggerItem>
 
-      <HomeDiamondMark
-        tone="forest"
+      <StaggerItem
         className="absolute top-[732px] left-[708px] h-[18px] w-[54px]"
-      />
+        y={18}
+      >
+        <HomeDiamondMark tone="forest" className="size-full" />
+      </StaggerItem>
 
-      <p
-        data-node-id="362:301"
+      <StaggerItem
         className="absolute top-[761px] left-[111px] w-[651px] text-right text-[16px] leading-[26px] text-[#222]"
+        y={24}
       >
-        {copy.intro}
-      </p>
+        <p data-node-id="362:301">{copy.intro}</p>
+      </StaggerItem>
 
-      <div
-        data-node-id="362:358"
+      <StaggerItem
         className="absolute top-[603px] left-[822px] isolate h-[389px] w-[531px] overflow-hidden rounded-[20px]"
+        y={32}
       >
-        <Image
-          src={ABOUT_RUG_IMAGE}
-          alt={copy.rugImageAlt}
-          fill
-          sizes="531px"
-          className="object-cover object-center"
-        />
-      </div>
-    </div>
+        <div data-node-id="362:358" className="relative size-full">
+          <Image
+            src={ABOUT_RUG_IMAGE}
+            alt={copy.rugImageAlt}
+            fill
+            sizes="531px"
+            className="object-cover object-center"
+          />
+        </div>
+      </StaggerItem>
+    </Stagger>
   );
 }
 
 export function AboutStorySection({ copy }: AboutStorySectionProps) {
+  const playMotion = usePlayHomeMotion();
+  const instant: Transition = { duration: 0 };
+  const panelTransition: Transition = playMotion
+    ? { ...springCard, delay: 0.45 }
+    : instant;
+
   return (
     <section
       data-node-id="362:284"
       className="relative left-1/2 z-[2] -mt-28 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible sm:-mt-40 lg:-mt-[420px]"
     >
-      <div className="w-full overflow-visible rounded-[30px] bg-white pb-10 sm:rounded-[40px] sm:pb-12 lg:rounded-[50px] lg:pb-10">
-        <AboutStoryMobile copy={copy} />
-        <AboutStoryDesktop copy={copy} />
-      </div>
+      <motion.div
+        className="w-full overflow-visible rounded-[30px] bg-white pb-10 sm:rounded-[40px] sm:pb-12 lg:rounded-[50px] lg:pb-10"
+        initial={playMotion ? { opacity: 0, y: 36 } : false}
+        animate={{ opacity: 1, y: 0 }}
+        transition={panelTransition}
+      >
+        <AboutStoryMobile copy={copy} playMotion={playMotion} />
+        <AboutStoryDesktop copy={copy} playMotion={playMotion} />
+      </motion.div>
     </section>
   );
 }
