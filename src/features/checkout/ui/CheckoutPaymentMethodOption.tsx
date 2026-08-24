@@ -91,7 +91,7 @@ export function CheckoutPaymentMethodOption({
           {option.id === "cash_on_delivery" ? (
             <>
               <div className="font-medium text-gray-900">{option.name}</div>
-              <div className={descriptionClass(selected)}>
+              <div className={`hidden lg:block ${descriptionClass(selected)}`}>
                 {option.description}
               </div>
             </>

@@ -617,6 +617,20 @@ html {
     padding-bottom: 6rem;
   }
 
+  /* Checkout — Grill.am mobile inset (single 1.25rem; no double px from layout + form). */
+  .storefront-main:has(.checkout-page) {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  /* Checkout white cards (e.g. ՄԱՆՐ) on the forest background. */
+  .checkout-page .profile-inner-card {
+    border-color: rgb(229 231 235);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.08),
+      0 1px 2px -1px rgb(0 0 0 / 0.06);
+  }
+
   .profile-mobile-tab-sheet-scroll {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;

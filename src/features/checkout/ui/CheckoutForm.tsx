@@ -263,7 +263,7 @@ export function CheckoutForm({
 
   if (!hasItems) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="checkout-page mx-auto max-w-7xl px-0 py-12">
         <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
         <div className="liquid-glass isolate overflow-hidden rounded-2xl p-6 text-center">
           <p className="relative z-[2] mb-4 text-gray-700">{labels.cartEmpty}</p>
@@ -333,7 +333,7 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="checkout-page mx-auto max-w-7xl px-0 py-12">
       <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
 
       <CheckoutProductsInOrder

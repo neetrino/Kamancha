@@ -102,7 +102,7 @@ export function CashChangePicker({
                   alt={`${option.amount} AMD`}
                   fill
                   className={`relative z-[2] ${CHECKOUT_CASH_CHANGE_NOTE_IMAGE_CLASS}`}
-                  sizes="(max-width: 640px) 25vw, 140px"
+                  sizes="(max-width: 1023px) 45vw, 140px"
                 />
               ) : (
                 <span className="relative z-[2] px-1.5 text-center font-big-fat-boii text-[11px] font-normal leading-snug tracking-wide text-brand-forest uppercase sm:text-sm">

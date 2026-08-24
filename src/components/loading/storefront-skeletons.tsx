@@ -73,7 +73,7 @@ export function BlogPostSkeleton() {
 export function CartCheckoutSkeleton() {
   return (
     <div
-      className={`${pulse} flex max-w-2xl flex-col gap-4`}
+      className={`checkout-page ${pulse} flex max-w-2xl flex-col gap-4`}
       aria-busy="true"
       aria-live="polite"
     >
