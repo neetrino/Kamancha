@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { getCartItemCount } from "@/features/cart/cart";
 import { getWishlistCount } from "@/features/wishlist/queries";
+import { getCurrentUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -16,10 +17,13 @@ type MobileBottomNavIslandProps = {
 function MobileBottomNavFallback() {
   return (
     <div
-      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex h-[calc(63px+0.75rem+env(safe-area-inset-bottom))] justify-center md:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex h-[calc(63px+0.75rem+env(safe-area-inset-bottom))] justify-center pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden"
       aria-hidden="true"
     >
-      <div className="h-[63px] w-[267px] max-w-[calc(100%-3rem)] rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
+      <div className="flex w-[339px] max-w-[calc(100%-3rem)] items-center gap-[9px]">
+        <div className="h-[63px] min-w-0 flex-1 rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
+        <div className="size-[63px] shrink-0 rounded-full bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
+      </div>
     </div>
   );
 }
@@ -29,9 +33,10 @@ async function MobileBottomNavAsync({
   currency,
   dictionary,
 }: MobileBottomNavIslandProps) {
-  const [cartItemCount, wishlistCount] = await Promise.all([
+  const [cartItemCount, wishlistCount, user] = await Promise.all([
     getCartItemCount(),
     getWishlistCount(),
+    getCurrentUser(),
   ]);
 
   return (
@@ -41,6 +46,9 @@ async function MobileBottomNavAsync({
       dictionary={dictionary}
       cartItemCount={cartItemCount}
       wishlistCount={wishlistCount}
+      groupOrderDefaultName={
+        user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : ""
+      }
     />
   );
 }

@@ -14,9 +14,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
 import { HeaderMenuIcon } from "@/components/layout/storefront-nav-icons";
-import { SITE_HEADER_GROUP_ORDER_ON_LIGHT } from "@/components/layout/site-header-classes";
 import { AppLink } from "@/components/ui/AppLink";
-import { CreateGroupOrderModal } from "@/features/group-orders/ui/CreateGroupOrderModal";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -39,8 +37,6 @@ type MobileNavDrawerProps = {
   panelFooter?: ReactNode;
   /** When true, Figma 181:504 forest hamburger (34px). */
   forestTrigger?: boolean;
-  /** Prefill organizer name in the group-order modal. */
-  groupOrderDefaultName?: string;
 };
 
 function isNavItemActive(pathname: string, href: string, locale: Locale): boolean {
@@ -61,7 +57,6 @@ export function MobileNavDrawer({
   triggerClassName,
   panelFooter,
   forestTrigger = false,
-  groupOrderDefaultName = "",
 }: MobileNavDrawerProps) {
   const menuId = useId();
   const pathname = usePathname() ?? "";
@@ -72,7 +67,6 @@ export function MobileNavDrawer({
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [rendered, setRendered] = useState(false);
-  const [groupOrderOpen, setGroupOrderOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [panelTopPx, setPanelTopPx] = useState(72);
 
@@ -302,41 +296,17 @@ export function MobileNavDrawer({
                     })}
                   </div>
 
-                  <div className="mt-1 flex flex-col gap-2 border-t border-gray-100 py-4">
-                    {panelFooter}
-                    <button
-                      type="button"
-                      className={SITE_HEADER_GROUP_ORDER_ON_LIGHT}
-                      aria-haspopup="dialog"
-                      aria-expanded={groupOrderOpen}
-                      onClick={() => {
-                        setGroupOrderOpen(true);
-                        // Drop the menu immediately so its touch-lock / unmount
-                        // does not swallow the group-order modal.
-                        clearExitTimer();
-                        renderedRef.current = false;
-                        setExpanded(false);
-                        setRendered(false);
-                        setOpen(false);
-                      }}
-                    >
-                      {dictionary.nav.groupOrder}
-                    </button>
-                  </div>
+                  {panelFooter ? (
+                    <div className="mt-1 flex flex-col gap-2 border-t border-gray-100 py-4">
+                      {panelFooter}
+                    </div>
+                  ) : null}
                 </nav>
               </div>
             </div>,
             document.body,
           )
         : null}
-
-      <CreateGroupOrderModal
-        open={groupOrderOpen}
-        onClose={() => setGroupOrderOpen(false)}
-        locale={locale}
-        labels={dictionary.groupOrder}
-        defaultName={groupOrderDefaultName}
-      />
     </>
   );
 }

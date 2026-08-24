@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import {
   SITE_HEADER_GROUP_ORDER,
@@ -18,6 +18,8 @@ type GroupOrderHeaderButtonProps = {
   className?: string;
   defaultName?: string;
   onClick?: () => void;
+  /** Icon-only trigger (mobile bottom nav, Figma 370:368). */
+  icon?: ReactNode;
 };
 
 /**
@@ -31,6 +33,7 @@ export function GroupOrderHeaderButton({
   className = "",
   defaultName,
   onClick,
+  icon,
 }: GroupOrderHeaderButtonProps) {
   const [open, setOpen] = useState(false);
   const toneClass =
@@ -46,11 +49,12 @@ export function GroupOrderHeaderButton({
           onClick?.();
           setOpen(true);
         }}
-        className={`${toneClass} ${className}`}
+        className={icon ? className : `${toneClass} ${className}`}
+        aria-label={icon ? label : undefined}
         aria-haspopup="dialog"
         aria-expanded={open}
       >
-        {label}
+        {icon ?? label}
       </button>
       <CreateGroupOrderModal
         open={open}
