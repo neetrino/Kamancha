@@ -6,6 +6,7 @@ import type { MouseEvent } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { Locale } from "@/lib/i18n/config";
+import { scrollStorefrontToTop } from "@/lib/navigation/storefront-scroll";
 
 type BrandLogoProps = {
   locale: Locale;
@@ -30,7 +31,7 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
     }
 
     event.preventDefault();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollStorefrontToTop(true);
   }
 
   return (
