@@ -112,7 +112,7 @@ export function ProfileBonusesView({
           />
         </div>
 
-        <div className={PROFILE_SECTION}>
+        <div className={`profile-bonuses-history ${PROFILE_SECTION}`}>
           <div className="relative z-[2] mb-6 border-b border-gray-100 pb-5 sm:mb-8 sm:pb-6 lg:border-white/35">
             <h2 className={PROFILE_SECTION_TITLE}>{copy.history}</h2>
           </div>

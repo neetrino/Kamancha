@@ -666,6 +666,17 @@ html {
     border-radius: 0;
   }
 
+  /* Bonuses history: align section width with stat cards above. */
+  .profile-mobile-tab-sheet-scroll .profile-bonuses-history.liquid-glass {
+    background: none;
+    box-shadow: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 0;
+  }
+
   .profile-mobile-tab-sheet-scroll .profile-pill-light {
     background-color: var(--brand-forest);
     color: #ffffff;
