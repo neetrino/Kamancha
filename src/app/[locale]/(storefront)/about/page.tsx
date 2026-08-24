@@ -20,7 +20,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const copy = dictionary.about;
 
   return (
-    <div className="-mx-4 -mt-6 pb-8 sm:-mx-6 sm:-mt-8 lg:-mx-8">
+    <div className="-mx-4 -mt-6 pb-8 sm:-mx-6 sm:-mt-8 xl:-mx-8">
       <AboutHeroSection copy={copy} />
       <AboutStorySection copy={copy} />
     </div>

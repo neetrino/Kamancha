@@ -125,7 +125,7 @@ export function CatalogControls({
     <div
       data-node-id="103:1277"
       data-catalog-layout
-      className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-8"
+      className="flex flex-col gap-8 xl:flex-row xl:items-start xl:gap-8"
     >
       <CatalogStickySidebar>
         <Reveal immediate x={-20} y={0} delay={0.06}>
@@ -142,7 +142,7 @@ export function CatalogControls({
       </CatalogStickySidebar>
 
       <div className="min-w-0 flex-1">
-        <Reveal immediate delay={0.08} y={12} className="mb-4 lg:hidden">
+        <Reveal immediate delay={0.08} y={12} className="mb-4 xl:hidden">
           <MobileCatalogCategoryChips
             locale={locale}
             filters={filters}

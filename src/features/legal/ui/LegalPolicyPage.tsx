@@ -44,7 +44,7 @@ export async function LegalPolicyPage({
   const copy = dictionary.legal[policy];
 
   return (
-    <div className="-mx-4 -my-10 bg-white sm:-mx-6 lg:-mx-8">
+    <div className="-mx-4 -my-10 bg-white sm:-mx-6 xl:-mx-8">
       <LegalDocumentView
         copy={copy}
         lastUpdatedLabel={dictionary.legal.lastUpdatedLabel}

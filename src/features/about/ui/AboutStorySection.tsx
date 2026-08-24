@@ -30,7 +30,7 @@ const springCard: Transition = {
 function AboutStoryMobile({ copy, playMotion }: AboutStorySectionProps & { playMotion: boolean }) {
   return (
     <Stagger
-      className="px-5 py-10 sm:px-8 sm:py-12 lg:hidden"
+      className="px-5 py-10 sm:px-8 sm:py-12 xl:hidden"
       amount={scrollRevealViewport.amount}
       viewportMargin={scrollRevealViewport.viewportMargin}
       stagger={0.08}
@@ -93,7 +93,7 @@ function AboutStoryDesktop({
 }: AboutStorySectionProps & { playMotion: boolean }) {
   return (
     <Stagger
-      className="relative mx-auto hidden min-h-[1040px] w-full max-w-[1440px] lg:block"
+      className="relative mx-auto hidden min-h-[1040px] w-full max-w-[1440px] xl:block"
       amount={scrollRevealViewport.amount}
       viewportMargin={scrollRevealViewport.viewportMargin}
       stagger={0.08}
@@ -189,10 +189,10 @@ export function AboutStorySection({ copy }: AboutStorySectionProps) {
   return (
     <section
       data-node-id="362:284"
-      className="relative left-1/2 z-[2] -mt-28 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible sm:-mt-40 lg:-mt-[420px]"
+      className="relative left-1/2 z-[2] -mt-28 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible sm:-mt-40 xl:-mt-[420px]"
     >
       <motion.div
-        className="w-full overflow-visible rounded-[30px] bg-white pb-10 sm:rounded-[40px] sm:pb-12 lg:rounded-[50px] lg:pb-10"
+        className="w-full overflow-visible rounded-[30px] bg-white pb-10 sm:rounded-[40px] sm:pb-12 xl:rounded-[50px] xl:pb-10"
         initial={playMotion ? { opacity: 0, y: 36 } : false}
         animate={{ opacity: 1, y: 0 }}
         transition={panelTransition}

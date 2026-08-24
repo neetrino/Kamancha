@@ -40,7 +40,7 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
       onClick={handleClick}
       className={
         className ??
-        "relative inline-flex h-[52px] w-[110px] shrink-0 items-center lg:h-[65px] lg:w-[136px]"
+        "relative inline-flex h-[52px] w-[110px] shrink-0 items-center xl:h-[65px] xl:w-[136px]"
       }
       aria-label={brandName}
       data-brand-logo

@@ -84,7 +84,7 @@ export default async function OrdersPage({
     <section className="profile-sheet-keep-frame space-y-6">
       <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.orders}</h1>
 
-      <div className="hidden lg:block">
+      <div className="hidden xl:block">
         <CustomerOrdersFilters
           total={total}
           status={filters.status}
@@ -109,7 +109,7 @@ export default async function OrdersPage({
       />
 
       {totalPages > 1 ? (
-        <nav className="flex items-center gap-3 font-big-fat-boii text-sm font-normal tracking-wide text-gray-800 uppercase lg:text-white/80">
+        <nav className="flex items-center gap-3 font-big-fat-boii text-sm font-normal tracking-wide text-gray-800 uppercase xl:text-white/80">
           {filters.page > 1 ? (
             <Link
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page - 1)}`}

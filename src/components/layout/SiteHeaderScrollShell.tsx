@@ -57,7 +57,7 @@ export function SiteHeaderScrollShell({ children }: SiteHeaderScrollShellProps) 
 
   return (
     <div
-      className="site-header relative sticky top-0 z-[80] shrink-0 bg-transparent pt-6 pb-2 lg:pt-8 lg:pb-2.5"
+      className="site-header relative sticky top-0 z-[80] shrink-0 bg-transparent pt-6 pb-2 xl:pt-8 xl:pb-2.5"
       data-site-header
       data-scrolled={scrolled ? "true" : "false"}
     >

@@ -109,7 +109,7 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
   return (
     <div
       ref={anchorRef}
-      className="relative hidden w-[280px] shrink-0 self-start lg:block"
+      className="relative hidden w-[280px] shrink-0 self-start xl:block"
       style={{ minHeight: spacerHeight || undefined }}
     >
       <div

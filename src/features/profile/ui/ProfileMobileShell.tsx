@@ -29,7 +29,7 @@ function isProfileHubPath(pathname: string, locale: Locale): boolean {
 
 /**
  * Mobile profile shell: hub always visible; section content in a bottom sheet.
- * Desktop content column is unchanged (`lg+`). Renders `children` once (matchMedia).
+ * Desktop content column is unchanged (`xl+`). Renders `children` once (matchMedia).
  */
 export function ProfileMobileShell({
   locale,
@@ -46,7 +46,7 @@ export function ProfileMobileShell({
   const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
+    const media = window.matchMedia("(min-width: 1280px)");
     function sync(): void {
       setIsDesktop(media.matches);
     }
@@ -104,12 +104,12 @@ export function ProfileMobileShell({
 
   let content: ReactNode;
 
-  // SSR / pre-hydration: hub on mobile via CSS; content only from lg up.
+  // SSR / pre-hydration: hub on mobile via CSS; content only from xl up.
   if (isDesktop === null) {
     content = (
       <>
-        <div className="profile-mobile-page w-full lg:hidden">{hub}</div>
-        <div className="profile-desktop-content profile-sticky-band hidden min-w-0 flex-1 lg:block">
+        <div className="profile-mobile-page w-full xl:hidden">{hub}</div>
+        <div className="profile-desktop-content profile-sticky-band hidden min-w-0 flex-1 xl:block">
           {revealed}
         </div>
       </>

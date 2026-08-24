@@ -108,14 +108,14 @@ export function CheckoutOrderSummary({
   const stickyTop = useSummaryStickyTop();
 
   return (
-    <div className="lg:sticky lg:self-start" style={{ top: stickyTop }}>
+    <div className="lg:sticky xl:self-start" style={{ top: stickyTop }}>
       <LiquidGlassPanel className="px-5 py-6 sm:px-6 sm:py-7">
         <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
           {title}
         </h2>
 
         <div className={CHECKOUT_COUPON_GLASS_CLASS}>
-          <div className="relative z-[2] lg:hidden">
+          <div className="relative z-[2] xl:hidden">
             <div className="mb-3 flex items-center justify-between gap-3">
               <p className="text-sm text-white/80">{couponTitle}</p>
               <Button
@@ -147,7 +147,7 @@ export function CheckoutOrderSummary({
             />
           </div>
 
-          <div className="relative z-[2] hidden lg:block">
+          <div className="relative z-[2] hidden xl:block">
             <p className="mb-3 text-sm text-white/80">{couponTitle}</p>
             <div className="flex gap-2">
               <input

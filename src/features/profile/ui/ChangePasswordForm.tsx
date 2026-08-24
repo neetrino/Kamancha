@@ -57,7 +57,7 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
 
       <form
         action={formAction}
-        className="relative z-[2] mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
+        className="relative z-[2] mx-auto max-w-xl space-y-6 xl:mx-0 xl:max-w-2xl"
       >
         <label className={PROFILE_LABEL}>
           {labels.currentPassword}

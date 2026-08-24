@@ -81,10 +81,10 @@ export function CheckoutPaymentMethodIcons({
   if (methodId === "cash_on_delivery") {
     return (
       <>
-        <div className="flex shrink-0 items-center justify-center lg:hidden">
+        <div className="flex shrink-0 items-center justify-center xl:hidden">
           <CheckoutCashIcon sizePx={CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX} />
         </div>
-        <div className="hidden shrink-0 items-center justify-center lg:flex">
+        <div className="hidden shrink-0 items-center justify-center xl:flex">
           <CheckoutCashIcon sizePx={CHECKOUT_PAYMENT_CASH_ICON_SIZE_DESKTOP_PX} />
         </div>
       </>
@@ -95,7 +95,7 @@ export function CheckoutPaymentMethodIcons({
     return (
       <>
         <div
-          className="relative flex shrink-0 items-center justify-center overflow-hidden border border-gray-200 bg-white px-1.5 lg:hidden"
+          className="relative flex shrink-0 items-center justify-center overflow-hidden border border-gray-200 bg-white px-1.5 xl:hidden"
           style={{
             width: CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_MOBILE_PX,
             height: CHECKOUT_PAYMENT_IDRAM_BOX_HEIGHT_MOBILE_PX,
@@ -112,7 +112,7 @@ export function CheckoutPaymentMethodIcons({
           />
         </div>
         <div
-          className="relative hidden shrink-0 items-center justify-center overflow-hidden border border-gray-200 bg-white px-2 lg:flex"
+          className="relative hidden shrink-0 items-center justify-center overflow-hidden border border-gray-200 bg-white px-2 xl:flex"
           style={{
             width: CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_PX,
             height: CHECKOUT_PAYMENT_ICON_BOX_HEIGHT_PX,
@@ -155,7 +155,7 @@ function CheckoutCardPaymentBadges({
   return (
     <>
       <div
-        className="flex max-w-full flex-wrap items-center justify-start self-start lg:hidden"
+        className="flex max-w-full flex-wrap items-center justify-start self-start xl:hidden"
         style={{ gap: CHECKOUT_PAYMENT_CARD_BADGES_GAP_MOBILE_PX }}
       >
         {badges.map((badge) => (
@@ -171,7 +171,7 @@ function CheckoutCardPaymentBadges({
         ))}
       </div>
       <div
-        className="hidden shrink-0 flex-nowrap items-center justify-start lg:flex"
+        className="hidden shrink-0 flex-nowrap items-center justify-start xl:flex"
         style={{ gap: CHECKOUT_PAYMENT_CARD_BADGES_GAP_PX }}
       >
         {badges.map((badge) => (

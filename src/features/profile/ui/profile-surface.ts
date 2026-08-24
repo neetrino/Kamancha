@@ -1,28 +1,28 @@
 /** Storefront profile surfaces — glass on desktop; solid readable tokens on mobile sheets. */
 
 export const PROFILE_PAGE_TITLE =
-  "font-big-fat-boii text-[32px] leading-[1.1] font-normal tracking-wide text-gray-900 uppercase sm:text-[40px] md:text-[48px] lg:text-white";
+  "font-big-fat-boii text-[32px] leading-[1.1] font-normal tracking-wide text-gray-900 uppercase sm:text-[40px] md:text-[48px] xl:text-white";
 
 export const PROFILE_PAGE_SUBTITLE =
-  "mt-2 text-sm text-gray-600 lg:text-white/70";
+  "mt-2 text-sm text-gray-600 xl:text-white/70";
 
 export const PROFILE_SECTION =
   "liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
 
 export const PROFILE_SECTION_TITLE =
-  "relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase lg:text-white";
+  "relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase xl:text-white";
 
 export const PROFILE_SECTION_DIVIDER =
-  "relative z-[2] mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6 lg:border-white/35";
+  "relative z-[2] mb-8 border-b border-gray-100 pb-5 sm:mb-10 sm:pb-6 xl:border-white/35";
 
 export const PROFILE_FIELD =
-  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-brand-forest/40 disabled:bg-gray-50 lg:border-white/50 lg:bg-white/55 lg:backdrop-blur-sm lg:placeholder:text-gray-500 lg:hover:border-white/70 lg:focus:border-white/80 lg:disabled:bg-white/30";
+  "h-11 w-full rounded-2xl border border-gray-200 bg-white px-4 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-brand-forest/40 disabled:bg-gray-50 xl:border-white/50 xl:bg-white/55 xl:backdrop-blur-sm xl:placeholder:text-gray-500 xl:hover:border-white/70 xl:focus:border-white/80 xl:disabled:bg-white/30";
 
 export const PROFILE_LABEL =
-  "relative z-[2] flex flex-col gap-1.5 text-sm font-medium text-gray-900 lg:text-white";
+  "relative z-[2] flex flex-col gap-1.5 text-sm font-medium text-gray-900 xl:text-white";
 
 export const PROFILE_BODY =
-  "relative z-[2] text-sm leading-relaxed text-gray-600 lg:text-gray-700";
+  "relative z-[2] text-sm leading-relaxed text-gray-600 xl:text-gray-700";
 
 export const PROFILE_LINK =
   "font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase transition-opacity hover:opacity-80";
@@ -34,13 +34,13 @@ export const PROFILE_PILL_DARK =
   "inline-flex h-12 items-center justify-center rounded-[70px] bg-brand-forest px-6 font-big-fat-boii text-base leading-none text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50";
 
 export const PROFILE_PILL_GHOST =
-  "inline-flex h-12 items-center justify-center rounded-[70px] border border-gray-200 bg-white px-6 font-big-fat-boii text-base leading-none text-gray-900 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 lg:border-white/50 lg:bg-white/35 lg:hover:bg-white/50";
+  "inline-flex h-12 items-center justify-center rounded-[70px] border border-gray-200 bg-white px-6 font-big-fat-boii text-base leading-none text-gray-900 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 xl:border-white/50 xl:bg-white/35 xl:hover:bg-white/50";
 
 export const PROFILE_PILL_DANGER =
   "inline-flex h-12 items-center justify-center rounded-[70px] bg-[#8b1e1e] px-6 font-big-fat-boii text-base leading-none text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50";
 
 export const PROFILE_PILL_SM =
-  "inline-flex h-9 items-center justify-center rounded-full border border-gray-200 bg-white px-4 font-big-fat-boii text-xs font-normal tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 lg:border-white/50 lg:bg-white/40 lg:hover:bg-white/60";
+  "inline-flex h-9 items-center justify-center rounded-full border border-gray-200 bg-white px-4 font-big-fat-boii text-xs font-normal tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 xl:border-white/50 xl:bg-white/40 xl:hover:bg-white/60";
 
 export const PROFILE_PILL_SM_DANGER =
   "inline-flex h-9 items-center justify-center rounded-full border border-red-200 bg-red-50 px-4 font-big-fat-boii text-xs font-normal tracking-wide text-red-700 uppercase transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50";
@@ -51,17 +51,17 @@ export const PROFILE_INNER_CARD =
 export const PROFILE_STATUS_BADGE =
   "inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-medium capitalize text-gray-800";
 
-/** Order/bonus/history cards — 1 col phone, 2 col iPad, 3 col desktop. */
+/** Order/bonus/history cards — 1 col phone, 2 col Mini/Air, 3 col iPad Pro, 3 col desktop. */
 export const PROFILE_CARD_GRID =
-  "grid grid-cols-1 gap-4 min-[744px]:max-lg:grid-cols-2 min-[744px]:max-lg:gap-[15px] lg:grid-cols-3 lg:gap-[15px]";
+  "grid grid-cols-1 gap-4 min-[744px]:max-[833px]:grid-cols-2 min-[834px]:max-xl:grid-cols-3 min-[744px]:max-xl:gap-[15px] xl:grid-cols-3 xl:gap-[15px]";
 
-/** Same as above without desktop columns (mobile/tablet orders list). */
+/** Same as above without desktop-only overrides (mobile/tablet orders list). */
 export const PROFILE_ORDERS_CARD_GRID =
-  "grid grid-cols-1 gap-4 min-[744px]:max-lg:grid-cols-2 min-[744px]:max-lg:gap-[15px]";
+  "grid grid-cols-1 gap-4 min-[744px]:max-[833px]:grid-cols-2 min-[834px]:max-xl:grid-cols-3 min-[744px]:max-xl:gap-[15px]";
 
-/** Stat summary tiles — 1 col narrow phone, 2 col iPad, 3–4 col desktop. */
+/** Stat summary tiles — 1 col phone, 2 col Mini/Air, 3 col iPad Pro + desktop. */
 export const PROFILE_STAT_GRID_THREE =
-  "grid grid-cols-1 gap-3 min-[744px]:max-lg:grid-cols-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3";
+  "grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 min-[744px]:max-[833px]:grid-cols-2 min-[834px]:max-xl:grid-cols-3 xl:grid-cols-3";
 
 /** Sliding sidebar pill — same duration as Grill.am profile nav. */
 export { SLIDING_NAV_TRANSITION_MS as PROFILE_NAV_TRANSITION_MS } from "@/components/ui/useSlidingNavIndicator";

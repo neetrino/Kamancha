@@ -17,7 +17,7 @@
   --accent-foreground: #f9fafb;
   --brand-forest: #265127;
   --radius: 15px;
-  /* SiteHeader lg+: pt-8 + min-h-[65px] + pb-2.5 */
+  /* SiteHeader xl+: pt-8 + min-h-[65px] + pb-2.5 */
   --storefront-header-offset: calc(2rem + 65px + 0.625rem);
   --profile-sticky-gap: 1.75rem;
   --brand-pale-edge-stroke: linear-gradient(
@@ -543,7 +543,7 @@ html {
  * Equal top/bottom gaps; content column scrolls internally. When that
  * column reaches its end, page scroll continues so the footer is reachable.
  */
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .storefront-shell:has(.profile-desktop-page) .storefront-main {
     display: flex;
     flex: 1 1 auto;
@@ -600,14 +600,14 @@ html {
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
   .site-header [data-brand-logo] {
     height: 79px;
     width: 164px;
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
   .storefront-shell:has(.profile-mobile-page) .site-header {
     display: none;
   }

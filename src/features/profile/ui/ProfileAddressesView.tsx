@@ -163,7 +163,7 @@ export function ProfileAddressesView({
   return (
     <div className="space-y-6 sm:space-y-8">
       <section className={PROFILE_SECTION}>
-        <div className="relative z-[2] mb-6 flex flex-col gap-4 border-b border-gray-100 pb-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:pb-6 lg:border-white/35">
+        <div className="relative z-[2] mb-6 flex flex-col gap-4 border-b border-gray-100 pb-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:pb-6 xl:border-white/35">
           <h1 className={PROFILE_SECTION_TITLE}>{labels.title}</h1>
           {!showForm ? (
             <button
@@ -180,7 +180,7 @@ export function ProfileAddressesView({
         {showForm ? (
           <form
             onSubmit={onSave}
-            className="relative z-[2] mb-8 space-y-5 overflow-hidden rounded-3xl border border-gray-200 bg-gray-50 p-4 sm:mb-10 sm:p-6 lg:border-white/50 lg:bg-white/35"
+            className="relative z-[2] mb-8 space-y-5 overflow-hidden rounded-3xl border border-gray-200 bg-gray-50 p-4 sm:mb-10 sm:p-6 xl:border-white/50 xl:bg-white/35"
           >
             <h2 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
               {editingId ? labels.formEditTitle : labels.formAddTitle}

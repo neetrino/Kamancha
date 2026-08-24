@@ -74,27 +74,27 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     rating: "text-[16px]",
     cart: "size-12",
   },
-  /** Figma catalog item 103:3029 — mobile card below lg; full 300×419 from lg. */
+  /** Figma catalog item 103:3029 — mobile card below xl; full 300×419 from xl. */
   catalog: {
     article:
-      "h-auto w-full rounded-[26px] lg:h-[419px] lg:max-w-[300px] lg:rounded-[37px]",
+      "h-auto w-full rounded-[26px] xl:h-[419px] xl:max-w-[300px] xl:rounded-[37px]",
     image:
-      "mx-[6px] mt-[7px] aspect-[287/220] rounded-[30px] lg:h-[220px] lg:aspect-auto",
+      "mx-[6px] mt-[7px] aspect-[287/220] rounded-[30px] xl:h-[220px] xl:aspect-auto",
     imageSizes:
-      "(min-width: 1024px) 287px, (min-width: 744px) 33vw, 50vw",
+      "(min-width: 1280px) 287px, (min-width: 744px) 33vw, 50vw",
     badge:
       "top-1.5 left-2 h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814]",
     wishlist: "top-0.5 right-1.5 size-10",
     wishlistSize: "lg",
-    body: "gap-0.5 px-2.5 pt-1.5 pb-3 lg:gap-0 lg:px-[17px] lg:pt-2 lg:pb-5",
-    title: "text-[13px] leading-5 lg:text-[16px] lg:leading-[30px]",
-    category: "text-[12px] leading-4 lg:-mt-2 lg:text-[16px] lg:leading-[30px]",
-    price: "text-[16px] lg:text-[22px]",
-    compare: "text-[12px] leading-4 lg:text-[16px] lg:leading-5",
-    metaCol: "ml-1 w-12 gap-1.5 lg:ml-2 lg:w-[52px] lg:gap-3",
-    star: "size-3.5 lg:size-6",
-    rating: "text-[12px] lg:text-[16px]",
-    cart: "size-12 lg:size-[50px]",
+    body: "gap-0.5 px-2.5 pt-1.5 pb-3 xl:gap-0 xl:px-[17px] xl:pt-2 xl:pb-5",
+    title: "text-[13px] leading-5 xl:text-[16px] xl:leading-[30px]",
+    category: "text-[12px] leading-4 xl:-mt-2 xl:text-[16px] xl:leading-[30px]",
+    price: "text-[16px] xl:text-[22px]",
+    compare: "text-[12px] leading-4 xl:text-[16px] xl:leading-5",
+    metaCol: "ml-1 w-12 gap-1.5 xl:ml-2 xl:w-[52px] xl:gap-3",
+    star: "size-3.5 xl:size-6",
+    rating: "text-[12px] xl:text-[16px]",
+    cart: "size-12 xl:size-[50px]",
   },
 };
 

@@ -75,7 +75,7 @@ export function GroupOrderSummary({
 
   return (
     <div
-      className="w-full space-y-3 lg:sticky lg:self-start"
+      className="w-full space-y-3 xl:sticky xl:self-start"
       style={{ top: stickyTop }}
     >
       <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">

@@ -42,7 +42,7 @@ export function ContactHands({
   return (
     <>
       <motion.div
-        className="pointer-events-none absolute inset-x-0 top-4 z-0 hidden h-[720px] overflow-visible sm:top-6 lg:block"
+        className="pointer-events-none absolute inset-x-0 top-4 z-0 hidden h-[720px] overflow-visible sm:top-6 xl:block"
         aria-hidden
         initial={playMotion ? { opacity: 0, x: "-12%" } : false}
         animate={{ opacity: 1, x: 0 }}
@@ -58,7 +58,7 @@ export function ContactHands({
         />
       </motion.div>
       <motion.div
-        className="pointer-events-none absolute inset-x-0 top-4 z-[2] hidden h-[720px] overflow-visible sm:top-6 lg:block"
+        className="pointer-events-none absolute inset-x-0 top-4 z-[2] hidden h-[720px] overflow-visible sm:top-6 xl:block"
         aria-hidden
         initial={playMotion ? { opacity: 0, x: "12%" } : false}
         animate={{ opacity: 1, x: 0 }}

@@ -53,7 +53,7 @@ export function CustomerOrdersFilters({
       <form
         ref={formRef}
         method="get"
-        className="relative z-[2] flex flex-col gap-3 lg:flex-row lg:flex-nowrap lg:items-center"
+        className="relative z-[2] flex flex-col gap-3 xl:flex-row xl:flex-nowrap xl:items-center"
       >
         <SelectDropdown
           name="status"
@@ -61,7 +61,7 @@ export function CustomerOrdersFilters({
           value={statusValue}
           allLabel="All statuses"
           options={ORDER_STATUS_FILTERS}
-          className="w-full lg:w-[180px] lg:shrink-0"
+          className="w-full xl:w-[180px] xl:shrink-0"
           onValueChange={applyStatus}
         />
         <SelectDropdown
@@ -70,11 +70,11 @@ export function CustomerOrdersFilters({
           value={paymentValue}
           allLabel="All payment statuses"
           options={PAYMENT_STATUS_FILTERS}
-          className="w-full lg:w-[200px] lg:shrink-0"
+          className="w-full xl:w-[200px] xl:shrink-0"
           onValueChange={applyPayment}
         />
         <div
-          className="flex h-11 min-w-0 items-center gap-2.5 rounded-2xl border border-white/50 bg-white/15 px-4 shadow-sm backdrop-blur-sm transition-colors hover:border-white/70 focus-within:border-white/80 lg:flex-1 lg:shrink"
+          className="flex h-11 min-w-0 items-center gap-2.5 rounded-2xl border border-white/50 bg-white/15 px-4 shadow-sm backdrop-blur-sm transition-colors hover:border-white/70 focus-within:border-white/80 xl:flex-1 xl:shrink"
         >
           <Search className="h-4 w-4 shrink-0 text-white" aria-hidden />
           <input

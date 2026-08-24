@@ -210,7 +210,7 @@ export function ProductGallery({
       : null;
 
   return (
-    <div className="flex w-full flex-col gap-4 lg:w-[min(100%,640px)] lg:shrink-0">
+    <div className="flex w-full flex-col gap-4 xl:w-[min(100%,640px)] xl:shrink-0">
       <div className="group relative aspect-[520/420] w-full overflow-hidden rounded-[30px] border-[3px] border-white bg-white">
         {selected ? (
           <Image

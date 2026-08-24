@@ -75,7 +75,7 @@ export function CustomerOrdersView({
 
   return (
     <>
-      <div className="lg:hidden">
+      <div className="xl:hidden">
         <CustomerOrdersCards
           locale={locale as Locale}
           orders={orders}
@@ -83,7 +83,7 @@ export function CustomerOrdersView({
           onOpenOrder={openOrder}
         />
       </div>
-      <div className="hidden lg:block">
+      <div className="hidden xl:block">
         <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} />
       </div>
       <CustomerOrderDetailsSheet

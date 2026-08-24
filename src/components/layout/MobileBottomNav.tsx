@@ -230,7 +230,7 @@ export function MobileBottomNav({
   return (
     <nav
       aria-label={dictionary.nav.navigation}
-      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
+      className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(0.75rem,env(safe-area-inset-bottom))] xl:hidden"
     >
       <div
         className="pointer-events-auto flex w-[339px] max-w-[calc(100%-3rem)] items-center gap-[9px]"

@@ -41,9 +41,9 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
       data-node-id="362:289"
       className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible"
     >
-      <div className="relative mx-auto w-full max-w-[1440px] lg:min-h-[1180px]">
+      <div className="relative mx-auto w-full max-w-[1440px] xl:min-h-[1180px]">
         <div
-          className={`${SITE_HEADER_INNER} relative z-[1] pt-2 pb-8 sm:pt-4 lg:pt-[108px] lg:pb-32`}
+          className={`${SITE_HEADER_INNER} relative z-[1] pt-2 pb-8 sm:pt-4 xl:pt-[108px] xl:pb-32`}
         >
           <Stagger
             className="max-w-[777px]"
@@ -52,7 +52,7 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
             stagger={0.09}
           >
             <StaggerItem>
-              <h1 className="font-big-fat-boii text-[clamp(36px,5.2vw,68px)] leading-[1.05] font-normal text-[#e5e2e1] uppercase lg:whitespace-nowrap">
+              <h1 className="font-big-fat-boii text-[clamp(36px,5.2vw,68px)] leading-[1.05] font-normal text-[#e5e2e1] uppercase xl:whitespace-nowrap">
                 {copy.title}
               </h1>
             </StaggerItem>
@@ -87,7 +87,7 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
         {/* Figma 362:282 — cropped 887×1774, object-bottom, overflows right by 55px at 1440 */}
         <motion.div
           data-node-id="362:282"
-          className="relative mx-auto -mt-4 w-full max-w-[420px] sm:max-w-[480px] lg:pointer-events-none lg:absolute lg:-top-[100px] lg:right-[-55px] lg:z-0 lg:mx-0 lg:mt-0 lg:w-[887px] lg:max-w-none"
+          className="relative mx-auto -mt-4 w-full max-w-[420px] sm:max-w-[480px] xl:pointer-events-none xl:absolute xl:-top-[100px] xl:right-[-55px] xl:z-0 xl:mx-0 xl:mt-0 xl:w-[887px] xl:max-w-none"
           initial={playMotion ? { opacity: 0, x: "12%" } : false}
           animate={{ opacity: 1, x: 0 }}
           transition={sideTransition}

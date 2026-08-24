@@ -42,12 +42,12 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
     <section className={PROFILE_SECTION}>
       <div className="relative z-[2] mb-6 space-y-2 sm:mb-8">
         <h1 className={PROFILE_SECTION_TITLE}>{labels.title}</h1>
-        <p className="relative z-[2] text-sm leading-relaxed text-gray-600 lg:text-white">
+        <p className="relative z-[2] text-sm leading-relaxed text-gray-600 xl:text-white">
           {labels.description}
         </p>
       </div>
 
-      <ul className="relative z-[2] mb-8 max-w-2xl list-disc space-y-2 pl-5 text-sm text-gray-600 sm:mb-10 lg:text-white">
+      <ul className="relative z-[2] mb-8 max-w-2xl list-disc space-y-2 pl-5 text-sm text-gray-600 sm:mb-10 xl:text-white">
         <li>{labels.pointOrders}</li>
         <li>{labels.pointLogin}</li>
         <li>{labels.pointData}</li>
@@ -55,7 +55,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
 
       <form
         action={formAction}
-        className="relative z-[2] mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
+        className="relative z-[2] mx-auto max-w-xl space-y-6 xl:mx-0 xl:max-w-2xl"
       >
         <label className={PROFILE_LABEL}>
           {labels.currentPassword}
@@ -76,11 +76,11 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
             name="acknowledged"
             type="checkbox"
             value="on"
-            className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-forest focus:ring-brand-forest lg:border-white/60"
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-forest focus:ring-brand-forest xl:border-white/60"
             checked={acknowledged}
             onChange={(event) => setAcknowledged(event.target.checked)}
           />
-          <span className="text-sm leading-snug text-gray-900 lg:text-white">
+          <span className="text-sm leading-snug text-gray-900 xl:text-white">
             {labels.acknowledge}
           </span>
         </label>

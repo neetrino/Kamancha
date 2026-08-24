@@ -94,7 +94,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   return (
     <footer
       data-node-id="22:337"
-      className="storefront-footer relative z-[2] mt-auto hidden bg-transparent pt-20 lg:block lg:pt-36"
+      className="storefront-footer relative z-[2] mt-auto hidden bg-transparent pt-20 xl:block xl:pt-36"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 px-5">
         <div

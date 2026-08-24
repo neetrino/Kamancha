@@ -67,7 +67,7 @@ export function PersonalInformationForm({
 
       <form
         action={formAction}
-        className="relative z-[2] mx-auto max-w-xl space-y-6 lg:mx-0 lg:max-w-2xl"
+        className="relative z-[2] mx-auto max-w-xl space-y-6 xl:mx-0 xl:max-w-2xl"
       >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
           <label className={PROFILE_LABEL}>

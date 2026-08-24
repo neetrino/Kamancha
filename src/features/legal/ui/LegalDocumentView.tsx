@@ -35,7 +35,7 @@ export function LegalDocumentView({
       className={
         isSheet
           ? "flex flex-col gap-6"
-          : "mx-auto flex max-w-3xl flex-col gap-8 px-4 py-12 sm:px-6 lg:px-8"
+          : "mx-auto flex max-w-3xl flex-col gap-8 px-4 py-12 sm:px-6 xl:px-8"
       }
     >
       <header className="flex flex-col gap-3">

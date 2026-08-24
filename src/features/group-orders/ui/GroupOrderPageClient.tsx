@@ -48,11 +48,11 @@ const BLOCK_TITLE =
   "font-big-fat-boii text-base font-normal tracking-wide text-white uppercase";
 
 const SECTION_TITLE =
-  "font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase lg:text-base";
+  "font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase xl:text-base";
 
 /** Long settings labels — one line on narrow mobile viewports. */
 const SETTINGS_FIELD_TITLE =
-  "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase whitespace-nowrap lg:text-base lg:tracking-wide lg:leading-normal lg:whitespace-normal";
+  "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase whitespace-nowrap xl:text-base xl:tracking-wide xl:leading-normal xl:whitespace-normal";
 
 const PRODUCT_THUMB_PX = 96;
 const PRODUCT_THUMB_RADIUS_PX = 16;
@@ -270,7 +270,7 @@ export function GroupOrderPageClient({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 items-stretch gap-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
       <div className="space-y-6">
       <section className="liquid-glass isolate overflow-hidden rounded-3xl p-4">
         <div className="flex flex-col gap-3">

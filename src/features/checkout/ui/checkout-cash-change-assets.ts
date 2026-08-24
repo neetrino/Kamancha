@@ -5,15 +5,15 @@ export const CASH_CHANGE_NONE = "none" as const;
 export type CashChangeSelection = number | typeof CASH_CHANGE_NONE;
 
 export const CHECKOUT_CASH_CHANGE_SECTION_CLASS =
-  "checkout-cash-change profile-inner-card overflow-hidden rounded-[15px] border border-gray-200/80 bg-white p-4 sm:p-5 lg:rounded-2xl";
+  "checkout-cash-change profile-inner-card overflow-hidden rounded-[15px] border border-gray-200/80 bg-white p-4 sm:p-5 xl:rounded-2xl";
 export const CHECKOUT_CASH_CHANGE_TITLE_CLASS =
   "font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase";
 export const CHECKOUT_CASH_CHANGE_HINT_CLASS =
   "mt-2 text-sm leading-snug text-gray-600";
 export const CHECKOUT_CASH_CHANGE_GRID_CLASS =
-  "mt-4 grid grid-cols-2 gap-2 min-[744px]:max-lg:grid-cols-3 min-[744px]:max-lg:gap-2 lg:grid-cols-4 lg:gap-2.5";
+  "mt-4 grid grid-cols-2 gap-2 min-[744px]:max-xl:grid-cols-3 min-[744px]:max-xl:gap-2 xl:grid-cols-4 xl:gap-2.5";
 export const CHECKOUT_CASH_CHANGE_OPTION_BASE_CLASS =
-  "relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-[15px] bg-white transition-colors [-webkit-tap-highlight-color:transparent] disabled:cursor-not-allowed disabled:opacity-50 lg:rounded-[18px]";
+  "relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-[15px] bg-white transition-colors [-webkit-tap-highlight-color:transparent] disabled:cursor-not-allowed disabled:opacity-50 xl:rounded-[18px]";
 export const CHECKOUT_CASH_CHANGE_OPTION_SELECTED_CLASS =
   "outline outline-[3px] outline-offset-2 outline-[#163318]";
 export const CHECKOUT_CASH_CHANGE_OPTION_DEFAULT_CLASS =

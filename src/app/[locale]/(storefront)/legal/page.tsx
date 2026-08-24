@@ -44,7 +44,7 @@ export default async function LegalHubPage({ params }: PageProps) {
   }));
 
   return (
-    <div className="-mx-4 -my-10 min-h-full sm:-mx-6 lg:-mx-8">
+    <div className="-mx-4 -my-10 min-h-full sm:-mx-6 xl:-mx-8">
       <LegalPoliciesHub
         title={dictionary.legal.hubTitle}
         lastUpdatedLabel={dictionary.legal.lastUpdatedLabel}

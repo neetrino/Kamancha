@@ -193,7 +193,7 @@ function RelatedDesktopGrid({
   labels: RelatedCardLabels;
 }) {
   return (
-    <div className="hidden justify-items-center gap-6 sm:grid-cols-2 md:grid lg:grid-cols-4 lg:justify-items-start lg:gap-[25px]">
+    <div className="hidden justify-items-center gap-6 sm:grid-cols-2 md:grid xl:grid-cols-4 xl:justify-items-start xl:gap-[25px]">
       {items.map((item) => (
         <RelatedProductCard
           key={item.id}

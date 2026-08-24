@@ -65,7 +65,7 @@ export function MobileCatalogCategoryChips({
   return (
     <nav
       aria-label={categoriesLabel}
-      className="overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:hidden"
+      className="overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:hidden"
     >
       <ul className="flex w-max items-center gap-2.5 pb-0.5">
         <li>

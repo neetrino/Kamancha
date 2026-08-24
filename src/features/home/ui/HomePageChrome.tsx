@@ -20,8 +20,8 @@ export function HomePageChrome({
   children,
 }: HomePageChromeProps) {
   return (
-    <div className="home-mobile-page -mx-4 sm:-mx-6 lg:-mx-8 lg:-my-10">
-      <div className="hidden lg:block">
+    <div className="home-mobile-page -mx-4 sm:-mx-6 xl:-mx-8 xl:-my-10">
+      <div className="hidden xl:block">
         <HomeHero
           brandName={dictionary.brand}
           ctaLabel={dictionary.nav.products}
@@ -29,7 +29,7 @@ export function HomePageChrome({
         />
         <HomeOrnamentStrip />
       </div>
-      <div className="lg:hidden">
+      <div className="xl:hidden">
         <HomeMobilePromo
           headlineBefore={dictionary.home.familyDinner.headlineBefore}
           headlineAccent={dictionary.home.familyDinner.headlineAccent}
