@@ -9,10 +9,12 @@ import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDet
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
 import {
   PROFILE_BODY,
+  PROFILE_CARD_GRID,
   PROFILE_INNER_CARD,
   PROFILE_PAGE_TITLE,
   PROFILE_SECTION,
   PROFILE_SECTION_TITLE,
+  PROFILE_STAT_GRID_THREE,
   PROFILE_STATUS_BADGE,
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
@@ -97,7 +99,7 @@ export function ProfileBonusesView({
       <section className="profile-sheet-keep-frame space-y-8">
         <h1 className={PROFILE_PAGE_TITLE}>{title}</h1>
 
-        <div className="grid grid-cols-1 gap-3 overflow-visible sm:grid-cols-3 sm:gap-4">
+        <div className={`${PROFILE_STAT_GRID_THREE} overflow-visible`}>
           <ProfileStatCard
             label={copy.available}
             value={formatMoneyAmount(availableBalance, "AMD", locale)}
@@ -120,7 +122,7 @@ export function ProfileBonusesView({
           {transactions.length === 0 ? (
             <p className={PROFILE_BODY}>{copy.empty}</p>
           ) : (
-            <ul className="relative z-[2] grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-[15px]">
+            <ul className={`relative z-[2] ${PROFILE_CARD_GRID}`}>
               {transactions.map((row) => {
                 const positive = row.delta > 0;
                 return (

@@ -51,5 +51,17 @@ export const PROFILE_INNER_CARD =
 export const PROFILE_STATUS_BADGE =
   "inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-medium capitalize text-gray-800";
 
+/** Order/bonus/history cards — 1 col phone, 2 col iPad, 3 col desktop. */
+export const PROFILE_CARD_GRID =
+  "grid grid-cols-1 gap-4 min-[744px]:max-lg:grid-cols-2 min-[744px]:max-lg:gap-[15px] lg:grid-cols-3 lg:gap-[15px]";
+
+/** Same as above without desktop columns (mobile/tablet orders list). */
+export const PROFILE_ORDERS_CARD_GRID =
+  "grid grid-cols-1 gap-4 min-[744px]:max-lg:grid-cols-2 min-[744px]:max-lg:gap-[15px]";
+
+/** Stat summary tiles — 1 col narrow phone, 2 col iPad, 3–4 col desktop. */
+export const PROFILE_STAT_GRID_THREE =
+  "grid grid-cols-1 gap-3 min-[744px]:max-lg:grid-cols-2 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3";
+
 /** Sliding sidebar pill — same duration as Grill.am profile nav. */
 export { SLIDING_NAV_TRANSITION_MS as PROFILE_NAV_TRANSITION_MS } from "@/components/ui/useSlidingNavIndicator";

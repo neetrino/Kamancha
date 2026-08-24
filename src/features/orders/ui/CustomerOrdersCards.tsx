@@ -6,7 +6,10 @@ import {
   formatOrderStatusLabel,
 } from "@/features/orders/ui/order-drawer-format";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
-import { PROFILE_PILL_LIGHT } from "@/features/profile/ui/profile-surface";
+import {
+  PROFILE_ORDERS_CARD_GRID,
+  PROFILE_PILL_LIGHT,
+} from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import { formatShortDate } from "@/lib/i18n/format-date";
 
@@ -69,7 +72,7 @@ export function CustomerOrdersCards({
   }
 
   return (
-    <ul className="grid grid-cols-1 gap-4">
+    <ul className={PROFILE_ORDERS_CARD_GRID}>
       {orders.map((order) => (
         <li key={order.id} className="min-w-0">
           <ProfileRecentOrderCard

@@ -9,6 +9,7 @@ import { getCustomerOrderDetailAction } from "@/features/orders/application/get-
 import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
 import {
+  PROFILE_CARD_GRID,
   PROFILE_PILL_LIGHT,
   PROFILE_SECTION,
 } from "@/features/profile/ui/profile-surface";
@@ -67,7 +68,7 @@ function RecentOrdersBody({
   }
 
   return (
-    <ul className="relative z-[2] grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-[15px]">
+    <ul className={`relative z-[2] ${PROFILE_CARD_GRID}`}>
       {orders.map((order) => (
         <li key={order.id} className="min-w-0">
           <ProfileRecentOrderCard
