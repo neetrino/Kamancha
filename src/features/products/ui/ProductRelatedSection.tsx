@@ -156,7 +156,7 @@ function RelatedMobileRail({
   labels: RelatedCardLabels;
 }) {
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 md:hidden">
+    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 xl:hidden">
       <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <Stagger
           className="inline-flex gap-[13px] px-2.5 py-3"
@@ -193,7 +193,7 @@ function RelatedDesktopGrid({
   labels: RelatedCardLabels;
 }) {
   return (
-    <div className="hidden justify-items-center gap-6 sm:grid-cols-2 md:grid xl:grid-cols-4 xl:justify-items-start xl:gap-[25px]">
+    <div className="hidden gap-6 xl:grid xl:grid-cols-4 xl:justify-items-start xl:gap-[25px]">
       {items.map((item) => (
         <RelatedProductCard
           key={item.id}

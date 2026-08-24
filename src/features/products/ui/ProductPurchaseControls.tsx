@@ -171,7 +171,7 @@ export function ProductPurchaseControls({
     <div className="flex w-full min-w-0 flex-col gap-6">
       <div
         data-node-id="106:3285"
-        className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:gap-y-3"
+        className="flex w-full min-w-0 flex-col gap-4 md:flex-row md:flex-nowrap md:items-center md:justify-between md:gap-x-4"
       >
         <div className="flex shrink-0 flex-col items-start gap-px">
           <p className="whitespace-nowrap text-4xl leading-9 font-bold text-white">
@@ -184,7 +184,7 @@ export function ProductPurchaseControls({
           ) : null}
         </div>
 
-        <div className="flex w-full min-w-0 flex-nowrap items-center gap-3">
+        <div className="flex w-full min-w-0 flex-nowrap items-center gap-3 md:w-auto md:shrink-0">
           <div className="inline-flex h-[52px] w-[144px] shrink-0 items-center overflow-hidden rounded-[50px] bg-white/10">
             <button
               type="button"
@@ -217,7 +217,7 @@ export function ProductPurchaseControls({
             type="button"
             disabled={disabled}
             onClick={handleAdd}
-            className="inline-flex h-[52px] min-w-0 flex-1 items-center justify-center gap-2.5 rounded-[50px] bg-white px-4 text-base font-semibold text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50 sm:shrink-0 sm:flex-none sm:gap-3 sm:px-7"
+            className="inline-flex h-[52px] min-w-0 flex-1 items-center justify-center gap-2.5 rounded-[50px] bg-white px-4 text-base font-semibold text-brand-forest transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50 md:flex-none md:shrink-0 md:gap-3 md:px-7"
           >
             <Image
               src={CART_PLUS_SRC}
@@ -227,10 +227,10 @@ export function ProductPurchaseControls({
               className="shrink-0"
               aria-hidden
             />
-            <span className="truncate sm:hidden">
+            <span className="truncate md:hidden">
               {disabled ? labels.outOfStock : labels.addToCartShort}
             </span>
-            <span className="hidden truncate sm:inline">
+            <span className="hidden truncate md:inline">
               {disabled ? labels.outOfStock : labels.addToCart}
             </span>
           </button>
