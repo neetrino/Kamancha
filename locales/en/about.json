@@ -1,10 +1,8 @@
 {
-  "eyebrow": "Elegant design",
-  "title": "About our online store",
-  "paragraphs": [
-    "We are delighted to welcome you to our online store. Our company strives to provide you with the best shopping experience with a wide range of quality products and excellent service.",
-    "Our mission is to make online shopping simple, convenient and enjoyable. We carefully select each product to ensure high quality and customer satisfaction.",
-    "We are proud to offer not only excellent products but also excellent customer service. Our team is always ready to help you find exactly what you are looking for."
-  ],
-  "heroImageAlt": "Our team working together"
+  "title": "OUR STORY",
+  "intro": "Kamancha is more than just a restaurant. It is a harmonious blend of Armenian culture, music, and gastronomy. We take age-old traditions and present them to the modern world, keeping the warmth that belongs only to an Armenian hearth.",
+  "introSecond": "Every dish is prepared with love, using local fresh produce and spices brought from different corners of Armenia.",
+  "heroImageAlt": "Woman playing the kamancha",
+  "dressImageAlt": "Traditional Armenian dress",
+  "rugImageAlt": "Armenian rug"
 }
