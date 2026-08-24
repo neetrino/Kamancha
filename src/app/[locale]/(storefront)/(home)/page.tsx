@@ -7,7 +7,6 @@ import { HomeFamilyDinnerPromo } from "@/features/home/ui/HomeFamilyDinnerPromo"
 import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
 import { HomeMobileCategories } from "@/features/home/ui/HomeMobileCategories";
 import { HomeMobileProductSection } from "@/features/home/ui/HomeMobileProductSection";
-import { HomePageChrome } from "@/features/home/ui/HomePageChrome";
 import { HomeOurStory } from "@/features/home/ui/HomeOurStory";
 import {
   getDiscountedProducts,
@@ -217,8 +216,8 @@ async function HomeBelowFold({
 }
 
 /**
- * Home: background + navbar from layout; hero animates immediately;
- * catalog sections stream in after data.
+ * Home below-fold catalog sections stream in after data.
+ * Hero chrome is provided by `(home)/layout.tsx`.
  */
 export default async function HomePage({ params }: HomePageProps) {
   const { locale: rawLocale } = await params;
@@ -231,10 +230,8 @@ export default async function HomePage({ params }: HomePageProps) {
   const dictionary = getDictionary(locale);
 
   return (
-    <HomePageChrome locale={locale} dictionary={dictionary}>
-      <Suspense fallback={null}>
-        <HomeBelowFold locale={locale} dictionary={dictionary} />
-      </Suspense>
-    </HomePageChrome>
+    <Suspense fallback={null}>
+      <HomeBelowFold locale={locale} dictionary={dictionary} />
+    </Suspense>
   );
 }

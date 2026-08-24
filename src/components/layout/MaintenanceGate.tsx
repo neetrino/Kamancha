@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { headers } from "next/headers";
 
 import { getMaintenanceGateState } from "@/lib/maintenance/gate";
@@ -7,7 +6,12 @@ type MaintenanceGateProps = {
   children: React.ReactNode;
 };
 
-async function MaintenanceGateInner({ children }: MaintenanceGateProps) {
+/**
+ * Storefront maintenance check. Resolved in the layout before children render —
+ * do not wrap in Suspense with `children` as the fallback; that remounts the
+ * page tree (e.g. home hero entrance plays twice after admin → storefront nav).
+ */
+export async function MaintenanceGate({ children }: MaintenanceGateProps) {
   const pathname = (await headers()).get("x-pathname") ?? "";
   const state = await getMaintenanceGateState(pathname);
 
@@ -24,16 +28,4 @@ async function MaintenanceGateInner({ children }: MaintenanceGateProps) {
   }
 
   return children;
-}
-
-/**
- * Storefront maintenance check — does not block first paint.
- * Page content streams as the Suspense fallback while the gate resolves.
- */
-export function MaintenanceGate({ children }: MaintenanceGateProps) {
-  return (
-    <Suspense fallback={children}>
-      <MaintenanceGateInner>{children}</MaintenanceGateInner>
-    </Suspense>
-  );
 }
