@@ -35,6 +35,13 @@
     "deleting": "Ջնջվում է…",
     "remove": "Հեռացնել",
     "clear": "Մաքրել",
+    "datePicker": {
+      "placeholder": "ՕՕ.ԱԱ.ՏՏՏՏ",
+      "dateTimePlaceholder": "ՕՕ.ԱԱ.ՏՏՏՏ ժ:ր",
+      "today": "Այսօր",
+      "time": "Ժամ",
+      "weekdaysShort": ["Երկ", "Երք", "Չրք", "Հնգ", "Ուրբ", "Շբթ", "Կիր"]
+    },
     "search": "Որոնել",
     "filter": "Զտել",
     "apply": "Կիրառել",

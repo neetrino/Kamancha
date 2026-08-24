@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
 import { SideSheet } from "@/components/ui/SideSheet";
+import { AdminDateTimePickerField } from "@/features/admin/ui/AdminDateTimePickerField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -133,11 +134,11 @@ export function GiftCardDrawer({
         </label>
         <label className="block space-y-1">
           <span className={ADMIN_LABEL}>{copy.drawer.expiresOptional}</span>
-          <input
-            className={ADMIN_INPUT}
-            type="datetime-local"
+          <AdminDateTimePickerField
             value={expiresAt}
-            onChange={(event) => setExpiresAt(event.target.value)}
+            onChange={setExpiresAt}
+            locale={locale}
+            common={copy.common}
           />
         </label>
         <label className="flex items-center gap-2 text-sm text-gray-700">

@@ -35,6 +35,13 @@
     "deleting": "Deleting…",
     "remove": "Remove",
     "clear": "Clear",
+    "datePicker": {
+      "placeholder": "DD.MM.YYYY",
+      "dateTimePlaceholder": "DD.MM.YYYY HH:mm",
+      "today": "Today",
+      "time": "Time",
+      "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    },
     "search": "Search",
     "filter": "Filter",
     "apply": "Apply",

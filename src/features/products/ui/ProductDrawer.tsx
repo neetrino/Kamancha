@@ -344,6 +344,8 @@ export function ProductDrawer({
                 value={discount}
                 disabled={isPending}
                 onChange={setDiscount}
+                locale={locale}
+                common={copy.common}
                 copy={copy.discount}
               />
             </div>

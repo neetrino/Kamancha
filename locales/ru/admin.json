@@ -35,6 +35,13 @@
     "deleting": "Удаление…",
     "remove": "Убрать",
     "clear": "Очистить",
+    "datePicker": {
+      "placeholder": "ДД.ММ.ГГГГ",
+      "dateTimePlaceholder": "ДД.ММ.ГГГГ ЧЧ:ММ",
+      "today": "Сегодня",
+      "time": "Время",
+      "weekdaysShort": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    },
     "search": "Поиск",
     "filter": "Фильтр",
     "apply": "Применить",

@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
+import { AdminDateTimePickerField } from "@/features/admin/ui/AdminDateTimePickerField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -229,12 +230,12 @@ export function CouponDrawer({
               <span className={`${ADMIN_LABEL} flex-1`}>
                 {copy.drawer.expiresOptional}
               </span>
-              <input
-                type="datetime-local"
+              <AdminDateTimePickerField
                 value={expiresAt}
-                onChange={(event) => setExpiresAt(event.target.value)}
-                className={ADMIN_INPUT}
+                onChange={setExpiresAt}
                 disabled={isPending}
+                locale={locale}
+                common={copy.common}
               />
             </label>
           </div>

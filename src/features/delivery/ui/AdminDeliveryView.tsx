@@ -227,6 +227,8 @@ export function AdminDeliveryView({
               value={schedule}
               onChange={setSchedule}
               disabled={isPending}
+              locale={locale}
+              common={copy.common}
               copy={copy.delivery.schedule}
               confirm={copy.confirm}
             />

@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AdminDateTimePickerField } from "@/features/admin/ui/AdminDateTimePickerField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -79,6 +80,8 @@ export function PromotionForm({
 }: PromotionFormProps) {
   const router = useRouter();
   const [kind, setKind] = useState<PromotionKind>(initialKind);
+  const [startsAt, setStartsAt] = useState(toDateInput(defaults?.startsAt));
+  const [endsAt, setEndsAt] = useState(toDateInput(defaults?.endsAt));
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -120,12 +123,8 @@ export function PromotionForm({
             priority: Number(formData.get("priority") ?? 0),
             allowStacking: formData.get("allowStacking") === "on",
             isActive: formData.get("isActive") === "on",
-            startsAt: String(formData.get("startsAt") ?? "")
-              ? new Date(String(formData.get("startsAt")))
-              : null,
-            endsAt: String(formData.get("endsAt") ?? "")
-              ? new Date(String(formData.get("endsAt")))
-              : null,
+            startsAt: startsAt ? new Date(startsAt) : null,
+            endsAt: endsAt ? new Date(endsAt) : null,
           };
 
           startTransition(async () => {
@@ -291,22 +290,22 @@ export function PromotionForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <label>
             <span className={ADMIN_LABEL}>{copy.form.startsAt}</span>
-            <input
-              name="startsAt"
-              type="datetime-local"
-              defaultValue={toDateInput(defaults?.startsAt)}
-              className={ADMIN_INPUT}
+            <AdminDateTimePickerField
+              value={startsAt}
+              onChange={setStartsAt}
               disabled={isPending}
+              locale={locale}
+              common={copy.common}
             />
           </label>
           <label>
             <span className={ADMIN_LABEL}>{copy.form.endsAt}</span>
-            <input
-              name="endsAt"
-              type="datetime-local"
-              defaultValue={toDateInput(defaults?.endsAt)}
-              className={ADMIN_INPUT}
+            <AdminDateTimePickerField
+              value={endsAt}
+              onChange={setEndsAt}
               disabled={isPending}
+              locale={locale}
+              common={copy.common}
             />
           </label>
         </div>

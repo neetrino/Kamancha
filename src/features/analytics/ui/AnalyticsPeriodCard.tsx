@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
+import { useEffect, useState, useTransition, type FormEvent } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
+import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import {
-  ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
 import {
@@ -39,9 +39,16 @@ export function AnalyticsPeriodCard({
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [forceCustom, setForceCustom] = useState(preset === "custom");
+  const [customFrom, setCustomFrom] = useState(from);
+  const [customTo, setCustomTo] = useState(to);
   const selectedPreset: AnalyticsPeriodPreset = forceCustom
     ? "custom"
     : preset;
+
+  useEffect(() => {
+    setCustomFrom(from);
+    setCustomTo(to);
+  }, [from, to]);
 
   const presetLabel = (p: AnalyticsPeriodPreset): string => {
     const map: Record<AnalyticsPeriodPreset, string> = {
@@ -115,20 +122,24 @@ export function AnalyticsPeriodCard({
         >
           <label className="min-w-[140px] flex-1">
             <span className={ADMIN_LABEL}>{copy.analytics.period.from}</span>
-            <input
+            <AdminDatePickerField
               name="from"
-              type="date"
-              defaultValue={from}
-              className={ADMIN_INPUT}
+              value={customFrom}
+              onChange={setCustomFrom}
+              disabled={pending}
+              locale={locale}
+              common={copy.common}
             />
           </label>
           <label className="min-w-[140px] flex-1">
             <span className={ADMIN_LABEL}>{copy.analytics.period.to}</span>
-            <input
+            <AdminDatePickerField
               name="to"
-              type="date"
-              defaultValue={to}
-              className={ADMIN_INPUT}
+              value={customTo}
+              onChange={setCustomTo}
+              disabled={pending}
+              locale={locale}
+              common={copy.common}
             />
           </label>
           <button

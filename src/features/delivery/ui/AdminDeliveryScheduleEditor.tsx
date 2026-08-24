@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -21,6 +22,8 @@ type AdminDeliveryScheduleEditorProps = {
   value: DeliveryScheduleSettings;
   onChange: (value: DeliveryScheduleSettings) => void;
   disabled?: boolean;
+  locale: string;
+  common: Dictionary["admin"]["common"];
   copy: Dictionary["admin"]["delivery"]["schedule"];
   confirm: Dictionary["admin"]["confirm"];
 };
@@ -67,6 +70,8 @@ export function AdminDeliveryScheduleEditor({
   value,
   onChange,
   disabled = false,
+  locale,
+  common,
   copy,
   confirm,
 }: AdminDeliveryScheduleEditorProps) {
@@ -233,13 +238,14 @@ export function AdminDeliveryScheduleEditor({
 
       <div>
         <span className={ADMIN_LABEL}>{copy.closedDates}</span>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <input
-            type="date"
+        <div className="mt-2 flex flex-wrap items-end gap-2">
+          <AdminDatePickerField
             value={closedDraft}
+            onChange={setClosedDraft}
             disabled={disabled}
-            className={ADMIN_INPUT}
-            onChange={(event) => setClosedDraft(event.target.value)}
+            locale={locale}
+            common={common}
+            className="min-w-[12rem] flex-1"
           />
           <button
             type="button"

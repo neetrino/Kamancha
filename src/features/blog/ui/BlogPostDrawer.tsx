@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
+import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -318,12 +319,12 @@ export function BlogPostDrawer({
               <div className="space-y-4">
                 <label className="block">
                   <span className={ADMIN_LABEL}>{copy.blog.drawer.publicationDate}</span>
-                  <input
-                    type="date"
+                  <AdminDatePickerField
                     value={publishedAt}
-                    onChange={(event) => setPublishedAt(event.target.value)}
-                    className={ADMIN_INPUT}
+                    onChange={setPublishedAt}
                     disabled={isPending}
+                    locale={locale}
+                    common={copy.common}
                   />
                   <span className="mt-1 block text-xs text-gray-500">
                     {copy.blog.drawer.publicationDateHint}
