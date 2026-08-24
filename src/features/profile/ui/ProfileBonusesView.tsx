@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import { useState, useTransition } from "react";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
@@ -9,7 +10,6 @@ import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
 import {
   PROFILE_BODY,
   PROFILE_INNER_CARD,
-  PROFILE_LINK,
   PROFILE_PAGE_TITLE,
   PROFILE_SECTION,
   PROFILE_SECTION_TITLE,
@@ -107,35 +107,34 @@ export function ProfileBonusesView({
           {transactions.length === 0 ? (
             <p className={PROFILE_BODY}>{copy.empty}</p>
           ) : (
-            <ul className="relative z-[2] space-y-3">
+            <ul className="relative z-[2] grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-[15px]">
               {transactions.map((row) => {
                 const positive = row.delta > 0;
                 return (
                   <li
                     key={row.id}
-                    className={`${PROFILE_INNER_CARD} flex flex-col gap-2 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5`}
+                    className={`${PROFILE_INNER_CARD} flex h-full min-w-0 flex-col p-4 sm:p-5`}
                   >
-                    <div className="min-w-0 space-y-1">
-                      <p className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-                        {typeLabel(row.type, copy.types)}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {row.createdAt.slice(0, 16).replace("T", " ")} UTC
-                        {row.orderNumber ? (
-                          <>
-                            {" · "}
-                            <button
-                              type="button"
-                              onClick={() => openOrder(row.orderNumber!)}
-                              className={PROFILE_LINK}
-                            >
-                              {copy.order} {row.orderNumber}
-                            </button>
-                          </>
-                        ) : null}
-                      </p>
+                    <p className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+                      {typeLabel(row.type, copy.types)}
+                    </p>
+                    <p
+                      className={
+                        positive
+                          ? "mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest sm:text-xl"
+                          : "mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-gray-900 sm:text-xl"
+                      }
+                    >
+                      {positive ? "+" : ""}
+                      {formatMoneyAmount(row.delta, "AMD", locale)}
+                    </p>
+
+                    <div className="my-4 h-px rounded-full bg-gray-200" aria-hidden />
+
+                    <div className="space-y-1.5 text-xs text-gray-500">
+                      <p>{row.createdAt.slice(0, 16).replace("T", " ")} UTC</p>
                       {row.type === "EARN" ? (
-                        <p className="text-xs text-gray-500">
+                        <p>
                           {row.expiresAt
                             ? copy.expires.replace(
                                 "{date}",
@@ -145,16 +144,23 @@ export function ProfileBonusesView({
                         </p>
                       ) : null}
                     </div>
-                    <p
-                      className={
-                        positive
-                          ? "font-big-fat-boii text-base font-normal tracking-wide text-brand-forest"
-                          : "font-big-fat-boii text-base font-normal tracking-wide text-gray-900"
-                      }
-                    >
-                      {positive ? "+" : ""}
-                      {formatMoneyAmount(row.delta, "AMD", locale)}
-                    </p>
+
+                    {row.orderNumber ? (
+                      <div className="mt-auto pt-5">
+                        <button
+                          type="button"
+                          onClick={() => openOrder(row.orderNumber!)}
+                          className="flex min-h-9 w-full items-center gap-2 rounded-full bg-brand-forest py-0.5 pr-0.5 pl-3 font-big-fat-boii text-xs font-normal tracking-wide text-white uppercase"
+                        >
+                          <span className="min-w-0 flex-1 truncate text-center">
+                            {copy.order} {row.orderNumber}
+                          </span>
+                          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-brand-forest">
+                            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                          </span>
+                        </button>
+                      </div>
+                    ) : null}
                   </li>
                 );
               })}
