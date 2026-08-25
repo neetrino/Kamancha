@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { uploadCashChangeImageAction } from "@/features/delivery/application/upload-cash-change-image";
 import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { createClientId } from "@/lib/id";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type CashChangeCopy = Dictionary["admin"]["delivery"]["cashChange"];
@@ -58,7 +59,7 @@ export function AdminCashChangeEditor({
     onChange([
       ...value,
       {
-        id: crypto.randomUUID(),
+        id: createClientId(),
         amount: 0,
         imageObjectKey: null,
         isActive: true,

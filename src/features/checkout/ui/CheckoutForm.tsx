@@ -18,6 +18,7 @@ import {
   CASH_CHANGE_NONE,
   type CashChangeSelection,
 } from "@/features/checkout/ui/checkout-cash-change-assets";
+import { createClientId } from "@/lib/id";
 import {
   computeCashChangeDue,
   type CashChangeDenominationView,
@@ -131,7 +132,7 @@ export function CheckoutForm({
   lockedDeliveryAmount = null,
 }: CheckoutFormProps) {
   const router = useRouter();
-  const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
+  const idempotencyKey = useMemo(() => createClientId(), []);
   const [line1, setLine1] = useState(defaultLine1);
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
     null,

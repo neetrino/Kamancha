@@ -20,6 +20,14 @@
   /* SiteHeader xl+: pt-8 + min-h-[65px] + pb-2.5 */
   --storefront-header-offset: calc(2rem + 65px + 0.625rem);
   --profile-sticky-gap: 1.75rem;
+  /* Mobile bottom nav (Figma 181:727) + home-like gap above the bar */
+  --mobile-bottom-nav-height: 63px;
+  --mobile-bottom-nav-bottom-inset: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  --mobile-bottom-nav-content-gap: 2rem;
+  --mobile-bottom-nav-clearance: calc(
+    var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-bottom-inset) +
+      var(--mobile-bottom-nav-content-gap)
+  );
   --brand-pale-edge-stroke: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0) 0%,
@@ -614,7 +622,7 @@ html {
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
     padding-top: 0.5rem;
-    padding-bottom: 6rem;
+    padding-bottom: var(--mobile-bottom-nav-clearance);
   }
 
   /* Checkout + group order — Grill.am mobile inset (single 1.25rem; no double px). */

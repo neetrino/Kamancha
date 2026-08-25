@@ -114,7 +114,7 @@ async function HomeBelowFold({
 
   return (
     <>
-      <div className="xl:hidden pb-8">
+      <div className="xl:hidden">
         <HomeMobileCategories
           productCountLabel={dictionary.home.categoryProductCount}
           emptyLabel={dictionary.home.emptyCategories}

@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { createClientId } from "@/lib/id";
 
 export type ProductDraftImage = {
   key: string;
@@ -63,7 +64,7 @@ export function ProductDrawerImages({
     for (const file of Array.from(fileList)) {
       if (!file.type.startsWith("image/")) continue;
       additions.push({
-        key: `new-${crypto.randomUUID()}`,
+        key: `new-${createClientId()}`,
         previewUrl: URL.createObjectURL(file),
         isPrimary: false,
         file,
