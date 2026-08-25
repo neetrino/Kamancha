@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 
-import { HOME_HORIZONTAL_SCROLL } from "@/features/home/ui/home-motion";
+import { HomeMobileCategoryPills } from "@/features/home/ui/HomeMobileCategoryPills";
 import {
   HomeMobileCategoryStage,
   type HomeMobileCategorySlide,
@@ -13,7 +13,6 @@ type HomeMobileCategoriesProps = {
   productCountLabel: string;
   emptyLabel: string;
   viewAllLabel: string;
-  viewAllHref: string;
   previousLabel: string;
   nextLabel: string;
   categories: readonly HomeMobileCategorySlide[];
@@ -25,24 +24,14 @@ function wrapIndex(index: number, length: number): number {
 
 const WHEEL_LOCK_MS = 480;
 
-function shortestDirection(
-  from: number,
-  to: number,
-  length: number,
-): WheelDirection {
-  const forward = wrapIndex(to - from, length);
-  const backward = wrapIndex(from - to, length);
-  return forward <= backward ? 1 : -1;
-}
-
 /**
  * Mobile home categories — pills + plated carousel (Figma 196:205 / 181:482).
+ * Pills open the menu with that category selected; arrows walk the carousel.
  */
 export function HomeMobileCategories({
   productCountLabel,
   emptyLabel,
   viewAllLabel,
-  viewAllHref,
   previousLabel,
   nextLabel,
   categories,
@@ -68,18 +57,6 @@ export function HomeMobileCategories({
     }, WHEEL_LOCK_MS);
   }
 
-  function moveTo(target: number): void {
-    if (target === index || lockRef.current) {
-      return;
-    }
-    lockRef.current = true;
-    setDirection(shortestDirection(index, target, count));
-    setIndex(target);
-    window.setTimeout(() => {
-      lockRef.current = false;
-    }, WHEEL_LOCK_MS);
-  }
-
   if (count === 0 || !current) {
     return (
       <p className="px-6 pt-8 text-center text-white/70">{emptyLabel}</p>
@@ -88,31 +65,11 @@ export function HomeMobileCategories({
 
   return (
     <section className="relative z-[1] overflow-x-clip pt-6 pb-0">
-      <div
-        data-node-id="196:205"
-        className={`${HOME_HORIZONTAL_SCROLL} px-6`}
-      >
-        <div className="flex w-max items-center gap-2">
-          {categories.map((category, categoryIndex) => {
-            const active = categoryIndex === index;
-            return (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => moveTo(categoryIndex)}
-                aria-pressed={active}
-                className={`rounded-[50px] px-4 py-2 text-[16px] leading-6 whitespace-nowrap transition-colors ${
-                  active
-                    ? "bg-white font-semibold text-[rgba(34,34,34,0.9)]"
-                    : "bg-white/10 font-normal text-white/90 hover:bg-white/15"
-                }`}
-              >
-                {category.title}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <HomeMobileCategoryPills
+        categories={categories}
+        index={index}
+        direction={direction}
+      />
 
       <HomeMobileCategoryStage
         current={current}
@@ -120,7 +77,7 @@ export function HomeMobileCategories({
         next={nextSlide ?? null}
         productCountLabel={productCountLabel}
         viewAllLabel={viewAllLabel}
-        viewAllHref={viewAllHref}
+        viewAllHref={current.href}
         previousLabel={previousLabel}
         nextLabel={nextLabel}
         onPrev={() => moveBy(-1)}
