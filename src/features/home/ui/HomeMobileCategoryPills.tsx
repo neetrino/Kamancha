@@ -1,65 +1,17 @@
 "use client";
 
-import { animate, motion, useMotionValue, type MotionValue } from "motion/react";
-import {
-  useLayoutEffect,
-  useRef,
-  type MutableRefObject,
-} from "react";
+import { useLayoutEffect, useRef } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import {
-  type HomeMobileCategorySlide,
-  type WheelDirection,
-} from "@/features/home/ui/HomeMobilePlateWheel";
-import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
+import { HOME_HORIZONTAL_SCROLL } from "@/features/home/ui/home-motion";
+import type { HomeMobileCategorySlide } from "@/features/home/ui/HomeMobilePlateWheel";
 
 const PILL_INSET_PX = 24;
-const COPY_COUNT = 3;
-
-/** Same spring as the plate wheel so pills step in sync. */
-const PILL_SPRING = {
-  type: "spring",
-  stiffness: 52,
-  damping: 18,
-  mass: 0.95,
-} as const;
 
 type HomeMobileCategoryPillsProps = {
   categories: readonly HomeMobileCategorySlide[];
   index: number;
-  direction: WheelDirection;
 };
-
-function wrapIndex(index: number, length: number): number {
-  return ((index % length) + length) % length;
-}
-
-function stepsAlongDirection(
-  from: number,
-  to: number,
-  length: number,
-  direction: WheelDirection,
-): number {
-  if (from === to || length <= 0) {
-    return 0;
-  }
-  if (direction === 1) {
-    return wrapIndex(to - from, length);
-  }
-  return wrapIndex(from - to, length);
-}
-
-function middleSlot(slot: number, count: number): number {
-  let next = slot;
-  while (next < count) {
-    next += count;
-  }
-  while (next >= count * 2) {
-    next -= count;
-  }
-  return next;
-}
 
 function pillClassName(active: boolean): string {
   return `rounded-[50px] px-4 py-2 text-[16px] leading-6 whitespace-nowrap transition-colors ${
@@ -69,147 +21,66 @@ function pillClassName(active: boolean): string {
   }`;
 }
 
-function translateForSlot(
-  pillRefs: MutableRefObject<Array<HTMLElement | null>>,
-  slot: number,
-): number | null {
-  const pill = pillRefs.current[slot];
-  if (!pill) {
-    return null;
+function scrollActivePillIntoView(scroller: HTMLElement): void {
+  const selected = scroller.querySelector<HTMLElement>(
+    '[data-active-home-category-pill="true"]',
+  );
+  if (!selected) {
+    return;
   }
-  return PILL_INSET_PX - pill.offsetLeft;
-}
 
-function useCircularPillTrack(
-  pillRefs: MutableRefObject<Array<HTMLElement | null>>,
-  index: number,
-  count: number,
-  direction: WheelDirection,
-  playMotion: boolean,
-  x: MotionValue<number>,
-): void {
-  const slotRef = useRef(count > 1 ? count + index : index);
-  const prevIndexRef = useRef(index);
-  const mountedRef = useRef(false);
-
-  useLayoutEffect(() => {
-    if (count <= 1) {
-      x.set(0);
-      return;
-    }
-
-    const prev = prevIndexRef.current;
-    const isFirst = !mountedRef.current;
-
-    if (isFirst) {
-      slotRef.current = count + index;
-      mountedRef.current = true;
-    } else if (prev !== index) {
-      const steps = stepsAlongDirection(prev, index, count, direction);
-      slotRef.current += direction * steps;
-    }
-    prevIndexRef.current = index;
-
-    const targetX = translateForSlot(pillRefs, slotRef.current);
-    if (targetX == null) {
-      return;
-    }
-
-    const play = playMotion && !isFirst && prev !== index;
-
-    function snapToMiddleCopy(): void {
-      const normalized = middleSlot(slotRef.current, count);
-      if (normalized === slotRef.current) {
-        return;
-      }
-      slotRef.current = normalized;
-      const homeX = translateForSlot(pillRefs, normalized);
-      if (homeX != null) {
-        x.set(homeX);
-      }
-    }
-
-    if (!play) {
-      x.set(targetX);
-      snapToMiddleCopy();
-      return;
-    }
-
-    const controls = animate(x, targetX, {
-      ...PILL_SPRING,
-      onComplete: snapToMiddleCopy,
-    });
-
-    return () => {
-      controls.stop();
-    };
-  }, [count, direction, index, pillRefs, playMotion, x]);
+  const delta =
+    selected.getBoundingClientRect().left -
+    scroller.getBoundingClientRect().left -
+    PILL_INSET_PX;
+  scroller.scrollTo({
+    left: scroller.scrollLeft + delta,
+    behavior: "smooth",
+  });
 }
 
 /**
- * Circular category pills — after the last item the first slides in from the left.
+ * Scrollable category pills — browse by horizontal scroll; tap opens the menu.
+ * Active pill follows the plate carousel (arrows / plate swipe), not pill scroll.
  */
 export function HomeMobileCategoryPills({
   categories,
   index,
-  direction,
 }: HomeMobileCategoryPillsProps) {
-  const playMotion = usePlayHomeMotion();
-  const pillRefs = useRef<Array<HTMLElement | null>>([]);
-  const x = useMotionValue(0);
-  const count = categories.length;
-  const copies = count > 1 ? COPY_COUNT : 1;
+  const scrollerRef = useRef<HTMLDivElement>(null);
 
-  useCircularPillTrack(pillRefs, index, count, direction, playMotion, x);
+  useLayoutEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) {
+      return;
+    }
+    scrollActivePillIntoView(scroller);
+  }, [index, categories]);
 
   return (
     <div
+      ref={scrollerRef}
       data-node-id="196:205"
-      className="overflow-x-hidden overflow-y-clip"
+      className={`${HOME_HORIZONTAL_SCROLL} overflow-y-clip`}
     >
-      <motion.div
-        className="flex w-max items-center gap-2 px-6"
-        style={{ x }}
-      >
-        {Array.from({ length: copies }, (_, copy) =>
-          categories.map((category, categoryIndex) => {
-            const slot = copy * count + categoryIndex;
-            const active = categoryIndex === index;
-            const interactive = copies === 1 || copy === 1;
-            const className = pillClassName(active);
+      <div className="flex w-max items-center gap-2 px-6">
+        {categories.map((category, categoryIndex) => {
+          const active = categoryIndex === index;
 
-            if (interactive) {
-              return (
-                <AppLink
-                  key={`${copy}-${category.id}`}
-                  ref={(node) => {
-                    pillRefs.current[slot] = node;
-                  }}
-                  href={category.href}
-                  prefetchPolicy="intent"
-                  aria-current={active ? "page" : undefined}
-                  className={className}
-                >
-                  {category.title}
-                </AppLink>
-              );
-            }
-
-            return (
-              <span
-                key={`${copy}-${category.id}`}
-                ref={(node) => {
-                  pillRefs.current[slot] = node;
-                }}
-                aria-hidden
-                className={className}
-              >
-                {category.title}
-              </span>
-            );
-          }),
-        )}
-      </motion.div>
+          return (
+            <AppLink
+              key={category.id}
+              href={category.href}
+              prefetchPolicy="intent"
+              aria-current={active ? "page" : undefined}
+              data-active-home-category-pill={active ? "true" : undefined}
+              className={pillClassName(active)}
+            >
+              {category.title}
+            </AppLink>
+          );
+        })}
+      </div>
     </div>
   );
 }

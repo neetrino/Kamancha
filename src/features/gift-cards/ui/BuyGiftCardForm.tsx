@@ -131,23 +131,39 @@ export function BuyGiftCardForm({
     <form onSubmit={onSubmit} className="space-y-5">
       <div className={DRAWER_LABEL}>
         <span>{copy.amount}</span>
-        <SegmentedControl
-          aria-label={copy.amount}
+        <SelectDropdown
+          className={useCustom ? undefined : "md:hidden"}
+          ariaLabel={copy.amount}
           value={selectedAmount}
           options={amountOptions}
-          onSelect={setSelectedAmount}
+          onValueChange={setSelectedAmount}
+          deferChange={false}
+          triggerContent={
+            useCustom ? (
+              <input
+                type="number"
+                min={settings.minAmount}
+                max={settings.maxAmount}
+                value={customAmount}
+                onChange={(event) => setCustomAmount(event.target.value)}
+                className="h-full w-full min-w-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                placeholder={copy.customAmount}
+                autoFocus
+                required
+              />
+            ) : undefined
+          }
         />
-        {useCustom ? (
-          <input
-            type="number"
-            min={settings.minAmount}
-            max={settings.maxAmount}
-            value={customAmount}
-            onChange={(event) => setCustomAmount(event.target.value)}
-            className={DRAWER_FIELD}
-            required
-          />
-        ) : null}
+        {useCustom ? null : (
+          <div className="hidden md:block">
+            <SegmentedControl
+              aria-label={copy.amount}
+              value={selectedAmount}
+              options={amountOptions}
+              onSelect={setSelectedAmount}
+            />
+          </div>
+        )}
       </div>
 
       <label className={DRAWER_LABEL}>

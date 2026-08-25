@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, type Transition } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { plateWheelTransition, resolveWheelStepFromSwipe } from "@/features/home/ui/home-plate-motion";
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import { HOME_MOBILE_CATEGORY_DISH_SRC } from "@/lib/brand/assets";
 
@@ -21,6 +22,7 @@ type HomeMobilePlateWheelProps = {
   prev: HomeMobileCategorySlide | null;
   next: HomeMobileCategorySlide | null;
   direction: WheelDirection;
+  onStep?: (delta: WheelDirection) => void;
 };
 
 type PlateSlot = "prev" | "current" | "next";
@@ -61,13 +63,6 @@ const ENTER_LEFT: PlatePose = {
   zIndex: 0,
 };
 
-const springMove: Transition = {
-  type: "spring",
-  stiffness: 52,
-  damping: 18,
-  mass: 0.95,
-};
-
 function poseForEnter(direction: WheelDirection): PlatePose {
   return direction === 1 ? ENTER_LEFT : ENTER_RIGHT;
 }
@@ -84,9 +79,11 @@ export function HomeMobilePlateWheel({
   prev,
   next,
   direction,
+  onStep,
 }: HomeMobilePlateWheelProps) {
   const playMotion = usePlayHomeMotion();
-  const transition: Transition = playMotion ? springMove : { duration: 0 };
+  const transition = plateWheelTransition(playMotion);
+  const canSwipe = Boolean(onStep) && Boolean(prev ?? next);
   const plates: Array<{ slide: HomeMobileCategorySlide; slot: PlateSlot }> = [];
 
   if (prev) {
@@ -98,11 +95,21 @@ export function HomeMobilePlateWheel({
   }
 
   return (
-    <div
-      className="relative mx-auto h-[154px] w-[222px]"
+    <motion.div
+      className="relative mx-auto h-[154px] w-[222px] touch-pan-y"
       data-node-id="181:482"
+      onPanEnd={
+        canSwipe
+          ? (_event, info) => {
+              const step = resolveWheelStepFromSwipe(info.offset.x, info.velocity.x);
+              if (step) {
+                onStep?.(step);
+              }
+            }
+          : undefined
+      }
     >
-      <AnimatePresence initial={false} custom={direction}>
+      <AnimatePresence initial={false} mode="sync" custom={direction}>
         {plates.map(({ slide, slot }) => (
           <motion.div
             key={slide.id}
@@ -143,6 +150,6 @@ export function HomeMobilePlateWheel({
           </motion.div>
         ))}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
