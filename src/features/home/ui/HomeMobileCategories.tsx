@@ -7,6 +7,10 @@ import {
   HomeMobileCategoryStage,
   type HomeMobileCategorySlide,
 } from "@/features/home/ui/HomeMobileCategoryStage";
+import {
+  HOME_PLATE_RIM_STEP_DEG,
+  HOME_PLATE_WHEEL_LOCK_MS,
+} from "@/features/home/ui/home-plate-motion";
 import type { WheelDirection } from "@/features/home/ui/HomeMobilePlateWheel";
 
 type HomeMobileCategoriesProps = {
@@ -22,8 +26,6 @@ function wrapIndex(index: number, length: number): number {
   return ((index % length) + length) % length;
 }
 
-const WHEEL_LOCK_MS = 480;
-
 /**
  * Mobile home categories — pills + plated carousel (Figma 196:205 / 181:482).
  * Pills open the menu with that category selected; arrows walk the carousel.
@@ -38,6 +40,7 @@ export function HomeMobileCategories({
 }: HomeMobileCategoriesProps) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<WheelDirection>(1);
+  const [plateRotation, setPlateRotation] = useState(0);
   const lockRef = useRef(false);
   const count = categories.length;
   const current = categories[index];
@@ -51,10 +54,11 @@ export function HomeMobileCategories({
     }
     lockRef.current = true;
     setDirection(delta);
+    setPlateRotation((value) => value - delta * HOME_PLATE_RIM_STEP_DEG);
     setIndex((value) => wrapIndex(value + delta, count));
     window.setTimeout(() => {
       lockRef.current = false;
-    }, WHEEL_LOCK_MS);
+    }, HOME_PLATE_WHEEL_LOCK_MS);
   }
 
   if (count === 0 || !current) {
@@ -84,6 +88,7 @@ export function HomeMobileCategories({
         onNext={() => moveBy(1)}
         loop={loops}
         direction={direction}
+        plateRotation={plateRotation}
       />
     </section>
   );

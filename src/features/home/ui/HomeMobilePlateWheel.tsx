@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, type Transition } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { plateWheelTransition } from "@/features/home/ui/home-plate-motion";
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import { HOME_MOBILE_CATEGORY_DISH_SRC } from "@/lib/brand/assets";
 
@@ -61,13 +62,6 @@ const ENTER_LEFT: PlatePose = {
   zIndex: 0,
 };
 
-const springMove: Transition = {
-  type: "spring",
-  stiffness: 52,
-  damping: 18,
-  mass: 0.95,
-};
-
 function poseForEnter(direction: WheelDirection): PlatePose {
   return direction === 1 ? ENTER_LEFT : ENTER_RIGHT;
 }
@@ -86,7 +80,7 @@ export function HomeMobilePlateWheel({
   direction,
 }: HomeMobilePlateWheelProps) {
   const playMotion = usePlayHomeMotion();
-  const transition: Transition = playMotion ? springMove : { duration: 0 };
+  const transition = plateWheelTransition(playMotion);
   const plates: Array<{ slide: HomeMobileCategorySlide; slot: PlateSlot }> = [];
 
   if (prev) {
@@ -102,7 +96,7 @@ export function HomeMobilePlateWheel({
       className="relative mx-auto h-[154px] w-[222px]"
       data-node-id="181:482"
     >
-      <AnimatePresence initial={false} custom={direction}>
+      <AnimatePresence initial={false} mode="sync" custom={direction}>
         {plates.map(({ slide, slot }) => (
           <motion.div
             key={slide.id}

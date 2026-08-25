@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { HomeCategorySwitchers } from "@/features/home/ui/HomeCategorySwitchers";
 import { HomeDiamondMark } from "@/features/home/ui/HomeDiamondMark";
+import { HOME_PLATE_WHEEL_SPRING } from "@/features/home/ui/home-plate-motion";
 import { HomeReveal } from "@/features/home/ui/home-motion";
+import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import {
   HomeMobilePlateWheel,
   type HomeMobileCategorySlide,
@@ -30,6 +32,7 @@ type HomeMobileCategoryStageProps = {
   /** When true, switchers stay enabled and wrap around. */
   loop?: boolean;
   direction?: WheelDirection;
+  plateRotation?: number;
 };
 
 function formatProductCount(template: string, count: number): string {
@@ -52,7 +55,11 @@ export function HomeMobileCategoryStage({
   onNext,
   loop = false,
   direction = 1,
+  plateRotation = 0,
 }: HomeMobileCategoryStageProps) {
+  const playMotion = usePlayHomeMotion();
+  const plateTransition = playMotion ? HOME_PLATE_WHEEL_SPRING : { duration: 0 };
+
   return (
     <div className="relative mt-2 pt-6 pb-2">
       <div
@@ -60,16 +67,20 @@ export function HomeMobileCategoryStage({
         className="pointer-events-none absolute inset-x-0 top-[-24px] z-0 h-[765px] overflow-x-clip"
         data-node-id="181:476"
       >
-        <div className="absolute top-0 left-1/2 size-[765px] -translate-x-1/2">
+        <motion.div
+          className="absolute top-0 left-1/2 size-[765px] -translate-x-1/2 will-change-transform"
+          animate={{ rotate: 180 + plateRotation }}
+          transition={plateTransition}
+        >
           <Image
             src={HOME_HERO_PLATE_SRC}
             alt=""
             width={1370}
             height={1370}
             sizes="765px"
-            className="size-full rotate-180 rounded-full object-cover"
+            className="size-full rounded-full object-cover"
           />
-        </div>
+        </motion.div>
       </div>
 
       <HomeReveal className="relative z-[1]">
@@ -85,23 +96,12 @@ export function HomeMobileCategoryStage({
           data-node-id="181:503"
         >
           <HomeDiamondMark tone="forest" className="mb-1" />
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={current.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22 }}
-              className="flex flex-col items-center"
-            >
-              <p className="text-[18px] leading-6 font-semibold text-[rgba(34,34,34,0.9)]">
-                {current.title}
-              </p>
-              <p className="text-[16px] leading-[30px] text-black/55">
-                {formatProductCount(productCountLabel, current.productCount)}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+          <p className="text-[18px] leading-6 font-semibold text-[rgba(34,34,34,0.9)]">
+            {current.title}
+          </p>
+          <p className="text-[16px] leading-[30px] text-black/55">
+            {formatProductCount(productCountLabel, current.productCount)}
+          </p>
         </div>
 
         <div className="mt-2">

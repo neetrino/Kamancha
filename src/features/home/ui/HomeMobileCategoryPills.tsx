@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { HOME_PLATE_WHEEL_SPRING } from "@/features/home/ui/home-plate-motion";
 import {
   type HomeMobileCategorySlide,
   type WheelDirection,
@@ -16,14 +17,6 @@ import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 
 const PILL_INSET_PX = 24;
 const COPY_COUNT = 3;
-
-/** Same spring as the plate wheel so pills step in sync. */
-const PILL_SPRING = {
-  type: "spring",
-  stiffness: 52,
-  damping: 18,
-  mass: 0.95,
-} as const;
 
 type HomeMobileCategoryPillsProps = {
   categories: readonly HomeMobileCategorySlide[];
@@ -136,7 +129,7 @@ function useCircularPillTrack(
     }
 
     const controls = animate(x, targetX, {
-      ...PILL_SPRING,
+      ...HOME_PLATE_WHEEL_SPRING,
       onComplete: snapToMiddleCopy,
     });
 
