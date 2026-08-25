@@ -167,7 +167,7 @@ export function CreateGroupOrderModal({
             <h2 className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
               {labels.createTitle}
             </h2>
-            <p className="mt-1 text-sm leading-relaxed text-gray-600">
+            <p className="mt-1 hidden text-sm leading-relaxed text-gray-600 sm:block">
               {labels.createDescription}
             </p>
           </div>
