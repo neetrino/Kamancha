@@ -6,6 +6,7 @@ import {
   useId,
   useRef,
   useState,
+  type ReactNode,
   type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
@@ -36,7 +37,21 @@ type SelectDropdownProps = {
   deferChange?: boolean;
   /** Grow the trigger to the selected label instead of truncating. */
   fitContent?: boolean;
+  /**
+   * Replaces the selected label in the trigger (e.g. an inline input).
+   * The chevron still opens the menu.
+   */
+  triggerContent?: ReactNode;
 };
+
+function DropdownChevron({ open }: { open: boolean }) {
+  return (
+    <ChevronDown
+      className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-[360ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "rotate-180" : ""}`}
+      aria-hidden
+    />
+  );
+}
 
 function measureMenuPosition(trigger: HTMLElement): MenuPosition {
   const rect = trigger.getBoundingClientRect();
@@ -58,6 +73,7 @@ export function SelectDropdown({
   onValueChange,
   deferChange = true,
   fitContent = false,
+  triggerContent,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -174,24 +190,41 @@ export function SelectDropdown({
       className={`relative ${fitContent ? "w-max" : ""} ${className}`}
     >
       {name ? <input type="hidden" name={name} value={value} /> : null}
-      <button
-        type="button"
-        disabled={disabled}
-        className={`flex h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 ${fitContent ? "w-auto" : "w-full"}`}
-        aria-label={ariaLabel}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={listId}
-        onClick={() => (open ? closeMenu() : openMenu())}
-      >
-        <span className={fitContent ? "whitespace-nowrap" : "min-w-0 truncate"}>
-          {selectedLabel}
-        </span>
-        <ChevronDown
-          className={`h-4 w-4 shrink-0 text-gray-400 transition-transform duration-[360ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "rotate-180" : ""}`}
-          aria-hidden
-        />
-      </button>
+      {triggerContent ? (
+        <div
+          className={`flex h-11 items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-sm text-gray-900 shadow-sm transition-colors hover:border-gray-300 ${fitContent ? "w-auto" : "w-full"} ${disabled ? "pointer-events-none opacity-50" : ""}`}
+        >
+          <div className="min-w-0 flex-1">{triggerContent}</div>
+          <button
+            type="button"
+            disabled={disabled}
+            className="flex shrink-0 items-center outline-none"
+            aria-label={ariaLabel}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            aria-controls={listId}
+            onClick={() => (open ? closeMenu() : openMenu())}
+          >
+            <DropdownChevron open={open} />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          disabled={disabled}
+          className={`flex h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 ${fitContent ? "w-auto" : "w-full"}`}
+          aria-label={ariaLabel}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-controls={listId}
+          onClick={() => (open ? closeMenu() : openMenu())}
+        >
+          <span className={fitContent ? "whitespace-nowrap" : "min-w-0 truncate"}>
+            {selectedLabel}
+          </span>
+          <DropdownChevron open={open} />
+        </button>
+      )}
       {mounted && position
         ? createPortal(
             <SelectDropdownMenu

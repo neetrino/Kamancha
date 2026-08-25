@@ -102,15 +102,15 @@ export function MyGiftCardsView({
               <li key={card.id} className={`${PROFILE_INNER_CARD} overflow-hidden`}>
                 <div className="space-y-3 px-4 py-4 sm:px-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0 space-y-2">
+                    <div className="flex min-w-0 flex-1 items-start justify-between gap-3 sm:block sm:space-y-2">
                       <p className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
                         {card.code}
                       </p>
-                      <span className={PROFILE_STATUS_BADGE}>
+                      <span className={`${PROFILE_STATUS_BADGE} shrink-0`}>
                         {copy.statuses[card.status] ?? card.status}
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="w-full text-left sm:w-auto sm:text-right">
                       <p className="font-big-fat-boii text-lg font-normal tracking-wide text-brand-forest">
                         {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
                       </p>
