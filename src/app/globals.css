@@ -137,6 +137,29 @@ html {
   }
 }
 
+/**
+ * iOS Safari zooms the page when a focused field has font-size < 16px.
+ * Force 16px on touch devices so typing does not jump the viewport.
+ */
+@media (hover: none) and (pointer: coarse) {
+  input:not(
+    [type="checkbox"],
+    [type="radio"],
+    [type="range"],
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [type="file"],
+    [type="image"],
+    [type="color"],
+    [type="hidden"]
+  ),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 /* Confirm / modal dismiss — same motion as Mobee storefront dialog */
 @keyframes confirm-dialog-backdrop-in {
   0% {
