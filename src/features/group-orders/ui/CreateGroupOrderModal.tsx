@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, Users, X } from "lucide-react";
+import { Info, User, Users, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -199,6 +199,7 @@ export function CreateGroupOrderModal({
             selected={paymentMode === "ORGANIZER_PAYS_ALL"}
             title={labels.paymentModeOrganizer}
             hint={labels.paymentModeOrganizerHint}
+            icon={<User className="mt-0.5 h-5 w-5 shrink-0 text-gray-800" aria-hidden />}
             onSelect={() => setPaymentMode("ORGANIZER_PAYS_ALL")}
           >
             {paymentMode === "ORGANIZER_PAYS_ALL" ? (
@@ -223,6 +224,7 @@ export function CreateGroupOrderModal({
           <PaymentOption
             selected={paymentMode === "SPLIT_PER_PARTICIPANT"}
             title={labels.paymentModeSplit}
+            icon={<Users className="mt-0.5 h-5 w-5 shrink-0 text-gray-800" aria-hidden />}
             onSelect={() => setPaymentMode("SPLIT_PER_PARTICIPANT")}
           />
 
@@ -258,12 +260,14 @@ function PaymentOption({
   selected,
   title,
   hint,
+  icon,
   onSelect,
   children,
 }: {
   selected: boolean;
   title: string;
   hint?: string;
+  icon: ReactNode;
   onSelect: () => void;
   children?: ReactNode;
 }) {
@@ -278,7 +282,7 @@ function PaymentOption({
       }`}
     >
       <div className="flex items-start gap-3">
-        <Users className="mt-0.5 h-5 w-5 shrink-0 text-gray-800" aria-hidden />
+        {icon}
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-gray-900">{title}</p>
           {hint ? (
