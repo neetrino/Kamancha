@@ -69,11 +69,7 @@ export function HomeMobileCategories({
 
   return (
     <section className="relative z-[1] overflow-x-clip pt-6 pb-0">
-      <HomeMobileCategoryPills
-        categories={categories}
-        index={index}
-        direction={direction}
-      />
+      <HomeMobileCategoryPills categories={categories} index={index} />
 
       <HomeMobileCategoryStage
         current={current}
@@ -86,6 +82,7 @@ export function HomeMobileCategories({
         nextLabel={nextLabel}
         onPrev={() => moveBy(-1)}
         onNext={() => moveBy(1)}
+        onStep={moveBy}
         loop={loops}
         direction={direction}
         plateRotation={plateRotation}

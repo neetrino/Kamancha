@@ -29,6 +29,7 @@ type HomeMobileCategoryStageProps = {
   nextLabel: string;
   onPrev: () => void;
   onNext: () => void;
+  onStep?: (delta: WheelDirection) => void;
   /** When true, switchers stay enabled and wrap around. */
   loop?: boolean;
   direction?: WheelDirection;
@@ -53,6 +54,7 @@ export function HomeMobileCategoryStage({
   nextLabel,
   onPrev,
   onNext,
+  onStep,
   loop = false,
   direction = 1,
   plateRotation = 0,
@@ -89,6 +91,7 @@ export function HomeMobileCategoryStage({
           prev={prev}
           next={next}
           direction={direction}
+          onStep={onStep}
         />
 
         <div
