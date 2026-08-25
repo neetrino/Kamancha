@@ -37,16 +37,6 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
     <CatalogPageHeader
       heading={wishlistCopy.heading}
       headingSize="compact"
-      resultsLabel={
-        !user || products.length === 0
-          ? wishlistCopy.resultsCountZero
-          : products.length === 1
-            ? wishlistCopy.resultsCountOne
-            : wishlistCopy.resultsCount.replace(
-                "{count}",
-                String(products.length),
-              )
-      }
     />
   );
 

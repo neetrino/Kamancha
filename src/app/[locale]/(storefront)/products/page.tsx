@@ -109,17 +109,9 @@ export default async function ProductsPage({
   const pageHref = (targetPage: number) =>
     catalogHref(rawLocale, filters, { page: targetPage });
 
-  const resultsLabel =
-    catalog.total === 1
-      ? catalogCopy.resultsCountOne
-      : catalogCopy.resultsCount.replace("{count}", String(catalog.total));
-
   return (
     <section className="flex flex-col gap-6">
-      <CatalogPageHeader
-        heading={catalogCopy.heading}
-        resultsLabel={resultsLabel}
-      />
+      <CatalogPageHeader heading={catalogCopy.heading} />
 
       <CatalogControls
         locale={rawLocale}

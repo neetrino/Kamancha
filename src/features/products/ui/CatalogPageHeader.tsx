@@ -2,7 +2,6 @@ import { Reveal } from "@/components/ui/RevealMotion";
 
 type CatalogPageHeaderProps = {
   heading: string;
-  resultsLabel: string;
   headingSize?: "default" | "compact";
 };
 
@@ -14,11 +13,10 @@ const HEADING_SIZE_CLASS = {
 } as const;
 
 /**
- * Catalog page intro — Figma Container 103:2412 (H1, results count).
+ * Catalog / wishlist page intro — heading only (Figma Container 103:2412).
  */
 export function CatalogPageHeader({
   heading,
-  resultsLabel,
   headingSize = "default",
 }: CatalogPageHeaderProps) {
   return (
@@ -30,15 +28,6 @@ export function CatalogPageHeader({
         <h1 data-node-id="103:2420" className={HEADING_SIZE_CLASS[headingSize]}>
           {heading}
         </h1>
-      </Reveal>
-
-      <Reveal immediate delay={0.08} y={16}>
-        <p
-          data-node-id="103:2422"
-          className="pt-2 text-base leading-6 text-white/60"
-        >
-          {resultsLabel}
-        </p>
       </Reveal>
     </header>
   );
