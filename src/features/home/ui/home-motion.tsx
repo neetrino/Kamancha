@@ -16,12 +16,15 @@ import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 export const homeEaseOut = revealEaseOut;
 
 /**
- * Horizontal product/category rows — contain overscroll so vertical page scroll
- * is not captured; pan-x keeps cards from blocking vertical gestures.
- * `overflow-y-clip` avoids a stray vertical scrollbar track on the right.
+ * Horizontal product/category rows.
+ * Do not use `touch-pan-x` — it blocks vertical page scroll while the finger
+ * is on the row (ԼԱՎԱԳՈՒՅՆԸ / THE BEST cards). Default touch-action lets the
+ * browser choose horizontal vs vertical. `overscroll-x-contain` keeps
+ * horizontal overscroll from chaining sideways; `overflow-y-clip` avoids a
+ * stray vertical scrollbar track.
  */
 export const HOME_HORIZONTAL_SCROLL =
-  "overflow-x-auto overflow-y-clip overscroll-x-contain touch-pan-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:size-0";
+  "overflow-x-auto overflow-y-clip overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:size-0";
 
 type HomeRevealProps = ComponentProps<typeof Reveal>;
 
