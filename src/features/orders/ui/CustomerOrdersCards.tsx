@@ -74,7 +74,7 @@ export function CustomerOrdersCards({
   return (
     <ul className={PROFILE_ORDERS_CARD_GRID}>
       {orders.map((order) => (
-        <li key={order.id} className="min-w-0">
+        <li key={order.id} className="min-w-0 w-full">
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
             status={formatOrderStatusLabel(order.status)}

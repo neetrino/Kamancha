@@ -744,6 +744,14 @@ html {
       0 1px 2px -1px rgb(0 0 0 / 0.06);
   }
 
+  /* Safari: flex children inside <button> do not stretch to full card width. */
+  .profile-order-card,
+  .profile-order-card-cta {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
   .profile-mobile-tab-sheet-scroll .profile-pill-light {
     background-color: var(--brand-forest);
     color: #ffffff;

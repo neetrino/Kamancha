@@ -70,7 +70,7 @@ function RecentOrdersBody({
   return (
     <ul className={`relative z-[2] ${PROFILE_CARD_GRID}`}>
       {orders.map((order) => (
-        <li key={order.id} className="min-w-0">
+        <li key={order.id} className="min-w-0 w-full">
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
             status={order.status}
