@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { AnimatePresence, motion, type Transition } from "motion/react";
 
+import { AppLink } from "@/components/ui/AppLink";
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { HOME_MOBILE_CATEGORY_DISH_SRC } from "@/lib/brand/assets";
 
 export type WheelDirection = 1 | -1;
 
@@ -12,7 +13,6 @@ export type HomeMobileCategorySlide = {
   id: string;
   title: string;
   href: string;
-  imageUrl: string | null;
   productCount: number;
 };
 
@@ -68,10 +68,6 @@ const springMove: Transition = {
   mass: 0.95,
 };
 
-function categoryPhoto(imageUrl: string | null): string {
-  return imageUrl ?? STOREFRONT_PRODUCT_PHOTO;
-}
-
 function poseForEnter(direction: WheelDirection): PlatePose {
   return direction === 1 ? ENTER_LEFT : ENTER_RIGHT;
 }
@@ -110,21 +106,40 @@ export function HomeMobilePlateWheel({
         {plates.map(({ slide, slot }) => (
           <motion.div
             key={slide.id}
-            className="pointer-events-none absolute top-0 left-0"
+            className={`absolute top-0 left-0 ${
+              slot === "current" ? "" : "pointer-events-none"
+            }`}
             style={{ width: PLATE_W, height: PLATE_H }}
             initial={playMotion ? poseForEnter(direction) : SLOT_POSE[slot]}
             animate={SLOT_POSE[slot]}
             exit={playMotion ? poseForExit(direction) : SLOT_POSE[slot]}
             transition={transition}
           >
-            <Image
-              src={categoryPhoto(slide.imageUrl)}
-              alt={slot === "current" ? slide.title : ""}
-              fill
-              sizes={slot === "current" ? "222px" : "178px"}
-              className="object-contain object-center"
-              priority={slot === "current"}
-            />
+            {slot === "current" ? (
+              <AppLink
+                href={slide.href}
+                prefetchPolicy="intent"
+                aria-label={slide.title}
+                className="relative block size-full"
+              >
+                <Image
+                  src={HOME_MOBILE_CATEGORY_DISH_SRC}
+                  alt=""
+                  fill
+                  sizes="222px"
+                  className="object-contain object-center"
+                  priority
+                />
+              </AppLink>
+            ) : (
+              <Image
+                src={HOME_MOBILE_CATEGORY_DISH_SRC}
+                alt=""
+                fill
+                sizes="178px"
+                className="object-contain object-center"
+              />
+            )}
           </motion.div>
         ))}
       </AnimatePresence>

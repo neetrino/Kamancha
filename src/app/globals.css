@@ -20,6 +20,14 @@
   /* SiteHeader xl+: pt-8 + min-h-[65px] + pb-2.5 */
   --storefront-header-offset: calc(2rem + 65px + 0.625rem);
   --profile-sticky-gap: 1.75rem;
+  /* Mobile bottom nav (Figma 181:727) + home-like gap above the bar */
+  --mobile-bottom-nav-height: 63px;
+  --mobile-bottom-nav-bottom-inset: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  --mobile-bottom-nav-content-gap: 2rem;
+  --mobile-bottom-nav-clearance: calc(
+    var(--mobile-bottom-nav-height) + var(--mobile-bottom-nav-bottom-inset) +
+      var(--mobile-bottom-nav-content-gap)
+  );
   --brand-pale-edge-stroke: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0) 0%,
@@ -126,6 +134,29 @@ html {
   ):focus-visible {
     outline: 2px solid color-mix(in srgb, var(--brand-forest) 70%, white);
     outline-offset: 2px;
+  }
+}
+
+/**
+ * iOS Safari zooms the page when a focused field has font-size < 16px.
+ * Force 16px on touch devices so typing does not jump the viewport.
+ */
+@media (hover: none) and (pointer: coarse) {
+  input:not(
+    [type="checkbox"],
+    [type="radio"],
+    [type="range"],
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [type="file"],
+    [type="image"],
+    [type="color"],
+    [type="hidden"]
+  ),
+  textarea,
+  select {
+    font-size: 16px !important;
   }
 }
 
@@ -448,7 +479,12 @@ html {
 
 /**
  * Storefront glass: frosted base; rim refraction while idle.
- * Refraction paused during scroll (`html.liquid-glass-scrolling` from LiquidGlassOptics).
+ * Refraction is the default (desktop). Touch GPUs drop `backdrop-filter: url(#svg)`
+ * as a whole, so coarse pointers keep blur only. Scroll pauses refraction via
+ * `html.liquid-glass-scrolling` (LiquidGlassOptics; desktop only).
+ *
+ * Do not put `url(#svg)` on `-webkit-backdrop-filter` — WebKit discards the
+ * entire filter, including blur.
  */
 .liquid-glass,
 .liquid-glass-panel {
@@ -474,6 +510,14 @@ html {
 
   html.liquid-glass-scrolling .liquid-glass,
   html.liquid-glass-scrolling .liquid-glass-panel {
+    backdrop-filter: blur(3px) saturate(1.22);
+    -webkit-backdrop-filter: blur(3px) saturate(1.22);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .liquid-glass,
+  .liquid-glass-panel {
     backdrop-filter: blur(3px) saturate(1.22);
     -webkit-backdrop-filter: blur(3px) saturate(1.22);
   }
@@ -614,7 +658,7 @@ html {
 
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
     padding-top: 0.5rem;
-    padding-bottom: 6rem;
+    padding-bottom: var(--mobile-bottom-nav-clearance);
   }
 
   /* Checkout + group order — Grill.am mobile inset (single 1.25rem; no double px). */
@@ -698,6 +742,14 @@ html {
     box-shadow:
       0 1px 3px 0 rgb(0 0 0 / 0.08),
       0 1px 2px -1px rgb(0 0 0 / 0.06);
+  }
+
+  /* Safari: flex children inside <button> do not stretch to full card width. */
+  .profile-order-card,
+  .profile-order-card-cta {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .profile-mobile-tab-sheet-scroll .profile-pill-light {

@@ -12,6 +12,10 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 import { useIsClient } from "@/lib/react/use-is-client";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 /** Must match `.animate-side-sheet-panel-*` duration in globals.css. */
@@ -88,11 +92,10 @@ export function SideSheet({
     return () => window.clearTimeout(timer);
   }, [open, rendered, finishExit]);
 
+  useBodyScrollLock(rendered);
+
   useEffect(() => {
     if (!rendered) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") onClose();
@@ -100,7 +103,6 @@ export function SideSheet({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [rendered, onClose]);
@@ -188,6 +190,7 @@ export function SideSheet({
         )}
         <div
           className={`relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${panelRadius}`}
+          {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
           onClick={(event) => event.stopPropagation()}
         >
           {displayChildren}

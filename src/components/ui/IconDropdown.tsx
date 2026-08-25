@@ -160,7 +160,13 @@ export function IconDropdown({
                 setOpen(false);
               }}
             >
-              {children}
+              {/*
+                Mount menu only while open/closing. Keeps logout <form> out of the
+                SSR DOM so password-manager extensions cannot inject attributes
+                (e.g. __gcruniqueid) before hydration — common on mobile when the
+                desktop-hidden header menu is still in the document.
+              */}
+              {open || elevated ? children : null}
             </div>
           </div>
         </div>

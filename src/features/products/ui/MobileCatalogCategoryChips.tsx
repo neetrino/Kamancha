@@ -1,3 +1,7 @@
+"use client";
+
+import { useLayoutEffect, useRef } from "react";
+
 import { AppLink } from "@/components/ui/AppLink";
 import { catalogHref } from "@/features/products/application/catalog-search-params";
 import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
@@ -23,6 +27,25 @@ const CHIP_SELECTED =
 /** Idle — translucent on forest. */
 const CHIP_IDLE =
   "border-white/25 bg-white/10 text-white hover:bg-white/15";
+
+const CHIP_SCROLL_INSET_PX = 0;
+
+function scrollSelectedChipIntoView(scroller: HTMLElement): void {
+  const selected = scroller.querySelector<HTMLElement>(
+    '[data-selected-category-chip="true"]',
+  );
+  if (!selected) {
+    scroller.scrollLeft = 0;
+    return;
+  }
+
+  const inset = CHIP_SCROLL_INSET_PX;
+  const delta =
+    selected.getBoundingClientRect().left -
+    scroller.getBoundingClientRect().left -
+    inset;
+  scroller.scrollLeft += delta;
+}
 
 function CategoryIcon({
   src,
@@ -60,10 +83,20 @@ export function MobileCatalogCategoryChips({
   allCategoriesLabel,
   categoriesLabel,
 }: MobileCatalogCategoryChipsProps) {
+  const scrollerRef = useRef<HTMLElement>(null);
   const selectedSlug = filters.category ?? null;
+
+  useLayoutEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) {
+      return;
+    }
+    scrollSelectedChipIntoView(scroller);
+  }, [selectedSlug, categories]);
 
   return (
     <nav
+      ref={scrollerRef}
       aria-label={categoriesLabel}
       className="overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:hidden"
     >
@@ -80,6 +113,7 @@ export function MobileCatalogCategoryChips({
               selectedSlug == null ? CHIP_SELECTED : CHIP_IDLE
             }`}
             aria-current={selectedSlug == null ? "page" : undefined}
+            data-selected-category-chip={selectedSlug == null ? "true" : undefined}
           >
             <CategoryIcon
               src={CATALOG_CATEGORY_ICON_ALL}
@@ -110,6 +144,7 @@ export function MobileCatalogCategoryChips({
                   active ? CHIP_SELECTED : CHIP_IDLE
                 }`}
                 aria-current={active ? "page" : undefined}
+                data-selected-category-chip={active ? "true" : undefined}
               >
                 <CategoryIcon src={icon} className="size-4" />
                 <span className="whitespace-nowrap uppercase">

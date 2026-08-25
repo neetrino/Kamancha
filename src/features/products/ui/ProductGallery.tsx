@@ -10,6 +10,10 @@ import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import { clearActiveFocus } from "@/lib/dom/clear-active-focus";
 import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
 
 const ZOOM_SRC = "/assets/brand/product/zoom-in.svg";
@@ -98,11 +102,10 @@ export function ProductGallery({
     clearActiveFocus();
   }
 
+  useBodyScrollLock(zoomed);
+
   useEffect(() => {
     if (!zoomed) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function onKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
@@ -138,7 +141,6 @@ export function ProductGallery({
 
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [zoomed, canCycle, galleryImages]);
@@ -189,7 +191,10 @@ export function ProductGallery({
               </>
             ) : null}
 
-            <div className="relative z-10 mx-auto flex h-[min(86dvh,880px)] w-[min(92vw,920px)] items-center justify-center p-2">
+            <div
+              className="relative z-10 mx-auto flex h-[min(86dvh,880px)] w-[min(92vw,920px)] items-center justify-center p-2"
+              {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
+            >
               <div className="relative h-full w-full">
                 <Image
                   src={selected.url}

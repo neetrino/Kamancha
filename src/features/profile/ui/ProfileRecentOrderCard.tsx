@@ -1,5 +1,6 @@
 "use client";
 
+import type { KeyboardEvent } from "react";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
 import {
@@ -18,6 +19,16 @@ type ProfileRecentOrderCardProps = {
   onViewDetails: () => void;
 };
 
+function handleCardKeyDown(
+  event: KeyboardEvent<HTMLElement>,
+  onViewDetails: () => void,
+): void {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    onViewDetails();
+  }
+}
+
 export function ProfileRecentOrderCard({
   orderNumber,
   status,
@@ -29,10 +40,12 @@ export function ProfileRecentOrderCard({
   onViewDetails,
 }: ProfileRecentOrderCardProps) {
   return (
-    <button
-      type="button"
+    <article
+      role="button"
+      tabIndex={0}
       onClick={onViewDetails}
-      className={`flex h-full w-full flex-col p-4 text-left transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-5 ${PROFILE_INNER_CARD}`}
+      onKeyDown={(event) => handleCardKeyDown(event, onViewDetails)}
+      className={`profile-order-card flex h-full w-full min-w-0 cursor-pointer flex-col items-stretch p-4 text-left transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-5 ${PROFILE_INNER_CARD}`}
     >
       <div className="flex items-start justify-between gap-3">
         <h3 className="min-w-0 font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
@@ -56,16 +69,19 @@ export function ProfileRecentOrderCard({
         </div>
       </div>
 
-      <div className="mt-auto pt-5">
-        <span className="flex min-h-9 w-full items-center gap-2 rounded-full bg-brand-forest py-0.5 pr-0.5 pl-3 font-big-fat-boii text-xs font-normal tracking-wide text-white uppercase">
+      <div className="mt-auto w-full self-stretch pt-5">
+        <div
+          className="profile-order-card-cta box-border flex w-full min-w-0 items-center gap-2 rounded-full bg-brand-forest py-0.5 pr-0.5 pl-3 font-big-fat-boii text-xs font-normal tracking-wide text-white uppercase"
+          aria-hidden
+        >
           <span className="min-w-0 flex-1 truncate text-center">
             {viewDetailsLabel}
           </span>
           <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-brand-forest">
             <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </span>
-        </span>
+        </div>
       </div>
-    </button>
+    </article>
   );
 }

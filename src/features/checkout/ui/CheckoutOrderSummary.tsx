@@ -117,7 +117,7 @@ export function CheckoutOrderSummary({
         <div className={CHECKOUT_COUPON_GLASS_CLASS}>
           <div className="relative z-[2] xl:hidden">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="text-sm text-white/80">{couponTitle}</p>
+              <p className="text-sm text-gray-900">{couponTitle}</p>
               <Button
                 type="button"
                 variant="secondary"

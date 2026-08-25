@@ -10,7 +10,7 @@ type HomeCategorySwitchersProps = {
 const SWITCHER_BUTTON =
   "group relative flex size-[58px] shrink-0 items-center justify-center rounded-full touch-manipulation disabled:pointer-events-none disabled:opacity-40";
 
-/** Default = Figma 196:218 (forest + white). Pressed = 196:215 (forest/40 + forest arrow). */
+/** Default = light green + forest arrow; pressed = softer green. */
 function SwitcherArrowIcon({ className }: { className: string }) {
   return (
     <svg
@@ -25,11 +25,11 @@ function SwitcherArrowIcon({ className }: { className: string }) {
         cx="20.5"
         cy="20.5"
         r="20"
-        className="fill-brand-forest stroke-white transition-[fill] duration-150 group-active:fill-brand-forest/40"
+        className="fill-[#cfe8c4] transition-[fill] duration-150 group-active:fill-[#b8dcb0]"
       />
       <path
         d="M28.7547 14.2454C28.7547 13.6931 28.307 13.2454 27.7547 13.2454L18.7547 13.2454C18.2024 13.2454 17.7547 13.6931 17.7547 14.2454C17.7547 14.7977 18.2024 15.2454 18.7547 15.2454L26.7547 15.2454L26.7547 23.2454C26.7547 23.7977 27.2024 24.2454 27.7547 24.2454C28.307 24.2454 28.7547 23.7977 28.7547 23.2454L28.7547 14.2454ZM14.2454 27.7546L14.9525 28.4617L28.4618 14.9525L27.7547 14.2454L27.0476 13.5383L13.5383 27.0475L14.2454 27.7546Z"
-        className="fill-white transition-[fill] duration-150 group-active:fill-brand-forest"
+        className="fill-brand-forest"
       />
     </svg>
   );

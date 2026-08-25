@@ -59,7 +59,7 @@ export default async function StorefrontLayout({
             inviteToken={groupBanner.inviteToken}
           />
         ) : null}
-        <main className="storefront-main mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-24 sm:px-6 xl:px-8 xl:pb-10">
+        <main className="storefront-main mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-[var(--mobile-bottom-nav-clearance)] sm:px-6 xl:px-8 xl:pb-10">
           <MaintenanceGate>{children}</MaintenanceGate>
         </main>
         <SiteFooter dictionary={dictionary} locale={locale} />

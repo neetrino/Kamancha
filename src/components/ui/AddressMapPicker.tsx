@@ -13,6 +13,10 @@ import {
   type GoogleMarkerInstance,
   type GoogleMapsNamespace,
 } from "@/lib/maps/load-google-maps-script";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 
 type AddressMapPickerLabels = {
   openMap: string;
@@ -56,11 +60,11 @@ export function AddressMapPicker({
   const mapRef = useRef<GoogleMapInstance | null>(null);
   const markerRef = useRef<GoogleMarkerInstance | null>(null);
 
+  useBodyScrollLock(open);
+
   useEffect(() => {
     if (!open) return;
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     function onKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape" && !resolving) {
         setExiting(true);
@@ -68,7 +72,6 @@ export function AddressMapPicker({
     }
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [open, resolving]);
@@ -206,6 +209,7 @@ export function AddressMapPicker({
               />
               <div
                 className={`liquid-glass relative z-[1] flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl ${panelClass}`}
+                {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
                 <MapPickerHeader labels={labels} onClose={closePicker} resolving={resolving} />
