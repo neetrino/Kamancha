@@ -9,6 +9,10 @@ import {
 import { createPortal } from "react-dom";
 
 import { useIsClient } from "@/lib/react/use-is-client";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 /** Keep mounted through exit keyframes (Mobee dialog out is 280ms; fallback 320ms). */
@@ -81,11 +85,10 @@ export function ConfirmDialog({
     return () => window.clearTimeout(timer);
   }, [open, rendered]);
 
+  useBodyScrollLock(rendered);
+
   useEffect(() => {
     if (!rendered) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape" && !isPending) onClose();
@@ -93,7 +96,6 @@ export function ConfirmDialog({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [rendered, isPending, onClose]);
@@ -139,6 +141,7 @@ export function ConfirmDialog({
       />
       <div
         className={`relative z-[1] w-full max-w-md rounded-3xl bg-white p-6 shadow-xl sm:p-7 ${panelClass}`}
+        {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
         onAnimationEnd={handlePanelAnimationEnd}
       >
         <h2

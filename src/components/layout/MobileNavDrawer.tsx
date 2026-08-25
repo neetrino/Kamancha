@@ -18,6 +18,10 @@ import { AppLink } from "@/components/ui/AppLink";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
 
 const MENU_TRANSITION_MS = 320;
@@ -115,6 +119,7 @@ export function MobileNavDrawer({
 
     document.body.appendChild(pill);
     pill.dataset.elevated = "true";
+    pill.setAttribute(BODY_SCROLL_LOCK_ALLOW, "");
     pill.style.position = "fixed";
     pill.style.top = `${rect.top}px`;
     pill.style.left = `${rect.left}px`;
@@ -141,6 +146,7 @@ export function MobileNavDrawer({
     pillNextSiblingRef.current = null;
 
     delete pill.dataset.elevated;
+    pill.removeAttribute(BODY_SCROLL_LOCK_ALLOW);
     pill.style.position = "";
     pill.style.top = "";
     pill.style.left = "";
@@ -245,30 +251,17 @@ export function MobileNavDrawer({
     };
   }, [restoreHeaderPill]);
 
+  useBodyScrollLock(rendered);
+
   useEffect(() => {
     if (!rendered) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") setOpen(false);
     }
 
-    function handleTouchMove(event: TouchEvent): void {
-      const target = event.target;
-      if (!(target instanceof Node)) return;
-      if (panelRef.current?.contains(target)) return;
-      const pill = document.querySelector(MOBILE_HEADER_PILL_SELECTOR);
-      if (pill?.contains(target)) return;
-      event.preventDefault();
-    }
-
-    document.addEventListener("touchmove", handleTouchMove, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [rendered]);
@@ -356,6 +349,7 @@ export function MobileNavDrawer({
                 role="dialog"
                 aria-modal="true"
                 aria-label={dictionary.nav.navigation}
+                {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
                 className={`fixed z-[90] origin-top-right overflow-hidden rounded-[20px] bg-white px-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] motion-reduce:transition-none motion-reduce:transform-none transition-[opacity,transform] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
                   expanded
                     ? "translate-y-0 scale-100 opacity-100"

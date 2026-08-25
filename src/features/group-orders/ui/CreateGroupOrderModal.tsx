@@ -17,6 +17,10 @@ import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/statu
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
 
 /** Match ConfirmDialog / profile popup exit (globals.css). */
@@ -75,16 +79,15 @@ export function CreateGroupOrderModal({
     return () => window.clearTimeout(timer);
   }, [open, rendered, defaultName]);
 
+  useBodyScrollLock(rendered && !exiting);
+
   useEffect(() => {
     if (!rendered || exiting) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape" && !pending) onClose();
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [rendered, exiting, onClose, pending]);
@@ -156,6 +159,7 @@ export function CreateGroupOrderModal({
         aria-modal="true"
         aria-label={labels.createTitle}
         className={`relative z-[1] flex max-h-[min(92vh,720px)] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-xl sm:max-w-lg ${panelClass}`}
+        {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
         onAnimationEnd={handlePanelAnimationEnd}
       >
         <div className="flex shrink-0 items-start justify-between gap-3 border-b border-gray-100 px-5 py-4 sm:px-6 sm:py-5">

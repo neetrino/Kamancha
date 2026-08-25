@@ -14,6 +14,10 @@ import { createPortal } from "react-dom";
 
 import { useProfileMobileSheetDrag } from "@/features/profile/ui/use-profile-mobile-sheet-drag";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
 
 /** Must match `.animate-bottom-sheet-panel-*` duration in globals.css. */
@@ -189,11 +193,10 @@ export function ProfileMobileTabSheet({
     return () => window.clearTimeout(timer);
   }, [rendered, phase]);
 
+  useBodyScrollLock(rendered);
+
   useEffect(() => {
     if (!rendered) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") onCloseRef.current();
@@ -201,7 +204,6 @@ export function ProfileMobileTabSheet({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [rendered]);
@@ -282,6 +284,7 @@ export function ProfileMobileTabSheet({
           borderTopLeftRadius: "var(--radius)",
           borderTopRightRadius: "var(--radius)",
         }}
+        {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
         onClick={(event) => event.stopPropagation()}
         onAnimationEnd={handlePanelAnimationEnd}
         onTransitionEnd={handlePanelTransitionEnd}

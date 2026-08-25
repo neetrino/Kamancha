@@ -24,6 +24,10 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import {
+  BODY_SCROLL_LOCK_ALLOW,
+  useBodyScrollLock,
+} from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
 
 const SEARCH_EXIT_MS = 320;
@@ -104,15 +108,14 @@ export function HeaderSearch({
     return () => window.clearTimeout(timer);
   }, [open, rendered, finishExit]);
 
+  useBodyScrollLock(rendered && !exiting);
+
   useEffect(() => {
     if (!rendered || exiting) return;
 
     const focusTimer = window.setTimeout(() => {
       inputRef.current?.focus();
     }, 40);
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
@@ -123,7 +126,6 @@ export function HeaderSearch({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       window.clearTimeout(focusTimer);
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [rendered, exiting]);
@@ -245,6 +247,7 @@ export function HeaderSearch({
               />
               <div
                 className={`relative z-[1] flex max-h-[min(70vh,560px)] w-full max-w-lg flex-col overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
+                {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
                 onAnimationEnd={handlePanelAnimationEnd}
               >
                 <div className="flex min-h-0 flex-1 flex-col">
