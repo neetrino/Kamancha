@@ -4,7 +4,7 @@ import Image from "next/image";
 import { AnimatePresence, motion, type Transition } from "motion/react";
 
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { HOME_MOBILE_CATEGORY_DISH_SRC } from "@/lib/brand/assets";
 
 export type WheelDirection = 1 | -1;
 
@@ -12,7 +12,6 @@ export type HomeMobileCategorySlide = {
   id: string;
   title: string;
   href: string;
-  imageUrl: string | null;
   productCount: number;
 };
 
@@ -68,10 +67,6 @@ const springMove: Transition = {
   mass: 0.95,
 };
 
-function categoryPhoto(imageUrl: string | null): string {
-  return imageUrl ?? STOREFRONT_PRODUCT_PHOTO;
-}
-
 function poseForEnter(direction: WheelDirection): PlatePose {
   return direction === 1 ? ENTER_LEFT : ENTER_RIGHT;
 }
@@ -118,7 +113,7 @@ export function HomeMobilePlateWheel({
             transition={transition}
           >
             <Image
-              src={categoryPhoto(slide.imageUrl)}
+              src={HOME_MOBILE_CATEGORY_DISH_SRC}
               alt={slot === "current" ? slide.title : ""}
               fill
               sizes={slot === "current" ? "222px" : "178px"}

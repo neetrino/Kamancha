@@ -5,6 +5,10 @@ export const BRAND_ORNAMENT_SRC = "/assets/brand/ornament.png" as const;
 export const HOME_HERO_PLATE_SRC =
   "/assets/brand/home/hero-plate.webp" as const;
 
+/** Mobile home category carousel dish (plate cutout, no table backdrop). */
+export const HOME_MOBILE_CATEGORY_DISH_SRC =
+  "/assets/brand/home/mobile-category-dish.webp" as const;
+
 /** Contact page flanking hands — Figma 244:509 / 251:510. */
 export const CONTACT_HAND_PARCHMENT_SRC =
   "/assets/brand/contact/hand-parchment.webp" as const;
