@@ -5,16 +5,16 @@ import type { WheelDirection } from "@/features/home/ui/HomeMobilePlateWheel";
 /** Shared spring for the mobile plate rim, dish wheel, and category pills. */
 export const HOME_PLATE_WHEEL_SPRING: Transition = {
   type: "spring",
-  stiffness: 46,
-  damping: 22,
+  stiffness: 52,
+  damping: 24,
   mass: 1,
 };
 
 /** Input lock while the rim spring settles. */
-export const HOME_PLATE_WHEEL_LOCK_MS = 640;
+export const HOME_PLATE_WHEEL_LOCK_MS = 560;
 
 /** Hero plate rim rotation per category step (matches dish arc travel). */
-export const HOME_PLATE_RIM_STEP_DEG = 14;
+export const HOME_PLATE_RIM_STEP_DEG = 13;
 
 /** Horizontal swipe distance before the carousel steps. */
 export const HOME_PLATE_SWIPE_OFFSET_PX = 36;

@@ -46,20 +46,21 @@ const SLOT_POSE: Record<PlateSlot, PlatePose> = {
   next: { x: -181, y: 80, scale: 0.8, opacity: 0.8, rotate: -16, zIndex: 1 },
 };
 
+/** Continue the upper rim arc — keep some opacity so dishes never blink out. */
 const ENTER_RIGHT: PlatePose = {
-  x: 300,
-  y: 150,
-  scale: 0.55,
-  opacity: 0,
-  rotate: 28,
+  x: 245,
+  y: 105,
+  scale: 0.68,
+  opacity: 0.55,
+  rotate: 20,
   zIndex: 0,
 };
 const ENTER_LEFT: PlatePose = {
-  x: -300,
-  y: 150,
-  scale: 0.55,
-  opacity: 0,
-  rotate: -28,
+  x: -245,
+  y: 105,
+  scale: 0.68,
+  opacity: 0.55,
+  rotate: -20,
   zIndex: 0,
 };
 
@@ -122,31 +123,25 @@ export function HomeMobilePlateWheel({
             exit={playMotion ? poseForExit(direction) : SLOT_POSE[slot]}
             transition={transition}
           >
-            {slot === "current" ? (
-              <AppLink
-                href={slide.href}
-                prefetchPolicy="intent"
-                aria-label={slide.title}
-                className="relative block size-full"
-              >
-                <Image
-                  src={HOME_MOBILE_CATEGORY_DISH_SRC}
-                  alt=""
-                  fill
-                  sizes="222px"
-                  className="object-contain object-center"
-                  priority
-                />
-              </AppLink>
-            ) : (
+            {/* Keep one Image node across slot changes — swapping AppLink remounts and flashes. */}
+            <div className="relative size-full">
               <Image
                 src={HOME_MOBILE_CATEGORY_DISH_SRC}
                 alt=""
                 fill
-                sizes="178px"
+                sizes="222px"
                 className="object-contain object-center"
+                priority
               />
-            )}
+              {slot === "current" ? (
+                <AppLink
+                  href={slide.href}
+                  prefetchPolicy="intent"
+                  aria-label={slide.title}
+                  className="absolute inset-0"
+                />
+              ) : null}
+            </div>
           </motion.div>
         ))}
       </AnimatePresence>
