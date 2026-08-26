@@ -1,47 +1,61 @@
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-/** Figma catalog sidebar category icons (103:1283). */
+/** Figma catalog sidebar category icons (103:1283). Same-origin — used as CSS masks. */
 export const CATALOG_CATEGORY_ICON_ALL = staticAssetUrl(
   "/assets/brand/catalog/cat-all.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_BREAKFAST = staticAssetUrl(
   "/assets/brand/catalog/cat-breakfast.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_APPETIZER = staticAssetUrl(
   "/assets/brand/catalog/cat-appetizer.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_SALAD = staticAssetUrl(
   "/assets/brand/catalog/cat-salad.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_SOUP = staticAssetUrl(
   "/assets/brand/catalog/cat-soup.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_HOT = staticAssetUrl(
   "/assets/brand/catalog/cat-hot.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_FAMILY = staticAssetUrl(
   "/assets/brand/catalog/cat-family.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_BBQ = staticAssetUrl(
   "/assets/brand/catalog/cat-bbq.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_FISH = staticAssetUrl(
   "/assets/brand/catalog/cat-fish.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_SIDE = staticAssetUrl(
   "/assets/brand/catalog/cat-side.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_TAPAKA = staticAssetUrl(
   "/assets/brand/catalog/cat-tapaka.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_SAUCE = staticAssetUrl(
   "/assets/brand/catalog/cat-sauce.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_DESSERT = staticAssetUrl(
   "/assets/brand/catalog/cat-dessert.svg",
+  { sameOrigin: true },
 );
 export const CATALOG_CATEGORY_ICON_BAR = staticAssetUrl(
   "/assets/brand/catalog/cat-bar.svg",
+  { sameOrigin: true },
 );
 
 const ICON_RULES: ReadonlyArray<{ pattern: RegExp; icon: string }> = [

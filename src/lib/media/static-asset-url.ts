@@ -1,14 +1,29 @@
 const STATIC_ASSET_PREFIX = "/assets/";
 
+type StaticAssetUrlOptions = {
+  /**
+   * Keep the `/assets/...` origin for CSS masks and other fetches that need CORS
+   * from the app host. Cross-origin CDN SVGs fail silently as `mask-image` sources.
+   */
+  sameOrigin?: boolean;
+};
+
 /**
  * Resolves a `/assets/...` path to the R2 CDN URL when configured.
  * Falls back to the local `public/` path when no CDN base is set.
  */
-export function staticAssetUrl(path: string): string {
+export function staticAssetUrl(
+  path: string,
+  options?: StaticAssetUrlOptions,
+): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  const base = process.env.NEXT_PUBLIC_STATIC_ASSET_BASE_URL?.replace(/\/$/, "");
 
-  if (!base || !normalized.startsWith(STATIC_ASSET_PREFIX)) {
+  if (options?.sameOrigin || !normalized.startsWith(STATIC_ASSET_PREFIX)) {
+    return normalized;
+  }
+
+  const base = process.env.NEXT_PUBLIC_STATIC_ASSET_BASE_URL?.replace(/\/$/, "");
+  if (!base) {
     return normalized;
   }
 
