@@ -1,40 +1,45 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { ImageResponse } from "next/og";
+import sharp from "sharp";
 
 export const alt = "Kamancha";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+/** Sharp needs Node — not Edge. */
+export const runtime = "nodejs";
 
-const BRAND_FOREST = "#265127";
+const BRAND_FOREST = { r: 0x26, g: 0x51, b: 0x27 };
 const WORDMARK_PATH = "public/assets/brand/hero/hero-wordmark.svg";
+const WORDMARK_WIDTH = 560;
 
-async function loadWordmarkDataUri(): Promise<string> {
-  const data = await readFile(join(process.cwd(), WORDMARK_PATH));
-  return `data:image/svg+xml;base64,${data.toString("base64")}`;
-}
+/**
+ * Link-preview image — forest green with centered wordmark.
+ * Rasterized with sharp: Satori/ImageResponse does not reliably paint this SVG.
+ */
+export default async function OpenGraphImage(): Promise<Response> {
+  const wordmarkSvg = await readFile(join(process.cwd(), WORDMARK_PATH));
+  const wordmarkPng = await sharp(wordmarkSvg)
+    .resize({ width: WORDMARK_WIDTH, withoutEnlargement: true })
+    .png()
+    .toBuffer();
 
-/** Social / messenger link preview — forest green with centered wordmark. */
-export default async function OpenGraphImage() {
-  const wordmarkSrc = await loadWordmarkDataUri();
+  const png = await sharp({
+    create: {
+      width: size.width,
+      height: size.height,
+      channels: 3,
+      background: BRAND_FOREST,
+    },
+  })
+    .composite([{ input: wordmarkPng, gravity: "center" }])
+    .png()
+    .toBuffer();
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: BRAND_FOREST,
-        }}
-      >
-        {/* ImageResponse requires <img> — not next/image. */}
-        <img src={wordmarkSrc} alt="" width={520} height={250} />
-      </div>
-    ),
-    { ...size },
-  );
+  return new Response(png, {
+    headers: {
+      "Content-Type": contentType,
+      "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+    },
+  });
 }
