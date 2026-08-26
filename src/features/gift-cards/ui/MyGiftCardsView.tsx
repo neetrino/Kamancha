@@ -74,6 +74,9 @@ export function MyGiftCardsView({
 }: MyGiftCardsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerKey, setDrawerKey] = useState(0);
+  const [openHistoryCardId, setOpenHistoryCardId] = useState<string | null>(
+    null,
+  );
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -95,13 +98,17 @@ export function MyGiftCardsView({
         {details.length === 0 ? (
           <p className={PROFILE_BODY}>{copy.empty}</p>
         ) : (
-          <ul className="relative z-[2] space-y-4">
+          <ul className="relative z-[2] grid grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-[15px]">
             {details.map(({ card, detail }) => (
               <MyGiftCardItem
                 key={card.id}
                 locale={locale}
                 card={card}
                 detail={detail}
+                historyOpen={openHistoryCardId === card.id}
+                onHistoryOpenChange={(open) => {
+                  setOpenHistoryCardId(open ? card.id : null);
+                }}
                 copy={{
                   history: copy.history,
                   balance: copy.balance,

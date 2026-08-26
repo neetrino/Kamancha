@@ -11,7 +11,7 @@ import {
   Tag,
   User,
 } from "lucide-react";
-import { useId, useState, type ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 
 import type {
   GiftCardDetail,
@@ -37,6 +37,8 @@ type MyGiftCardItemProps = {
   card: GiftCardListItem;
   detail: GiftCardDetail | null;
   copy: MyGiftCardItemCopy;
+  historyOpen: boolean;
+  onHistoryOpenChange: (open: boolean) => void;
 };
 
 function formatDateOnly(
@@ -156,8 +158,9 @@ export function MyGiftCardItem({
   card,
   detail,
   copy,
+  historyOpen,
+  onHistoryOpenChange,
 }: MyGiftCardItemProps) {
-  const [historyOpen, setHistoryOpen] = useState(false);
   const historyPanelId = useId();
   const statusLabel = copy.statuses[card.status] ?? card.status;
   const expiresLabel = formatDateOnly(card.expiresAt, locale);
@@ -165,26 +168,28 @@ export function MyGiftCardItem({
 
   return (
     <li
-      className={`${PROFILE_INNER_CARD} overflow-hidden rounded-3xl border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)]`}
+      className={`${PROFILE_INNER_CARD} h-full overflow-hidden rounded-3xl border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)]`}
     >
       <div className="space-y-5 px-5 py-5 sm:px-6 sm:py-6">
         <div className="flex items-start gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-forest text-white">
             <Gift className="size-5" aria-hidden />
           </span>
-          <div className="min-w-0 space-y-2">
-            <p className="font-big-fat-boii text-lg leading-none font-normal tracking-wide text-gray-900 uppercase sm:text-xl">
-              {card.code}
-            </p>
-            <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${statusBadgeClass(card.status)}`}
-            >
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between xl:gap-3">
+              <p className="font-big-fat-boii text-lg leading-none font-normal tracking-wide text-gray-900 uppercase sm:text-xl">
+                {card.code}
+              </p>
               <span
-                className={`size-1.5 rounded-full ${statusDotClass(card.status)}`}
-                aria-hidden
-              />
-              {statusLabel}
-            </span>
+                className={`inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${statusBadgeClass(card.status)}`}
+              >
+                <span
+                  className={`size-1.5 rounded-full ${statusDotClass(card.status)}`}
+                  aria-hidden
+                />
+                {statusLabel}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -222,7 +227,7 @@ export function MyGiftCardItem({
               className="flex w-full items-center gap-2 text-left"
               aria-expanded={historyOpen}
               aria-controls={historyPanelId}
-              onClick={() => setHistoryOpen((open) => !open)}
+              onClick={() => onHistoryOpenChange(!historyOpen)}
             >
               <History
                 className="size-4 shrink-0 text-brand-forest"
