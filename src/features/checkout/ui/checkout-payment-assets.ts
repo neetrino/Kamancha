@@ -1,10 +1,19 @@
 /** Checkout payment logos and badge geometry (MaMarie checkout). */
 
-export const CHECKOUT_PAYMENT_VISA_SRC = "/assets/payments/checkout/visa.webp";
-export const CHECKOUT_PAYMENT_MASTERCARD_SRC =
-  "/assets/payments/checkout/mastercard-classic.webp";
-export const CHECKOUT_PAYMENT_ARCA_SRC = "/assets/payments/checkout/arca.webp";
-export const CHECKOUT_PAYMENT_IDRAM_SRC = "/assets/payments/checkout/idram.webp";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
+export const CHECKOUT_PAYMENT_VISA_SRC = staticAssetUrl(
+  "/assets/payments/checkout/visa.webp",
+);
+export const CHECKOUT_PAYMENT_MASTERCARD_SRC = staticAssetUrl(
+  "/assets/payments/checkout/mastercard-classic.webp",
+);
+export const CHECKOUT_PAYMENT_ARCA_SRC = staticAssetUrl(
+  "/assets/payments/checkout/arca.webp",
+);
+export const CHECKOUT_PAYMENT_IDRAM_SRC = staticAssetUrl(
+  "/assets/payments/checkout/idram.webp",
+);
 
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =
   "ring-2 ring-inset ring-brand-forest";

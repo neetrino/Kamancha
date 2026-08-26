@@ -8,6 +8,7 @@ import {
 import { HomeSectionHeading } from "@/features/home/ui/HomeSectionHeading";
 import { ProductCard } from "@/features/products/ui/ProductCard";
 import type { Locale } from "@/lib/i18n/config";
+import { staticAssetBackground } from "@/lib/media/static-asset-url";
 
 type MobileProductItem = {
   id: string;
@@ -52,7 +53,7 @@ const FULL_BLEED_ROUNDED_SHEET =
   "relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden rounded-t-[40px] pt-10 pb-6";
 
 const TEXTURE_STYLE = {
-  backgroundImage: "url(/assets/brand/storefront-texture.webp)",
+  backgroundImage: staticAssetBackground("/assets/brand/storefront-texture.webp"),
   backgroundRepeat: "no-repeat",
   backgroundPosition: "top center",
   backgroundSize: "cover",

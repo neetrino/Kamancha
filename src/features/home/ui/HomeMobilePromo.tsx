@@ -1,8 +1,9 @@
 import Image from "next/image";
 
 import { HomeReveal } from "@/features/home/ui/home-motion";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const PLATE_SRC = "/assets/brand/home/family-dinner-plate.webp";
+const PLATE_SRC = staticAssetUrl("/assets/brand/home/family-dinner-plate.webp");
 
 type HomeMobilePromoProps = {
   headlineBefore: string;

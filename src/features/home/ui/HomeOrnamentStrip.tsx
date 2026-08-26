@@ -5,8 +5,9 @@ import { motion } from "motion/react";
 
 import { homeEaseOut } from "@/features/home/ui/home-motion";
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const ORNAMENT_SRC = "/assets/brand/home/ornament-strip.webp";
+const ORNAMENT_SRC = staticAssetUrl("/assets/brand/home/ornament-strip.webp");
 const ORNAMENT_COUNT = 9;
 const ORNAMENT_H = 232;
 const ORNAMENT_W_EDGE = 172;

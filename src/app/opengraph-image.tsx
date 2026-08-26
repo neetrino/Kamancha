@@ -1,7 +1,6 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-
 import sharp from "sharp";
+
+import { loadStaticAssetBytes } from "@/lib/media/load-static-asset";
 
 export const alt = "Kamancha";
 export const size = { width: 1200, height: 630 };
@@ -10,7 +9,7 @@ export const contentType = "image/png";
 export const runtime = "nodejs";
 
 const BRAND_FOREST = { r: 0x26, g: 0x51, b: 0x27 };
-const WORDMARK_PATH = "public/assets/brand/hero/hero-wordmark.svg";
+const WORDMARK_PATH = "/assets/brand/hero/hero-wordmark.svg";
 const WORDMARK_WIDTH = 560;
 
 /**
@@ -18,7 +17,7 @@ const WORDMARK_WIDTH = 560;
  * Rasterized with sharp: Satori/ImageResponse does not reliably paint this SVG.
  */
 export default async function OpenGraphImage(): Promise<Response> {
-  const wordmarkSvg = await readFile(join(process.cwd(), WORDMARK_PATH));
+  const wordmarkSvg = await loadStaticAssetBytes(WORDMARK_PATH);
   const wordmarkPng = await sharp(wordmarkSvg)
     .resize({ width: WORDMARK_WIDTH, withoutEnlargement: true })
     .png()

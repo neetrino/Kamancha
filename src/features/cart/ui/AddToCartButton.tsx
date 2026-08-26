@@ -12,9 +12,10 @@ import {
   adjustCartItemCount,
   settleCartItemCountAdjust,
 } from "@/features/storefront-chrome/storefront-counts-store";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const CART_PLUS_SRC = "/assets/brand/home/cart-plus.svg";
-const CART_MOBILE_SRC = "/assets/brand/home/product-card-cart.svg";
+const CART_PLUS_SRC = staticAssetUrl("/assets/brand/home/cart-plus.svg");
+const CART_MOBILE_SRC = staticAssetUrl("/assets/brand/home/product-card-cart.svg");
 
 type AddToCartIcon = "cart" | "cart-plus" | "cart-mobile";
 

@@ -15,8 +15,9 @@ import {
   useBodyScrollLock,
 } from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const ZOOM_SRC = "/assets/brand/product/zoom-in.svg";
+const ZOOM_SRC = staticAssetUrl("/assets/brand/product/zoom-in.svg");
 
 type ProductGalleryProps = {
   images: ProductGalleryImage[];

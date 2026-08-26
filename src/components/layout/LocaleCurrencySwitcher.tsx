@@ -10,6 +10,7 @@ import { skipNextHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import { setCurrencyAction } from "@/features/preferences/set-currency-action";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 import type { Locale } from "@/lib/i18n/config";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import { localeLabels, locales } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { currencies } from "@/lib/money/currency";
@@ -202,7 +203,7 @@ export function LocaleCurrencySwitcher({
       >
         {tone === "onDark" ? (
           <Image
-            src="/assets/brand/globe-icon.svg"
+            src={staticAssetUrl("/assets/brand/globe-icon.svg")}
             alt=""
             width={20}
             height={19}

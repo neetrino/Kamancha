@@ -8,12 +8,13 @@ import {
   HomeStagger,
   HomeStaggerItem,
 } from "@/features/home/ui/home-motion";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const PLATE_SRC = "/assets/brand/home/family-dinner-plate.webp";
-const GRAPES_SRC = "/assets/brand/home/our-story/grapes-jug.webp";
-const DOLMA_SRC = "/assets/brand/home/our-story/dolma.webp";
-const KAMANCHA_SRC = "/assets/brand/home/our-story/kamancha.webp";
-const RUG_SRC = "/assets/brand/home/our-story/rug.webp";
+const PLATE_SRC = staticAssetUrl("/assets/brand/home/family-dinner-plate.webp");
+const GRAPES_SRC = staticAssetUrl("/assets/brand/home/our-story/grapes-jug.webp");
+const DOLMA_SRC = staticAssetUrl("/assets/brand/home/our-story/dolma.webp");
+const KAMANCHA_SRC = staticAssetUrl("/assets/brand/home/our-story/kamancha.webp");
+const RUG_SRC = staticAssetUrl("/assets/brand/home/our-story/rug.webp");
 
 /** Figma mosaic 1338px — grow type and cards on wider screens. */
 const mosaicTitleClass =

@@ -4,9 +4,10 @@ import Image from "next/image";
 
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { HomeFloat, HomeReveal } from "@/features/home/ui/home-motion";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const PLATE_SRC = "/assets/brand/home/family-dinner-plate.webp";
-const RUGS_SRC = "/assets/brand/home/family-dinner-rugs.webp";
+const PLATE_SRC = staticAssetUrl("/assets/brand/home/family-dinner-plate.webp");
+const RUGS_SRC = staticAssetUrl("/assets/brand/home/family-dinner-rugs.webp");
 
 type HomeFamilyDinnerPromoProps = {
   headlineBefore: string;

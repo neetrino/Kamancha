@@ -1,5 +1,7 @@
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
 const CART_FLY_TARGET = "[data-cart-fly-target]";
-const CART_ICON_SRC = "/assets/brand/cart-icon.svg";
+const CART_ICON_SRC = staticAssetUrl("/assets/brand/cart-icon.svg");
 const FLY_MS = 650;
 
 function pickVisibleCartTarget(): HTMLElement | null {
