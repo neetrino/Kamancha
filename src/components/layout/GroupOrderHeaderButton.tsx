@@ -21,6 +21,8 @@ type GroupOrderHeaderButtonProps = {
   onClick?: () => void;
   /** Icon-only trigger (mobile bottom nav, Figma 370:368). */
   icon?: ReactNode;
+  /** White icon on forest pill — no inactive fade. Default: muted green on white. */
+  iconPresentation?: "mutedOnLight" | "solidOnDark";
 };
 
 function isGroupOrderPath(pathname: string, locale: Locale): boolean {
@@ -40,6 +42,7 @@ export function GroupOrderHeaderButton({
   defaultName,
   onClick,
   icon,
+  iconPresentation = "mutedOnLight",
 }: GroupOrderHeaderButtonProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname() ?? "";
@@ -69,7 +72,11 @@ export function GroupOrderHeaderButton({
         {icon ? (
           <span
             className={`inline-flex transition-opacity ${
-              iconActive ? "opacity-100" : "opacity-70 group-hover:opacity-100"
+              iconPresentation === "solidOnDark"
+                ? "text-white opacity-100"
+                : iconActive
+                  ? "opacity-100"
+                  : "opacity-70 group-hover:opacity-100"
             }`}
           >
             {icon}

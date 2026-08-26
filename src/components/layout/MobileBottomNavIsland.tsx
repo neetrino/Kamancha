@@ -20,9 +20,8 @@ function MobileBottomNavFallback() {
       className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex h-[calc(var(--mobile-bottom-nav-height)+var(--mobile-bottom-nav-bottom-inset))] justify-center pb-[var(--mobile-bottom-nav-bottom-inset)] xl:hidden"
       aria-hidden="true"
     >
-      <div className="flex w-[339px] max-w-[calc(100%-3rem)] items-center gap-[9px]">
-        <div className="h-[63px] min-w-0 flex-1 rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
-        <div className="size-[63px] shrink-0 rounded-full bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
+      <div className="w-[339px] max-w-[calc(100%-3rem)]">
+        <div className="h-[63px] w-full rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)]" />
       </div>
     </div>
   );
@@ -46,9 +45,7 @@ async function MobileBottomNavAsync({
       dictionary={dictionary}
       cartItemCount={cartItemCount}
       wishlistCount={wishlistCount}
-      groupOrderDefaultName={
-        user ? [user.firstName, user.lastName].filter(Boolean).join(" ") : ""
-      }
+      user={user}
     />
   );
 }

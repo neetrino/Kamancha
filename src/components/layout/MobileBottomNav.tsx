@@ -4,12 +4,11 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { GroupOrderHeaderButton } from "@/components/layout/GroupOrderHeaderButton";
 import {
+  HeaderProfileGlyph,
   NavActiveDiamonds,
   NavCartIcon,
   NavClocheIcon,
-  NavGroupIcon,
   NavHeartIcon,
   NavHomeIcon,
 } from "@/components/layout/storefront-nav-icons";
@@ -19,8 +18,9 @@ import { useWishlistCount } from "@/features/storefront-chrome/storefront-counts
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
+import type { SessionUser } from "@/lib/auth/session";
 
-const TAB_ORDER = ["home", "shop", "cart", "wishlist"] as const;
+const TAB_ORDER = ["home", "shop", "cart", "wishlist", "profile"] as const;
 const DIAMOND_WIDTH_PX = 27;
 const TAB_PERCENT = 100 / TAB_ORDER.length;
 
@@ -32,7 +32,7 @@ type MobileBottomNavProps = {
   dictionary: Dictionary;
   cartItemCount: number;
   wishlistCount: number;
-  groupOrderDefaultName?: string;
+  user: SessionUser | null;
 };
 
 type NavTab = {
@@ -62,11 +62,20 @@ function resolveSelectedTab(
   pathname: string,
   locale: Locale,
   cartOpen: boolean,
+  user: SessionUser | null,
 ): BottomNavTabId | null {
   if (cartOpen) return "cart";
   if (isHomePath(pathname, locale)) return "home";
   if (startsWithPath(pathname, `/${locale}/products`)) return "shop";
   if (startsWithPath(pathname, `/${locale}/wishlist`)) return "wishlist";
+  if (startsWithPath(pathname, `/${locale}/profile`)) return "profile";
+  if (
+    !user &&
+    (startsWithPath(pathname, `/${locale}/login`) ||
+      startsWithPath(pathname, `/${locale}/register`))
+  ) {
+    return "profile";
+  }
   return null;
 }
 
@@ -137,11 +146,13 @@ type BottomNavBarProps = {
   homeTab: NavTab;
   shopTab: NavTab;
   wishlistTab: NavTab;
+  profileTab: NavTab;
   cartOpen: boolean;
   badgeCount: number;
   cartLabel: string;
   openDrawer: () => void;
   prefetchDrawerView: () => void;
+  user: SessionUser | null;
 };
 
 function BottomNavBar({
@@ -150,13 +161,15 @@ function BottomNavBar({
   homeTab,
   shopTab,
   wishlistTab,
+  profileTab,
   cartOpen,
   badgeCount,
   cartLabel,
   openDrawer,
   prefetchDrawerView,
+  user,
 }: BottomNavBarProps) {
-  const selectedTab = resolveSelectedTab(pathname, locale, cartOpen);
+  const selectedTab = resolveSelectedTab(pathname, locale, cartOpen, user);
   const selectedIndex =
     selectedTab == null ? null : TAB_ORDER.indexOf(selectedTab);
   const [parkedIndex, setParkedIndex] = useState(selectedIndex ?? 0);
@@ -167,7 +180,7 @@ function BottomNavBar({
 
   return (
     <div
-      className="pointer-events-auto relative flex h-[63px] w-[267px] min-w-0 max-w-full flex-1 items-stretch rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] [container-type:inline-size]"
+      className="pointer-events-auto relative flex h-[63px] w-full min-w-0 items-stretch rounded-[40px] bg-white shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] [container-type:inline-size]"
       data-node-id="181:727"
     >
       <LinkTab tab={homeTab} active={selectedTab === "home"} />
@@ -189,6 +202,7 @@ function BottomNavBar({
         <span className="sr-only">{cartLabel}</span>
       </button>
       <LinkTab tab={wishlistTab} active={selectedTab === "wishlist"} />
+      <LinkTab tab={profileTab} active={selectedTab === "profile"} />
       <SlidingDiamonds tabIndex={tabIndex} visible={selectedTab != null} />
     </div>
   );
@@ -200,7 +214,7 @@ export function MobileBottomNav({
   dictionary,
   cartItemCount,
   wishlistCount,
-  groupOrderDefaultName = "",
+  user,
 }: MobileBottomNavProps) {
   const pathname = usePathname() ?? `/${locale}`;
   const liveWishlistCount = useWishlistCount(wishlistCount);
@@ -227,13 +241,20 @@ export function MobileBottomNav({
     badge: liveWishlistCount,
   };
 
+  const profileTab: NavTab = {
+    id: "profile",
+    href: user ? `/${locale}/profile` : `/${locale}/login`,
+    label: user ? dictionary.header.profile : dictionary.header.login,
+    icon: <HeaderProfileGlyph className="h-[26px] w-[21px]" />,
+  };
+
   return (
     <nav
       aria-label={dictionary.nav.navigation}
       className="mobile-bottom-nav pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[var(--mobile-bottom-nav-bottom-inset)] xl:hidden"
     >
       <div
-        className="pointer-events-auto flex w-[339px] max-w-[calc(100%-3rem)] items-center gap-[9px]"
+        className="pointer-events-auto w-[339px] max-w-[calc(100%-3rem)]"
         data-node-id="370:369"
       >
         <CartDrawer
@@ -254,21 +275,15 @@ export function MobileBottomNav({
               homeTab={homeTab}
               shopTab={shopTab}
               wishlistTab={wishlistTab}
+              profileTab={profileTab}
               cartOpen={open}
               badgeCount={badgeCount}
               cartLabel={label}
               openDrawer={openDrawer}
               prefetchDrawerView={prefetchDrawerView}
+              user={user}
             />
           )}
-        />
-        <GroupOrderHeaderButton
-          locale={locale}
-          label={dictionary.nav.groupOrder}
-          labels={dictionary.groupOrder}
-          defaultName={groupOrderDefaultName}
-          className="flex size-[63px] shrink-0 items-center justify-center rounded-full bg-white text-brand-forest shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] touch-manipulation"
-          icon={<NavGroupIcon className="h-[26px] w-[30px]" />}
         />
       </div>
     </nav>
