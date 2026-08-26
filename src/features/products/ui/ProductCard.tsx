@@ -9,9 +9,10 @@ import {
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const DIVIDER_SRC = "/assets/brand/home/product-card-divider.svg";
-const STAR_SRC = "/assets/brand/home/star.svg";
+const DIVIDER_SRC = staticAssetUrl("/assets/brand/home/product-card-divider.svg");
+const STAR_SRC = staticAssetUrl("/assets/brand/home/star.svg");
 
 type ProductCardProps = {
   href: string;

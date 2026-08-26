@@ -8,16 +8,14 @@ import type {
   GiftCardListItem,
 } from "@/features/gift-cards/application/queries";
 import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
+import { MyGiftCardItem } from "@/features/gift-cards/ui/MyGiftCardItem";
 import {
   PROFILE_BODY,
-  PROFILE_INNER_CARD,
   PROFILE_PILL_LIGHT,
   PROFILE_SECTION,
   PROFILE_SECTION_TITLE,
-  PROFILE_STATUS_BADGE,
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
-import { formatMoneyAmount } from "@/lib/money/format";
 
 type MyGiftCardsViewCopy = {
   title: string;
@@ -76,6 +74,9 @@ export function MyGiftCardsView({
 }: MyGiftCardsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerKey, setDrawerKey] = useState(0);
+  const [openHistoryCardId, setOpenHistoryCardId] = useState<string | null>(
+    null,
+  );
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -97,63 +98,26 @@ export function MyGiftCardsView({
         {details.length === 0 ? (
           <p className={PROFILE_BODY}>{copy.empty}</p>
         ) : (
-          <ul className="relative z-[2] space-y-4">
+          <ul className="relative z-[2] grid grid-cols-1 gap-4 xl:grid-cols-2 xl:gap-[15px]">
             {details.map(({ card, detail }) => (
-              <li key={card.id} className={`${PROFILE_INNER_CARD} overflow-hidden`}>
-                <div className="space-y-3 px-4 py-4 sm:px-5">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="flex min-w-0 flex-1 items-start justify-between gap-3 sm:block sm:space-y-2">
-                      <p className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
-                        {card.code}
-                      </p>
-                      <span className={`${PROFILE_STATUS_BADGE} shrink-0`}>
-                        {copy.statuses[card.status] ?? card.status}
-                      </span>
-                    </div>
-                    <div className="w-full text-left sm:w-auto sm:text-right">
-                      <p className="font-big-fat-boii text-lg font-normal tracking-wide text-brand-forest">
-                        {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
-                      </p>
-                      <p className="mt-1 text-xs text-gray-500">
-                        {copy.initial}:{" "}
-                        {formatMoneyAmount(card.initialAmount, "AMD", locale)}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    {copy.recipient}: {card.recipientName} · {card.recipientEmail}
-                  </p>
-                  {card.expiresAt ? (
-                    <p className="text-xs text-gray-500">
-                      {copy.expires}: {card.expiresAt.toISOString().slice(0, 10)}
-                    </p>
-                  ) : null}
-                </div>
-                {detail && detail.transactions.length > 0 ? (
-                  <div className="border-t border-gray-100 px-4 py-3 sm:px-5">
-                    <p className="mb-2 font-big-fat-boii text-xs font-normal tracking-wide text-gray-500 uppercase">
-                      {copy.history}
-                    </p>
-                    <ul className="space-y-2">
-                      {detail.transactions.map((row) => (
-                        <li
-                          key={row.id}
-                          className="flex items-center justify-between gap-3 text-xs text-gray-600"
-                        >
-                          <span>
-                            {row.type} ·{" "}
-                            {row.createdAt.toISOString().slice(0, 10)}
-                          </span>
-                          <span className="font-medium text-gray-900">
-                            {row.delta > 0 ? "+" : ""}
-                            {formatMoneyAmount(row.delta, "AMD", locale)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-              </li>
+              <MyGiftCardItem
+                key={card.id}
+                locale={locale}
+                card={card}
+                detail={detail}
+                historyOpen={openHistoryCardId === card.id}
+                onHistoryOpenChange={(open) => {
+                  setOpenHistoryCardId(open ? card.id : null);
+                }}
+                copy={{
+                  history: copy.history,
+                  balance: copy.balance,
+                  initial: copy.initial,
+                  recipient: copy.recipient,
+                  expires: copy.expires,
+                  statuses: copy.statuses,
+                }}
+              />
             ))}
           </ul>
         )}

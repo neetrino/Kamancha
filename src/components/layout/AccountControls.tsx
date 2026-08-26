@@ -1,6 +1,7 @@
 "use client";
 
 import { User } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { BrandHeaderIcon } from "@/components/layout/BrandHeaderIcon";
 import { HeaderProfileGlyph } from "@/components/layout/storefront-nav-icons";
@@ -17,14 +18,14 @@ type AccountControlsProps = {
   profileLabel: string;
   adminLabel: string;
   user: SessionUser | null;
-  tone?: "default" | "onDark" | "onLight" | "pill";
+  tone?: "default" | "onDark" | "onLight" | "pill" | "bottomNav";
 };
 
 const menuItemClassName =
   "block w-full whitespace-nowrap px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900";
 
 function iconButtonClassName(
-  tone: "default" | "onDark" | "onLight" | "pill",
+  tone: "default" | "onDark" | "onLight" | "pill" | "bottomNav",
   active = false,
 ): string {
   if (tone === "onDark") {
@@ -37,6 +38,14 @@ function iconButtonClassName(
     const base =
       "inline-flex size-[51px] shrink-0 items-center justify-center rounded-full bg-brand-forest text-white transition-opacity duration-150 hover:opacity-90";
     return active ? `${base} opacity-100` : base;
+  }
+
+  if (tone === "bottomNav") {
+    const base =
+      "inline-flex size-[63px] shrink-0 items-center justify-center rounded-full bg-white text-brand-forest shadow-[0px_0px_9px_0px_rgba(0,0,0,0.25)] transition-opacity duration-150 touch-manipulation";
+    return active
+      ? `${base} opacity-100 hover:opacity-100`
+      : `${base} opacity-70 hover:opacity-100`;
   }
 
   if (tone === "onLight") {
@@ -55,13 +64,16 @@ function iconButtonClassName(
 function AccountIcon({
   tone,
 }: {
-  tone: "default" | "onDark" | "onLight" | "pill";
+  tone: "default" | "onDark" | "onLight" | "pill" | "bottomNav";
 }) {
   if (tone === "onDark") {
     return <BrandHeaderIcon name="profile" size={28} />;
   }
   if (tone === "pill") {
     return <HeaderProfileGlyph className="h-[25px] w-[20px]" />;
+  }
+  if (tone === "bottomNav") {
+    return <HeaderProfileGlyph className="h-[26px] w-[21px]" />;
   }
   return <User className="h-5 w-5" aria-hidden="true" />;
 }
@@ -75,15 +87,24 @@ export function AccountControls({
   user,
   tone = "default",
 }: AccountControlsProps) {
+  const pathname = usePathname() ?? "";
   const logoutWithLocale = logoutAction.bind(null, locale);
+  const profileActive =
+    tone === "bottomNav" &&
+    (pathname === `/${locale}/profile` ||
+      pathname.startsWith(`/${locale}/profile/`) ||
+      (!user &&
+        (pathname === `/${locale}/login` ||
+          pathname.startsWith(`/${locale}/login/`))));
 
-  if (!user || tone === "pill") {
+  if (!user || tone === "pill" || tone === "bottomNav") {
     return (
       <AppLink
         href={user ? `/${locale}/profile` : `/${locale}/login`}
         prefetchPolicy="intent"
-        className={iconButtonClassName(tone)}
+        className={iconButtonClassName(tone, profileActive)}
         aria-label={user ? profileLabel : loginLabel}
+        aria-current={profileActive ? "page" : undefined}
       >
         <AccountIcon tone={tone} />
       </AppLink>

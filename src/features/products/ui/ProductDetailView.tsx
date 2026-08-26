@@ -7,8 +7,9 @@ import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseC
 import type { ProductDetail } from "@/features/products/types";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const STAR_SRC = "/assets/brand/product/star.svg";
+const STAR_SRC = staticAssetUrl("/assets/brand/product/star.svg");
 
 type ProductDetailViewProps = {
   locale: Locale;

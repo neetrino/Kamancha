@@ -5,6 +5,7 @@ import { motion, type Transition } from "motion/react";
 
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type HomeHeroProps = {
   brandName: string;
@@ -88,7 +89,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
         transition={sideTransition}
       >
         <Image
-          src="/assets/brand/hero/hero-left.webp"
+          src={staticAssetUrl("/assets/brand/hero/hero-left.webp")}
           alt=""
           width={HERO_SIDE_W}
           height={HERO_SIDE_H}
@@ -110,7 +111,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
         transition={sideTransition}
       >
         <Image
-          src="/assets/brand/hero/hero-right.webp"
+          src={staticAssetUrl("/assets/brand/hero/hero-right.webp")}
           alt=""
           width={HERO_SIDE_W}
           height={HERO_SIDE_H}
@@ -151,7 +152,7 @@ export function HomeHero({ brandName, ctaLabel, ctaHref }: HomeHeroProps) {
           }}
         >
           <Image
-            src="/assets/brand/hero/hero-wordmark.svg"
+            src={staticAssetUrl("/assets/brand/hero/hero-wordmark.svg")}
             alt={brandName}
             fill
             priority

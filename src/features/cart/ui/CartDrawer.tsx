@@ -30,8 +30,9 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const CART_PLUS_SRC = "/assets/brand/home/cart-plus.svg";
+const CART_PLUS_SRC = staticAssetUrl("/assets/brand/home/cart-plus.svg");
 
 type CartDrawerTriggerArgs = {
   open: boolean;

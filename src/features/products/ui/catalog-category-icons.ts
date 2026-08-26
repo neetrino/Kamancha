@@ -1,32 +1,62 @@
-/** Figma catalog sidebar category icons (103:1283). */
-export const CATALOG_CATEGORY_ICON_ALL =
-  "/assets/brand/catalog/cat-all.svg" as const;
-export const CATALOG_CATEGORY_ICON_BREAKFAST =
-  "/assets/brand/catalog/cat-breakfast.svg" as const;
-export const CATALOG_CATEGORY_ICON_APPETIZER =
-  "/assets/brand/catalog/cat-appetizer.svg" as const;
-export const CATALOG_CATEGORY_ICON_SALAD =
-  "/assets/brand/catalog/cat-salad.svg" as const;
-export const CATALOG_CATEGORY_ICON_SOUP =
-  "/assets/brand/catalog/cat-soup.svg" as const;
-export const CATALOG_CATEGORY_ICON_HOT =
-  "/assets/brand/catalog/cat-hot.svg" as const;
-export const CATALOG_CATEGORY_ICON_FAMILY =
-  "/assets/brand/catalog/cat-family.svg" as const;
-export const CATALOG_CATEGORY_ICON_BBQ =
-  "/assets/brand/catalog/cat-bbq.svg" as const;
-export const CATALOG_CATEGORY_ICON_FISH =
-  "/assets/brand/catalog/cat-fish.svg" as const;
-export const CATALOG_CATEGORY_ICON_SIDE =
-  "/assets/brand/catalog/cat-side.svg" as const;
-export const CATALOG_CATEGORY_ICON_TAPAKA =
-  "/assets/brand/catalog/cat-tapaka.svg" as const;
-export const CATALOG_CATEGORY_ICON_SAUCE =
-  "/assets/brand/catalog/cat-sauce.svg" as const;
-export const CATALOG_CATEGORY_ICON_DESSERT =
-  "/assets/brand/catalog/cat-dessert.svg" as const;
-export const CATALOG_CATEGORY_ICON_BAR =
-  "/assets/brand/catalog/cat-bar.svg" as const;
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
+/** Figma catalog sidebar category icons (103:1283). Same-origin — used as CSS masks. */
+export const CATALOG_CATEGORY_ICON_ALL = staticAssetUrl(
+  "/assets/brand/catalog/cat-all.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_BREAKFAST = staticAssetUrl(
+  "/assets/brand/catalog/cat-breakfast.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_APPETIZER = staticAssetUrl(
+  "/assets/brand/catalog/cat-appetizer.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_SALAD = staticAssetUrl(
+  "/assets/brand/catalog/cat-salad.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_SOUP = staticAssetUrl(
+  "/assets/brand/catalog/cat-soup.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_HOT = staticAssetUrl(
+  "/assets/brand/catalog/cat-hot.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_FAMILY = staticAssetUrl(
+  "/assets/brand/catalog/cat-family.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_BBQ = staticAssetUrl(
+  "/assets/brand/catalog/cat-bbq.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_FISH = staticAssetUrl(
+  "/assets/brand/catalog/cat-fish.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_SIDE = staticAssetUrl(
+  "/assets/brand/catalog/cat-side.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_TAPAKA = staticAssetUrl(
+  "/assets/brand/catalog/cat-tapaka.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_SAUCE = staticAssetUrl(
+  "/assets/brand/catalog/cat-sauce.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_DESSERT = staticAssetUrl(
+  "/assets/brand/catalog/cat-dessert.svg",
+  { sameOrigin: true },
+);
+export const CATALOG_CATEGORY_ICON_BAR = staticAssetUrl(
+  "/assets/brand/catalog/cat-bar.svg",
+  { sameOrigin: true },
+);
 
 const ICON_RULES: ReadonlyArray<{ pattern: RegExp; icon: string }> = [
   {

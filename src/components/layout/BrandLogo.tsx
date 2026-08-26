@@ -6,6 +6,7 @@ import type { MouseEvent } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import type { Locale } from "@/lib/i18n/config";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import { scrollStorefrontToTop } from "@/lib/navigation/storefront-scroll";
 
 type BrandLogoProps = {
@@ -47,7 +48,7 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
       data-brand-logo
     >
       <Image
-        src="/assets/brand/kamancha-logo.svg"
+        src={staticAssetUrl("/assets/brand/kamancha-logo.svg")}
         alt=""
         width={136}
         height={65}

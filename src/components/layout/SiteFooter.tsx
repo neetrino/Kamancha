@@ -5,6 +5,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 type SiteFooterProps = {
   dictionary: Dictionary;
@@ -119,7 +120,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 label={footer.instagram}
               >
                 <Image
-                  src="/assets/brand/footer/instagram.svg"
+                  src={staticAssetUrl("/assets/brand/footer/instagram.svg")}
                   alt=""
                   width={16}
                   height={16}
@@ -131,7 +132,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 label={footer.facebook}
               >
                 <Image
-                  src="/assets/brand/footer/facebook.svg"
+                  src={staticAssetUrl("/assets/brand/footer/facebook.svg")}
                   alt=""
                   width={16}
                   height={16}

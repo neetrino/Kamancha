@@ -5,6 +5,7 @@ import { CurrencySwitcher } from "@/components/layout/CurrencySwitcher";
 import { LocaleCurrencySwitcher } from "@/components/layout/LocaleCurrencySwitcher";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { MobileNavDrawer } from "@/components/layout/MobileNavDrawer";
+import { NavGroupIcon } from "@/components/layout/storefront-nav-icons";
 import {
   SITE_HEADER_ICON_RAIL,
   SITE_HEADER_INNER,
@@ -202,14 +203,18 @@ export function SiteHeaderMainNav({
                     </div>
                   }
                 />
-                <AccountControls
+                <GroupOrderHeaderButton
                   locale={locale}
-                  loginLabel={dictionary.header.login}
-                  logoutLabel={dictionary.header.logout}
-                  profileLabel={dictionary.header.profile}
-                  adminLabel={dictionary.header.admin}
-                  user={user}
-                  tone="pill"
+                  label={dictionary.nav.groupOrder}
+                  labels={dictionary.groupOrder}
+                  defaultName={
+                    user
+                      ? [user.firstName, user.lastName].filter(Boolean).join(" ")
+                      : ""
+                  }
+                  className="inline-flex size-[51px] shrink-0 items-center justify-center rounded-full bg-brand-forest text-white transition-opacity duration-150 hover:opacity-90 touch-manipulation"
+                  iconPresentation="solidOnDark"
+                  icon={<NavGroupIcon className="h-[22px] w-[26px]" />}
                 />
               </div>
             </div>

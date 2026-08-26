@@ -1,11 +1,13 @@
 import Image from "next/image";
 
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
 type BrandHeaderIconName = "cart" | "wishlist" | "profile";
 
 const ICON_SRC: Record<BrandHeaderIconName, string> = {
-  cart: "/assets/brand/cart-icon.svg",
-  wishlist: "/assets/brand/wishlist-icon.svg",
-  profile: "/assets/brand/profile-icon.svg",
+  cart: staticAssetUrl("/assets/brand/cart-icon.svg"),
+  wishlist: staticAssetUrl("/assets/brand/wishlist-icon.svg"),
+  profile: staticAssetUrl("/assets/brand/profile-icon.svg"),
 };
 
 type BrandHeaderIconProps = {

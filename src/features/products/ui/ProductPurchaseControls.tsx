@@ -12,8 +12,9 @@ import {
   revertCartItemCountAdjust,
   settleCartItemCountAdjust,
 } from "@/features/storefront-chrome/storefront-counts-store";
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const CART_PLUS_SRC = "/assets/brand/product/cart-plus-dark.svg";
+const CART_PLUS_SRC = staticAssetUrl("/assets/brand/product/cart-plus-dark.svg");
 
 type ProductPurchaseControlsProps = {
   productId: string;

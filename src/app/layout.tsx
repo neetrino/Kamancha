@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { staticAssetUrl } from "@/lib/media/static-asset-url";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -62,6 +64,13 @@ export const metadata: Metadata = {
     template: "%s · Kamancha",
   },
   description: "Multilingual e-commerce storefront",
+  icons: {
+    icon: {
+      url: staticAssetUrl("/assets/brand/favicon.svg"),
+      type: "image/svg+xml",
+    },
+    apple: staticAssetUrl("/assets/brand/apple-icon.png"),
+  },
   openGraph: {
     type: "website",
     siteName: "Kamancha",

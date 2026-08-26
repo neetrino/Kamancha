@@ -88,6 +88,13 @@ function buildImageRemotePatterns(): NonNullable<
 }
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_STATIC_ASSET_BASE_URL:
+      process.env.NEXT_PUBLIC_STATIC_ASSET_BASE_URL ??
+      process.env.R2_PUBLIC_BASE_URL ??
+      process.env.R2_PUBLIC_URL ??
+      "",
+  },
   allowedDevOrigins: lanDevOrigins(),
   turbopack: {
     root: projectRoot,
