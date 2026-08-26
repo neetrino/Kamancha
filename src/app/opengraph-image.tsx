@@ -36,7 +36,7 @@ export default async function OpenGraphImage(): Promise<Response> {
     .png()
     .toBuffer();
 
-  return new Response(png, {
+  return new Response(new Uint8Array(png), {
     headers: {
       "Content-Type": contentType,
       "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
