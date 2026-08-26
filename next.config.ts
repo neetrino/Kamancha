@@ -92,6 +92,8 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  // Keep sharp outside the SSR bundle so native libvips loads correctly on Vercel.
+  serverExternalPackages: ["sharp"],
   // Product/category/hero drawers upload images via Server Actions (up to 5MB each).
   experimental: {
     serverActions: {
