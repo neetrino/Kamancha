@@ -25,7 +25,7 @@
   "giftCardsPage": {
     "buy": "Buy gift card",
     "empty": "No gift cards yet.",
-    "history": "Usage history",
+    "history": "Transaction history",
     "status": "Status",
     "balance": "Balance",
     "initial": "Initial value",

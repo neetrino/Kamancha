@@ -48,6 +48,52 @@ const HY_MONTHS = [
   "դկտ",
 ] as const;
 
+const EN_MONTHS_LONG = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+] as const;
+
+/** Genitive forms for day + month + year (e.g. 28 июля 2026). */
+const RU_MONTHS_LONG = [
+  "января",
+  "февраля",
+  "марта",
+  "апреля",
+  "мая",
+  "июня",
+  "июля",
+  "августа",
+  "сентября",
+  "октября",
+  "ноября",
+  "декабря",
+] as const;
+
+const HY_MONTHS_LONG = [
+  "հունվար",
+  "փետրվար",
+  "մարտ",
+  "ապրիլ",
+  "մայիս",
+  "հունիս",
+  "հուլիս",
+  "օգոստոս",
+  "սեպտեմբեր",
+  "հոկտեմբեր",
+  "նոյեմբեր",
+  "դեկտեմբեր",
+] as const;
+
 function calendarParts(value: Date): {
   day: number;
   monthIndex: number;
@@ -91,6 +137,28 @@ export function formatShortDate(
       return `${day} ${RU_MONTHS[monthIndex]} ${year} г.`;
     case "hy":
       return `${day} ${HY_MONTHS[monthIndex]}, ${year} թ.`;
+  }
+}
+
+/**
+ * Day + full month name + year in Asia/Yerevan (e.g. `28 հուլիս 2026 թ.`).
+ * Fixed month words avoid `hy` SSR/client ICU mismatches.
+ */
+export function formatLongDate(
+  value: Date | string | number,
+  locale: string,
+): string {
+  const date = value instanceof Date ? value : new Date(value);
+  const { day, monthIndex, year } = calendarParts(date);
+  const appLocale = resolveLocale(locale);
+
+  switch (appLocale) {
+    case "en":
+      return `${day} ${EN_MONTHS_LONG[monthIndex]} ${year}`;
+    case "ru":
+      return `${day} ${RU_MONTHS_LONG[monthIndex]} ${year} г.`;
+    case "hy":
+      return `${day} ${HY_MONTHS_LONG[monthIndex]} ${year} թ.`;
   }
 }
 
