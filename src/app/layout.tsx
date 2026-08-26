@@ -62,6 +62,15 @@ export const metadata: Metadata = {
     template: "%s · Kamancha",
   },
   description: "Multilingual e-commerce storefront",
+  icons: {
+    icon: [
+      {
+        url: "/favicon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     type: "website",
     siteName: "Kamancha",
