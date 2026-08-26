@@ -4,6 +4,7 @@ import { CalendarDays } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { DatePickerField, type DatePickerFieldLabels } from "@/components/ui/DatePickerField";
+import { TimePickerField } from "@/components/ui/TimePickerField";
 import {
   combineDateTimeLocal,
   defaultDateForTimePick,
@@ -66,12 +67,11 @@ export function DateTimePickerField({
       <span className="mb-1 block text-xs font-medium text-gray-600">
         {labels.time}
       </span>
-      <input
-        type="time"
+      <TimePickerField
         disabled={disabled}
         value={time}
-        onChange={(event) => updateTime(event.target.value)}
-        className="h-10 w-full rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition-colors hover:border-gray-300 focus:border-gray-300"
+        onChange={updateTime}
+        aria-label={labels.time}
       />
     </label>
   );

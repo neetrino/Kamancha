@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { TimePickerField } from "@/components/ui/TimePickerField";
 import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import {
   ADMIN_INPUT,
@@ -202,30 +203,26 @@ export function AdminDeliveryScheduleEditor({
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="time"
+                    <TimePickerField
                       value={hours.openTime}
                       max={hours.closeTime}
                       disabled={disabled || !hours.isOpen}
-                      className={ADMIN_INPUT}
-                      onChange={(event) =>
-                        updateWeekly(day, {
-                          openTime: toHHmm(event.target.value),
-                        })
+                      inputClassName={ADMIN_INPUT}
+                      aria-label={`${weekdayLabels[day]} ${copy.from}`}
+                      onChange={(openTime) =>
+                        updateWeekly(day, { openTime: toHHmm(openTime) })
                       }
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="time"
+                    <TimePickerField
                       value={hours.closeTime}
                       min={hours.openTime}
                       disabled={disabled || !hours.isOpen}
-                      className={ADMIN_INPUT}
-                      onChange={(event) =>
-                        updateWeekly(day, {
-                          closeTime: toHHmm(event.target.value),
-                        })
+                      inputClassName={ADMIN_INPUT}
+                      aria-label={`${weekdayLabels[day]} ${copy.to}`}
+                      onChange={(closeTime) =>
+                        updateWeekly(day, { closeTime: toHHmm(closeTime) })
                       }
                     />
                   </td>
