@@ -13,15 +13,45 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+function isLocalhostUrl(value: string): boolean {
+  try {
+    const { hostname } = new URL(value);
+    return hostname === "localhost" || hostname === "127.0.0.1";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Absolute origin for OG/Twitter images.
+ * Never emit localhost in production builds — crawlers cannot fetch it.
+ */
 function resolveMetadataBase(): URL {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (appUrl && !isLocalhostUrl(appUrl)) {
+    return new URL(appUrl);
+  }
+
+  const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (productionHost) {
+    return new URL(
+      productionHost.startsWith("http")
+        ? productionHost
+        : `https://${productionHost}`,
+    );
+  }
+
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  if (vercelUrl) {
+    return new URL(
+      vercelUrl.startsWith("http") ? vercelUrl : `https://${vercelUrl}`,
+    );
+  }
+
   if (appUrl) {
     return new URL(appUrl);
   }
-  const vercelUrl = process.env.VERCEL_URL?.trim();
-  if (vercelUrl) {
-    return new URL(`https://${vercelUrl}`);
-  }
+
   return new URL("http://localhost:3000");
 }
 
