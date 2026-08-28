@@ -836,6 +836,8 @@ html {
   appearance: none;
   height: 11px;
   width: 11px;
+  /* Center 11px thumb on 6px track: (6 - 11) / 2 */
+  margin-top: -2.5px;
   border-radius: 9999px;
   background: #fff;
   border: 0;
