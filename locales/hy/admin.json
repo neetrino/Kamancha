@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Վահանակ",
     "orders": "Պատվերներ",
-    "groupOrders": "Խմբային պատվերներ",
+    "groupOrders": "Խմբային",
     "products": "Ապրանքներ",
     "categories": "Կատեգորիաներ",
     "delivery": "Առաքում",
@@ -21,8 +21,7 @@
     "menu": "Մենյու",
     "adminMenuAria": "Ադմինիստրատորի մենյու",
     "expandSidebar": "Բացել կողային վահանակը",
-    "collapseSidebar": "Փակել կողային վահանակը",
-    "toggleProductSubpages": "Փոխարկել ապրանքների ենթաէջերը"
+    "collapseSidebar": "Փակել կողային վահանակը"
   },
   "common": {
     "save": "Պահպանել",
@@ -891,6 +890,8 @@
     "sheetAria": "Gift Card-ի մանրամասներ",
     "sheetTitle": "Gift Card",
     "activate": "Ակտիվացնել",
+    "disable": "Անջատել",
+    "resendEmail": "Կրկին ուղարկել email",
     "searchPlaceholder": "Որոնել ըստ կոդի, գնորդի կամ ստացողի",
     "statuses": {
       "PENDING_PAYMENT": "Սպասում է վճարման",

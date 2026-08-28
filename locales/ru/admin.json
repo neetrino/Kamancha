@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Панель управления",
     "orders": "Заказы",
-    "groupOrders": "Групповые заказы",
+    "groupOrders": "Групповые",
     "products": "Товары",
     "categories": "Категории",
     "delivery": "Доставка",
@@ -21,8 +21,7 @@
     "menu": "Меню",
     "adminMenuAria": "Меню администратора",
     "expandSidebar": "Развернуть боковую панель",
-    "collapseSidebar": "Свернуть боковую панель",
-    "toggleProductSubpages": "Переключить подстраницы товаров"
+    "collapseSidebar": "Свернуть боковую панель"
   },
   "common": {
     "save": "Сохранить",
@@ -891,6 +890,8 @@
     "sheetAria": "Детали подарочной карты",
     "sheetTitle": "Подарочная карта",
     "activate": "Активировать",
+    "disable": "Отключить",
+    "resendEmail": "Отправить email снова",
     "searchPlaceholder": "Поиск по коду, покупателю или получателю",
     "statuses": {
       "PENDING_PAYMENT": "Ожидает оплаты",

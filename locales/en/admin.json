@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "orders": "Orders",
-    "groupOrders": "Group orders",
+    "groupOrders": "Group",
     "products": "Products",
     "categories": "Categories",
     "delivery": "Delivery",
@@ -21,8 +21,7 @@
     "menu": "Menu",
     "adminMenuAria": "Admin menu",
     "expandSidebar": "Expand sidebar",
-    "collapseSidebar": "Collapse sidebar",
-    "toggleProductSubpages": "Toggle product subpages"
+    "collapseSidebar": "Collapse sidebar"
   },
   "common": {
     "save": "Save",
@@ -891,6 +890,8 @@
     "sheetAria": "Gift card details",
     "sheetTitle": "Gift card",
     "activate": "Activate",
+    "disable": "Disable",
+    "resendEmail": "Resend email",
     "searchPlaceholder": "Search by code, purchaser, or recipient",
     "statuses": {
       "PENDING_PAYMENT": "Pending payment",

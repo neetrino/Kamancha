@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { Button } from "@/components/ui/Button";
 import { SideSheet } from "@/components/ui/SideSheet";
 import type { GiftCardDetail } from "@/features/gift-cards/application/queries";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -23,8 +24,12 @@ type GiftCardDetailSheetProps = {
   onClose: () => void;
   detail: GiftCardDetail | null;
   isLoading: boolean;
+  isActionPending?: boolean;
   locale: string;
   copy: GiftCardDetailSheetCopy;
+  onActivate?: () => void;
+  onResendEmail?: () => void;
+  onDisable?: () => void;
 };
 
 function formatDateOnly(
@@ -77,10 +82,20 @@ export function GiftCardDetailSheet({
   onClose,
   detail,
   isLoading,
+  isActionPending = false,
   locale,
   copy,
+  onActivate,
+  onResendEmail,
+  onDisable,
 }: GiftCardDetailSheetProps) {
   const { giftCards, common } = copy;
+  const showActivate = detail?.status === "PENDING_PAYMENT" && onActivate;
+  const showResend =
+    (detail?.status === "ACTIVE" || detail?.status === "USED") && onResendEmail;
+  const showDisable =
+    detail != null && detail.status !== "DISABLED" && onDisable;
+  const showActions = Boolean(showActivate || showResend || showDisable);
 
   return (
     <SideSheet
@@ -176,6 +191,43 @@ export function GiftCardDetailSheet({
           </div>
         ) : null}
       </div>
+
+      {showActions ? (
+        <div className="flex flex-wrap gap-2 border-t border-gray-200 px-5 py-4">
+          {showActivate ? (
+            <Button
+              type="button"
+              size="field"
+              disabled={isActionPending}
+              onClick={onActivate}
+            >
+              {giftCards.activate}
+            </Button>
+          ) : null}
+          {showResend ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="field"
+              disabled={isActionPending}
+              onClick={onResendEmail}
+            >
+              {giftCards.resendEmail}
+            </Button>
+          ) : null}
+          {showDisable ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="field"
+              disabled={isActionPending}
+              onClick={onDisable}
+            >
+              {giftCards.disable}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
     </SideSheet>
   );
 }
