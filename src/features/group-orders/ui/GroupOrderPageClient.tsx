@@ -420,7 +420,7 @@ export function GroupOrderPageClient({
                 : labels.deliveryOrganizerPaysHint}
             </p>
             {view.deliveryAmount > 0 ? (
-              <p className="text-sm font-medium text-emerald-200">
+              <p className="text-base font-semibold text-[#f3e5a8] sm:text-lg">
                 {labels.deliveryQuoteReady
                   .replace("{amount}", view.deliveryFormatted)
                   .replace(
@@ -429,23 +429,26 @@ export function GroupOrderPageClient({
                   )}
               </p>
             ) : null}
-            <button
-              type="button"
-              className={GLASS_PILL_BUTTON}
-              disabled={pending || deliveryAddress.trim().length < 3}
-              onClick={() =>
-                run(async () =>
-                  setDeliveryAddressAction({
-                    inviteToken,
-                    deliveryAddress: deliveryAddress.trim(),
-                    deliveryLat: deliveryPoint?.lat,
-                    deliveryLng: deliveryPoint?.lng,
-                  }),
-                )
-              }
-            >
-              {labels.calculateDelivery}
-            </button>
+            <div className="flex justify-end">
+              <KamanchaPillButton
+                type="button"
+                variant="light"
+                size="compact"
+                label={labels.calculateDelivery}
+                className="!h-11 !min-h-11 !w-auto min-w-[180px] max-w-none px-7 text-[14px] leading-5 sm:max-w-none"
+                disabled={pending || deliveryAddress.trim().length < 3}
+                onClick={() =>
+                  run(async () =>
+                    setDeliveryAddressAction({
+                      inviteToken,
+                      deliveryAddress: deliveryAddress.trim(),
+                      deliveryLat: deliveryPoint?.lat,
+                      deliveryLng: deliveryPoint?.lng,
+                    }),
+                  )
+                }
+              />
+            </div>
           </div>
           </div>
         </section>
