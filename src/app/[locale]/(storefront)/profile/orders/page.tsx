@@ -87,6 +87,7 @@ export default async function OrdersPage({
       <div className="hidden xl:block">
         <CustomerOrdersFilters
           total={total}
+          totalLabel={dictionary.profile.totalOrders}
           status={filters.status}
           paymentStatus={filters.paymentStatus}
           q={filters.q}

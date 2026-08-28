@@ -84,7 +84,11 @@ export function CustomerOrdersView({
         />
       </div>
       <div className="hidden xl:block">
-        <CustomerOrdersTable orders={orders} onOpenOrder={openOrder} />
+        <CustomerOrdersTable
+          orders={orders}
+          emptyLabel={profileCopy.noOrders}
+          onOpenOrder={openOrder}
+        />
       </div>
       <CustomerOrderDetailsSheet
         open={drawerOpen}
