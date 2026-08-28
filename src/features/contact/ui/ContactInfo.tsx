@@ -4,6 +4,7 @@ import { useMemo, type ReactNode } from "react";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
 import { Stagger, StaggerItem, scrollRevealViewport } from "@/components/ui/RevealMotion";
+import { KAMANCHA_BRANCHES } from "@/lib/brand/store-locations";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ContactInfoProps = {
@@ -50,9 +51,13 @@ function ContactPill({
   );
 
   if (href) {
+    const isExternal = href.startsWith("http://") || href.startsWith("https://");
     return (
       <a
         href={href}
+        {...(isExternal
+          ? { target: "_blank", rel: "noopener noreferrer" }
+          : {})}
         className={`${PILL_CLASS} transition-opacity hover:opacity-90`}
       >
         {inner}
@@ -90,11 +95,13 @@ function buildContactPills(copy: Dictionary["contact"]): ContactPillItem[] {
     {
       id: "address-1",
       icon: <MapPin className="size-[22px]" strokeWidth={1.75} />,
+      href: KAMANCHA_BRANCHES.tumanyan.mapUrl,
       content: copy.storeAddress,
     },
     {
       id: "address-2",
       icon: <MapPin className="size-[22px]" strokeWidth={1.75} />,
+      href: KAMANCHA_BRANCHES.saryan.mapUrl,
       content: copy.storeAddress2,
     },
   ];
