@@ -228,7 +228,7 @@ export function ProfileMobileHub({
           className="flex items-center justify-between gap-3 overflow-hidden rounded-3xl bg-white px-4 py-3.5 shadow-sm transition-colors hover:bg-gray-50"
         >
           <span className="flex min-w-0 items-center gap-3">
-            <ProfileBonusIcon className="h-7 w-7 shrink-0 text-brand-forest" />
+            <ProfileBonusIcon className="h-7 w-7 shrink-0 text-pink-300" />
             <span className="truncate font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
               {dictionary.bonuses}
             </span>
