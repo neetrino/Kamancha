@@ -67,7 +67,7 @@ export function AuthPageShell({
             <span className="size-1.5 rounded-full bg-white" />
           </motion.div>
           <motion.h1
-            className="mb-8 text-center font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px]"
+            className="mb-8 text-center font-big-fat-boii text-[44px] leading-[1.1] font-bold tracking-wide text-white uppercase sm:text-[52px] md:text-[62px]"
             initial={
               playMotion
                 ? { opacity: 0, y: 18, filter: "blur(4px)" }
