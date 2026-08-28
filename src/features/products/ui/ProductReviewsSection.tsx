@@ -1,4 +1,5 @@
 import {
+  displayProductRating,
   RatingDistribution,
   RatingStars,
 } from "@/features/products/ui/ProductReviewRating";
@@ -39,6 +40,9 @@ export function ProductReviewsSection({
   }
   const aggregate = buildReviewAggregate(ratings);
   const isEmpty = aggregate.count === 0;
+  const displayAverage = displayProductRating(
+    isEmpty ? null : aggregate.average,
+  );
 
   return (
     <section className="flex w-full flex-col gap-8 border-t border-white/10 pt-10">
@@ -48,9 +52,9 @@ export function ProductReviewsSection({
             {labels.reviews}
           </h2>
           <p className="text-4xl font-bold tracking-tight text-white md:text-5xl">
-            {formatAverage(aggregate.average)}
+            {formatAverage(displayAverage)}
           </p>
-          <RatingStars average={aggregate.average} />
+          <RatingStars average={displayAverage} />
           <p className="text-sm text-white/50">
             {labels.reviewCount.replace("{count}", String(aggregate.count))}
           </p>
