@@ -81,6 +81,8 @@
   "itemCountOne": "{count} товар",
   "itemCountOther": "{count} товаров",
   "noOrders": "Заказов пока нет.",
+  "ordersSearchPlaceholder": "Поиск по № заказа…",
+  "ordersSearchAria": "Поиск заказов",
   "orderNumber": "Заказ",
   "status": "Статус",
   "total": "Итого",

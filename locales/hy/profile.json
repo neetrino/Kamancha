@@ -81,6 +81,8 @@
   "itemCountOne": "{count} ապրանք",
   "itemCountOther": "{count} ապրանք",
   "noOrders": "Պատվերներ դեռ չկան։",
+  "ordersSearchPlaceholder": "Որոնել ըստ պատվերի համարի…",
+  "ordersSearchAria": "Որոնել պատվերներ",
   "orderNumber": "Պատվեր",
   "status": "Կարգավիճակ",
   "total": "Ընդամենը",

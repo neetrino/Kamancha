@@ -8,10 +8,12 @@ import {
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
-import { orderStatusLabel } from "@/features/orders/domain/order-status";
-import { paymentStatusLabel } from "@/features/orders/domain/payment-status";
-import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { CustomerOrderSheetPayment } from "@/features/orders/ui/CustomerOrderSheetPayment";
+import {
+  localizeOrderStatus,
+  localizePaymentStatus,
+} from "@/features/orders/ui/localize-order-status";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
@@ -60,12 +62,15 @@ export function CustomerOrderDetailsSheet({
             <span
               className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
             >
-              {orderStatusLabel(detail.status)}
+              {localizeOrderStatus(detail.status, copy.orders.statusLabels)}
             </span>
             <span
               className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(detail.paymentStatus)}`}
             >
-              {paymentStatusLabel(detail.paymentStatus)}
+              {localizePaymentStatus(
+                detail.paymentStatus,
+                copy.orders.statusLabels,
+              )}
             </span>
           </div>
         ) : null}
