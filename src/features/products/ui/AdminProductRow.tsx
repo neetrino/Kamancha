@@ -51,8 +51,14 @@ export function AdminProductRow({
   const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
 
   return (
-    <tr className={ADMIN_TABLE_ROW}>
-      <td className={ADMIN_TABLE_TD_CHECK}>
+    <tr
+      className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+      onClick={onEdit}
+    >
+      <td
+        className={ADMIN_TABLE_TD_CHECK}
+        onClick={(event) => event.stopPropagation()}
+      >
         <input
           type="checkbox"
           className={ADMIN_TABLE_CHECKBOX}
@@ -108,7 +114,10 @@ export function AdminProductRow({
             : copy.common.none}
         </span>
       </td>
-      <td className={ADMIN_TABLE_TD_CENTER}>
+      <td
+        className={ADMIN_TABLE_TD_CENTER}
+        onClick={(event) => event.stopPropagation()}
+      >
         <button
           type="button"
           disabled={disabled}
@@ -123,7 +132,10 @@ export function AdminProductRow({
           />
         </button>
       </td>
-      <td className={ADMIN_TABLE_TD_CENTER}>
+      <td
+        className={ADMIN_TABLE_TD_CENTER}
+        onClick={(event) => event.stopPropagation()}
+      >
         <div className="inline-flex items-center justify-center gap-1">
           <button
             type="button"
