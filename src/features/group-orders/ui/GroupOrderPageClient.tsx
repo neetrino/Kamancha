@@ -126,6 +126,9 @@ export function GroupOrderPageClient({
   const [spendLimit, setSpendLimit] = useState(
     initialView?.spendLimitAmount?.toString() ?? "",
   );
+  const [spendLimitEditing, setSpendLimitEditing] = useState(
+    () => initialView?.spendLimitAmount == null,
+  );
   const [deliveryAddress, setDeliveryAddress] = useState(
     initialView?.deliveryAddress ?? "",
   );
@@ -150,6 +153,8 @@ export function GroupOrderPageClient({
 
   const isOrganizer = view.currentParticipantRole === "ORGANIZER";
   const canEdit = view.status === "OPEN";
+  const spendLimitLocked =
+    view.spendLimitAmount != null && !spendLimitEditing;
   const currentParticipant = view.participants.find(
     (participant) => participant.id === view.currentParticipantId,
   );
@@ -323,7 +328,11 @@ export function GroupOrderPageClient({
               </span>
             </label>
             <div className="flex flex-wrap gap-2">
-              <div className="flex min-w-[8rem] flex-1 items-center gap-2 rounded-[15px] border border-gray-200 bg-gray-50 px-3 py-2">
+              <div
+                className={`flex min-w-[8rem] flex-1 items-center gap-2 rounded-[15px] border border-gray-200 px-3 py-2 ${
+                  spendLimitLocked ? "bg-gray-100" : "bg-gray-50"
+                }`}
+              >
                 <span className="text-sm text-gray-500" aria-hidden>
                   ֏
                 </span>
@@ -331,51 +340,66 @@ export function GroupOrderPageClient({
                   value={spendLimit}
                   onChange={(e) => setSpendLimit(e.target.value)}
                   inputMode="numeric"
+                  readOnly={spendLimitLocked}
                   placeholder={labels.spendLimitPlaceholder}
                   aria-label={labels.spendLimitFieldLabel}
-                  className="w-full bg-transparent text-sm text-gray-900 outline-none"
+                  className={`w-full bg-transparent text-sm text-gray-900 outline-none ${
+                    spendLimitLocked ? "cursor-default text-gray-600" : ""
+                  }`}
                 />
               </div>
-              <button
-                type="button"
-                className={GLASS_ACTION_BUTTON}
-                onClick={() => {
-                  const parsed = parseSpendLimitInput(spendLimit);
-                  if (!parsed.ok) {
-                    setToastMessage(
-                      parsed.reason === "too_large"
-                        ? labels.spendLimitTooLarge.replace(
-                            "{max}",
-                            formatMoneyAmount(
-                              GROUP_ORDER_SPEND_LIMIT_MAX,
-                              "AMD",
-                              locale,
-                            ),
-                          )
-                        : labels.spendLimitInvalid,
-                    );
-                    return;
-                  }
-                  setError(null);
-                  startTransition(async () => {
-                    const result = await updateSpendLimitAction({
-                      inviteToken,
-                      spendLimitAmount: parsed.value,
-                    });
-                    if (!result.ok) {
+              {spendLimitLocked ? (
+                <button
+                  type="button"
+                  className={GLASS_ACTION_BUTTON}
+                  onClick={() => setSpendLimitEditing(true)}
+                >
+                  {labels.editLimit}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={GLASS_ACTION_BUTTON}
+                  disabled={pending}
+                  onClick={() => {
+                    const parsed = parseSpendLimitInput(spendLimit);
+                    if (!parsed.ok) {
                       setToastMessage(
-                        result.error === "SPEND_LIMIT_INVALID"
-                          ? labels.spendLimitInvalid
-                          : (result.error ?? labels.errorGeneric),
+                        parsed.reason === "too_large"
+                          ? labels.spendLimitTooLarge.replace(
+                              "{max}",
+                              formatMoneyAmount(
+                                GROUP_ORDER_SPEND_LIMIT_MAX,
+                                "AMD",
+                                locale,
+                              ),
+                            )
+                          : labels.spendLimitInvalid,
                       );
                       return;
                     }
-                    router.refresh();
-                  });
-                }}
-              >
-                {labels.saveLimit}
-              </button>
+                    setError(null);
+                    startTransition(async () => {
+                      const result = await updateSpendLimitAction({
+                        inviteToken,
+                        spendLimitAmount: parsed.value,
+                      });
+                      if (!result.ok) {
+                        setToastMessage(
+                          result.error === "SPEND_LIMIT_INVALID"
+                            ? labels.spendLimitInvalid
+                            : (result.error ?? labels.errorGeneric),
+                        );
+                        return;
+                      }
+                      setSpendLimitEditing(false);
+                      router.refresh();
+                    });
+                  }}
+                >
+                  {labels.saveLimit}
+                </button>
+              )}
             </div>
           </div>
 

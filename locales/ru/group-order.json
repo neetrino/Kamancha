@@ -58,6 +58,7 @@
   "spendLimitPlaceholder": "напр. 1600",
   "setSpendLimit": "Лимит",
   "saveLimit": "Сохранить",
+  "editLimit": "Изменить",
   "deliveryFieldLabel": "Адрес доставки",
   "deliveryFieldHint": "Сначала укажите адрес — так мы посчитаем доставку и разделим её между участниками.",
   "deliveryPlaceholder": "напр. 1000",

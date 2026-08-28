@@ -58,6 +58,7 @@
   "spendLimitPlaceholder": "e.g. 1600",
   "setSpendLimit": "Spend limit",
   "saveLimit": "Save",
+  "editLimit": "Edit",
   "deliveryFieldLabel": "Delivery address",
   "deliveryFieldHint": "Enter the address first so we can calculate the delivery fee and split it across the group.",
   "deliveryPlaceholder": "e.g. 1000",
