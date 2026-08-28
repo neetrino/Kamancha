@@ -40,7 +40,6 @@
   "statusPaysAtCheckout": "Վճարում է Checkout-ում",
   "statusFailed": "Վճարումը ձախողվել է",
   "statusNotRequired": "Չի պահանջվում",
-  "statusPaidBy": "Վճարում է {name}",
   "statusRefunded": "Վերադարձված",
   "statusMarkedReceived": "Նշված է որպես ստացված",
   "itemsReady": "Ավարտեցի",

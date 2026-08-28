@@ -40,7 +40,6 @@
   "statusPaysAtCheckout": "Pays at checkout",
   "statusFailed": "Payment failed",
   "statusNotRequired": "Not required",
-  "statusPaidBy": "Paid by {name}",
   "statusRefunded": "Refunded",
   "statusMarkedReceived": "Marked received",
   "itemsReady": "I'm done",

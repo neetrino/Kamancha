@@ -7,6 +7,7 @@ import {
   Copy,
   Share2,
   Trash2,
+  User,
   Users,
   X,
 } from "lucide-react";
@@ -49,6 +50,9 @@ const GLASS_ACTION_BUTTON =
   "inline-flex items-center justify-center rounded-[15px] bg-white px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
 
 const PILL_FULL = "max-w-none sm:max-w-none";
+/** Match «Հաշվել առաքումը»: same height, compact type, no ornaments. */
+const PILL_COMPACT =
+  "!h-11 !min-h-11 !max-h-11 !py-0 !pt-0 !pb-0 !w-full max-w-none px-7 text-[14px] leading-5 sm:max-w-none";
 
 const BLOCK_TITLE =
   "font-big-fat-boii text-base font-normal tracking-wide text-white uppercase";
@@ -86,7 +90,7 @@ function absoluteInviteUrl(invitePath: string): string {
 function paymentLabel(
   status: string,
   labels: Dictionary["groupOrder"],
-  options?: { paysAtCheckout?: boolean; paidByName?: string },
+  options?: { paysAtCheckout?: boolean },
 ): string {
   if (options?.paysAtCheckout) {
     return labels.statusPaysAtCheckout;
@@ -97,9 +101,7 @@ function paymentLabel(
     case "FAILED":
       return labels.statusFailed;
     case "NOT_REQUIRED":
-      return options?.paidByName
-        ? labels.statusPaidBy.replace("{name}", options.paidByName)
-        : labels.statusNotRequired;
+      return labels.statusNotRequired;
     case "REFUNDED":
       return labels.statusRefunded;
     case "MARKED_RECEIVED":
@@ -474,23 +476,6 @@ export function GroupOrderPageClient({
                       </span>
                     ) : null}
                   </p>
-                  <p className="mt-0.5 text-sm text-white">
-                    {participant.subtotalFormatted} ·{" "}
-                    {paymentLabel(participant.paymentStatus, labels, {
-                      paysAtCheckout:
-                        view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-                        participant.role === "ORGANIZER" &&
-                        participant.paymentStatus !== "PAID" &&
-                        participant.paymentStatus !== "MARKED_RECEIVED" &&
-                        (view.status === "AWAITING_PAYMENTS" ||
-                          view.status === "CHECKOUT"),
-                      paidByName:
-                        view.paymentMode === "ORGANIZER_PAYS_ALL" &&
-                        participant.paymentStatus === "NOT_REQUIRED"
-                          ? view.organizerDisplayName
-                          : undefined,
-                    })}
-                  </p>
                   {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
                     <p className="mt-0.5 text-xs text-white/70">
                       {labels.deliveryShare}:{" "}
@@ -499,34 +484,58 @@ export function GroupOrderPageClient({
                     </p>
                   ) : null}
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <p
-                    className={`inline-flex rounded-full bg-white px-3.5 py-1 text-xs font-medium ${
-                      participant.itemsReady
-                        ? "text-brand-forest"
-                        : "text-amber-500"
-                    }`}
-                  >
-                    {participant.itemsReady ? labels.ready : labels.notReady}
-                  </p>
-                  {isOrganizer &&
-                  participant.role !== "ORGANIZER" &&
-                  canEdit ? (
-                    <button
-                      type="button"
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
-                      aria-label={labels.removeParticipant}
-                      onClick={() =>
-                        setPendingConfirm({
-                          kind: "participant",
-                          id: participant.id,
-                          name: participant.displayName,
-                        })
-                      }
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <div className="flex items-center gap-1">
+                    <p
+                      className={`inline-flex rounded-full bg-white px-3.5 py-1 text-xs font-medium ${
+                        participant.itemsReady
+                          ? "text-brand-forest"
+                          : "text-amber-500"
+                      }`}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  ) : null}
+                      {participant.itemsReady ? labels.ready : labels.notReady}
+                    </p>
+                    {isOrganizer &&
+                    participant.role !== "ORGANIZER" &&
+                    canEdit ? (
+                      <button
+                        type="button"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
+                        aria-label={labels.removeParticipant}
+                        onClick={() =>
+                          setPendingConfirm({
+                            kind: "participant",
+                            id: participant.id,
+                            name: participant.displayName,
+                          })
+                        }
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    ) : null}
+                  </div>
+                  <p className="text-right text-sm text-white">
+                    {(view.paymentMode === "ORGANIZER_PAYS_ALL"
+                      ? participant.finalAmountFormatted
+                      : participant.subtotalFormatted)}{" "}
+                    ·{" "}
+                    {paymentLabel(
+                      view.paymentMode === "ORGANIZER_PAYS_ALL" &&
+                        participant.paymentStatus === "NOT_REQUIRED"
+                        ? "PENDING"
+                        : participant.paymentStatus,
+                      labels,
+                      {
+                        paysAtCheckout:
+                          view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+                          participant.role === "ORGANIZER" &&
+                          participant.paymentStatus !== "PAID" &&
+                          participant.paymentStatus !== "MARKED_RECEIVED" &&
+                          (view.status === "AWAITING_PAYMENTS" ||
+                            view.status === "CHECKOUT"),
+                      },
+                    )}
+                  </p>
                 </div>
               </div>
 
@@ -594,8 +603,9 @@ export function GroupOrderPageClient({
                   <KamanchaPillButton
                     type="button"
                     variant="light"
+                    size="compact"
                     label={labels.itemsReady}
-                    className={`${PILL_FULL} !max-w-none`}
+                    className={PILL_COMPACT}
                     disabled={pending}
                     onClick={() => {
                       setError(null);
@@ -614,8 +624,9 @@ export function GroupOrderPageClient({
                   <KamanchaPillButton
                     type="button"
                     variant="light"
+                    size="compact"
                     label={labels.cancelOrder}
-                    className={`${PILL_FULL} !max-w-none !text-red-700`}
+                    className={`${PILL_COMPACT} !text-red-700`}
                     onClick={() => setPendingConfirm({ kind: "cancel" })}
                   />
                 </div>
@@ -816,8 +827,18 @@ function JoinPanel({
         <p className="mt-2 text-sm text-white">{labels.joinDescription}</p>
 
         <div className="mt-5 space-y-3 text-sm text-white">
-          <p className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+          <p
+            className={`flex items-center gap-2 ${
+              view.paymentMode === "ORGANIZER_PAYS_ALL"
+                ? "text-base font-semibold"
+                : ""
+            }`}
+          >
+            {view.paymentMode === "ORGANIZER_PAYS_ALL" ? (
+              <User className="h-5 w-5 shrink-0" aria-hidden />
+            ) : (
+              <Users className="h-4 w-4 shrink-0" aria-hidden />
+            )}
             {view.paymentMode === "ORGANIZER_PAYS_ALL"
               ? labels.payingOrganizer.replace(
                   "{name}",

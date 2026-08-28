@@ -40,7 +40,6 @@
   "statusPaysAtCheckout": "Оплатит на Checkout",
   "statusFailed": "Оплата не удалась",
   "statusNotRequired": "Не требуется",
-  "statusPaidBy": "Оплачивает {name}",
   "statusRefunded": "Возвращено",
   "statusMarkedReceived": "Отмечено как получено",
   "itemsReady": "Я закончил",
