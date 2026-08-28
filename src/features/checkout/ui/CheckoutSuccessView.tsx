@@ -47,7 +47,7 @@ export function CheckoutSuccessView({
         </p>
 
         <div className="relative z-[2] mt-6 border-t border-white/40 pt-4">
-          <p className="font-big-fat-boii text-lg font-normal tracking-wide text-white uppercase">
+          <p className="font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase sm:text-2xl">
             {labels.total.replace("{amount}", totalFormatted)}
           </p>
         </div>
