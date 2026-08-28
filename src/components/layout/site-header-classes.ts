@@ -27,7 +27,7 @@ export const SITE_HEADER_CART_BADGE =
 
 /** Desktop search pill — slightly longer than the «Որոնել» label. */
 export const SITE_HEADER_SEARCH_PILL =
-  "h-12 w-fit min-w-[120px] shrink-0 items-center justify-center gap-2 rounded-full bg-[rgba(255,255,255,0.31)] px-6 text-sm font-bold leading-6 whitespace-nowrap text-white transition-colors hover:bg-[rgba(255,255,255,0.4)]";
+  "flex h-12 w-fit min-w-[120px] shrink-0 cursor-text items-center justify-center gap-2 rounded-full bg-[rgba(255,255,255,0.31)] px-6 text-sm font-bold leading-6 whitespace-nowrap text-white transition-colors hover:bg-[rgba(255,255,255,0.4)]";
 
 /** Group-order CTA — same 48× pill chrome as the locale switcher. */
 export const SITE_HEADER_GROUP_ORDER =

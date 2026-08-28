@@ -374,7 +374,10 @@ export function CheckoutForm({
               splitOthersPrepaid
                 ? {
                     title: labels.groupPrepaidTitle,
-                    hint: `${labels.groupPrepaidHint} ${labels.groupPrepaidOthersPaid}: ${formatMoney(prepaidApplied)}. ${labels.groupPrepaidYouPay}: ${formatMoney(totalAmount)}.`,
+                    lines: [
+                      `${labels.groupPrepaidHint} ${labels.groupPrepaidOthersPaid}: ${formatMoney(prepaidApplied)}.`,
+                      `${labels.groupPrepaidYouPay}: ${formatMoney(totalAmount)}.`,
+                    ],
                   }
                 : null
             }

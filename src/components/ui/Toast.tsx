@@ -17,11 +17,21 @@ const DEFAULT_TOAST_DURATION_MS = 2500;
 /** Must match `.animate-toast-out` max duration in globals.css. */
 export const TOAST_ANIMATION_MS = 280;
 
+type ToastTone = "forest" | "warning";
+
 type ToastProps = {
   message: string;
   open: boolean;
   onClose: () => void;
   durationMs?: number;
+  /** `warning` — amber banner for validation / attention messages. */
+  tone?: ToastTone;
+};
+
+const TOAST_TONE_CLASS: Record<ToastTone, string> = {
+  forest: "bg-brand-forest text-white",
+  /** Warm butter yellow — soft warning, still on-brand with forest text. */
+  warning: "border border-[#e2c86a] bg-[#f3e5a8] text-black",
 };
 
 /** Brief confirmation toast centered at the top of the viewport. */
@@ -30,6 +40,7 @@ export function Toast({
   open,
   onClose,
   durationMs = DEFAULT_TOAST_DURATION_MS,
+  tone = "forest",
 }: ToastProps) {
   const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
@@ -96,7 +107,7 @@ export function Toast({
       <div
         role="status"
         aria-live="polite"
-        className={`rounded-xl bg-brand-forest px-4 py-3 text-center text-sm font-medium text-white shadow-lg ${
+        className={`rounded-xl px-4 py-3 text-center text-sm font-medium shadow-lg ${TOAST_TONE_CLASS[tone]} ${
           exiting ? "animate-toast-out" : "animate-toast-in"
         }`}
         onAnimationEnd={handleAnimationEnd}

@@ -23,6 +23,7 @@ const PAYMENT_STATUS_FILTERS = [
 
 type CustomerOrdersFiltersProps = {
   total: number;
+  totalLabel: string;
   status?: OrderStatus;
   paymentStatus?: string;
   q?: string;
@@ -30,6 +31,7 @@ type CustomerOrdersFiltersProps = {
 
 export function CustomerOrdersFilters({
   total,
+  totalLabel,
   status,
   paymentStatus,
   q,
@@ -87,7 +89,9 @@ export function CustomerOrdersFilters({
         </div>
       </form>
       <div className="relative z-[2] mt-4 border-t border-white/35 pt-3">
-        <p className="text-sm text-white">Total orders: {total}</p>
+        <p className="text-sm text-white">
+          {totalLabel}: {total}
+        </p>
       </div>
     </section>
   );

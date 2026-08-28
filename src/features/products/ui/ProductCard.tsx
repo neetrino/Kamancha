@@ -6,6 +6,7 @@ import {
   productCardLayout,
   type ProductCardLayout,
 } from "@/features/products/ui/product-card-layout";
+import { displayProductRating } from "@/features/products/ui/ProductReviewRating";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
@@ -78,8 +79,7 @@ export function ProductCard({
   const showWishlist =
     locale != null && productId != null && wishlistLabel != null;
   const showAddToCart = productId != null && addToCartLabel != null;
-  const showRating = rating != null && rating > 0;
-  const ratingLabel = showRating ? rating.toFixed(1) : "—";
+  const ratingLabel = displayProductRating(rating).toFixed(1);
   const ui = productCardLayout(layout);
   const fluid = layout === "fluid";
   const compact = layout === "compact";

@@ -132,7 +132,7 @@ export function SiteHeaderMainNav({
                 locale={locale}
                 currency={currency}
                 labels={searchLabels}
-                variant="responsive"
+                variant="pill"
                 tone="onDark"
               />
 

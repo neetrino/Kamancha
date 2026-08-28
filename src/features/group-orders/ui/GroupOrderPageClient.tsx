@@ -7,6 +7,7 @@ import {
   Copy,
   Share2,
   Trash2,
+  User,
   Users,
   X,
 } from "lucide-react";
@@ -15,6 +16,7 @@ import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { Toast } from "@/components/ui/Toast";
 import { GroupOrderSummary } from "@/features/group-orders/ui/GroupOrderSummary";
 import {
   cancelGroupOrderAction,
@@ -32,7 +34,12 @@ import type {
   GroupOrderDetailView,
   GroupOrderItemView,
 } from "@/features/group-orders/application/queries";
+import {
+  GROUP_ORDER_SPEND_LIMIT_MAX,
+  parseSpendLimitInput,
+} from "@/features/group-orders/domain/spend-limit";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
@@ -43,6 +50,9 @@ const GLASS_ACTION_BUTTON =
   "inline-flex items-center justify-center rounded-[15px] bg-white px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
 
 const PILL_FULL = "max-w-none sm:max-w-none";
+/** Match «Հաշվել առաքումը»: same height, compact type, no ornaments. */
+const PILL_COMPACT =
+  "!h-11 !min-h-11 !max-h-11 !py-0 !pt-0 !pb-0 !w-full max-w-none px-7 text-[14px] leading-5 sm:max-w-none";
 
 const BLOCK_TITLE =
   "font-big-fat-boii text-base font-normal tracking-wide text-white uppercase";
@@ -116,6 +126,9 @@ export function GroupOrderPageClient({
   const [spendLimit, setSpendLimit] = useState(
     initialView?.spendLimitAmount?.toString() ?? "",
   );
+  const [spendLimitEditing, setSpendLimitEditing] = useState(
+    () => initialView?.spendLimitAmount == null,
+  );
   const [deliveryAddress, setDeliveryAddress] = useState(
     initialView?.deliveryAddress ?? "",
   );
@@ -126,6 +139,7 @@ export function GroupOrderPageClient({
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(
     null,
   );
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   if (!initialView) {
     return (
@@ -139,6 +153,8 @@ export function GroupOrderPageClient({
 
   const isOrganizer = view.currentParticipantRole === "ORGANIZER";
   const canEdit = view.status === "OPEN";
+  const spendLimitLocked =
+    view.spendLimitAmount != null && !spendLimitEditing;
   const currentParticipant = view.participants.find(
     (participant) => participant.id === view.currentParticipantId,
   );
@@ -312,7 +328,11 @@ export function GroupOrderPageClient({
               </span>
             </label>
             <div className="flex flex-wrap gap-2">
-              <div className="flex min-w-[8rem] flex-1 items-center gap-2 rounded-[15px] border border-gray-200 bg-gray-50 px-3 py-2">
+              <div
+                className={`flex min-w-[8rem] flex-1 items-center gap-2 rounded-[15px] border border-gray-200 px-3 py-2 ${
+                  spendLimitLocked ? "bg-gray-100" : "bg-gray-50"
+                }`}
+              >
                 <span className="text-sm text-gray-500" aria-hidden>
                   ֏
                 </span>
@@ -320,27 +340,66 @@ export function GroupOrderPageClient({
                   value={spendLimit}
                   onChange={(e) => setSpendLimit(e.target.value)}
                   inputMode="numeric"
+                  readOnly={spendLimitLocked}
                   placeholder={labels.spendLimitPlaceholder}
                   aria-label={labels.spendLimitFieldLabel}
-                  className="w-full bg-transparent text-sm text-gray-900 outline-none"
+                  className={`w-full bg-transparent text-sm text-gray-900 outline-none ${
+                    spendLimitLocked ? "cursor-default text-gray-600" : ""
+                  }`}
                 />
               </div>
-              <button
-                type="button"
-                className={GLASS_ACTION_BUTTON}
-                onClick={() =>
-                  run(async () =>
-                    updateSpendLimitAction({
-                      inviteToken,
-                      spendLimitAmount: spendLimit.trim()
-                        ? Number.parseInt(spendLimit, 10)
-                        : null,
-                    }),
-                  )
-                }
-              >
-                {labels.saveLimit}
-              </button>
+              {spendLimitLocked ? (
+                <button
+                  type="button"
+                  className={GLASS_ACTION_BUTTON}
+                  onClick={() => setSpendLimitEditing(true)}
+                >
+                  {labels.editLimit}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={GLASS_ACTION_BUTTON}
+                  disabled={pending}
+                  onClick={() => {
+                    const parsed = parseSpendLimitInput(spendLimit);
+                    if (!parsed.ok) {
+                      setToastMessage(
+                        parsed.reason === "too_large"
+                          ? labels.spendLimitTooLarge.replace(
+                              "{max}",
+                              formatMoneyAmount(
+                                GROUP_ORDER_SPEND_LIMIT_MAX,
+                                "AMD",
+                                locale,
+                              ),
+                            )
+                          : labels.spendLimitInvalid,
+                      );
+                      return;
+                    }
+                    setError(null);
+                    startTransition(async () => {
+                      const result = await updateSpendLimitAction({
+                        inviteToken,
+                        spendLimitAmount: parsed.value,
+                      });
+                      if (!result.ok) {
+                        setToastMessage(
+                          result.error === "SPEND_LIMIT_INVALID"
+                            ? labels.spendLimitInvalid
+                            : (result.error ?? labels.errorGeneric),
+                        );
+                        return;
+                      }
+                      setSpendLimitEditing(false);
+                      router.refresh();
+                    });
+                  }}
+                >
+                  {labels.saveLimit}
+                </button>
+              )}
             </div>
           </div>
 
@@ -387,7 +446,7 @@ export function GroupOrderPageClient({
                 : labels.deliveryOrganizerPaysHint}
             </p>
             {view.deliveryAmount > 0 ? (
-              <p className="text-sm font-medium text-emerald-200">
+              <p className="text-base font-semibold text-[#f3e5a8] sm:text-lg">
                 {labels.deliveryQuoteReady
                   .replace("{amount}", view.deliveryFormatted)
                   .replace(
@@ -396,43 +455,26 @@ export function GroupOrderPageClient({
                   )}
               </p>
             ) : null}
-            <button
-              type="button"
-              className={GLASS_PILL_BUTTON}
-              disabled={pending || deliveryAddress.trim().length < 3}
-              onClick={() =>
-                run(async () =>
-                  setDeliveryAddressAction({
-                    inviteToken,
-                    deliveryAddress: deliveryAddress.trim(),
-                    deliveryLat: deliveryPoint?.lat,
-                    deliveryLng: deliveryPoint?.lng,
-                  }),
-                )
-              }
-            >
-              {labels.calculateDelivery}
-            </button>
-          </div>
-
-          <div className="space-y-2 border-t border-white/40 pt-4">
-            <p className="text-xs leading-relaxed text-white">
-              {labels.closeJoinsHint}
-            </p>
-            <button
-              type="button"
-              className={`${GLASS_PILL_BUTTON} w-full sm:w-auto`}
-              onClick={() =>
-                run(async () =>
-                  setJoinsClosedAction({
-                    inviteToken,
-                    joinsClosed: !view.joinsClosed,
-                  }),
-                )
-              }
-            >
-              {view.joinsClosed ? labels.openJoins : labels.closeJoins}
-            </button>
+            <div className="flex justify-end">
+              <KamanchaPillButton
+                type="button"
+                variant="light"
+                size="compact"
+                label={labels.calculateDelivery}
+                className="!h-11 !min-h-11 !w-auto min-w-[180px] max-w-none px-7 text-[14px] leading-5 sm:max-w-none"
+                disabled={pending || deliveryAddress.trim().length < 3}
+                onClick={() =>
+                  run(async () =>
+                    setDeliveryAddressAction({
+                      inviteToken,
+                      deliveryAddress: deliveryAddress.trim(),
+                      deliveryLat: deliveryPoint?.lat,
+                      deliveryLng: deliveryPoint?.lng,
+                    }),
+                  )
+                }
+              />
+            </div>
           </div>
           </div>
         </section>
@@ -458,18 +500,6 @@ export function GroupOrderPageClient({
                       </span>
                     ) : null}
                   </p>
-                  <p className="mt-0.5 text-sm text-white">
-                    {participant.subtotalFormatted} ·{" "}
-                    {paymentLabel(participant.paymentStatus, labels, {
-                      paysAtCheckout:
-                        view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-                        participant.role === "ORGANIZER" &&
-                        participant.paymentStatus !== "PAID" &&
-                        participant.paymentStatus !== "MARKED_RECEIVED" &&
-                        (view.status === "AWAITING_PAYMENTS" ||
-                          view.status === "CHECKOUT"),
-                    })}
-                  </p>
                   {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
                     <p className="mt-0.5 text-xs text-white/70">
                       {labels.deliveryShare}:{" "}
@@ -478,34 +508,58 @@ export function GroupOrderPageClient({
                     </p>
                   ) : null}
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <p
-                    className={`inline-flex rounded-full bg-white px-3.5 py-1 text-xs font-medium ${
-                      participant.itemsReady
-                        ? "text-brand-forest"
-                        : "text-amber-500"
-                    }`}
-                  >
-                    {participant.itemsReady ? labels.ready : labels.notReady}
-                  </p>
-                  {isOrganizer &&
-                  participant.role !== "ORGANIZER" &&
-                  canEdit ? (
-                    <button
-                      type="button"
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
-                      aria-label={labels.removeParticipant}
-                      onClick={() =>
-                        setPendingConfirm({
-                          kind: "participant",
-                          id: participant.id,
-                          name: participant.displayName,
-                        })
-                      }
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <div className="flex items-center gap-1">
+                    <p
+                      className={`inline-flex rounded-full bg-white px-3.5 py-1 text-xs font-medium ${
+                        participant.itemsReady
+                          ? "text-brand-forest"
+                          : "text-amber-500"
+                      }`}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  ) : null}
+                      {participant.itemsReady ? labels.ready : labels.notReady}
+                    </p>
+                    {isOrganizer &&
+                    participant.role !== "ORGANIZER" &&
+                    canEdit ? (
+                      <button
+                        type="button"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
+                        aria-label={labels.removeParticipant}
+                        onClick={() =>
+                          setPendingConfirm({
+                            kind: "participant",
+                            id: participant.id,
+                            name: participant.displayName,
+                          })
+                        }
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    ) : null}
+                  </div>
+                  <p className="text-right text-sm text-white">
+                    {(view.paymentMode === "ORGANIZER_PAYS_ALL"
+                      ? participant.finalAmountFormatted
+                      : participant.subtotalFormatted)}{" "}
+                    ·{" "}
+                    {paymentLabel(
+                      view.paymentMode === "ORGANIZER_PAYS_ALL" &&
+                        participant.paymentStatus === "NOT_REQUIRED"
+                        ? "PENDING"
+                        : participant.paymentStatus,
+                      labels,
+                      {
+                        paysAtCheckout:
+                          view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+                          participant.role === "ORGANIZER" &&
+                          participant.paymentStatus !== "PAID" &&
+                          participant.paymentStatus !== "MARKED_RECEIVED" &&
+                          (view.status === "AWAITING_PAYMENTS" ||
+                            view.status === "CHECKOUT"),
+                      },
+                    )}
+                  </p>
                 </div>
               </div>
 
@@ -568,6 +622,38 @@ export function GroupOrderPageClient({
                     {labels.itemsReadyDoneHint}
                   </p>
                 </div>
+              ) : isOrganizer ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <KamanchaPillButton
+                    type="button"
+                    variant="light"
+                    size="compact"
+                    label={labels.itemsReady}
+                    className={PILL_COMPACT}
+                    disabled={pending}
+                    onClick={() => {
+                      setError(null);
+                      startTransition(async () => {
+                        const result = await markItemsReadyAction({
+                          inviteToken,
+                        });
+                        if (!result.ok) {
+                          setError(result.error ?? labels.errorGeneric);
+                          return;
+                        }
+                        router.refresh();
+                      });
+                    }}
+                  />
+                  <KamanchaPillButton
+                    type="button"
+                    variant="light"
+                    size="compact"
+                    label={labels.cancelOrder}
+                    className={`${PILL_COMPACT} !text-red-700`}
+                    onClick={() => setPendingConfirm({ kind: "cancel" })}
+                  />
+                </div>
               ) : (
                 <KamanchaPillButton
                   type="button"
@@ -602,6 +688,21 @@ export function GroupOrderPageClient({
                 onClick={() =>
                   run(async () => lockGroupOrderAction({ inviteToken }))
                 }
+              />
+            ) : null}
+
+            {isOrganizer &&
+            view.status !== "CANCELLED" &&
+            view.status !== "COMPLETED" &&
+            view.status !== "PAID" &&
+            view.status !== "PREPARING" &&
+            !(canEdit && view.currentParticipantId && !iAmReady) ? (
+              <KamanchaPillButton
+                type="button"
+                variant="light"
+                label={labels.cancelOrder}
+                className={`${PILL_FULL} !text-red-700`}
+                onClick={() => setPendingConfirm({ kind: "cancel" })}
               />
             ) : null}
 
@@ -669,17 +770,23 @@ export function GroupOrderPageClient({
               </p>
             ) : null}
 
-            {isOrganizer &&
-            view.status !== "CANCELLED" &&
-            view.status !== "COMPLETED" &&
-            view.status !== "PAID" &&
-            view.status !== "PREPARING" ? (
+            {isOrganizer && canEdit ? (
               <KamanchaPillButton
                 type="button"
                 variant="light"
-                label={labels.cancelOrder}
-                className={`${PILL_FULL} !text-red-700`}
-                onClick={() => setPendingConfirm({ kind: "cancel" })}
+                label={
+                  view.joinsClosed ? labels.openJoins : labels.closeJoins
+                }
+                className={PILL_FULL}
+                disabled={pending}
+                onClick={() =>
+                  run(async () =>
+                    setJoinsClosedAction({
+                      inviteToken,
+                      joinsClosed: !view.joinsClosed,
+                    }),
+                  )
+                }
               />
             ) : null}
           </div>
@@ -706,6 +813,13 @@ export function GroupOrderPageClient({
           if (!pending) setPendingConfirm(null);
         }}
         onConfirm={confirmPendingDelete}
+      />
+      <Toast
+        open={toastMessage != null}
+        message={toastMessage ?? ""}
+        tone="warning"
+        durationMs={4000}
+        onClose={() => setToastMessage(null)}
       />
     </div>
   );
@@ -737,8 +851,18 @@ function JoinPanel({
         <p className="mt-2 text-sm text-white">{labels.joinDescription}</p>
 
         <div className="mt-5 space-y-3 text-sm text-white">
-          <p className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+          <p
+            className={`flex items-center gap-2 ${
+              view.paymentMode === "ORGANIZER_PAYS_ALL"
+                ? "text-base font-semibold"
+                : ""
+            }`}
+          >
+            {view.paymentMode === "ORGANIZER_PAYS_ALL" ? (
+              <User className="h-5 w-5 shrink-0" aria-hidden />
+            ) : (
+              <Users className="h-4 w-4 shrink-0" aria-hidden />
+            )}
             {view.paymentMode === "ORGANIZER_PAYS_ALL"
               ? labels.payingOrganizer.replace(
                   "{name}",

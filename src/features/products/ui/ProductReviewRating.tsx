@@ -4,6 +4,18 @@ import type { ReviewAggregate } from "@/features/reviews/domain/review-rules";
 
 const STAR_LEVELS = [5, 4, 3, 2, 1] as const;
 
+/** Storefront display value when a product has no approved reviews. */
+export const PRODUCT_RATING_DISPLAY_FALLBACK = 5;
+
+/** Resolves the rating shown on cards/PDP; missing or zero → 5. */
+export function displayProductRating(
+  rating: number | null | undefined,
+): number {
+  return rating != null && rating > 0
+    ? rating
+    : PRODUCT_RATING_DISPLAY_FALLBACK;
+}
+
 type RatingStarsProps = {
   average: number;
   size?: "sm" | "md";

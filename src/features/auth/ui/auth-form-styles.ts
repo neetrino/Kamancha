@@ -12,6 +12,14 @@ export const AUTH_LABEL_CLASS =
 export const AUTH_LINK_CLASS =
   "font-medium text-brand-forest underline-offset-2 hover:underline";
 
+/** Footer switch link (Մուտք / Ստեղծել հաշիվ) — slightly larger + bold. */
+export const AUTH_SWITCH_LINK_CLASS =
+  "text-base font-bold text-brand-forest underline-offset-2 hover:underline";
+
+/** Submit pill label — slightly larger + bold on auth forms. */
+export const AUTH_SUBMIT_PILL_CLASS =
+  "max-w-none sm:max-w-none [&_span.font-big-fat-boii]:text-[20px] [&_span.font-big-fat-boii]:font-bold sm:[&_span.font-big-fat-boii]:text-[22px]";
+
 export const AUTH_ERROR_CLASS =
   "w-full px-4 pt-3 text-sm text-red-600 sm:px-5";
 

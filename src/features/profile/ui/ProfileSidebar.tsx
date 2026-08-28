@@ -67,7 +67,7 @@ export function ProfileSidebar({
             />
           ) : null}
           <ProfileContactRow
-            icon={<ProfileBonusIcon />}
+            icon={<ProfileBonusIcon className="h-5 w-5 !text-pink-300" />}
             value={formatProfileBonusBalance(
               user.bonusBalance,
               locale,

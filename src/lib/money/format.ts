@@ -2,8 +2,10 @@ import type { Currency } from "@/lib/money/currency";
 import { currencySymbols } from "@/lib/money/currency";
 import { getCurrencyMeta } from "@/lib/money/currency-meta";
 
-/** Narrow no-break space — stable across Node and browsers (unlike Intl hy/AMD). */
-const GROUP_SEPARATOR = "\u202f";
+/** Dot thousands (1.000) — Armenian/European grouping, SSR-stable. */
+const GROUP_SEPARATOR = ".";
+/** Comma decimals when fraction digits > 0 (avoids clash with grouping dots). */
+const DECIMAL_SEPARATOR = ",";
 
 /**
  * Formats the major-unit number without Intl currency style.
@@ -21,7 +23,7 @@ function formatMajorAmount(major: number, fractionDigits: number): string {
   );
 
   if (fractionDigits > 0 && fractionPart !== undefined) {
-    return `${sign}${grouped}.${fractionPart}`;
+    return `${sign}${grouped}${DECIMAL_SEPARATOR}${fractionPart}`;
   }
 
   return `${sign}${grouped}`;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { Users } from "lucide-react";
+import { User, Users } from "lucide-react";
 
 import type {
   GroupOrderDetailView,
@@ -80,11 +80,19 @@ export function GroupOrderSummary({
     >
       <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
         <h2 className="relative z-[2] mb-6 flex items-start gap-2 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
-          <Users
-            className="mt-1 h-5 w-5 shrink-0"
-            strokeWidth={2.75}
-            aria-hidden
-          />
+          {view.paymentMode === "ORGANIZER_PAYS_ALL" ? (
+            <User
+              className="mt-1 h-5 w-5 shrink-0"
+              strokeWidth={2.75}
+              aria-hidden
+            />
+          ) : (
+            <Users
+              className="mt-1 h-5 w-5 shrink-0"
+              strokeWidth={2.75}
+              aria-hidden
+            />
+          )}
           <span>
             {view.paymentMode === "ORGANIZER_PAYS_ALL"
               ? labels.payingOrganizer.replace(

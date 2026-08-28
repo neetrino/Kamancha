@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
@@ -12,25 +12,26 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 type AdminProductsFiltersProps = {
   total: number;
   q?: string;
-  sku?: string;
   categoryId?: string;
   stock: "all" | "in_stock" | "out_of_stock" | "low_stock";
   categories: AdminCategoryOption[];
   sort: string;
   dir: string;
   copy: Dictionary["admin"]["products"]["filters"];
+  /** Shown next to the stock filter (e.g. add-product button). */
+  stockRowAction?: ReactNode;
 };
 
 export function AdminProductsFilters({
   total,
   q,
-  sku,
   categoryId,
   stock,
   categories,
   sort,
   dir,
   copy,
+  stockRowAction,
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [categoryValue, setCategoryValue] = useState(categoryId ?? "");
@@ -82,16 +83,6 @@ export function AdminProductsFilters({
             aria-label={copy.searchByTitleOrSlugAria}
           />
         </label>
-        <label>
-          <span className={ADMIN_LABEL}>{copy.searchBySku}</span>
-          <AdminSearchInput
-            name="sku"
-            defaultValue={sku ?? ""}
-            placeholder={copy.searchBySkuPlaceholder}
-            className="mt-1"
-            aria-label={copy.searchBySkuAria}
-          />
-        </label>
         <div>
           <span className={ADMIN_LABEL}>{copy.filterByCategory}</span>
           <SelectDropdown
@@ -104,16 +95,27 @@ export function AdminProductsFilters({
             onValueChange={applyCategory}
           />
         </div>
-        <div>
-          <span className={ADMIN_LABEL}>{copy.filterByStock}</span>
-          <SelectDropdown
-            name="stock"
-            ariaLabel={copy.filterByStockAria}
-            value={stockValue}
-            options={stockOptions}
-            className="mt-1"
-            onValueChange={applyStock}
-          />
+        <div
+          className={
+            stockRowAction
+              ? "md:col-span-2 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-end"
+              : undefined
+          }
+        >
+          <div className={stockRowAction ? "min-w-0" : undefined}>
+            <span className={ADMIN_LABEL}>{copy.filterByStock}</span>
+            <SelectDropdown
+              name="stock"
+              ariaLabel={copy.filterByStockAria}
+              value={stockValue}
+              options={stockOptions}
+              className="mt-1"
+              onValueChange={applyStock}
+            />
+          </div>
+          {stockRowAction ? (
+            <div className="min-w-0 sm:self-end">{stockRowAction}</div>
+          ) : null}
         </div>
       </form>
     </div>

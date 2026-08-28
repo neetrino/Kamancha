@@ -105,7 +105,7 @@
   },
   "success": {
     "title": "Заказ подтверждён",
-    "body": "Заказ {orderNumber} успешно оформлен. Корзина очищена.",
+    "body": "Заказ {orderNumber} успешно оформлен.",
     "total": "Итого: {amount}",
     "continueShopping": "Продолжить покупки",
     "viewOrders": "Мои заказы"

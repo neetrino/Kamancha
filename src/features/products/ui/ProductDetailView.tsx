@@ -4,6 +4,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import { SITE_HEADER_INNER, STOREFRONT_TABLET_INSET_X } from "@/components/layout/site-header-classes";
 import { ProductGallery } from "@/features/products/ui/ProductGallery";
 import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
+import { displayProductRating } from "@/features/products/ui/ProductReviewRating";
 import type { ProductDetail } from "@/features/products/types";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -43,6 +44,8 @@ export function ProductDetailView({
   const labels = dictionary.product;
   const inStock = product.stockOnHand > 0;
   const primaryCategory = product.categories[0] ?? null;
+  const hasReviews = ratingAverage != null && ratingCount > 0;
+  const displayRating = displayProductRating(ratingAverage);
 
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
@@ -133,26 +136,26 @@ export function ProductDetailView({
               </AppLink>
             ) : null}
 
-            {ratingAverage != null && ratingCount > 0 ? (
-              <div className="flex items-center gap-1.5">
-                <Image
-                  src={STAR_SRC}
-                  alt=""
-                  width={20}
-                  height={20}
-                  aria-hidden
-                />
-                <span className="text-lg font-semibold leading-[27px] text-white">
-                  {ratingAverage.toFixed(1)}
-                </span>
+            <div className="flex items-center gap-1.5">
+              <Image
+                src={STAR_SRC}
+                alt=""
+                width={20}
+                height={20}
+                aria-hidden
+              />
+              <span className="text-lg font-semibold leading-[27px] text-white">
+                {displayRating.toFixed(1)}
+              </span>
+              {hasReviews ? (
                 <span className="text-sm leading-[21px] text-white/50">
                   {labels.reviewCountParen.replace(
                     "{count}",
                     String(ratingCount),
                   )}
                 </span>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </div>
 
           {product.translation.description ? (

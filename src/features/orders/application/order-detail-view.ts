@@ -68,19 +68,7 @@ function formatAddressLine(
   return parts.join(", ");
 }
 
-function paymentMethodLabel(method: string): string {
-  const normalized = method.toUpperCase();
-  if (normalized === "COD" || normalized === "CASH") {
-    return "Cash";
-  }
-  if (normalized === "IDRAM") {
-    return "Idram";
-  }
-  if (normalized === "ARCA") {
-    return "ArCa";
-  }
-  return method;
-}
+import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 
 /** Maps a loaded order into a serializable admin drawer view. */
 export function toAdminOrderDetailView(

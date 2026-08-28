@@ -1,11 +1,26 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
+import { createPortal } from "react-dom";
 
 import { autocompleteAddressAction } from "@/features/delivery/application/autocomplete-address";
 import type { PlaceAutocompleteSuggestion } from "@/lib/maps/types";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 const DEBOUNCE_MS = 280;
+
+type MenuPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
 
 type AddressAutocompleteProps = {
   name?: string;
@@ -19,6 +34,15 @@ type AddressAutocompleteProps = {
   autoComplete?: string;
 };
 
+function measureMenuPosition(anchor: HTMLElement): MenuPosition {
+  const rect = anchor.getBoundingClientRect();
+  return {
+    top: rect.bottom + 4,
+    left: rect.left,
+    width: rect.width,
+  };
+}
+
 export function AddressAutocomplete({
   name,
   value,
@@ -31,7 +55,10 @@ export function AddressAutocomplete({
   autoComplete = "street-address",
 }: AddressAutocompleteProps) {
   const listId = useId();
+  const mounted = useIsClient();
   const rootRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
   const debounceRef = useRef<number | null>(null);
   const requestIdRef = useRef(0);
   const [open, setOpen] = useState(false);
@@ -41,17 +68,47 @@ export function AddressAutocomplete({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [highlightIndex, setHighlightIndex] = useState(-1);
+  const [position, setPosition] = useState<MenuPosition | null>(null);
+
+  function syncPosition(): void {
+    const input = inputRef.current;
+    if (!input) return;
+    setPosition(measureMenuPosition(input));
+  }
+
+  useLayoutEffect(() => {
+    if (!open || suggestions.length === 0) return;
+    syncPosition();
+  }, [open, suggestions.length]);
 
   useEffect(() => {
+    if (!open) return;
+
     function onPointerDown(event: MouseEvent): void {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-        setHighlightIndex(-1);
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
       }
+      setOpen(false);
+      setHighlightIndex(-1);
     }
+
+    function onReposition(): void {
+      syncPosition();
+    }
+
     document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
-  }, []);
+    window.addEventListener("resize", onReposition);
+    window.addEventListener("scroll", onReposition, true);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      window.removeEventListener("resize", onReposition);
+      window.removeEventListener("scroll", onReposition, true);
+    };
+  }, [open]);
 
   useEffect(() => {
     return () => {
@@ -68,6 +125,7 @@ export function AddressAutocomplete({
     setPending(false);
     setError(null);
     setHighlightIndex(-1);
+    setPosition(null);
   }
 
   function scheduleFetch(input: string): void {
@@ -149,9 +207,12 @@ export function AddressAutocomplete({
     }
   }
 
+  const showMenu = open && suggestions.length > 0 && position != null;
+
   return (
     <div ref={rootRef} className="relative w-full">
       <input
+        ref={inputRef}
         name={name}
         value={value}
         onChange={(event) => {
@@ -161,6 +222,7 @@ export function AddressAutocomplete({
         }}
         onFocus={() => {
           if (suggestions.length > 0) {
+            syncPosition();
             setOpen(true);
           }
         }}
@@ -182,38 +244,51 @@ export function AddressAutocomplete({
         </span>
       ) : null}
 
-      {open && suggestions.length > 0 ? (
-        <ul
-          id={listId}
-          role="listbox"
-          className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-2xl border border-gray-200 bg-white py-1"
-        >
-          {suggestions.map((suggestion, index) => {
-            const active = index === highlightIndex;
-            return (
-              <li key={suggestion.placeId} role="option" aria-selected={active}>
-                <button
-                  type="button"
-                  className={`flex w-full flex-col items-start px-4 py-2.5 text-left text-sm ${
-                    active ? "bg-gray-100" : "hover:bg-gray-50"
-                  }`}
-                  onMouseEnter={() => setHighlightIndex(index)}
-                  onClick={() => selectSuggestion(suggestion)}
-                >
-                  <span className="font-medium text-gray-900">
-                    {suggestion.primaryText}
-                  </span>
-                  {suggestion.secondaryText ? (
-                    <span className="text-xs text-gray-500">
-                      {suggestion.secondaryText}
-                    </span>
-                  ) : null}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+      {mounted && showMenu
+        ? createPortal(
+            <ul
+              ref={menuRef}
+              id={listId}
+              role="listbox"
+              className="fixed z-[300] max-h-60 overflow-auto rounded-2xl border border-gray-200 bg-white py-1 shadow-xl"
+              style={{
+                top: position.top,
+                left: position.left,
+                width: position.width,
+              }}
+            >
+              {suggestions.map((suggestion, index) => {
+                const active = index === highlightIndex;
+                return (
+                  <li
+                    key={suggestion.placeId}
+                    role="option"
+                    aria-selected={active}
+                  >
+                    <button
+                      type="button"
+                      className={`flex w-full flex-col items-start px-4 py-2.5 text-left text-sm ${
+                        active ? "bg-gray-100" : "hover:bg-gray-50"
+                      }`}
+                      onMouseEnter={() => setHighlightIndex(index)}
+                      onClick={() => selectSuggestion(suggestion)}
+                    >
+                      <span className="font-medium text-gray-900">
+                        {suggestion.primaryText}
+                      </span>
+                      {suggestion.secondaryText ? (
+                        <span className="text-xs text-gray-500">
+                          {suggestion.secondaryText}
+                        </span>
+                      ) : null}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>,
+            document.body,
+          )
+        : null}
 
       {error ? <p className="mt-1 text-xs text-amber-700">{error}</p> : null}
     </div>

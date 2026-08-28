@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { BrandLogo } from "@/components/layout/BrandLogo";
+import { KAMANCHA_BRANCHES } from "@/lib/brand/store-locations";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
@@ -16,6 +17,9 @@ type FooterLink = {
   href: string;
   label: string;
 };
+
+const CONTACT_LINK_CLASS =
+  "font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/50 transition-colors hover:text-white";
 
 function SocialCircle({
   href,
@@ -169,21 +173,31 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               {footer.contactTitle}
             </h4>
             <div className="mt-6 flex flex-col gap-3">
-              <p className="font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/50">
+              <a
+                href={KAMANCHA_BRANCHES.tumanyan.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={CONTACT_LINK_CLASS}
+              >
                 {footer.address}
-              </p>
-              <p className="font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/50">
+              </a>
+              <a
+                href={KAMANCHA_BRANCHES.saryan.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={CONTACT_LINK_CLASS}
+              >
                 {footer.address2}
-              </p>
+              </a>
               <a
                 href={`tel:${footer.phone.replace(/\s/g, "")}`}
-                className="font-big-fat-boii text-[14px] leading-5 font-normal text-white/50 transition-colors hover:text-white"
+                className={CONTACT_LINK_CLASS}
               >
                 {footer.phone}
               </a>
               <a
                 href={`mailto:${footer.email}`}
-                className="font-big-fat-boii text-[14px] leading-5 font-normal uppercase text-white/50 transition-colors hover:text-white"
+                className={`${CONTACT_LINK_CLASS} uppercase`}
               >
                 {footer.email}
               </a>

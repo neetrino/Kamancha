@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Վահանակ",
     "orders": "Պատվերներ",
-    "groupOrders": "Խմբային պատվերներ",
+    "groupOrders": "Խմբային",
     "products": "Ապրանքներ",
     "categories": "Կատեգորիաներ",
     "delivery": "Առաքում",
@@ -21,8 +21,7 @@
     "menu": "Մենյու",
     "adminMenuAria": "Ադմինիստրատորի մենյու",
     "expandSidebar": "Բացել կողային վահանակը",
-    "collapseSidebar": "Փակել կողային վահանակը",
-    "toggleProductSubpages": "Փոխարկել ապրանքների ենթաէջերը"
+    "collapseSidebar": "Փակել կողային վահանակը"
   },
   "common": {
     "save": "Պահպանել",
@@ -131,16 +130,16 @@
       "orderStatusAria": "Պատվերի կարգավիճակ",
       "allStatuses": "Բոլոր կարգավիճակները",
       "paymentStatusAria": "Վճարման կարգավիճակ",
-      "allPaymentStatuses": "Վճարման բոլոր կարգավիճակները",
-      "searchPlaceholder": "Որոնել պատվերի №-ով, հաճախորդով, էլ. փոստով, հեռախոսով…",
+      "allPaymentStatuses": "Բոլոր վճարման կարգավիճակները",
+      "searchPlaceholder": "Որոնել ըստ համարի, հաճախորդի, էլ․ փոստի, հեռախոսի…",
       "searchAria": "Որոնել պատվերներ",
       "totalOrders": "Ընդամենը պատվերներ՝ {total}",
-      "statusPending": "Սպասման մեջ",
+      "statusPending": "Սպասող",
       "statusProcessing": "Ընթացքի մեջ",
-      "statusCompleted": "Կատարված",
+      "statusCompleted": "Ավարտված",
       "statusCancelled": "Չեղարկված",
       "paymentPaid": "Վճարված",
-      "paymentPending": "Սպասման մեջ",
+      "paymentPending": "Սպասող",
       "paymentFailed": "Չհաջողված"
     },
     "bulk": {
@@ -157,8 +156,9 @@
       "customer": "Հաճախորդ",
       "status": "Կարգավիճակ",
       "payment": "Վճարում",
+      "paymentMethod": "Վճարման եղանակ",
       "total": "Ընդամենը",
-      "placed": "Կատարման ամսաթիվ",
+      "placed": "Տեղադրված",
       "archivedBadge": "Արխիվացված"
     },
     "inlineStatus": {
@@ -166,9 +166,9 @@
       "changePaymentAria": "Փոխել վճարման կարգավիճակը"
     },
     "statusLabels": {
-      "pending": "Սպասման մեջ",
+      "pending": "Սպասող",
       "processing": "Ընթացքի մեջ",
-      "completed": "Կատարված",
+      "completed": "Ավարտված",
       "cancelled": "Չեղարկված",
       "paid": "Վճարված",
       "failed": "Չհաջողված"
@@ -194,7 +194,7 @@
       "deliverySlot": "Առաքման ժամային միջակայք՝",
       "cashChange": "Մանր՝",
       "paymentSection": "Վճարում",
-      "method": "Եղանակ՝",
+      "method": "Վճարման եղանակ՝",
       "amount": "Գումար՝",
       "customerPays": "Հաճախորդը վճարում է՝",
       "prepareChange": "Պատրաստել մանրադրամ՝",
@@ -272,9 +272,6 @@
       "searchByTitleOrSlug": "Որոնել վերնագրով կամ slug-ով",
       "searchByTitleOrSlugPlaceholder": "Որոնել վերնագրով կամ slug-ով…",
       "searchByTitleOrSlugAria": "Որոնել վերնագրով կամ slug-ով",
-      "searchBySku": "Որոնել SKU-ով",
-      "searchBySkuPlaceholder": "Մուտքագրեք SKU կոդը",
-      "searchBySkuAria": "Որոնել SKU-ով",
       "filterByCategory": "Զտել ըստ կատեգորիայի",
       "filterByCategoryAria": "Զտել ըստ կատեգորիայի",
       "allCategories": "Բոլոր կատեգորիաները",
@@ -891,6 +888,8 @@
     "sheetAria": "Gift Card-ի մանրամասներ",
     "sheetTitle": "Gift Card",
     "activate": "Ակտիվացնել",
+    "disable": "Անջատել",
+    "resendEmail": "Կրկին ուղարկել email",
     "searchPlaceholder": "Որոնել ըստ կոդի, գնորդի կամ ստացողի",
     "statuses": {
       "PENDING_PAYMENT": "Սպասում է վճարման",

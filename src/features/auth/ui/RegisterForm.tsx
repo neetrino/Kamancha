@@ -10,6 +10,8 @@ import {
   AUTH_ERROR_CLASS,
   AUTH_LABEL_CLASS,
   AUTH_LINK_CLASS,
+  AUTH_SUBMIT_PILL_CLASS,
+  AUTH_SWITCH_LINK_CLASS,
   authFieldClassName,
 } from "@/features/auth/ui/auth-form-styles";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
@@ -186,16 +188,16 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
               : dictionary.submitRegister
           }
           disabled={isPending}
-          className="max-w-none sm:max-w-none"
+          className={AUTH_SUBMIT_PILL_CLASS}
         />
       </div>
 
-      <p className="pb-6 text-center text-sm text-[#0a0a0a]">
+      <p className="pb-6 text-center text-[#0a0a0a]">
         {dictionary.hasAccount}{" "}
         <AppLink
           href={`/${locale}/login`}
           prefetchPolicy="intent"
-          className={AUTH_LINK_CLASS}
+          className={AUTH_SWITCH_LINK_CLASS}
         >
           {dictionary.signInLink}
         </AppLink>

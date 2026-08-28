@@ -105,7 +105,7 @@
   },
   "success": {
     "title": "Order confirmed",
-    "body": "Order {orderNumber} was placed successfully. Your cart has been cleared.",
+    "body": "Order {orderNumber} was placed successfully.",
     "total": "Total: {amount}",
     "continueShopping": "Continue shopping",
     "viewOrders": "View orders"

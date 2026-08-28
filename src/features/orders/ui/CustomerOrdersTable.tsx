@@ -18,6 +18,7 @@ type CustomerOrderRow = {
 
 type CustomerOrdersTableProps = {
   orders: CustomerOrderRow[];
+  emptyLabel: string;
   onOpenOrder: (orderNumber: string) => void;
 };
 
@@ -64,13 +65,14 @@ function paymentStatusTextClass(status: string): string {
 
 export function CustomerOrdersTable({
   orders,
+  emptyLabel,
   onOpenOrder,
 }: CustomerOrdersTableProps) {
   if (orders.length === 0) {
     return (
       <section className={PROFILE_SECTION}>
-        <p className="relative z-[2] text-sm text-gray-700">
-          No orders match these filters.
+        <p className="relative z-[2] text-sm text-white">
+          {emptyLabel}
         </p>
       </section>
     );

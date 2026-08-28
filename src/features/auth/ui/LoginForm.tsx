@@ -12,6 +12,8 @@ import {
   AUTH_LABEL_CLASS,
   AUTH_LINK_CLASS,
   AUTH_STATUS_CLASS,
+  AUTH_SUBMIT_PILL_CLASS,
+  AUTH_SWITCH_LINK_CLASS,
   authFieldClassName,
 } from "@/features/auth/ui/auth-form-styles";
 import { PasswordField } from "@/features/auth/ui/PasswordField";
@@ -109,17 +111,18 @@ export function LoginForm({ locale, dictionary }: LoginFormProps) {
           label={dictionary.submitLogin}
           disabled={isPending}
           figmaNodeId="253:513"
-          className="max-w-none sm:max-w-none"
+          className={AUTH_SUBMIT_PILL_CLASS}
         />
       </div>
 
-      <p className="pb-6 text-center text-sm text-[#0a0a0a]">
+      <p className="pb-6 text-center text-[#0a0a0a]">
+        {dictionary.noAccount}{" "}
         <AppLink
           href={`/${locale}/register`}
           prefetchPolicy="intent"
-          className={AUTH_LINK_CLASS}
+          className={AUTH_SWITCH_LINK_CLASS}
         >
-          {dictionary.submitRegister}
+          {dictionary.createAccountLink}
         </AppLink>
       </p>
     </form>

@@ -113,7 +113,12 @@ export async function markItemsReadyAction(raw: unknown) {
 
 export async function updateSpendLimitAction(raw: unknown) {
   const parsed = updateSpendLimitSchema.safeParse(raw);
-  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+  if (!parsed.success) {
+    return {
+      ok: false as const,
+      error: "SPEND_LIMIT_INVALID",
+    };
+  }
   const result = await updateGroupOrderSpendLimit(parsed.data);
   if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
   return result;

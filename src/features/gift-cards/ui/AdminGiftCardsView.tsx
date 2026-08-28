@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Check, Copy, Mail, Plus, Power } from "lucide-react";
+import { Check, Copy, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -19,9 +19,7 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
-  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
-  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
@@ -152,13 +150,12 @@ export function AdminGiftCardsView({
                 <th className={ADMIN_TABLE_TH}>
                   {copy.giftCards.table.purchaser}
                 </th>
-                <th className={ADMIN_TABLE_TH_CENTER}>{copy.common.actions}</th>
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
               {cards.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className={ADMIN_TABLE_STATE_INSET}>
+                  <td colSpan={5} className={ADMIN_TABLE_STATE_INSET}>
                     {copy.giftCards.empty}
                   </td>
                 </tr>
@@ -170,9 +167,31 @@ export function AdminGiftCardsView({
                     onClick={() => openDetail(card.id)}
                   >
                     <td className={ADMIN_TABLE_TD}>
-                      <span className="font-mono text-xs tracking-wide">
-                        {card.code}
-                      </span>
+                      <div className="inline-flex items-center gap-1.5">
+                        <span className="font-mono text-xs tracking-wide">
+                          {card.code}
+                        </span>
+                        <button
+                          type="button"
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                          disabled={isPending}
+                          aria-label={copy.giftCards.table.copyAria.replace(
+                            "{code}",
+                            card.code,
+                          )}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void navigator.clipboard.writeText(card.code);
+                            setCopiedId(card.id);
+                          }}
+                        >
+                          {copiedId === card.id ? (
+                            <Check className="h-3.5 w-3.5" aria-hidden />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5" aria-hidden />
+                          )}
+                        </button>
+                      </div>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
@@ -195,98 +214,6 @@ export function AdminGiftCardsView({
                         {card.purchaserEmail ?? "—"}
                       </div>
                     </td>
-                    <td
-                      className={ADMIN_TABLE_TD_CENTER}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <div className="inline-flex flex-wrap items-center justify-center gap-1">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          size="sm"
-                          disabled={isPending}
-                          aria-label={copy.giftCards.table.copyAria.replace(
-                            "{code}",
-                            card.code,
-                          )}
-                          onClick={() => {
-                            void navigator.clipboard.writeText(card.code);
-                            setCopiedId(card.id);
-                          }}
-                        >
-                          {copiedId === card.id ? (
-                            <Check className="h-4 w-4" />
-                          ) : (
-                            <Copy className="h-4 w-4" />
-                          )}
-                        </Button>
-                        {card.status === "PENDING_PAYMENT" ? (
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            size="sm"
-                            disabled={isPending}
-                            onClick={() =>
-                              runAction(async () => {
-                                const result = await adminActivateGiftCardAction(
-                                  locale,
-                                  { id: card.id },
-                                );
-                                if (!result.ok) {
-                                  throw new Error(result.error.message);
-                                }
-                              })
-                            }
-                          >
-                            {copy.giftCards.activate}
-                          </Button>
-                        ) : null}
-                        {card.status === "ACTIVE" || card.status === "USED" ? (
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            size="sm"
-                            disabled={isPending}
-                            aria-label={copy.giftCards.table.resendAria}
-                            onClick={() =>
-                              runAction(async () => {
-                                const result =
-                                  await adminResendGiftCardEmailAction(locale, {
-                                    id: card.id,
-                                  });
-                                if (!result.ok) {
-                                  throw new Error(result.error.message);
-                                }
-                              })
-                            }
-                          >
-                            <Mail className="h-4 w-4" />
-                          </Button>
-                        ) : null}
-                        {card.status !== "DISABLED" ? (
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            size="sm"
-                            disabled={isPending}
-                            aria-label={copy.giftCards.table.disableAria}
-                            onClick={() =>
-                              runAction(async () => {
-                                const result = await adminDisableGiftCardAction(
-                                  locale,
-                                  { id: card.id },
-                                );
-                                if (!result.ok) {
-                                  throw new Error(result.error.message);
-                                }
-                              })
-                            }
-                          >
-                            <Power className="h-4 w-4" />
-                          </Button>
-                        ) : null}
-                      </div>
-                    </td>
                   </tr>
                 ))
               )}
@@ -300,11 +227,53 @@ export function AdminGiftCardsView({
         onClose={closeDetail}
         detail={detail}
         isLoading={isDetailPending}
+        isActionPending={isPending}
         locale={locale}
         copy={{
           giftCards: copy.giftCards,
           common: copy.common,
         }}
+        onActivate={
+          detail?.status === "PENDING_PAYMENT"
+            ? () =>
+                runAction(async () => {
+                  const result = await adminActivateGiftCardAction(locale, {
+                    id: detail.id,
+                  });
+                  if (!result.ok) {
+                    throw new Error(result.error.message);
+                  }
+                  closeDetail();
+                })
+            : undefined
+        }
+        onResendEmail={
+          detail?.status === "ACTIVE" || detail?.status === "USED"
+            ? () =>
+                runAction(async () => {
+                  const result = await adminResendGiftCardEmailAction(locale, {
+                    id: detail.id,
+                  });
+                  if (!result.ok) {
+                    throw new Error(result.error.message);
+                  }
+                })
+            : undefined
+        }
+        onDisable={
+          detail != null && detail.status !== "DISABLED"
+            ? () =>
+                runAction(async () => {
+                  const result = await adminDisableGiftCardAction(locale, {
+                    id: detail.id,
+                  });
+                  if (!result.ok) {
+                    throw new Error(result.error.message);
+                  }
+                  closeDetail();
+                })
+            : undefined
+        }
       />
 
       <GiftCardDrawer

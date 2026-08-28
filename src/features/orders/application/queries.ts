@@ -25,16 +25,28 @@ import {
   users,
 } from "@/db/schema";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
+import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
 import { getStoreRevenue } from "@/features/settings/application/queries";
 
 const PAGE_SIZE = 20;
+
+const latestPaymentMethodSql = sql<string | null>`
+  (
+    select ${payments.method}
+    from ${payments}
+    where ${payments.orderId} = ${orders.id}
+    order by ${payments.createdAt} desc
+    limit 1
+  )
+`;
 
 export type AdminOrderListItem = {
   id: string;
   orderNumber: string;
   status: string;
   paymentStatus: string;
+  paymentMethod: string | null;
   contactName: string;
   contactEmail: string;
   totalAmount: number;
@@ -123,6 +135,7 @@ export async function listAdminOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        paymentMethodRaw: latestPaymentMethodSql,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
@@ -139,7 +152,12 @@ export async function listAdminOrders(
   ]);
 
   return {
-    rows,
+    rows: rows.map(({ paymentMethodRaw, ...row }) => ({
+      ...row,
+      paymentMethod: paymentMethodRaw
+        ? paymentMethodLabel(paymentMethodRaw)
+        : null,
+    })),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
   };
@@ -170,6 +188,7 @@ export async function listCustomerOrders(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        paymentMethodRaw: latestPaymentMethodSql,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
@@ -196,7 +215,12 @@ export async function listCustomerOrders(
   ]);
 
   return {
-    rows,
+    rows: rows.map(({ paymentMethodRaw, ...row }) => ({
+      ...row,
+      paymentMethod: paymentMethodRaw
+        ? paymentMethodLabel(paymentMethodRaw)
+        : null,
+    })),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
   };
@@ -378,6 +402,7 @@ export async function getAdminDashboardMetrics(input: {
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
+        paymentMethodRaw: latestPaymentMethodSql,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
         totalAmount: orders.totalAmount,
@@ -418,7 +443,12 @@ export async function getAdminDashboardMetrics(input: {
     orders: ordersRow?.value ?? 0,
     revenueAmount: revenueRow?.value ?? 0,
     previousRevenueAmount: previousRevenueRow?.value ?? 0,
-    recentOrders,
+    recentOrders: recentOrders.map(({ paymentMethodRaw, ...row }) => ({
+      ...row,
+      paymentMethod: paymentMethodRaw
+        ? paymentMethodLabel(paymentMethodRaw)
+        : null,
+    })),
     topProducts: topProductRows.map((row) => ({
       productId: row.productId ?? "unknown",
       title: row.title,
