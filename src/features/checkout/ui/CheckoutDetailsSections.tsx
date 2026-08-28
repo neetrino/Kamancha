@@ -81,7 +81,7 @@ type CheckoutDetailsSectionsProps = {
   defaultEmail: string;
   defaultPhone: string;
   addressLocked?: boolean;
-  prepaidNotice?: { title: string; hint: string } | null;
+  prepaidNotice?: { title: string; lines: readonly string[] } | null;
 };
 
 export function CheckoutDetailsSections({
@@ -259,9 +259,11 @@ export function CheckoutDetailsSections({
       {prepaidNotice ? (
         <section className={SECTION_CLASS}>
           <h2 className={SECTION_TITLE_CLASS}>{prepaidNotice.title}</h2>
-          <p className="relative z-[2] text-sm text-white">
-            {prepaidNotice.hint}
-          </p>
+          <div className="relative z-[2] space-y-1 text-sm text-white">
+            {prepaidNotice.lines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </div>
         </section>
       ) : null}
 
