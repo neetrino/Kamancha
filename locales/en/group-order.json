@@ -9,6 +9,8 @@
   "paymentModeSplit": "Everyone pays for themselves",
   "spendLimitLabel": "Enter the amount",
   "spendLimitHint": "Per-participant merchandise limit (֏)",
+  "spendLimitTooLarge": "That limit is too large. Maximum is {max}.",
+  "spendLimitInvalid": "Enter a valid amount (numbers only).",
   "infoNote": "A group order is an order with more than one participant.",
   "start": "Start",
   "close": "Close",

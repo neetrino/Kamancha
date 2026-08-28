@@ -13,9 +13,14 @@ import { createPortal } from "react-dom";
 
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { createGroupOrderAction } from "@/features/group-orders/actions";
+import {
+  GROUP_ORDER_SPEND_LIMIT_MAX,
+  parseSpendLimitInput,
+} from "@/features/group-orders/domain/spend-limit";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { formatMoneyAmount } from "@/lib/money/format";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 import {
   BODY_SCROLL_LOCK_ALLOW,
@@ -105,17 +110,18 @@ export function CreateGroupOrderModal({
 
   function submit(): void {
     setError(null);
-    const limitRaw = spendLimit.trim();
-    const spendLimitAmount =
-      paymentMode === "ORGANIZER_PAYS_ALL" && limitRaw
-        ? Number.parseInt(limitRaw, 10)
-        : null;
-
-    if (
-      spendLimitAmount != null &&
-      (!Number.isInteger(spendLimitAmount) || spendLimitAmount < 1)
-    ) {
-      setError(labels.errorGeneric);
+    const limitRaw =
+      paymentMode === "ORGANIZER_PAYS_ALL" ? spendLimit : "";
+    const parsed = parseSpendLimitInput(limitRaw);
+    if (!parsed.ok) {
+      setError(
+        parsed.reason === "too_large"
+          ? labels.spendLimitTooLarge.replace(
+              "{max}",
+              formatMoneyAmount(GROUP_ORDER_SPEND_LIMIT_MAX, "AMD", locale),
+            )
+          : labels.spendLimitInvalid,
+      );
       return;
     }
 
@@ -123,7 +129,7 @@ export function CreateGroupOrderModal({
       const result = await createGroupOrderAction({
         paymentMode,
         organizerDisplayName: name.trim() || labels.organizer,
-        spendLimitAmount,
+        spendLimitAmount: parsed.value,
       });
       if (!result.ok) {
         setError(result.error);

@@ -1,15 +1,17 @@
 import { z } from "zod";
 
+import { GROUP_ORDER_SPEND_LIMIT_MAX } from "@/features/group-orders/domain/spend-limit";
 import { GROUP_ORDER_PAYMENT_MODES } from "@/features/group-orders/domain/status";
+
+const spendLimitAmountSchema = z
+  .number()
+  .int()
+  .positive()
+  .max(GROUP_ORDER_SPEND_LIMIT_MAX);
 
 export const createGroupOrderSchema = z.object({
   paymentMode: z.enum(GROUP_ORDER_PAYMENT_MODES),
-  spendLimitAmount: z
-    .number()
-    .int()
-    .positive()
-    .nullable()
-    .optional(),
+  spendLimitAmount: spendLimitAmountSchema.nullable().optional(),
   organizerDisplayName: z.string().trim().min(1).max(80),
 });
 
@@ -28,7 +30,7 @@ export const groupOrderInviteTokenSchema = z.object({
 
 export const updateSpendLimitSchema = z.object({
   inviteToken: z.string().uuid(),
-  spendLimitAmount: z.number().int().positive().nullable(),
+  spendLimitAmount: spendLimitAmountSchema.nullable(),
 });
 
 export const addGroupOrderItemSchema = z.object({

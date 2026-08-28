@@ -15,6 +15,7 @@ import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { Toast } from "@/components/ui/Toast";
 import { GroupOrderSummary } from "@/features/group-orders/ui/GroupOrderSummary";
 import {
   cancelGroupOrderAction,
@@ -32,7 +33,12 @@ import type {
   GroupOrderDetailView,
   GroupOrderItemView,
 } from "@/features/group-orders/application/queries";
+import {
+  GROUP_ORDER_SPEND_LIMIT_MAX,
+  parseSpendLimitInput,
+} from "@/features/group-orders/domain/spend-limit";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 import type { Locale } from "@/lib/i18n/config";
 import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
@@ -128,6 +134,7 @@ export function GroupOrderPageClient({
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(
     null,
   );
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   if (!initialView) {
     return (
@@ -330,16 +337,40 @@ export function GroupOrderPageClient({
               <button
                 type="button"
                 className={GLASS_ACTION_BUTTON}
-                onClick={() =>
-                  run(async () =>
-                    updateSpendLimitAction({
+                onClick={() => {
+                  const parsed = parseSpendLimitInput(spendLimit);
+                  if (!parsed.ok) {
+                    setToastMessage(
+                      parsed.reason === "too_large"
+                        ? labels.spendLimitTooLarge.replace(
+                            "{max}",
+                            formatMoneyAmount(
+                              GROUP_ORDER_SPEND_LIMIT_MAX,
+                              "AMD",
+                              locale,
+                            ),
+                          )
+                        : labels.spendLimitInvalid,
+                    );
+                    return;
+                  }
+                  setError(null);
+                  startTransition(async () => {
+                    const result = await updateSpendLimitAction({
                       inviteToken,
-                      spendLimitAmount: spendLimit.trim()
-                        ? Number.parseInt(spendLimit, 10)
-                        : null,
-                    }),
-                  )
-                }
+                      spendLimitAmount: parsed.value,
+                    });
+                    if (!result.ok) {
+                      setToastMessage(
+                        result.error === "SPEND_LIMIT_INVALID"
+                          ? labels.spendLimitInvalid
+                          : (result.error ?? labels.errorGeneric),
+                      );
+                      return;
+                    }
+                    router.refresh();
+                  });
+                }}
               >
                 {labels.saveLimit}
               </button>
@@ -744,6 +775,13 @@ export function GroupOrderPageClient({
           if (!pending) setPendingConfirm(null);
         }}
         onConfirm={confirmPendingDelete}
+      />
+      <Toast
+        open={toastMessage != null}
+        message={toastMessage ?? ""}
+        tone="warning"
+        durationMs={4000}
+        onClose={() => setToastMessage(null)}
       />
     </div>
   );
