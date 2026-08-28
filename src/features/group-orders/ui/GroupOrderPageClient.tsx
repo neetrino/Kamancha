@@ -414,26 +414,6 @@ export function GroupOrderPageClient({
               {labels.calculateDelivery}
             </button>
           </div>
-
-          <div className="space-y-2 border-t border-white/40 pt-4">
-            <p className="text-xs leading-relaxed text-white">
-              {labels.closeJoinsHint}
-            </p>
-            <button
-              type="button"
-              className={`${GLASS_PILL_BUTTON} w-full sm:w-auto`}
-              onClick={() =>
-                run(async () =>
-                  setJoinsClosedAction({
-                    inviteToken,
-                    joinsClosed: !view.joinsClosed,
-                  }),
-                )
-              }
-            >
-              {view.joinsClosed ? labels.openJoins : labels.closeJoins}
-            </button>
-          </div>
           </div>
         </section>
       ) : null}
@@ -568,6 +548,36 @@ export function GroupOrderPageClient({
                     {labels.itemsReadyDoneHint}
                   </p>
                 </div>
+              ) : isOrganizer ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <KamanchaPillButton
+                    type="button"
+                    variant="light"
+                    label={labels.itemsReady}
+                    className={`${PILL_FULL} !max-w-none`}
+                    disabled={pending}
+                    onClick={() => {
+                      setError(null);
+                      startTransition(async () => {
+                        const result = await markItemsReadyAction({
+                          inviteToken,
+                        });
+                        if (!result.ok) {
+                          setError(result.error ?? labels.errorGeneric);
+                          return;
+                        }
+                        router.refresh();
+                      });
+                    }}
+                  />
+                  <KamanchaPillButton
+                    type="button"
+                    variant="light"
+                    label={labels.cancelOrder}
+                    className={`${PILL_FULL} !max-w-none !text-red-700`}
+                    onClick={() => setPendingConfirm({ kind: "cancel" })}
+                  />
+                </div>
               ) : (
                 <KamanchaPillButton
                   type="button"
@@ -602,6 +612,21 @@ export function GroupOrderPageClient({
                 onClick={() =>
                   run(async () => lockGroupOrderAction({ inviteToken }))
                 }
+              />
+            ) : null}
+
+            {isOrganizer &&
+            view.status !== "CANCELLED" &&
+            view.status !== "COMPLETED" &&
+            view.status !== "PAID" &&
+            view.status !== "PREPARING" &&
+            !(canEdit && view.currentParticipantId && !iAmReady) ? (
+              <KamanchaPillButton
+                type="button"
+                variant="light"
+                label={labels.cancelOrder}
+                className={`${PILL_FULL} !text-red-700`}
+                onClick={() => setPendingConfirm({ kind: "cancel" })}
               />
             ) : null}
 
@@ -669,17 +694,23 @@ export function GroupOrderPageClient({
               </p>
             ) : null}
 
-            {isOrganizer &&
-            view.status !== "CANCELLED" &&
-            view.status !== "COMPLETED" &&
-            view.status !== "PAID" &&
-            view.status !== "PREPARING" ? (
+            {isOrganizer && canEdit ? (
               <KamanchaPillButton
                 type="button"
                 variant="light"
-                label={labels.cancelOrder}
-                className={`${PILL_FULL} !text-red-700`}
-                onClick={() => setPendingConfirm({ kind: "cancel" })}
+                label={
+                  view.joinsClosed ? labels.openJoins : labels.closeJoins
+                }
+                className={PILL_FULL}
+                disabled={pending}
+                onClick={() =>
+                  run(async () =>
+                    setJoinsClosedAction({
+                      inviteToken,
+                      joinsClosed: !view.joinsClosed,
+                    }),
+                  )
+                }
               />
             ) : null}
           </div>
