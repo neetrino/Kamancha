@@ -91,15 +91,48 @@ export function AdminInlineStatusSelect({
     return () => clearTimeout(timer);
   }, [open]);
 
+  const statusLabels = copy.orders.statusLabels;
+
   const options =
     kind === "order"
-      ? ADMIN_ORDER_STATUS_OPTIONS
-      : ADMIN_PAYMENT_STATUS_OPTIONS;
+      ? ADMIN_ORDER_STATUS_OPTIONS.map((option) => ({
+          value: option.value,
+          label:
+            option.value === "PENDING"
+              ? statusLabels.pending
+              : option.value === "PROCESSING"
+                ? statusLabels.processing
+                : option.value === "DELIVERED"
+                  ? statusLabels.completed
+                  : statusLabels.cancelled,
+        }))
+      : ADMIN_PAYMENT_STATUS_OPTIONS.map((option) => ({
+          value: option.value,
+          label:
+            option.value === "CAPTURED"
+              ? statusLabels.paid
+              : option.value === "PENDING"
+                ? statusLabels.pending
+                : statusLabels.failed,
+        }));
 
-  const currentLabel =
-    kind === "order"
-      ? orderStatusLabel(displayValue)
-      : paymentStatusLabel(displayValue);
+  function localizedCurrentLabel(): string {
+    if (kind === "order") {
+      const mapped = orderStatusLabel(displayValue);
+      if (mapped === "Pending") return statusLabels.pending;
+      if (mapped === "Processing") return statusLabels.processing;
+      if (mapped === "Completed") return statusLabels.completed;
+      if (mapped === "Cancelled") return statusLabels.cancelled;
+      return mapped;
+    }
+    const mapped = paymentStatusLabel(displayValue);
+    if (mapped === "Paid") return statusLabels.paid;
+    if (mapped === "Pending") return statusLabels.pending;
+    if (mapped === "Failed") return statusLabels.failed;
+    return mapped;
+  }
+
+  const currentLabel = localizedCurrentLabel();
 
   const badgeClassName =
     kind === "order"
@@ -232,11 +265,11 @@ export function AdminInlineStatusSelect({
             >
               {options.map((option) => {
                 const selected =
-                  option.value === displayValue ||
-                  (kind === "order" &&
-                    orderStatusLabel(displayValue) === option.label) ||
-                  (kind === "payment" &&
-                    paymentStatusLabel(displayValue) === option.label);
+                  kind === "order"
+                    ? orderStatusLabel(displayValue) ===
+                      orderStatusLabel(option.value)
+                    : paymentStatusLabel(displayValue) ===
+                      paymentStatusLabel(option.value);
                 return (
                   <SelectDropdownOptionRow
                     key={option.value}
@@ -257,7 +290,7 @@ export function AdminInlineStatusSelect({
       <button
         type="button"
         disabled={disabled || isPending}
-        className={`inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium outline-none transition-opacity disabled:opacity-50 ${badgeClassName}`}
+        className={`inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium uppercase outline-none transition-opacity disabled:opacity-50 ${badgeClassName}`}
         aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={open}

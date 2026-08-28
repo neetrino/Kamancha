@@ -130,16 +130,16 @@
       "orderStatusAria": "Պատվերի կարգավիճակ",
       "allStatuses": "Բոլոր կարգավիճակները",
       "paymentStatusAria": "Վճարման կարգավիճակ",
-      "allPaymentStatuses": "Վճարման բոլոր կարգավիճակները",
-      "searchPlaceholder": "Որոնել պատվերի №-ով, հաճախորդով, էլ. փոստով, հեռախոսով…",
+      "allPaymentStatuses": "Բոլոր վճարման կարգավիճակները",
+      "searchPlaceholder": "Որոնել ըստ համարի, հաճախորդի, էլ․ փոստի, հեռախոսի…",
       "searchAria": "Որոնել պատվերներ",
       "totalOrders": "Ընդամենը պատվերներ՝ {total}",
-      "statusPending": "Սպասման մեջ",
+      "statusPending": "Սպասող",
       "statusProcessing": "Ընթացքի մեջ",
-      "statusCompleted": "Կատարված",
+      "statusCompleted": "Ավարտված",
       "statusCancelled": "Չեղարկված",
       "paymentPaid": "Վճարված",
-      "paymentPending": "Սպասման մեջ",
+      "paymentPending": "Սպասող",
       "paymentFailed": "Չհաջողված"
     },
     "bulk": {
@@ -156,8 +156,9 @@
       "customer": "Հաճախորդ",
       "status": "Կարգավիճակ",
       "payment": "Վճարում",
+      "paymentMethod": "Վճարման եղանակ",
       "total": "Ընդամենը",
-      "placed": "Կատարման ամսաթիվ",
+      "placed": "Տեղադրված",
       "archivedBadge": "Արխիվացված"
     },
     "inlineStatus": {
@@ -165,9 +166,9 @@
       "changePaymentAria": "Փոխել վճարման կարգավիճակը"
     },
     "statusLabels": {
-      "pending": "Սպասման մեջ",
+      "pending": "Սպասող",
       "processing": "Ընթացքի մեջ",
-      "completed": "Կատարված",
+      "completed": "Ավարտված",
       "cancelled": "Չեղարկված",
       "paid": "Վճարված",
       "failed": "Չհաջողված"

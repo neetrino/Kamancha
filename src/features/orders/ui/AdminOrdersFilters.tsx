@@ -59,7 +59,7 @@ export function AdminOrdersFilters({
       <form
         ref={formRef}
         method="get"
-        className="flex flex-nowrap items-center gap-3 p-4"
+        className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-nowrap sm:items-center"
       >
         <SelectDropdown
           name="status"
@@ -67,7 +67,7 @@ export function AdminOrdersFilters({
           value={statusValue}
           allLabel={f.allStatuses}
           options={orderStatusFilters}
-          className="shrink-0"
+          className="w-full shrink-0 sm:w-auto"
           fitContent
           onValueChange={applyStatus}
         />
@@ -77,7 +77,7 @@ export function AdminOrdersFilters({
           value={paymentValue}
           allLabel={f.allPaymentStatuses}
           options={paymentStatusFilters}
-          className="shrink-0"
+          className="w-full shrink-0 sm:w-auto"
           fitContent
           onValueChange={applyPayment}
         />
@@ -89,7 +89,7 @@ export function AdminOrdersFilters({
           aria-label={f.searchAria}
         />
       </form>
-      <div className="border-t border-gray-200 px-4 py-3">
+      <div className="border-t border-gray-100 px-4 py-3">
         <p className="text-sm text-gray-600">
           {f.totalOrders.replace("{total}", String(total))}
         </p>
