@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Plus } from "lucide-react";
 
 import type {
@@ -8,6 +8,7 @@ import type {
   AdminProductListItem,
 } from "@/features/products/application/list-admin-products";
 import type { ProductModifierOption } from "@/features/products/types/modifiers";
+import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsTable } from "@/features/products/ui/AdminProductsTable";
 import { ProductDrawer } from "@/features/products/ui/ProductDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -31,6 +32,12 @@ type AdminProductsViewProps = {
   sortLinks: AdminProductsSortLinks;
   categories: AdminCategoryOption[];
   modifierLibrary: ProductModifierOption[];
+  total: number;
+  q?: string;
+  categoryId?: string;
+  stock: "all" | "in_stock" | "out_of_stock" | "low_stock";
+  sort: string;
+  dir: string;
   copy: ViewCopy;
 };
 
@@ -40,6 +47,12 @@ export function AdminProductsView({
   sortLinks,
   categories,
   modifierLibrary,
+  total,
+  q,
+  categoryId,
+  stock,
+  sort,
+  dir,
   copy,
 }: AdminProductsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -61,23 +74,41 @@ export function AdminProductsView({
     setEditingProduct(null);
   }
 
+  const addProductButton: ReactNode = (
+    <button
+      type="button"
+      onClick={openCreate}
+      className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-brand-forest px-4 text-sm font-medium whitespace-nowrap text-white shadow-sm transition-opacity hover:opacity-90"
+    >
+      <Plus className="h-4 w-4 shrink-0" aria-hidden />
+      {copy.products.addNewProduct}
+    </button>
+  );
+
   return (
     <>
-      <button
-        type="button"
-        onClick={openCreate}
-        className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-forest px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
-      >
-        <Plus className="h-4 w-4" aria-hidden />
-        {copy.products.addNewProduct}
-      </button>
+      <AdminProductsFilters
+        total={total}
+        q={q}
+        categoryId={categoryId}
+        stock={stock}
+        categories={categories}
+        sort={sort}
+        dir={dir}
+        copy={copy.products.filters}
+        stockRowAction={addProductButton}
+      />
 
       <AdminProductsTable
         locale={locale}
         products={products}
         sortLinks={sortLinks}
         onEdit={openEdit}
-        copy={{ table: copy.products.table, common: copy.common, confirm: copy.confirm }}
+        copy={{
+          table: copy.products.table,
+          common: copy.common,
+          confirm: copy.confirm,
+        }}
       />
 
       <ProductDrawer
