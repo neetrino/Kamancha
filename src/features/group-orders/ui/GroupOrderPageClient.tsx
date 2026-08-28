@@ -80,7 +80,7 @@ function absoluteInviteUrl(invitePath: string): string {
 function paymentLabel(
   status: string,
   labels: Dictionary["groupOrder"],
-  options?: { paysAtCheckout?: boolean },
+  options?: { paysAtCheckout?: boolean; paidByName?: string },
 ): string {
   if (options?.paysAtCheckout) {
     return labels.statusPaysAtCheckout;
@@ -91,7 +91,9 @@ function paymentLabel(
     case "FAILED":
       return labels.statusFailed;
     case "NOT_REQUIRED":
-      return labels.statusNotRequired;
+      return options?.paidByName
+        ? labels.statusPaidBy.replace("{name}", options.paidByName)
+        : labels.statusNotRequired;
     case "REFUNDED":
       return labels.statusRefunded;
     case "MARKED_RECEIVED":
@@ -448,6 +450,11 @@ export function GroupOrderPageClient({
                         participant.paymentStatus !== "MARKED_RECEIVED" &&
                         (view.status === "AWAITING_PAYMENTS" ||
                           view.status === "CHECKOUT"),
+                      paidByName:
+                        view.paymentMode === "ORGANIZER_PAYS_ALL" &&
+                        participant.paymentStatus === "NOT_REQUIRED"
+                          ? view.organizerDisplayName
+                          : undefined,
                     })}
                   </p>
                   {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
