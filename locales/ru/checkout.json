@@ -87,6 +87,25 @@
     "apply": "Применить",
     "applying": "Применение…"
   },
+  "giftCard": {
+    "title": "Код подарочной карты",
+    "placeholder": "KAM-XXXX-XXXX",
+    "apply": "Применить",
+    "applying": "Применение…",
+    "initial": "Номинал карты",
+    "used": "Списывается с карты",
+    "remaining": "Остаток",
+    "payable": "К оплате",
+    "applied": "Подарочная карта"
+  },
+  "bonus": {
+    "title": "Бонусный баланс",
+    "available": "Доступно: {amount}",
+    "use": "Использовать бонусы",
+    "amount": "Количество бонусов",
+    "useMax": "Максимум",
+    "applied": "Бонусы"
+  },
   "summary": {
     "subtotal": "Подытог",
     "discount": "Скидка",

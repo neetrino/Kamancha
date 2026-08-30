@@ -4,6 +4,7 @@ import {
   canEditGroupOrderItems,
   canJoinGroupOrder,
   canTransitionGroupOrderStatus,
+  isGroupOrderBagActive,
   nextStatusAfterLock,
 } from "@/features/group-orders/domain/status";
 
@@ -27,5 +28,13 @@ describe("group order status", () => {
     expect(nextStatusAfterLock("SPLIT_PER_PARTICIPANT")).toBe(
       "AWAITING_PAYMENTS",
     );
+  });
+
+  it("keeps the storefront bag on the group order until organizer checkout", () => {
+    expect(isGroupOrderBagActive("OPEN")).toBe(true);
+    expect(isGroupOrderBagActive("LOCKED")).toBe(true);
+    expect(isGroupOrderBagActive("AWAITING_PAYMENTS")).toBe(true);
+    expect(isGroupOrderBagActive("CHECKOUT")).toBe(false);
+    expect(isGroupOrderBagActive("PAID")).toBe(false);
   });
 });

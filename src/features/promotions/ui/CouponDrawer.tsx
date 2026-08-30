@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
+import { MultiSelectDropdown } from "@/components/ui/MultiSelectDropdown";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { SideSheet } from "@/components/ui/SideSheet";
 import { AdminDateTimePickerField } from "@/features/admin/ui/AdminDateTimePickerField";
@@ -16,7 +16,10 @@ import {
   createPromotionAction,
   updatePromotionAction,
 } from "@/features/promotions/application/upsert-promotion";
-import type { AdminPromotionListItem } from "@/features/promotions/application/queries";
+import type {
+  AdminPromotionListItem,
+  CouponUserOption,
+} from "@/features/promotions/application/queries";
 import type { DiscountType } from "@/features/promotions/domain/promotion-rules";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
@@ -30,6 +33,7 @@ type CouponDrawerCoupon = Pick<
   | "totalUsageLimit"
   | "endsAt"
   | "isActive"
+  | "eligibleUserIds"
 >;
 
 type CouponDrawerCopy = {
@@ -42,6 +46,7 @@ type CouponDrawerProps = {
   open: boolean;
   onClose: () => void;
   coupon?: CouponDrawerCoupon | null;
+  userOptions: CouponUserOption[];
   copy: CouponDrawerCopy;
 };
 
@@ -57,6 +62,7 @@ export function CouponDrawer({
   open,
   onClose,
   coupon = null,
+  userOptions,
   copy,
 }: CouponDrawerProps) {
   const router = useRouter();
@@ -68,6 +74,7 @@ export function CouponDrawer({
   const [value, setValue] = useState("10");
   const [quantity, setQuantity] = useState("1");
   const [expiresAt, setExpiresAt] = useState("");
+  const [userIds, setUserIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -87,6 +94,7 @@ export function CouponDrawer({
         coupon.totalUsageLimit != null ? String(coupon.totalUsageLimit) : "",
       );
       scheduleStateUpdate(setExpiresAt, toDateTimeLocal(coupon.endsAt));
+      scheduleStateUpdate(setUserIds, coupon.eligibleUserIds);
       scheduleStateUpdate(setError, null);
     } else {
       scheduleStateUpdate(setName, "");
@@ -95,6 +103,7 @@ export function CouponDrawer({
       scheduleStateUpdate(setValue, "10");
       scheduleStateUpdate(setQuantity, "1");
       scheduleStateUpdate(setExpiresAt, "");
+      scheduleStateUpdate(setUserIds, []);
       scheduleStateUpdate(setError, null);
     }
   }, [open, coupon]);
@@ -138,6 +147,7 @@ export function CouponDrawer({
             isActive: coupon?.isActive ?? true,
             startsAt: null,
             endsAt: expiresAt ? new Date(expiresAt) : null,
+            userIds,
           };
 
           startTransition(async () => {
@@ -243,19 +253,21 @@ export function CouponDrawer({
             </label>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 px-4 py-3">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {copy.drawer.selectUsers}
-                </p>
-                <p className="mt-0.5 text-sm text-gray-500">
-                  {copy.drawer.allUsersCanUse}
-                </p>
-              </div>
-              <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-gray-400" />
-            </div>
-          </div>
+          <MultiSelectDropdown
+            ariaLabel={copy.drawer.selectUsers}
+            title={copy.drawer.selectUsers}
+            emptyLabel={copy.drawer.allUsersCanUse}
+            searchPlaceholder={copy.drawer.searchUsers}
+            noResultsLabel={copy.drawer.noMatchingUsers}
+            options={userOptions.map((user) => ({
+              value: user.id,
+              label: user.label,
+              hint: user.email,
+            }))}
+            values={userIds}
+            disabled={isPending}
+            onValuesChange={setUserIds}
+          />
 
           {error ? <p className="text-sm text-red-700">{error}</p> : null}
         </div>

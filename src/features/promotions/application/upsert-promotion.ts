@@ -16,6 +16,10 @@ import {
   type TogglePromotionInput,
   type UpsertPromotionInput,
 } from "@/features/promotions/schemas/admin-promotions";
+import {
+  copyPromotionUsers,
+  replacePromotionUsers,
+} from "@/features/promotions/application/promotion-users";
 import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateProductsCache } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
@@ -100,6 +104,8 @@ export async function createPromotionAction(
         allowStacking: parsed.data.allowStacking,
       });
 
+      await replacePromotionUsers(tx, id, parsed.data.userIds);
+
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
@@ -112,6 +118,7 @@ export async function createPromotionAction(
           discountType: parsed.data.discountType,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
+          userCount: parsed.data.userIds?.length ?? 0,
         },
         correlationId,
         context: { createdAt: now.toISOString() },
@@ -121,6 +128,9 @@ export async function createPromotionAction(
     revalidatePromotionPaths(locale, id);
     return ok({ id });
   } catch (error) {
+    if (error instanceof Error && error.message === "INVALID_USERS") {
+      return err("INVALID_USERS", "One or more selected users were not found.");
+    }
     const message = error instanceof Error ? error.message : "";
     if (message.includes("promotions_code_uidx") || message.includes("unique")) {
       return err("CODE_TAKEN", "That coupon code is already in use.");
@@ -192,6 +202,8 @@ export async function updatePromotionAction(
         })
         .where(eq(promotions.id, promotionId));
 
+      await replacePromotionUsers(tx, promotionId, parsed.data.userIds);
+
       await tx.insert(auditLogs).values({
         id: createId(),
         actorUserId: actor.id,
@@ -207,6 +219,7 @@ export async function updatePromotionAction(
           code: ruleInput.code,
           discountValue: parsed.data.discountValue,
           isActive: parsed.data.isActive,
+          userCount: parsed.data.userIds?.length ?? 0,
         },
         correlationId,
       });
@@ -221,6 +234,9 @@ export async function updatePromotionAction(
     }
     if (code === "KIND_LOCKED") {
       return err("KIND_LOCKED", "Promotion kind cannot be changed.");
+    }
+    if (code === "INVALID_USERS") {
+      return err("INVALID_USERS", "One or more selected users were not found.");
     }
     const message = error instanceof Error ? error.message : "";
     if (message.includes("promotions_code_uidx") || message.includes("unique")) {
@@ -391,6 +407,8 @@ export async function duplicatePromotionAction(
         priority: existing.priority,
         allowStacking: existing.allowStacking,
       });
+
+      await copyPromotionUsers(tx, promotionId, id);
 
       await tx.insert(auditLogs).values({
         id: createId(),

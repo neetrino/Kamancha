@@ -1,15 +1,13 @@
 import "server-only";
 
-import { and, asc, eq, inArray, or } from "drizzle-orm";
-
-import { getCartWithItems } from "@/features/cart/cart";
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
-import { sumAdditionPrices } from "@/features/products/domain/modifier-selection";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  getStorefrontCart,
+  type StorefrontCartLine,
+} from "@/features/cart/get-storefront-cart";
+import { buildInvitePath } from "@/features/group-orders/application/money";
+import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
 import type { Locale } from "@/lib/i18n/config";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
-import { mediaPublicUrl } from "@/lib/media/public-url";
 import { convertAmount } from "@/lib/money/convert";
 import type { Currency } from "@/lib/money/currency";
 import { defaultCurrency } from "@/lib/money/currency";
@@ -32,40 +30,10 @@ export type CartDrawerView = {
   subtotalFormatted: string;
   shippingFormatted: string;
   totalFormatted: string;
+  checkoutHref: string;
+  canEdit: boolean;
+  source: "personal" | "group";
 };
-
-async function loadPrimaryProductImages(
-  productIds: string[],
-): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
-  if (productIds.length === 0) {
-    return map;
-  }
-
-  const rows = await getDb()
-    .select({
-      productId: mediaAssets.productId,
-      objectKey: mediaAssets.objectKey,
-    })
-    .from(mediaAssets)
-    .where(
-      and(
-        inArray(mediaAssets.productId, productIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, "PRIMARY")),
-      ),
-    )
-    .orderBy(asc(mediaAssets.sortOrder));
-
-  for (const row of rows) {
-    if (!row.productId || map.has(row.productId)) {
-      continue;
-    }
-    map.set(row.productId, mediaPublicUrl(row.objectKey));
-  }
-
-  return map;
-}
 
 function formatConvertedAmount(
   baseAmountAmd: number,
@@ -82,70 +50,23 @@ function formatConvertedAmount(
   return formatMoneyAmount(converted.amount, currency, locale);
 }
 
-/** Builds storefront cart-drawer display data for the active cart. */
+/** Builds storefront cart-drawer display data for the active bag. */
 export async function getCartDrawerView(
   locale: Locale,
   currency: Currency,
 ): Promise<CartDrawerView> {
-  const { items: rows } = await getCartWithItems();
-  const [images, quote, prices] = await Promise.all([
-    loadPrimaryProductImages(rows.map(({ product }) => product.id)),
+  const bag = await getStorefrontCart();
+  const [images, quote] = await Promise.all([
+    loadPrimaryProductImageUrls(bag.items.map((line) => line.product.id)),
     getCheckoutRateSnapshot(currency),
-    resolveProductPrices(
-      rows.map(({ product }) => ({
-        id: product.id,
-        priceAmount: product.priceAmount,
-        compareAtAmount: product.compareAtAmount,
-      })),
-    ),
   ]);
 
   const items: CartDrawerItemView[] = [];
   let subtotalBase = 0;
 
-  for (const { item, product, modifiers } of rows) {
-    const translation =
-      product.translations[locale] ?? product.translations.hy;
-    const slug =
-      translation?.slug ??
-      product.translations.hy?.slug ??
-      product.translations.en?.slug ??
-      product.translations.ru?.slug ??
-      product.id;
-    const baseUnit =
-      prices.get(product.id)?.unitAmount ?? product.priceAmount;
-    const unitAmount = baseUnit + sumAdditionPrices(modifiers);
-    const additions = modifiers.filter((row) => row.kind === "ADDITION");
-    const exceptions = modifiers.filter((row) => row.kind === "EXCEPTION");
-    const parts: string[] = [];
-    if (additions.length > 0) {
-      parts.push(`+ ${additions.map((row) => row.name).join(", ")}`);
-    }
-    if (exceptions.length > 0) {
-      parts.push(`− ${exceptions.map((row) => row.name).join(", ")}`);
-    }
-
-    items.push({
-      id: item.id,
-      title: translation?.title ?? product.sku,
-      href: `/${locale}/products/${slug}`,
-      quantity: item.quantity,
-      imageUrl: images.get(product.id) ?? null,
-      unitPriceFormatted: formatConvertedAmount(
-        unitAmount,
-        quote.rate,
-        currency,
-        locale,
-      ),
-      lineTotalFormatted: formatConvertedAmount(
-        unitAmount * item.quantity,
-        quote.rate,
-        currency,
-        locale,
-      ),
-      modifierSummary: parts.length > 0 ? parts.join(" · ") : null,
-    });
-    subtotalBase += item.quantity * unitAmount;
+  for (const line of bag.items) {
+    items.push(toDrawerItem(line, locale, currency, quote.rate, images));
+    subtotalBase += line.quantity * line.unitAmount;
   }
 
   const subtotalFormatted = formatConvertedAmount(
@@ -154,6 +75,9 @@ export async function getCartDrawerView(
     currency,
     locale,
   );
+  const checkoutHref = bag.inviteToken
+    ? buildInvitePath(locale, bag.inviteToken)
+    : `/${locale}/checkout`;
 
   return {
     itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
@@ -161,5 +85,62 @@ export async function getCartDrawerView(
     subtotalFormatted,
     shippingFormatted: formatMoneyAmount(0, currency, locale),
     totalFormatted: subtotalFormatted,
+    checkoutHref,
+    canEdit: bag.canEdit,
+    source: bag.source,
   };
+}
+
+function toDrawerItem(
+  line: StorefrontCartLine,
+  locale: Locale,
+  currency: Currency,
+  rate: string,
+  images: Map<string, string>,
+): CartDrawerItemView {
+  const translation =
+    line.product.translations[locale] ?? line.product.translations.hy;
+  const slug =
+    translation?.slug ??
+    line.product.translations.hy?.slug ??
+    line.product.translations.en?.slug ??
+    line.product.translations.ru?.slug ??
+    line.product.id;
+  const additions = line.modifiers.filter((row) => row.kind === "ADDITION");
+  const exceptions = line.modifiers.filter((row) => row.kind === "EXCEPTION");
+
+  return {
+    id: line.id,
+    title: translation?.title ?? line.product.sku,
+    href: `/${locale}/products/${slug}`,
+    quantity: line.quantity,
+    imageUrl: images.get(line.product.id) ?? null,
+    unitPriceFormatted: formatConvertedAmount(
+      line.unitAmount,
+      rate,
+      currency,
+      locale,
+    ),
+    lineTotalFormatted: formatConvertedAmount(
+      line.unitAmount * line.quantity,
+      rate,
+      currency,
+      locale,
+    ),
+    modifierSummary: formatModifierSummary(additions, exceptions),
+  };
+}
+
+function formatModifierSummary(
+  additions: Array<{ name: string }>,
+  exceptions: Array<{ name: string }>,
+): string | null {
+  const parts: string[] = [];
+  if (additions.length > 0) {
+    parts.push(`+ ${additions.map((row) => row.name).join(", ")}`);
+  }
+  if (exceptions.length > 0) {
+    parts.push(`− ${exceptions.map((row) => row.name).join(", ")}`);
+  }
+  return parts.length > 0 ? parts.join(" · ") : null;
 }

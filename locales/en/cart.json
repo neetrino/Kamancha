@@ -10,6 +10,7 @@
   "shipping": "Shipping",
   "total": "Total",
   "checkout": "Proceed to checkout",
+  "checkoutGroupOrder": "Go to group order",
   "close": "Close cart",
   "removeItem": "Remove item",
   "decreaseQuantity": "Decrease quantity",

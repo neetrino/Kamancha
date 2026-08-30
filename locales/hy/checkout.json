@@ -87,6 +87,25 @@
     "apply": "Կիրառել",
     "applying": "Կիրառվում է…"
   },
+  "giftCard": {
+    "title": "Gift Card կոդ",
+    "placeholder": "KAM-XXXX-XXXX",
+    "apply": "Կիրառել",
+    "applying": "Կիրառվում է…",
+    "initial": "Gift Card-ի արժեք",
+    "used": "Օգտագործվում է",
+    "remaining": "Մնացորդ",
+    "payable": "Վճարման ենթակա",
+    "applied": "Gift Card"
+  },
+  "bonus": {
+    "title": "Բոնուսային բալանս",
+    "available": "Հասանելի՝ {amount}",
+    "use": "Օգտագործել բոնուսները",
+    "amount": "Օգտագործվող բոնուսներ",
+    "useMax": "Առավելագույնը",
+    "applied": "Բոնուսներ"
+  },
   "summary": {
     "subtotal": "Ենթագումար",
     "discount": "Զեղչ",

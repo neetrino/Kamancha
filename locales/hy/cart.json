@@ -10,6 +10,7 @@
   "shipping": "Առաքում",
   "total": "Ընդամենը",
   "checkout": "Անցնել վճարման",
+  "checkoutGroupOrder": "Անցնել խմբակային պատվերի",
   "close": "Փակել զամբյուղը",
   "removeItem": "Հեռացնել",
   "decreaseQuantity": "Նվազեցնել քանակը",

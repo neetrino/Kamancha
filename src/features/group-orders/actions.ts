@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createGroupOrder, joinGroupOrder } from "@/features/group-orders/application/create-join";
+import { localizeGroupOrderMutationError } from "@/features/group-orders/application/format-mutation-error";
 import {
   addGroupOrderItem,
   markParticipantItemsReady,
@@ -57,6 +58,8 @@ import { getCurrentUser } from "@/lib/auth/session";
 function revalidateGroupOrder(inviteToken: string): void {
   revalidatePath(`/[locale]/group-orders/${inviteToken}`, "page");
   revalidatePath("/[locale]/admin/group-orders", "page");
+  revalidatePath("/[locale]/cart", "page");
+  revalidatePath("/[locale]/checkout", "page");
   revalidatePath("/", "layout");
 }
 
@@ -80,7 +83,13 @@ export async function addGroupOrderItemAction(raw: unknown) {
   const parsed = addGroupOrderItemSchema.safeParse(raw);
   if (!parsed.success) return { ok: false as const, error: "Invalid input." };
   const result = await addGroupOrderItem(parsed.data);
-  if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
+  if (!result.ok) {
+    return {
+      ok: false as const,
+      error: await localizeGroupOrderMutationError(result),
+    };
+  }
+  revalidateGroupOrder(parsed.data.inviteToken);
   return result;
 }
 
@@ -88,7 +97,13 @@ export async function updateGroupOrderItemQuantityAction(raw: unknown) {
   const parsed = updateGroupOrderItemQuantitySchema.safeParse(raw);
   if (!parsed.success) return { ok: false as const, error: "Invalid input." };
   const result = await updateGroupOrderItemQuantity(parsed.data);
-  if (result.ok) revalidateGroupOrder(parsed.data.inviteToken);
+  if (!result.ok) {
+    return {
+      ok: false as const,
+      error: await localizeGroupOrderMutationError(result),
+    };
+  }
+  revalidateGroupOrder(parsed.data.inviteToken);
   return result;
 }
 

@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import { flyToCart } from "@/features/cart/ui/fly-to-cart";
 import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
+import { showStorefrontAlert } from "@/features/storefront-chrome/storefront-alert-store";
 import {
   adjustCartItemCount,
   settleCartItemCountAdjust,
@@ -116,21 +117,27 @@ export function AddToCartButton({
       return;
     }
 
-    flyToCart(event.currentTarget);
-    setJustAdded(true);
-    window.setTimeout(() => setJustAdded(false), 1200);
-
-    void addProductToActiveCart(productId, 1).then((result) => {
-      if (!result.ok) {
-        return;
-      }
-      if (result.target === "cart") {
+    const origin = event.currentTarget;
+    void addProductToActiveCart(productId, 1)
+      .then((result) => {
+        if (!result.ok) {
+          showStorefrontAlert(result.error);
+          return;
+        }
+        flyToCart(origin);
+        setJustAdded(true);
+        window.setTimeout(() => setJustAdded(false), 1200);
         adjustCartItemCount(1);
         settleCartItemCountAdjust();
-        return;
-      }
-      router.refresh();
-    });
+        if (result.target !== "cart") {
+          router.refresh();
+        }
+      })
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.message.length > 0) {
+          showStorefrontAlert(error.message);
+        }
+      });
   }
 
   return (

@@ -41,7 +41,7 @@ import {
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
 import type { Locale } from "@/lib/i18n/config";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 
 const GLASS_PILL_BUTTON =
   "inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
@@ -919,7 +919,7 @@ function GroupOrderProductCard({
   canRemove: boolean;
   onRemove: (itemId: string) => void;
 }) {
-  const imageSrc = item.imageUrl ?? STOREFRONT_PRODUCT_PHOTO;
+  const imageSrc = storefrontProductImageSrc(item.imageUrl);
 
   return (
     <article

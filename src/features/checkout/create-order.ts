@@ -16,6 +16,7 @@ import {
   payments,
   products,
   promotions,
+  promotionUsers,
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
@@ -62,6 +63,16 @@ import {
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  lockAndQuoteBonusForCheckout,
+  persistCheckoutBonusRedeem,
+} from "@/features/checkout/application/apply-bonus-at-checkout";
+import {
+  lockAndQuoteGiftCardForCheckout,
+  persistCheckoutGiftCardRedeem,
+} from "@/features/checkout/application/apply-gift-card-at-checkout";
+import { bonusEligibleMerchandiseAmount } from "@/features/bonuses/domain/bonus-rules";
+import { normalizeGiftCardCode } from "@/features/gift-cards/domain/gift-card-rules";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { createId } from "@/lib/id";
@@ -215,6 +226,10 @@ export async function createOrderAction(
           : null,
       cashChangeAmount: cashChangeAmount ?? null,
       groupOrderId: groupCheckout.active ? groupCheckout.groupOrderId : null,
+      bonusRedeemAmount: input.bonusRedeemAmount ?? 0,
+      giftCardCode: input.giftCardCode
+        ? normalizeGiftCardCode(input.giftCardCode)
+        : null,
     }),
   );
 
@@ -405,7 +420,23 @@ export async function createOrderAction(
           .limit(1);
 
         const nowCheck = new Date();
-        const evaluated = evaluateCouponDiscount(coupon, subtotal, nowCheck);
+        const restrictedRows = coupon
+          ? await tx
+              .select({ userId: promotionUsers.userId })
+              .from(promotionUsers)
+              .where(eq(promotionUsers.promotionId, coupon.id))
+          : [];
+        const evaluated = evaluateCouponDiscount(
+          coupon
+            ? {
+                ...coupon,
+                restrictedUserIds: restrictedRows.map((row) => row.userId),
+              }
+            : null,
+          subtotal,
+          nowCheck,
+          user?.id ?? null,
+        );
         if (!evaluated.ok || !coupon) {
           throw new Error(
             couponDiscountErrorMessage(
@@ -426,7 +457,27 @@ export async function createOrderAction(
           .where(eq(promotions.id, coupon.id));
       }
 
-      const totalAmount = Math.max(0, subtotal - discountAmount) + deliveryAmount;
+      const merchandiseAfterDiscount = bonusEligibleMerchandiseAmount(
+        subtotal,
+        discountAmount,
+      );
+      const bonusRedeemedAmount = await lockAndQuoteBonusForCheckout(tx, {
+        userId: user?.id,
+        requestedAmount: input.bonusRedeemAmount,
+        merchandiseAfterDiscount,
+      });
+      const payableBeforeGiftCard =
+        Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) +
+        deliveryAmount;
+      const giftCard = await lockAndQuoteGiftCardForCheckout(
+        tx,
+        input.giftCardCode,
+        payableBeforeGiftCard,
+      );
+      const totalAmount = Math.max(
+        0,
+        payableBeforeGiftCard - giftCard.giftCardAmount,
+      );
       const chargeAmount = organizerPayableAmount(totalAmount, groupCheckout);
       const { onlineAmount, cashAmount } = plannedOrderPaymentSplit({
         totalAmount,
@@ -470,6 +521,8 @@ export async function createOrderAction(
         discountAmount,
         taxAmount: 0,
         deliveryAmount,
+        bonusRedeemedAmount,
+        bonusEarnedAmount: 0,
         totalAmount,
         onlineAmount,
         cashAmount,
@@ -480,6 +533,9 @@ export async function createOrderAction(
         promotionTypeSnapshot: appliedPromotion?.discountType ?? null,
         promotionValueSnapshot: appliedPromotion?.discountValue ?? null,
         promotionDiscountAmount: appliedPromotion ? discountAmount : null,
+        giftCardId: giftCard.giftCardId,
+        giftCardCodeSnapshot: giftCard.giftCardCodeSnapshot,
+        giftCardAmount: giftCard.giftCardAmount,
         deliveryRuleId: null,
         deliveryLabelSnapshot: deliveryQuote
           ? `Distance delivery (${deliveryQuote.distanceLabel})`
@@ -500,6 +556,25 @@ export async function createOrderAction(
         groupOrderId: groupCheckout.active ? groupCheckout.groupOrderId : null,
         placedAt: now,
       });
+
+      if (user?.id && bonusRedeemedAmount > 0) {
+        await persistCheckoutBonusRedeem({
+          tx,
+          userId: user.id,
+          orderId,
+          amount: bonusRedeemedAmount,
+          correlationId: number,
+        });
+      }
+
+      if (giftCard.giftCardId && giftCard.giftCardAmount > 0) {
+        await persistCheckoutGiftCardRedeem({
+          tx,
+          application: giftCard,
+          orderId,
+          correlationId: number,
+        });
+      }
 
       for (const line of lineSnapshots) {
         const orderItemId = createId();

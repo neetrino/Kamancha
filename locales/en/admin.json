@@ -586,7 +586,9 @@
       "quantity": "Quantity",
       "expiresOptional": "Expires (optional)",
       "selectUsers": "Select users",
-      "allUsersCanUse": "All users can use this coupon"
+      "allUsersCanUse": "All users can use this coupon",
+      "searchUsers": "Search users",
+      "noMatchingUsers": "No users found"
     }
   },
   "users": {

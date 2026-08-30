@@ -1,14 +1,18 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { getCartWithItems } from "@/features/cart/cart";
+import { getUserBonusBalance } from "@/features/bonuses/application/queries";
 import { getCheckoutOrderProducts } from "@/features/checkout/application/get-checkout-order-products";
 import { getGroupOrderCheckoutUiFlags } from "@/features/checkout/application/group-order-checkout-context";
+import { getGroupCartOverlay } from "@/features/group-orders/application/cart-overlay";
+import { buildInvitePath } from "@/features/group-orders/application/money";
 import { CheckoutForm } from "@/features/checkout/ui/CheckoutForm";
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
 import { listActiveCashChangeDenominations } from "@/features/delivery/domain/cash-change";
 import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { getStoreBonusSettings } from "@/features/settings/application/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -26,14 +30,20 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   const dictionary = getDictionary(rawLocale);
   const copy = dictionary.checkout;
-  const [user, { items }, deliverySettings, groupCheckoutFlags] =
+  const groupBag = await getGroupCartOverlay();
+  if (groupBag) {
+    redirect(buildInvitePath(rawLocale, groupBag.inviteToken));
+  }
+
+  const [user, { items }, deliverySettings, bonusSettings, groupCheckoutFlags] =
     await Promise.all([
       getCurrentUser(),
       getCartWithItems(),
       getDeliverySettings(),
+      getStoreBonusSettings(),
       getGroupOrderCheckoutUiFlags(),
     ]);
-  const [defaultAddress, prices] = await Promise.all([
+  const [defaultAddress, prices, bonusBalance] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(
       items.map(({ product }) => ({
@@ -42,6 +52,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         compareAtAmount: product.compareAtAmount,
       })),
     ),
+    user ? getUserBonusBalance(user.id) : Promise.resolve(null),
   ]);
   const orderProducts = await getCheckoutOrderProducts(
     rawLocale,
@@ -88,6 +99,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       splitOthersPrepaid={groupCheckoutFlags.splitOthersPrepaid}
       othersPrepaidAmount={groupCheckoutFlags.othersPrepaidAmount}
       lockedDeliveryAmount={groupCheckoutFlags.lockedDeliveryAmount}
+      bonusAvailableBalance={bonusBalance}
+      bonusMaxRedeemPercent={bonusSettings.maxRedeemPercent}
       labels={{
         title: copy.title,
         productsInOrder: copy.productsInOrder,
@@ -138,6 +151,21 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         couponPlaceholder: copy.coupon.placeholder,
         couponApply: copy.coupon.apply,
         couponApplying: copy.coupon.applying,
+        giftCardTitle: copy.giftCard.title,
+        giftCardPlaceholder: copy.giftCard.placeholder,
+        giftCardApply: copy.giftCard.apply,
+        giftCardApplying: copy.giftCard.applying,
+        giftCardInitial: copy.giftCard.initial,
+        giftCardUsed: copy.giftCard.used,
+        giftCardRemaining: copy.giftCard.remaining,
+        giftCardPayable: copy.giftCard.payable,
+        giftCardApplied: copy.giftCard.applied,
+        bonusTitle: copy.bonus.title,
+        bonusAvailable: copy.bonus.available,
+        bonusUse: copy.bonus.use,
+        bonusAmount: copy.bonus.amount,
+        bonusUseMax: copy.bonus.useMax,
+        bonusApplied: copy.bonus.applied,
         discount: copy.summary.discount,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,
