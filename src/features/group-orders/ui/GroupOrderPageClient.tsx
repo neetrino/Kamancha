@@ -512,9 +512,17 @@ export function GroupOrderPageClient({
                 {labels.deliveryQuoteReady
                   .replace("{amount}", view.deliveryFormatted)
                   .replace(
-                    "{distance}",
-                    view.deliveryDistanceLabel ?? "—",
-                  )}
+                    "({distance})",
+                    "",
+                  )
+                  .replace("{distance}", "")
+                  .trimEnd()}
+                {view.deliveryDistanceLabel ? (
+                  <span className="text-[calc(1em-2px)] font-semibold">
+                    {" "}
+                    ({view.deliveryDistanceLabel})
+                  </span>
+                ) : null}
               </p>
             ) : null}
           </div>
@@ -545,8 +553,8 @@ export function GroupOrderPageClient({
                   {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
                     <p className="mt-0.5 text-xs text-white/70">
                       {labels.deliveryShare}:{" "}
-                      {participant.deliveryShareFormatted} · {labels.total}:{" "}
-                      {participant.finalAmountFormatted}
+                      {participant.deliveryShareFormatted} · {labels.subtotal}:{" "}
+                      {participant.subtotalFormatted}
                     </p>
                   ) : null}
                 </div>
@@ -580,28 +588,25 @@ export function GroupOrderPageClient({
                       </button>
                     ) : null}
                   </div>
-                  <p className="text-right text-sm text-white">
-                    {(view.paymentMode === "ORGANIZER_PAYS_ALL"
-                      ? participant.finalAmountFormatted
-                      : participant.subtotalFormatted)}{" "}
-                    ·{" "}
-                    {paymentLabel(
-                      view.paymentMode === "ORGANIZER_PAYS_ALL" &&
-                        participant.paymentStatus === "NOT_REQUIRED"
-                        ? "PENDING"
-                        : participant.paymentStatus,
-                      labels,
-                      {
-                        paysAtCheckout:
-                          view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-                          participant.role === "ORGANIZER" &&
-                          participant.paymentStatus !== "PAID" &&
-                          participant.paymentStatus !== "MARKED_RECEIVED" &&
-                          (view.status === "AWAITING_PAYMENTS" ||
-                            view.status === "CHECKOUT"),
-                      },
-                    )}
-                  </p>
+                  {view.paymentMode === "ORGANIZER_PAYS_ALL" &&
+                  participant.role !== "ORGANIZER" ? null : (
+                    <p className="text-right text-sm text-white">
+                      {participant.finalAmountFormatted} ·{" "}
+                      {paymentLabel(
+                        participant.paymentStatus,
+                        labels,
+                        {
+                          paysAtCheckout:
+                            view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+                            participant.role === "ORGANIZER" &&
+                            participant.paymentStatus !== "PAID" &&
+                            participant.paymentStatus !== "MARKED_RECEIVED" &&
+                            (view.status === "AWAITING_PAYMENTS" ||
+                              view.status === "CHECKOUT"),
+                        },
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
 
