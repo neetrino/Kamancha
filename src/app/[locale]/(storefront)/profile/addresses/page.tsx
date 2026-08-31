@@ -20,6 +20,7 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
   const dictionary = getDictionary(locale);
   const addressRows = await listCustomerAddresses(user.id);
   const copy = dictionary.profile.addressBook;
+  const map = dictionary.checkout.map;
 
   return (
     <ProfileAddressesView
@@ -43,6 +44,14 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
         add: copy.add,
         update: copy.update,
         saving: dictionary.profile.saving,
+        map: {
+          openMap: map.openMap,
+          title: map.title,
+          hint: map.hint,
+          confirm: map.confirm,
+          cancel: map.cancel,
+          resolving: map.resolving,
+        },
       }}
     />
   );
