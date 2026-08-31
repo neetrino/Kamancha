@@ -216,10 +216,10 @@ export function AdminGroupOrdersView({
                   <th className={ADMIN_TABLE_TH}>{copy.id}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.organizer}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.total}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.delivery}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.created}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.status}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.participants}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.delivery}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.mode}</th>
                 </tr>
               </thead>
@@ -265,6 +265,11 @@ export function AdminGroupOrdersView({
                         </span>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
+                        <span className="font-semibold text-gray-900">
+                          {formatMoneyAmount(row.deliveryAmount, "AMD", locale)}
+                        </span>
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
                         <p className="text-sm text-gray-700">{placed.time}</p>
                         <p className="text-xs text-gray-500">{placed.date}</p>
                       </td>
@@ -277,11 +282,6 @@ export function AdminGroupOrdersView({
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>
                         {row.participantCount}
-                      </td>
-                      <td className={ADMIN_TABLE_TD_CENTER}>
-                        <span className="font-semibold text-gray-900">
-                          {formatMoneyAmount(row.deliveryAmount, "AMD", locale)}
-                        </span>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
                         <span className="text-sm text-gray-700">
