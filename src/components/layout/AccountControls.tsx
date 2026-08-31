@@ -22,7 +22,7 @@ type AccountControlsProps = {
 };
 
 const menuItemClassName =
-  "block w-full whitespace-nowrap px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900";
+  "block w-full whitespace-nowrap px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-[#dcecc6] hover:text-brand-forest";
 
 function iconButtonClassName(
   tone: "default" | "onDark" | "onLight" | "pill" | "bottomNav",
