@@ -106,6 +106,15 @@ export function ProductGallery({
     }
   }
 
+  function selectImage(imageId: string): void {
+    setSelectedId(imageId);
+    const el = mobileScrollerRef.current;
+    if (!el || el.clientWidth <= 0) return;
+    const index = galleryImages.findIndex((image) => image.id === imageId);
+    if (index < 0) return;
+    el.scrollTo({ left: index * el.clientWidth, behavior: "smooth" });
+  }
+
   function closeZoom(): void {
     setZoomed(false);
     clearActiveFocus();
@@ -330,7 +339,7 @@ export function ProductGallery({
               >
                 <button
                   type="button"
-                  onClick={() => setSelectedId(image.id)}
+                  onClick={() => selectImage(image.id)}
                   aria-label={image.alt || title}
                   aria-pressed={isActive}
                   className={`relative size-full overflow-hidden rounded-2xl transition ${
