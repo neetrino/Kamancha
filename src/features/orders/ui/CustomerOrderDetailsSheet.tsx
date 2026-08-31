@@ -158,11 +158,10 @@ function CustomerOrderSheetBody({
                 ? detail.storeName
                   ? `${labels.pickupStore} ${detail.storeName}`
                   : detail.shippingMethod
-                : labels.delivery}
+                : detail.scheduledDelivery
+                  ? `${labels.delivery} · ${detail.scheduledDelivery}`
+                  : labels.delivery}
             </p>
-            {detail.scheduledDelivery ? (
-              <p className="text-xs text-gray-500">{detail.scheduledDelivery}</p>
-            ) : null}
             {includeAdminDetails && !detail.isPickup && detail.floor ? (
               <p className="text-xs text-gray-500">
                 {labels.floor} {detail.floor}

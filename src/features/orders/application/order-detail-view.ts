@@ -1,5 +1,6 @@
 import "server-only";
 
+import { formatDeliverySlotDisplay } from "@/features/delivery/domain/delivery-schedule";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 import { getStoreIdentity } from "@/features/settings/application/queries";
 import {
@@ -109,7 +110,11 @@ export function toAdminOrderDetailView(
       order.shippingAddress.scheduledDeliveryDate &&
       order.shippingAddress.scheduledDeliveryStart &&
       order.shippingAddress.scheduledDeliveryEnd
-        ? `${order.shippingAddress.scheduledDeliveryDate} ${order.shippingAddress.scheduledDeliveryStart}–${order.shippingAddress.scheduledDeliveryEnd}`
+        ? formatDeliverySlotDisplay(
+            order.shippingAddress.scheduledDeliveryDate,
+            order.shippingAddress.scheduledDeliveryStart,
+            order.shippingAddress.scheduledDeliveryEnd,
+          )
         : order.deliveryEstimateSnapshot &&
             /\d{4}-\d{2}-\d{2}/.test(order.deliveryEstimateSnapshot)
           ? order.deliveryEstimateSnapshot
