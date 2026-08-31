@@ -91,6 +91,9 @@ export default async function OrdersPage({
           status={filters.status}
           paymentStatus={filters.paymentStatus}
           q={filters.q}
+          copy={dictionary.admin.orders.filters}
+          searchPlaceholder={dictionary.profile.ordersSearchPlaceholder}
+          searchAria={dictionary.profile.ordersSearchAria}
         />
       </div>
 

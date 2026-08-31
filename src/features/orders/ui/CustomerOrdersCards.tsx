@@ -2,9 +2,10 @@
 
 import { AppLink } from "@/components/ui/AppLink";
 import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
+  localizeOrderStatus,
+  type OrderStatusLabels,
+} from "@/features/orders/ui/localize-order-status";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
 import {
   PROFILE_ORDERS_CARD_GRID,
@@ -31,6 +32,7 @@ type CustomerOrdersCardsLabels = {
   viewDetails: string;
   noOrders: string;
   startShopping: string;
+  statusLabels: OrderStatusLabels;
 };
 
 type CustomerOrdersCardsProps = {
@@ -77,7 +79,7 @@ export function CustomerOrdersCards({
         <li key={order.id} className="min-w-0 w-full">
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
-            status={formatOrderStatusLabel(order.status)}
+            status={localizeOrderStatus(order.status, labels.statusLabels)}
             totalLabel={formatOrderDrawerMoney(
               order.totalAmount,
               order.baseCurrency,

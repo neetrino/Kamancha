@@ -81,6 +81,8 @@
   "itemCountOne": "{count} item",
   "itemCountOther": "{count} items",
   "noOrders": "No orders yet.",
+  "ordersSearchPlaceholder": "Search by order #",
+  "ordersSearchAria": "Search orders",
   "orderNumber": "Order",
   "status": "Status",
   "total": "Total",

@@ -1,9 +1,11 @@
 "use client";
 
 import {
-  formatOrderDrawerMoney,
-  formatOrderStatusLabel,
-} from "@/features/orders/ui/order-drawer-format";
+  localizeOrderStatus,
+  localizePaymentStatus,
+  type OrderStatusLabels,
+} from "@/features/orders/ui/localize-order-status";
+import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { PROFILE_SECTION } from "@/features/profile/ui/profile-surface";
 
 type CustomerOrderRow = {
@@ -19,6 +21,7 @@ type CustomerOrderRow = {
 type CustomerOrdersTableProps = {
   orders: CustomerOrderRow[];
   emptyLabel: string;
+  statusLabels: OrderStatusLabels;
   onOpenOrder: (orderNumber: string) => void;
 };
 
@@ -66,6 +69,7 @@ function paymentStatusTextClass(status: string): string {
 export function CustomerOrdersTable({
   orders,
   emptyLabel,
+  statusLabels,
   onOpenOrder,
 }: CustomerOrdersTableProps) {
   if (orders.length === 0) {
@@ -108,12 +112,12 @@ export function CustomerOrdersTable({
                 <span
                   className={`${STATUS_BADGE} ${orderStatusTextClass(order.status)}`}
                 >
-                  {formatOrderStatusLabel(order.status)}
+                  {localizeOrderStatus(order.status, statusLabels)}
                 </span>
                 <span
                   className={`${STATUS_BADGE} ${paymentStatusTextClass(order.paymentStatus)}`}
                 >
-                  {formatOrderStatusLabel(order.paymentStatus)}
+                  {localizePaymentStatus(order.paymentStatus, statusLabels)}
                 </span>
               </div>
             </button>

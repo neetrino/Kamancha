@@ -7,19 +7,7 @@ import { Search } from "lucide-react";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
-
-const ORDER_STATUS_FILTERS = [
-  { label: "Pending", value: "PENDING" },
-  { label: "Processing", value: "PROCESSING" },
-  { label: "Completed", value: "DELIVERED" },
-  { label: "Cancelled", value: "CANCELLED" },
-] as const satisfies ReadonlyArray<{ label: string; value: OrderStatus }>;
-
-const PAYMENT_STATUS_FILTERS = [
-  { label: "Paid", value: "CAPTURED" },
-  { label: "Pending", value: "PENDING" },
-  { label: "Failed", value: "FAILED" },
-] as const satisfies ReadonlyArray<{ label: string; value: PaymentStatus }>;
+import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrdersFiltersProps = {
   total: number;
@@ -27,6 +15,9 @@ type CustomerOrdersFiltersProps = {
   status?: OrderStatus;
   paymentStatus?: string;
   q?: string;
+  copy: Dictionary["admin"]["orders"]["filters"];
+  searchPlaceholder: string;
+  searchAria: string;
 };
 
 export function CustomerOrdersFilters({
@@ -35,10 +26,26 @@ export function CustomerOrdersFilters({
   status,
   paymentStatus,
   q,
+  copy,
+  searchPlaceholder,
+  searchAria,
 }: CustomerOrdersFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [statusValue, setStatusValue] = useState(status ?? "");
   const [paymentValue, setPaymentValue] = useState(paymentStatus ?? "");
+
+  const orderStatusFilters = [
+    { label: copy.statusPending, value: "PENDING" as OrderStatus },
+    { label: copy.statusProcessing, value: "PROCESSING" as OrderStatus },
+    { label: copy.statusCompleted, value: "DELIVERED" as OrderStatus },
+    { label: copy.statusCancelled, value: "CANCELLED" as OrderStatus },
+  ];
+
+  const paymentStatusFilters = [
+    { label: copy.paymentPaid, value: "CAPTURED" as PaymentStatus },
+    { label: copy.paymentPending, value: "PENDING" as PaymentStatus },
+    { label: copy.paymentFailed, value: "FAILED" as PaymentStatus },
+  ];
 
   function applyStatus(next: string): void {
     flushSync(() => setStatusValue(next));
@@ -59,19 +66,19 @@ export function CustomerOrdersFilters({
       >
         <SelectDropdown
           name="status"
-          ariaLabel="Order status"
+          ariaLabel={copy.orderStatusAria}
           value={statusValue}
-          allLabel="All statuses"
-          options={ORDER_STATUS_FILTERS}
+          allLabel={copy.allStatuses}
+          options={orderStatusFilters}
           className="w-full xl:w-[180px] xl:shrink-0"
           onValueChange={applyStatus}
         />
         <SelectDropdown
           name="paymentStatus"
-          ariaLabel="Payment status"
+          ariaLabel={copy.paymentStatusAria}
           value={paymentValue}
-          allLabel="All payment statuses"
-          options={PAYMENT_STATUS_FILTERS}
+          allLabel={copy.allPaymentStatuses}
+          options={paymentStatusFilters}
           className="w-full xl:w-[200px] xl:shrink-0"
           onValueChange={applyPayment}
         />
@@ -82,9 +89,9 @@ export function CustomerOrdersFilters({
           <input
             name="q"
             defaultValue={q ?? ""}
-            placeholder="Search by order #"
+            placeholder={searchPlaceholder}
             className="h-full min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/60"
-            aria-label="Search orders"
+            aria-label={searchAria}
           />
         </div>
       </form>

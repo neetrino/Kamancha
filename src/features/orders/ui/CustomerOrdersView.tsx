@@ -79,7 +79,10 @@ export function CustomerOrdersView({
         <CustomerOrdersCards
           locale={locale as Locale}
           orders={orders}
-          labels={profileCopy}
+          labels={{
+            ...profileCopy,
+            statusLabels: copy.orders.statusLabels,
+          }}
           onOpenOrder={openOrder}
         />
       </div>
@@ -87,6 +90,7 @@ export function CustomerOrdersView({
         <CustomerOrdersTable
           orders={orders}
           emptyLabel={profileCopy.noOrders}
+          statusLabels={copy.orders.statusLabels}
           onOpenOrder={openOrder}
         />
       </div>
