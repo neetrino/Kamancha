@@ -12,6 +12,12 @@ import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsS
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
 import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
+import {
+  calculateMaxRedeemAmount,
+  clampBonusRedeemRequest,
+} from "@/features/bonuses/domain/bonus-rules";
+import { previewGiftCardAction } from "@/features/gift-cards/application/preview-gift-card";
+import type { GiftCardRedeemPreview } from "@/features/gift-cards/domain/gift-card-rules";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
 import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
 import {
@@ -79,6 +85,21 @@ type CheckoutLabels = {
   couponPlaceholder: string;
   couponApply: string;
   couponApplying: string;
+  giftCardTitle: string;
+  giftCardPlaceholder: string;
+  giftCardApply: string;
+  giftCardApplying: string;
+  giftCardInitial: string;
+  giftCardUsed: string;
+  giftCardRemaining: string;
+  giftCardPayable: string;
+  giftCardApplied: string;
+  bonusTitle: string;
+  bonusAvailable: string;
+  bonusUse: string;
+  bonusAmount: string;
+  bonusUseMax: string;
+  bonusApplied: string;
   discount: string;
   subtotal: string;
   shipping: string;
@@ -108,6 +129,8 @@ type CheckoutFormProps = {
   deliverySchedule: DeliveryScheduleSettings;
   cashChangeOptions: CashChangeDenominationView[];
   hasItems: boolean;
+  bonusAvailableBalance?: number | null;
+  bonusMaxRedeemPercent?: number;
   splitOthersPrepaid?: boolean;
   othersPrepaidAmount?: number;
   lockedDeliveryAmount?: number | null;
@@ -127,6 +150,8 @@ export function CheckoutForm({
   deliverySchedule,
   cashChangeOptions,
   hasItems,
+  bonusAvailableBalance = null,
+  bonusMaxRedeemPercent = 0,
   splitOthersPrepaid = false,
   othersPrepaidAmount = 0,
   lockedDeliveryAmount = null,
@@ -151,8 +176,15 @@ export function CheckoutForm({
   );
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState<string | null>(null);
+  const [giftCardDraft, setGiftCardDraft] = useState("");
+  const [giftCardPreview, setGiftCardPreview] =
+    useState<GiftCardRedeemPreview | null>(null);
+  const [giftCardError, setGiftCardError] = useState<string | null>(null);
+  const [useBonuses, setUseBonuses] = useState(false);
+  const [bonusRedeemAmount, setBonusRedeemAmount] = useState(0);
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
+  const [applyingGiftCard, startApplyGiftCard] = useTransition();
 
   const paymentOptions = useMemo(
     () => [
@@ -192,10 +224,26 @@ export function CheckoutForm({
 
   const shippingAmount =
     lockedDeliveryAmount ?? deliveryQuote.deliveryAmount;
-  const merchandiseTotal =
-    Math.max(0, subtotalAmount - discountAmount) + shippingAmount;
+  const merchandiseAfterDiscount = Math.max(0, subtotalAmount - discountAmount);
+  const maxBonusRedeem =
+    bonusAvailableBalance == null
+      ? 0
+      : calculateMaxRedeemAmount({
+          eligibleMerchandiseAmount: merchandiseAfterDiscount,
+          availableBalance: bonusAvailableBalance,
+          maxRedeemPercent: bonusMaxRedeemPercent,
+        });
+  const appliedBonus = useBonuses
+    ? clampBonusRedeemRequest(bonusRedeemAmount, maxBonusRedeem)
+    : 0;
+  const payableBeforeGiftCard =
+    Math.max(0, merchandiseAfterDiscount - appliedBonus) + shippingAmount;
+  const giftCardRedeem = giftCardPreview
+    ? Math.min(giftCardPreview.redeemAmount, payableBeforeGiftCard)
+    : 0;
+  const afterGiftCard = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
   const prepaidApplied = splitOthersPrepaid ? othersPrepaidAmount : 0;
-  const totalAmount = Math.max(0, merchandiseTotal - prepaidApplied);
+  const totalAmount = Math.max(0, afterGiftCard - prepaidApplied);
   const selectedCashChange: CashChangeSelection =
     cashChangeAmount !== CASH_CHANGE_NONE &&
     computeCashChangeDue(cashChangeAmount, totalAmount) != null
@@ -230,6 +278,11 @@ export function CheckoutForm({
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
     setDiscountAmount(0);
+    setGiftCardPreview(null);
+  }
+
+  function clearAppliedGiftCard(): void {
+    setGiftCardPreview(null);
   }
 
   function onCouponDraftChange(value: string): void {
@@ -237,6 +290,14 @@ export function CheckoutForm({
     setCouponError(null);
     if (appliedCouponCode) {
       clearAppliedCoupon();
+    }
+  }
+
+  function onGiftCardDraftChange(value: string): void {
+    setGiftCardDraft(value);
+    setGiftCardError(null);
+    if (giftCardPreview) {
+      clearAppliedGiftCard();
     }
   }
 
@@ -259,6 +320,33 @@ export function CheckoutForm({
       setCouponDraft(result.code);
       setDiscountAmount(result.discountAmount);
       setCouponError(null);
+      setGiftCardPreview(null);
+    });
+  }
+
+  function onApplyGiftCard(): void {
+    const code = giftCardDraft.trim();
+    if (!code) {
+      return;
+    }
+
+    setGiftCardError(null);
+    startApplyGiftCard(async () => {
+      const result = await previewGiftCardAction({
+        giftCardCode: code,
+        couponCode: appliedCouponCode ?? undefined,
+        bonusRedeemAmount: useBonuses ? appliedBonus : undefined,
+        deliveryAmount: shippingAmount,
+      });
+      if (!result.ok) {
+        clearAppliedGiftCard();
+        setGiftCardError(result.error);
+        return;
+      }
+
+      setGiftCardDraft(result.preview.code);
+      setGiftCardPreview(result.preview);
+      setGiftCardError(null);
     });
   }
 
@@ -321,6 +409,8 @@ export function CheckoutForm({
             ? selectedCashChange
             : undefined,
         couponCode: appliedCouponCode ?? undefined,
+        bonusRedeemAmount: useBonuses ? appliedBonus : undefined,
+        giftCardCode: giftCardPreview?.code,
       });
 
       if (!result.ok) {
@@ -401,6 +491,16 @@ export function CheckoutForm({
             couponPlaceholder={labels.couponPlaceholder}
             couponApplyLabel={labels.couponApply}
             couponApplyingLabel={labels.couponApplying}
+            giftCardTitle={labels.giftCardTitle}
+            giftCardPlaceholder={labels.giftCardPlaceholder}
+            giftCardApplyLabel={labels.giftCardApply}
+            giftCardApplyingLabel={labels.giftCardApplying}
+            giftCardInitialLabel={labels.giftCardInitial}
+            giftCardUsedLabel={labels.giftCardUsed}
+            giftCardRemainingLabel={labels.giftCardRemaining}
+            giftCardPayableLabel={labels.giftCardPayable}
+            giftCardAppliedLabel={labels.giftCardApplied}
+            bonusAppliedLabel={labels.bonusApplied}
             discountLabel={labels.discount}
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}
@@ -419,6 +519,58 @@ export function CheckoutForm({
             onApplyCoupon={onApplyCoupon}
             couponError={couponError}
             isApplyingCoupon={applyingCoupon}
+            giftCardDraft={giftCardDraft}
+            onGiftCardDraftChange={onGiftCardDraftChange}
+            onApplyGiftCard={onApplyGiftCard}
+            giftCardError={giftCardError}
+            isApplyingGiftCard={applyingGiftCard}
+            giftCardPreview={
+              giftCardPreview
+                ? {
+                    initialAmount: giftCardPreview.initialAmount,
+                    redeemAmount: giftCardRedeem,
+                    remainingBalance:
+                      giftCardPreview.balanceAmount - giftCardRedeem,
+                    payableAfter: afterGiftCard,
+                  }
+                : null
+            }
+            bonus={
+              bonusAvailableBalance == null
+                ? null
+                : {
+                    availableBalance: bonusAvailableBalance,
+                    maxRedeem: maxBonusRedeem,
+                    useBonuses,
+                    redeemAmount: appliedBonus,
+                    onToggle: (enabled) => {
+                      setUseBonuses(enabled);
+                      setGiftCardPreview(null);
+                      if (!enabled) {
+                        setBonusRedeemAmount(0);
+                      } else if (bonusRedeemAmount <= 0) {
+                        setBonusRedeemAmount(maxBonusRedeem);
+                      }
+                    },
+                    onAmountChange: (amount) => {
+                      setBonusRedeemAmount(amount);
+                      setGiftCardPreview(null);
+                    },
+                    onUseMax: () => {
+                      setBonusRedeemAmount(maxBonusRedeem);
+                      setGiftCardPreview(null);
+                    },
+                    labels: {
+                      title: labels.bonusTitle,
+                      available: labels.bonusAvailable,
+                      useBonuses: labels.bonusUse,
+                      amount: labels.bonusAmount,
+                      useMax: labels.bonusUseMax,
+                    },
+                    formatMoney,
+                  }
+            }
+            formatMoney={formatMoney}
             error={error}
             isSubmitting={pending}
             placeOrderLabel={labels.placeOrder}

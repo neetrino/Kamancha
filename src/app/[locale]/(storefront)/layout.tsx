@@ -10,6 +10,7 @@ import { LiquidGlassOptics } from "@/components/ui/LiquidGlassOptics";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveGroupOrderBanner } from "@/features/group-orders/application/active-banner";
 import { ActiveGroupOrderBanner } from "@/features/group-orders/ui/ActiveGroupOrderBanner";
+import { StorefrontAlertHost } from "@/features/storefront-chrome/StorefrontAlertHost";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -68,6 +69,7 @@ export default async function StorefrontLayout({
           currency={currency}
           dictionary={dictionary}
         />
+        <StorefrontAlertHost />
       </div>
     </div>
   );

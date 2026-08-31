@@ -13,5 +13,6 @@ export {
 export {
   GROUP_ORDER_STATUSES,
   canTransitionGroupOrderStatus,
+  isGroupOrderBagActive,
   nextStatusAfterLock,
 } from "@/features/group-orders/domain/status";

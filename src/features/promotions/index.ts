@@ -28,7 +28,13 @@ export {
 export {
   getAdminPromotionById,
   listAdminPromotions,
+  listCouponUserOptions,
   listPromotionTargetOptions,
+  listPromotionUserIds,
+} from "@/features/promotions/application/queries";
+export type {
+  AdminPromotionListItem,
+  CouponUserOption,
 } from "@/features/promotions/application/queries";
 export {
   normalizePromotionCode,

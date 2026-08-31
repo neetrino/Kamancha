@@ -16,6 +16,7 @@ import {
 } from "@/features/bonuses/domain/bonus-rules";
 import { getUserBonusBalance } from "@/features/bonuses/application/queries";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { listPromotionUserIds } from "@/features/promotions/application/queries";
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
@@ -52,6 +53,8 @@ export async function previewGiftCardAction(
     return { ok: false, error: "Cart is empty." };
   }
 
+  const user = await getCurrentUser();
+
   const prices = await resolveProductPrices(
     items.map(({ product }) => ({
       id: product.id,
@@ -72,7 +75,15 @@ export async function previewGiftCardAction(
       .from(promotions)
       .where(and(eq(promotions.kind, "COUPON"), eq(promotions.code, code)))
       .limit(1);
-    const evaluated = evaluateCouponDiscount(coupon, subtotal);
+    const restrictedUserIds = coupon
+      ? await listPromotionUserIds(coupon.id)
+      : [];
+    const evaluated = evaluateCouponDiscount(
+      coupon ? { ...coupon, restrictedUserIds } : null,
+      subtotal,
+      new Date(),
+      user?.id ?? null,
+    );
     if (!evaluated.ok) {
       return {
         ok: false,
@@ -88,7 +99,6 @@ export async function previewGiftCardAction(
   );
 
   let bonusRedeemedAmount = 0;
-  const user = await getCurrentUser();
   if (user && (parsed.data.bonusRedeemAmount ?? 0) > 0) {
     const settings = await getStoreBonusSettings();
     const balance = await getUserBonusBalance(user.id);

@@ -16,6 +16,7 @@ import {
   splitDeliveryFee,
 } from "@/features/group-orders/domain/delivery-split";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
+import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import { createId } from "@/lib/id";
 
 type DbLike = ReturnType<typeof getDb> | DbTransaction;
@@ -179,6 +180,7 @@ export async function resolveLinePricing(input: {
     .select({
       id: products.id,
       price: products.priceAmount,
+      compareAtAmount: products.compareAtAmount,
       status: products.status,
       stock: products.stockOnHand,
     })
@@ -189,6 +191,15 @@ export async function resolveLinePricing(input: {
   if (!product || product.status !== "ACTIVE" || product.stock < 1) {
     return { ok: false, error: "Product unavailable." };
   }
+
+  const priced = await resolveProductPrices([
+    {
+      id: product.id,
+      priceAmount: product.price,
+      compareAtAmount: product.compareAtAmount,
+    },
+  ]);
+  const catalogUnit = priced.get(product.id)?.unitAmount ?? product.price;
 
   let modifiers: Array<{
     id: string;
@@ -217,7 +228,7 @@ export async function resolveLinePricing(input: {
   const additionTotal = modifiers
     .filter((m) => m.kind === "ADDITION")
     .reduce((sum, m) => sum + m.priceAmount, 0);
-  const unitAmount = product.price + additionTotal;
+  const unitAmount = catalogUnit + additionTotal;
   const qty = Math.min(input.quantity, product.stock);
 
   return {

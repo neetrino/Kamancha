@@ -13,12 +13,16 @@ import {
 import { AppLink } from "@/components/ui/AppLink";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { SideSheet } from "@/components/ui/SideSheet";
-import { removeItem, updateQuantity } from "@/features/cart/cart";
 import type {
   CartDrawerItemView,
   CartDrawerView,
 } from "@/features/cart/get-cart-drawer-view";
 import { loadCartDrawerViewAction } from "@/features/cart/load-cart-drawer-view-action";
+import {
+  removeStorefrontCartItem,
+  updateStorefrontCartItem,
+} from "@/features/cart/storefront-cart-mutations";
+import { showStorefrontAlert } from "@/features/storefront-chrome/storefront-alert-store";
 import {
   adjustCartItemCount,
   revertCartItemCountAdjust,
@@ -29,7 +33,7 @@ import {
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 const CART_PLUS_SRC = staticAssetUrl("/assets/brand/home/cart-plus.svg");
@@ -96,6 +100,10 @@ export function CartDrawer({
   const liveItemCount = useCartItemCount(itemCount);
   const badgeCount = liveItemCount;
   const hasItems = Boolean(view ? view.items.length > 0 : liveItemCount > 0);
+  const canEdit = view?.canEdit ?? true;
+  const checkoutHref = view?.checkoutHref ?? `/${locale}/checkout`;
+  const checkoutLabel =
+    view?.source === "group" ? labels.checkoutGroupOrder : labels.checkout;
 
   function applyView(next: CartDrawerView): void {
     setView(next);
@@ -140,7 +148,7 @@ export function CartDrawer({
   }
 
   function changeQuantity(itemId: string, quantity: number): void {
-    if (!view) return;
+    if (!view || !view.canEdit) return;
     const current = view.items.find((item) => item.id === itemId);
     if (!current) return;
 
@@ -157,18 +165,23 @@ export function CartDrawer({
     });
     adjustCartItemCount(delta);
 
-    void updateQuantity(itemId, nextQty)
+    void updateStorefrontCartItem(itemId, nextQty)
       .then(() => {
         syncViewInBackground();
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         setView(view);
         revertCartItemCountAdjust(-delta);
+        const message =
+          error instanceof Error && error.message.length > 0
+            ? error.message
+            : dictionary.groupOrder.errorGeneric;
+        showStorefrontAlert(message);
       });
   }
 
   function removeCartItem(itemId: string): void {
-    if (!view) return;
+    if (!view || !view.canEdit) return;
     const current = view.items.find((item) => item.id === itemId);
     if (!current) return;
 
@@ -182,7 +195,7 @@ export function CartDrawer({
     });
     adjustCartItemCount(-current.quantity);
 
-    void removeItem(itemId)
+    void removeStorefrontCartItem(itemId)
       .then(() => {
         syncViewInBackground();
       })
@@ -268,7 +281,7 @@ export function CartDrawer({
                           className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl"
                         >
                           <Image
-                            src={STOREFRONT_PRODUCT_PHOTO}
+                            src={storefrontProductImageSrc(item.imageUrl)}
                             alt={item.title}
                             fill
                             sizes="112px"
@@ -278,7 +291,7 @@ export function CartDrawer({
                       ) : (
                         <div className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl">
                           <Image
-                            src={STOREFRONT_PRODUCT_PHOTO}
+                            src={storefrontProductImageSrc(item.imageUrl)}
                             alt={item.title}
                             fill
                             sizes="112px"
@@ -319,7 +332,8 @@ export function CartDrawer({
                           <button
                             type="button"
                             onClick={() => removeCartItem(item.id)}
-                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                            disabled={!canEdit}
+                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                             aria-label={labels.removeItem}
                           >
                             <X className="h-4 w-4" aria-hidden />
@@ -333,7 +347,8 @@ export function CartDrawer({
                               onClick={() =>
                                 changeQuantity(item.id, item.quantity - 1)
                               }
-                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white"
+                              disabled={!canEdit}
+                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                               aria-label={labels.decreaseQuantity}
                             >
                               <Minus className="h-3.5 w-3.5" aria-hidden />
@@ -346,7 +361,8 @@ export function CartDrawer({
                               onClick={() =>
                                 changeQuantity(item.id, item.quantity + 1)
                               }
-                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white"
+                              disabled={!canEdit}
+                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                               aria-label={labels.increaseQuantity}
                             >
                               <Plus className="h-3.5 w-3.5" aria-hidden />
@@ -384,8 +400,8 @@ export function CartDrawer({
 
           {hasItems ? (
             <KamanchaPillButton
-              href={`/${locale}/checkout`}
-              label={labels.checkout}
+              href={checkoutHref}
+              label={checkoutLabel}
               variant="dark"
               className="mt-5 max-w-none sm:max-w-none"
               onClick={closeDrawer}

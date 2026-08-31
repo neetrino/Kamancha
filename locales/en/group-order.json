@@ -11,6 +11,7 @@
   "spendLimitHint": "Per-participant merchandise limit (֏)",
   "spendLimitTooLarge": "That limit is too large. Maximum is {max}.",
   "spendLimitInvalid": "Enter a valid amount (numbers only).",
+  "spendLimitExceeded": "This item can’t be added to the bag. The per-person limit is {limit}, and your selection would be {subtotal}.",
   "infoNote": "A group order is an order with more than one participant.",
   "start": "Start",
   "close": "Close",

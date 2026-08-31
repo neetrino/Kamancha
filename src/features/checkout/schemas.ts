@@ -33,6 +33,10 @@ export const checkoutSchema = z
     idempotencyKey: z.string().trim().min(8).max(128),
     locale: z.enum(["hy", "en", "ru"]),
     couponCode: z.string().trim().max(64).optional(),
+    /** Bonus points to redeem; ignored for guests. */
+    bonusRedeemAmount: z.coerce.number().int().min(0).max(100_000_000).optional(),
+    /** Gift card code to redeem at checkout. */
+    giftCardCode: z.string().trim().max(64).optional(),
   })
   .superRefine((value, ctx) => {
     if (!value.line1?.trim() || value.line1.trim().length < 3) {

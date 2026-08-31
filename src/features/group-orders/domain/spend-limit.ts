@@ -5,6 +5,9 @@
 /** Soft cap for organizer-entered limit (AMD). Above this → clear client/server error. */
 export const GROUP_ORDER_SPEND_LIMIT_MAX = 1_000_000;
 
+/** Stable mutation error code when the next subtotal would exceed the cap. */
+export const SPEND_LIMIT_EXCEEDED_ERROR = "EXCEEDS_LIMIT";
+
 export type SpendLimitCheck =
   | { ok: true }
   | {

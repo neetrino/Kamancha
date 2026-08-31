@@ -7,9 +7,9 @@ import { useMemo, useRef, useState } from "react";
 import { flyToCart } from "@/features/cart/ui/fly-to-cart";
 import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 import type { ProductModifierChoice } from "@/features/products/types";
+import { showStorefrontAlert } from "@/features/storefront-chrome/storefront-alert-store";
 import {
   adjustCartItemCount,
-  revertCartItemCountAdjust,
   settleCartItemCountAdjust,
 } from "@/features/storefront-chrome/storefront-counts-store";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
@@ -142,9 +142,7 @@ export function ProductPurchaseControls({
   function handleAdd(): void {
     if (disabled || quantity < 1) return;
     setError(null);
-    if (addButtonRef.current) {
-      flyToCart(addButtonRef.current);
-    }
+    const origin = addButtonRef.current;
 
     const selectedModifiers = [...additionIds, ...exceptionIds];
     void addProductToActiveCart(productId, quantity, {
@@ -153,18 +151,21 @@ export function ProductPurchaseControls({
       .then((result) => {
         if (!result.ok) {
           setError(result.error);
+          showStorefrontAlert(result.error);
           return;
         }
-        if (result.target !== "cart") {
-          router.refresh();
-          return;
+        if (origin) {
+          flyToCart(origin);
         }
         adjustCartItemCount(quantity);
         settleCartItemCountAdjust();
+        if (result.target !== "cart") {
+          router.refresh();
+        }
       })
       .catch(() => {
-        revertCartItemCountAdjust(-quantity);
         setError(labels.error);
+        showStorefrontAlert(labels.error);
       });
   }
 

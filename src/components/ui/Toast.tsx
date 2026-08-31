@@ -105,8 +105,8 @@ export function Toast({
   return createPortal(
     <div className="pointer-events-none fixed top-[max(1.5rem,env(safe-area-inset-top))] left-1/2 z-[300] w-max max-w-[min(90vw,24rem)] -translate-x-1/2">
       <div
-        role="status"
-        aria-live="polite"
+        role={tone === "warning" ? "alert" : "status"}
+        aria-live={tone === "warning" ? "assertive" : "polite"}
         className={`rounded-xl px-4 py-3 text-center text-sm font-medium shadow-lg ${TOAST_TONE_CLASS[tone]} ${
           exiting ? "animate-toast-out" : "animate-toast-in"
         }`}

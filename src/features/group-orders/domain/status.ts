@@ -40,6 +40,13 @@ const ITEM_EDITABLE: ReadonlySet<GroupOrderStatus> = new Set(["OPEN"]);
 
 const JOINABLE: ReadonlySet<GroupOrderStatus> = new Set(["OPEN"]);
 
+/** Bag UI + personal checkout are owned by the group until organizer checkout. */
+const BAG_ACTIVE: ReadonlySet<GroupOrderStatus> = new Set([
+  "OPEN",
+  "LOCKED",
+  "AWAITING_PAYMENTS",
+]);
+
 export function isGroupOrderStatus(value: string): value is GroupOrderStatus {
   return (GROUP_ORDER_STATUSES as readonly string[]).includes(value);
 }
@@ -57,6 +64,14 @@ export function canEditGroupOrderItems(status: GroupOrderStatus): boolean {
 
 export function canJoinGroupOrder(status: GroupOrderStatus): boolean {
   return JOINABLE.has(status);
+}
+
+/**
+ * While collecting/locking, the storefront bag shows group lines and
+ * personal `/checkout` is blocked in favor of the group-order page.
+ */
+export function isGroupOrderBagActive(status: GroupOrderStatus): boolean {
+  return BAG_ACTIVE.has(status);
 }
 
 /** Whether payment mode can still be changed (no successful payment yet). */

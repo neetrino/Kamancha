@@ -21,6 +21,9 @@ export const adminPromotionsFilterSchema = z.object({
 
 export type AdminPromotionsFilter = z.infer<typeof adminPromotionsFilterSchema>;
 
+/** Max users that can be attached to a coupon allowlist. */
+export const COUPON_USER_ALLOWLIST_MAX = 200;
+
 export const upsertPromotionSchema = z.object({
   kind: z.enum(PROMOTION_KINDS),
   code: z.preprocess(emptyToNull, z.string().trim().max(64).nullable()),
@@ -57,6 +60,7 @@ export const upsertPromotionSchema = z.object({
   }, z.boolean()),
   startsAt: z.preprocess(emptyToNull, z.coerce.date().nullable()),
   endsAt: z.preprocess(emptyToNull, z.coerce.date().nullable()),
+  userIds: z.array(z.string().uuid()).max(COUPON_USER_ALLOWLIST_MAX).optional(),
 });
 
 export type UpsertPromotionInput = z.infer<typeof upsertPromotionSchema>;

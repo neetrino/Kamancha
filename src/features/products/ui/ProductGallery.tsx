@@ -9,7 +9,7 @@ import type { ProductGalleryImage } from "@/features/products/types";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import { clearActiveFocus } from "@/lib/dom/clear-active-focus";
 import type { Locale } from "@/lib/i18n/config";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 import {
   BODY_SCROLL_LOCK_ALLOW,
   useBodyScrollLock,
@@ -61,14 +61,11 @@ export function ProductGallery({
   const galleryImages = useMemo<ProductGalleryImage[]>(
     () =>
       images.length > 0
-        ? images.map((image) => ({
-            ...image,
-            url: STOREFRONT_PRODUCT_PHOTO,
-          }))
+        ? images
         : [
             {
               id: "placeholder",
-              url: STOREFRONT_PRODUCT_PHOTO,
+              url: storefrontProductImageSrc(null),
               alt: title,
               isPrimary: true,
             },

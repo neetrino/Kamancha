@@ -7,12 +7,14 @@ import { getDb } from "@/db/client";
 import { promotions } from "@/db/schema";
 import { getCartWithItems } from "@/features/cart/cart";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
+import { listPromotionUserIds } from "@/features/promotions/application/queries";
 import {
   couponDiscountErrorMessage,
   evaluateCouponDiscount,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { getCurrentUser } from "@/lib/auth/session";
 
 const previewCouponSchema = z.object({
   couponCode: z.string().trim().min(1).max(64),
@@ -59,7 +61,16 @@ export async function previewCouponAction(
     .where(and(eq(promotions.kind, "COUPON"), eq(promotions.code, code)))
     .limit(1);
 
-  const evaluated = evaluateCouponDiscount(coupon, subtotal);
+  const user = await getCurrentUser();
+  const restrictedUserIds = coupon
+    ? await listPromotionUserIds(coupon.id)
+    : [];
+  const evaluated = evaluateCouponDiscount(
+    coupon ? { ...coupon, restrictedUserIds } : null,
+    subtotal,
+    new Date(),
+    user?.id ?? null,
+  );
   if (!evaluated.ok) {
     return { ok: false, error: couponDiscountErrorMessage(evaluated.error) };
   }

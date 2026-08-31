@@ -1,54 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import { Button } from "@/components/ui/Button";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { LiquidGlassPanel } from "@/components/ui/LiquidGlassPanel";
+import {
+  CheckoutBonusRedeemField,
+  type CheckoutBonusRedeemState,
+} from "@/features/checkout/ui/CheckoutBonusRedeemField";
+import { CheckoutCodeApplyField } from "@/features/checkout/ui/CheckoutCodeApplyField";
+import { useCheckoutSummaryStickyTop } from "@/features/checkout/ui/use-checkout-summary-sticky-top";
 
-const SUMMARY_HEADER_GAP_PX = 16;
-const SUMMARY_FALLBACK_TOP_PX = 140;
 const SUMMARY_ALERT_PILL_CLASS =
   "mb-4 w-full rounded-full bg-white px-4 py-3 text-center text-sm font-medium leading-snug text-red-600";
 
-const CHECKOUT_COUPON_GLASS_CLASS =
+const CHECKOUT_CODE_GLASS_CLASS =
   "relative z-[2] mb-6 liquid-glass isolate overflow-hidden rounded-xl p-4";
 
-const CHECKOUT_COUPON_INPUT_MOBILE_CLASS =
-  "h-11 w-full rounded-[15px] border border-gray-200 bg-white px-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:bg-gray-50";
-
-const CHECKOUT_COUPON_APPLY_MOBILE_CLASS =
-  "h-9 shrink-0 rounded-[15px] border border-gray-200 bg-white px-4 text-sm font-medium text-gray-900 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50";
-
-function useSummaryStickyTop(): number {
-  const [top, setTop] = useState(SUMMARY_FALLBACK_TOP_PX);
-
-  useEffect(() => {
-    function update(): void {
-      const header = document.querySelector<HTMLElement>("[data-site-header]");
-      if (!header) {
-        setTop(SUMMARY_FALLBACK_TOP_PX);
-        return;
-      }
-      setTop(
-        Math.round(header.getBoundingClientRect().bottom + SUMMARY_HEADER_GAP_PX),
-      );
-    }
-
-    update();
-    window.addEventListener("resize", update);
-    const header = document.querySelector("[data-site-header]");
-    const observer = header ? new ResizeObserver(update) : null;
-    if (header && observer) observer.observe(header);
-
-    return () => {
-      window.removeEventListener("resize", update);
-      observer?.disconnect();
-    };
-  }, []);
-
-  return top;
-}
+type GiftCardPreviewView = {
+  initialAmount: number;
+  redeemAmount: number;
+  remainingBalance: number;
+  payableAfter: number;
+};
 
 type CheckoutOrderSummaryProps = {
   title: string;
@@ -56,6 +28,16 @@ type CheckoutOrderSummaryProps = {
   couponPlaceholder: string;
   couponApplyLabel: string;
   couponApplyingLabel: string;
+  giftCardTitle: string;
+  giftCardPlaceholder: string;
+  giftCardApplyLabel: string;
+  giftCardApplyingLabel: string;
+  giftCardInitialLabel: string;
+  giftCardUsedLabel: string;
+  giftCardRemainingLabel: string;
+  giftCardPayableLabel: string;
+  giftCardAppliedLabel: string;
+  bonusAppliedLabel: string;
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
@@ -72,6 +54,14 @@ type CheckoutOrderSummaryProps = {
   onApplyCoupon: () => void;
   couponError: string | null;
   isApplyingCoupon: boolean;
+  giftCardDraft: string;
+  onGiftCardDraftChange: (value: string) => void;
+  onApplyGiftCard: () => void;
+  giftCardError: string | null;
+  isApplyingGiftCard: boolean;
+  giftCardPreview: GiftCardPreviewView | null;
+  bonus: CheckoutBonusRedeemState | null;
+  formatMoney: (amount: number) => string;
   error: string | null;
   isSubmitting: boolean;
   placeOrderLabel: string;
@@ -84,6 +74,16 @@ export function CheckoutOrderSummary({
   couponPlaceholder,
   couponApplyLabel,
   couponApplyingLabel,
+  giftCardTitle,
+  giftCardPlaceholder,
+  giftCardApplyLabel,
+  giftCardApplyingLabel,
+  giftCardInitialLabel,
+  giftCardUsedLabel,
+  giftCardRemainingLabel,
+  giftCardPayableLabel,
+  giftCardAppliedLabel,
+  bonusAppliedLabel,
   discountLabel,
   subtotalLabel,
   shippingLabel,
@@ -100,12 +100,20 @@ export function CheckoutOrderSummary({
   onApplyCoupon,
   couponError,
   isApplyingCoupon,
+  giftCardDraft,
+  onGiftCardDraftChange,
+  onApplyGiftCard,
+  giftCardError,
+  isApplyingGiftCard,
+  giftCardPreview,
+  bonus,
+  formatMoney,
   error,
   isSubmitting,
   placeOrderLabel,
   processingLabel,
 }: CheckoutOrderSummaryProps) {
-  const stickyTop = useSummaryStickyTop();
+  const stickyTop = useCheckoutSummaryStickyTop();
 
   return (
     <div className="lg:sticky xl:self-start" style={{ top: stickyTop }}>
@@ -114,77 +122,64 @@ export function CheckoutOrderSummary({
           {title}
         </h2>
 
-        <div className={CHECKOUT_COUPON_GLASS_CLASS}>
-          <div className="relative z-[2] xl:hidden">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <p className="text-sm text-gray-900">{couponTitle}</p>
-              <Button
-                type="button"
-                variant="secondary"
-                size="md"
-                className={CHECKOUT_COUPON_APPLY_MOBILE_CLASS}
-                disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
-                onClick={onApplyCoupon}
-              >
-                {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
-              </Button>
-            </div>
-            <input
-              type="text"
-              name="couponCodeDraft"
-              value={couponDraft}
-              onChange={(event) => onCouponDraftChange(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  onApplyCoupon();
-                }
-              }}
-              placeholder={couponPlaceholder}
-              autoComplete="off"
-              disabled={isSubmitting || isApplyingCoupon}
-              className={CHECKOUT_COUPON_INPUT_MOBILE_CLASS}
-            />
-          </div>
-
-          <div className="relative z-[2] hidden xl:block">
-            <p className="mb-3 text-sm text-white/80">{couponTitle}</p>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                name="couponCodeDraft"
-                value={couponDraft}
-                onChange={(event) => onCouponDraftChange(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    onApplyCoupon();
-                  }
-                }}
-                placeholder={couponPlaceholder}
-                autoComplete="off"
-                disabled={isSubmitting || isApplyingCoupon}
-                className="h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200"
-              />
-              <Button
-                type="button"
-                variant="secondary"
-                size="md"
-                className="h-11 shrink-0 rounded-lg border-gray-200 bg-white px-4 text-sm text-gray-900 hover:bg-gray-50"
-                disabled={isSubmitting || isApplyingCoupon || !couponDraft.trim()}
-                onClick={onApplyCoupon}
-              >
-                {isApplyingCoupon ? couponApplyingLabel : couponApplyLabel}
-              </Button>
-            </div>
-          </div>
-
-          {couponError ? (
-            <p className={`${SUMMARY_ALERT_PILL_CLASS} relative z-[2] mt-2`} role="alert">
-              {couponError}
-            </p>
-          ) : null}
+        <div className={CHECKOUT_CODE_GLASS_CLASS}>
+          <CheckoutCodeApplyField
+            title={couponTitle}
+            name="couponCodeDraft"
+            draft={couponDraft}
+            onDraftChange={onCouponDraftChange}
+            onApply={onApplyCoupon}
+            placeholder={couponPlaceholder}
+            applyLabel={couponApplyLabel}
+            applyingLabel={couponApplyingLabel}
+            error={couponError}
+            isApplying={isApplyingCoupon}
+            isSubmitting={isSubmitting}
+          />
         </div>
+
+        <div className={CHECKOUT_CODE_GLASS_CLASS}>
+          <CheckoutCodeApplyField
+            title={giftCardTitle}
+            name="giftCardCodeDraft"
+            draft={giftCardDraft}
+            onDraftChange={onGiftCardDraftChange}
+            onApply={onApplyGiftCard}
+            placeholder={giftCardPlaceholder}
+            applyLabel={giftCardApplyLabel}
+            applyingLabel={giftCardApplyingLabel}
+            error={giftCardError}
+            isApplying={isApplyingGiftCard}
+            isSubmitting={isSubmitting}
+          >
+            {giftCardPreview ? (
+              <div className="relative z-[2] mt-3 space-y-1 text-sm text-gray-900 xl:text-white/80">
+                <PreviewRow
+                  label={giftCardInitialLabel}
+                  value={formatMoney(giftCardPreview.initialAmount)}
+                />
+                <PreviewRow
+                  label={giftCardUsedLabel}
+                  value={formatMoney(giftCardPreview.redeemAmount)}
+                />
+                <PreviewRow
+                  label={giftCardRemainingLabel}
+                  value={formatMoney(giftCardPreview.remainingBalance)}
+                />
+                <PreviewRow
+                  label={giftCardPayableLabel}
+                  value={formatMoney(giftCardPreview.payableAfter)}
+                />
+              </div>
+            ) : null}
+          </CheckoutCodeApplyField>
+        </div>
+
+        {bonus ? (
+          <div className={CHECKOUT_CODE_GLASS_CLASS}>
+            <CheckoutBonusRedeemField bonus={bonus} isSubmitting={isSubmitting} />
+          </div>
+        ) : null}
 
         <div className="relative z-[2] mb-6 space-y-4">
           <div className="flex justify-between text-white">
@@ -195,6 +190,22 @@ export function CheckoutOrderSummary({
             <div className="flex justify-between text-white">
               <span>{discountLabel}</span>
               <span className="text-emerald-200">-{discountFormatted}</span>
+            </div>
+          ) : null}
+          {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
+            <div className="flex justify-between text-white">
+              <span>{bonusAppliedLabel}</span>
+              <span className="text-emerald-200">
+                -{formatMoney(bonus.redeemAmount)}
+              </span>
+            </div>
+          ) : null}
+          {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (
+            <div className="flex justify-between text-white">
+              <span>{giftCardAppliedLabel}</span>
+              <span className="text-emerald-200">
+                -{formatMoney(giftCardPreview.redeemAmount)}
+              </span>
             </div>
           ) : null}
           <div className="flex justify-between text-white">
@@ -244,6 +255,21 @@ export function CheckoutOrderSummary({
           />
         </div>
       </LiquidGlassPanel>
+    </div>
+  );
+}
+
+function PreviewRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex justify-between gap-3">
+      <span>{label}</span>
+      <span>{value}</span>
     </div>
   );
 }

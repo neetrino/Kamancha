@@ -10,6 +10,7 @@
   "shipping": "Доставка",
   "total": "Итого",
   "checkout": "Перейти к оформлению",
+  "checkoutGroupOrder": "Перейти к групповому заказу",
   "close": "Закрыть корзину",
   "removeItem": "Удалить товар",
   "decreaseQuantity": "Уменьшить количество",

@@ -22,7 +22,7 @@ import {
 } from "@/features/products/application/search-header-products-action";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 
 const SEARCH_DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 1;
@@ -234,7 +234,7 @@ export function HeaderSearch({
                     >
                       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                         <Image
-                          src={STOREFRONT_PRODUCT_PHOTO}
+                          src={storefrontProductImageSrc(product.imageUrl)}
                           alt=""
                           fill
                           sizes="56px"

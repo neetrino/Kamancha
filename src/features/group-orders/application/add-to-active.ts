@@ -1,27 +1,37 @@
 "use server";
 
-import { addToCart } from "@/features/cart/cart";
+import { revalidatePath } from "next/cache";
+
+import { addToCart, revalidateCartPaths } from "@/features/cart/cart";
+import { getGroupCartOverlay } from "@/features/group-orders/application/cart-overlay";
+import { localizeGroupOrderMutationError } from "@/features/group-orders/application/format-mutation-error";
 import { addGroupOrderItem } from "@/features/group-orders/application/items";
-import { peekGroupOrderSession } from "@/features/group-orders/session";
 
 /**
- * Adds to the active group order when a session cookie is present;
- * otherwise falls back to the personal cart.
+ * Adds to the active group bag while collecting; otherwise the personal cart.
  */
 export async function addProductToActiveCart(
   productId: string,
   quantity: number,
   options?: { modifierIds?: string[] },
 ): Promise<{ ok: true; target: "group" | "cart" } | { ok: false; error: string }> {
-  const session = await peekGroupOrderSession();
-  if (session.inviteToken && session.participantId) {
+  const overlay = await getGroupCartOverlay();
+  if (overlay) {
     const result = await addGroupOrderItem({
-      inviteToken: session.inviteToken,
+      inviteToken: overlay.inviteToken,
       productId,
       quantity,
       modifierIds: options?.modifierIds,
     });
-    if (!result.ok) return result;
+    if (!result.ok) {
+      return {
+        ok: false,
+        error: await localizeGroupOrderMutationError(result),
+      };
+    }
+    await revalidateCartPaths();
+    revalidatePath("/", "layout");
+    revalidatePath(`/[locale]/group-orders/${overlay.inviteToken}`, "page");
     return { ok: true, target: "group" };
   }
 

@@ -9,7 +9,7 @@ import {
 import { displayProductRating } from "@/features/products/ui/ProductReviewRating";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
+import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 const DIVIDER_SRC = staticAssetUrl("/assets/brand/home/product-card-divider.svg");
@@ -63,6 +63,7 @@ export function ProductCard({
   categoryLabel = null,
   rating = null,
   discountOffLabel = "{percent}% Off",
+  imageUrl,
   inStock,
   priority = false,
   locale,
@@ -100,7 +101,7 @@ export function ProductCard({
           className="absolute inset-0 block"
         >
           <Image
-            src={STOREFRONT_PRODUCT_PHOTO}
+            src={storefrontProductImageSrc(imageUrl)}
             alt={title}
             fill
             sizes={ui.imageSizes}

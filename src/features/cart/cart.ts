@@ -19,6 +19,7 @@ import {
 import { buildModifierSelectionKey } from "@/features/products/domain/modifier-selection";
 import { resolveSelectedModifiersForProduct } from "@/features/products/application/product-modifiers";
 import type { ProductModifierRow } from "@/features/products/types/modifiers";
+import { getGroupCartOverlayItemCount } from "@/features/group-orders/application/cart-overlay";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createId } from "@/lib/id";
 
@@ -164,6 +165,10 @@ export async function getCartWithItems(): Promise<{
 
 /** Cheap badge count for the header — no cart creation, no line enrichment. */
 export async function getCartItemCount(): Promise<number> {
+  const overlayCount = await getGroupCartOverlayItemCount();
+  if (overlayCount != null) {
+    return overlayCount;
+  }
   const owner = await getCartOwnerForRead();
   if (!owner) {
     return 0;

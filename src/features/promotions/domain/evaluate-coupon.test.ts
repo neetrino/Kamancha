@@ -96,5 +96,39 @@ describe("evaluateCouponDiscount", () => {
 
   it("maps error codes to messages", () => {
     expect(couponDiscountErrorMessage("EXPIRED")).toBe("Coupon has expired.");
+    expect(couponDiscountErrorMessage("NOT_ELIGIBLE")).toBe(
+      "This coupon is not available for your account.",
+    );
+  });
+
+  it("allows any user when the allowlist is empty", () => {
+    expect(
+      evaluateCouponDiscount(coupon({ restrictedUserIds: [] }), 10_000, now, null),
+    ).toEqual({ ok: true, discountAmount: 1_000 });
+    expect(
+      evaluateCouponDiscount(
+        coupon({ restrictedUserIds: [] }),
+        10_000,
+        now,
+        "user-1",
+      ),
+    ).toEqual({ ok: true, discountAmount: 1_000 });
+  });
+
+  it("restricts redemption to selected users", () => {
+    const restricted = coupon({ restrictedUserIds: ["user-1", "user-2"] });
+
+    expect(evaluateCouponDiscount(restricted, 10_000, now, "user-1")).toEqual({
+      ok: true,
+      discountAmount: 1_000,
+    });
+    expect(evaluateCouponDiscount(restricted, 10_000, now, "user-3")).toEqual({
+      ok: false,
+      error: "NOT_ELIGIBLE",
+    });
+    expect(evaluateCouponDiscount(restricted, 10_000, now, null)).toEqual({
+      ok: false,
+      error: "NOT_ELIGIBLE",
+    });
   });
 });

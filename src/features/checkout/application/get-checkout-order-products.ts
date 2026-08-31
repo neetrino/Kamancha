@@ -1,50 +1,13 @@
 import "server-only";
 
-import { and, asc, eq, inArray, or } from "drizzle-orm";
-
-import { getDb } from "@/db/client";
-import { mediaAssets } from "@/db/schema";
 import type { CartItemWithProduct } from "@/features/cart/cart";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
+import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
 import type { ResolvedCatalogPrice } from "@/features/promotions/domain/resolve-automatic-discount";
 import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
 
 export type { CheckoutOrderProduct };
-
-async function loadPrimaryProductImages(
-  productIds: string[],
-): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
-  if (productIds.length === 0) {
-    return map;
-  }
-
-  const rows = await getDb()
-    .select({
-      productId: mediaAssets.productId,
-      objectKey: mediaAssets.objectKey,
-    })
-    .from(mediaAssets)
-    .where(
-      and(
-        inArray(mediaAssets.productId, productIds),
-        eq(mediaAssets.uploadStatus, "READY"),
-        or(eq(mediaAssets.isPrimary, true), eq(mediaAssets.role, "PRIMARY")),
-      ),
-    )
-    .orderBy(asc(mediaAssets.sortOrder));
-
-  for (const row of rows) {
-    if (!row.productId || map.has(row.productId)) {
-      continue;
-    }
-    map.set(row.productId, mediaPublicUrl(row.objectKey));
-  }
-
-  return map;
-}
 
 /** Builds checkout “products in your order” display rows from cart lines. */
 export async function getCheckoutOrderProducts(
@@ -52,7 +15,7 @@ export async function getCheckoutOrderProducts(
   rows: CartItemWithProduct[],
   prices: ReadonlyMap<string, ResolvedCatalogPrice>,
 ): Promise<CheckoutOrderProduct[]> {
-  const images = await loadPrimaryProductImages(
+  const images = await loadPrimaryProductImageUrls(
     rows.map(({ product }) => product.id),
   );
 

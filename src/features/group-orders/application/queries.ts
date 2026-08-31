@@ -7,15 +7,16 @@ import {
   groupOrderItems,
   groupOrderParticipants,
   groupOrders,
-  mediaAssets,
   products,
 } from "@/db/schema";
 import type { LocaleTranslation, TranslationsJson } from "@/db/schema/catalog";
+import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { buildInvitePath } from "@/features/group-orders/application/money";
+import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
+import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
 import type { Locale } from "@/lib/i18n/config";
-import { mediaPublicUrl } from "@/lib/media/public-url";
-import { formatMoneyAmount } from "@/lib/money/format";
+import { createDisplayPriceFormatter } from "@/lib/money/display-price";
 import type { Currency } from "@/lib/money/currency";
 import { peekGroupOrderSession } from "@/features/group-orders/session";
 
@@ -91,6 +92,13 @@ function productTitle(
   return entry?.title ?? fallbackSku;
 }
 
+function modifierKind(
+  value: string,
+): "ADDITION" | "EXCEPTION" | null {
+  if (value === "ADDITION" || value === "EXCEPTION") return value;
+  return null;
+}
+
 export async function getGroupOrderDetailByInvite(input: {
   inviteToken: string;
   locale: Locale;
@@ -136,26 +144,19 @@ export async function getGroupOrderDetailByInvite(input: {
   }
 
   const productIds = [...new Set(items.map((row) => row.product.id))];
-  const mediaRows =
-    productIds.length === 0
-      ? []
-      : await db
-          .select()
-          .from(mediaAssets)
-          .where(
-            and(
-              inArray(mediaAssets.productId, productIds),
-              eq(mediaAssets.role, "PRIMARY"),
-              eq(mediaAssets.uploadStatus, "READY"),
-            ),
-          );
+  const [imageByProduct, prices, formatPrice] = await Promise.all([
+    loadPrimaryProductImageUrls(productIds),
+    resolveProductPrices(
+      items.map((row) => ({
+        id: row.product.id,
+        priceAmount: row.product.priceAmount,
+        compareAtAmount: row.product.compareAtAmount,
+      })),
+    ),
+    createDisplayPriceFormatter(input.locale, input.currency),
+  ]);
 
-  const imageByProduct = new Map(
-    mediaRows.map((row) => [row.productId!, mediaPublicUrl(row.objectKey)]),
-  );
-
-  const format = (amount: number) =>
-    formatMoneyAmount(amount, input.currency, input.locale);
+  const format = (amountAmd: number) => formatPrice(amountAmd).formatted;
 
   const participantViews: GroupOrderParticipantView[] = participants
     .filter((p) => p.status === "ACTIVE")
@@ -168,6 +169,20 @@ export async function getGroupOrderDetailByInvite(input: {
             mods.length > 0
               ? mods.map((m) => m.nameSnapshot).join(", ")
               : null;
+          const pricedModifiers = mods.flatMap((mod) => {
+            const kind = modifierKind(mod.kindSnapshot);
+            if (!kind) return [];
+            return [
+              {
+                kind,
+                priceAmount: mod.priceAmountSnapshot,
+              },
+            ];
+          });
+          const base =
+            prices.get(row.product.id)?.unitAmount ?? row.product.priceAmount;
+          const unitAmount = cartLineUnitAmount(base, pricedModifiers);
+          const lineTotalAmount = unitAmount * row.item.quantity;
           return {
             id: row.item.id,
             participantId: participant.id,
@@ -179,9 +194,9 @@ export async function getGroupOrderDetailByInvite(input: {
             ),
             imageUrl: imageByProduct.get(row.product.id) ?? null,
             quantity: row.item.quantity,
-            unitAmount: row.item.unitAmount,
-            lineTotalAmount: row.item.lineTotalAmount,
-            lineTotalFormatted: format(row.item.lineTotalAmount),
+            unitAmount,
+            lineTotalAmount,
+            lineTotalFormatted: format(lineTotalAmount),
             modifierSummary,
           };
         });

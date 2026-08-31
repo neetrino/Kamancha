@@ -14,6 +14,7 @@ import {
   createGroupOrderSchema,
   type CreateGroupOrderInput,
 } from "@/features/group-orders/schemas";
+import { importPersonalCartIntoGroupOrder } from "@/features/group-orders/application/import-cart";
 import { setGroupOrderSession } from "@/features/group-orders/session";
 import {
   getGuestCartToken,
@@ -98,6 +99,7 @@ export async function createGroupOrder(
   });
 
   await setGroupOrderSession({ inviteToken, participantId });
+  await importPersonalCartIntoGroupOrder(inviteToken);
 
   return { ok: true, groupOrderId, inviteToken, participantId };
 }
@@ -201,6 +203,7 @@ export async function joinGroupOrder(input: {
     inviteToken: groupOrder.inviteToken,
     participantId,
   });
+  await importPersonalCartIntoGroupOrder(groupOrder.inviteToken);
 
   return {
     ok: true,
