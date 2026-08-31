@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/Button";
 
 const INPUT_CLASS =
@@ -31,6 +33,17 @@ type CheckoutBonusRedeemFieldProps = {
   isSubmitting: boolean;
 };
 
+function clampBonusAmount(raw: string, maxAllowed: number): number {
+  if (raw === "") {
+    return 0;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return 0;
+  }
+  return Math.min(parsed, maxAllowed);
+}
+
 export function CheckoutBonusRedeemField({
   bonus,
   isSubmitting,
@@ -40,6 +53,18 @@ export function CheckoutBonusRedeemField({
     bonus.formatMoney(bonus.availableBalance),
   );
   const canRedeem = bonus.maxRedeem > 0;
+  const maxAllowed = Math.min(bonus.maxRedeem, bonus.availableBalance);
+  const [draft, setDraft] = useState(
+    bonus.redeemAmount > 0 ? String(bonus.redeemAmount) : "",
+  );
+
+  useEffect(() => {
+    if (!bonus.useBonuses) {
+      setDraft("");
+      return;
+    }
+    setDraft(bonus.redeemAmount > 0 ? String(bonus.redeemAmount) : "");
+  }, [bonus.useBonuses, bonus.redeemAmount]);
 
   return (
     <div className="relative z-[2]">
@@ -51,23 +76,28 @@ export function CheckoutBonusRedeemField({
           checked={bonus.useBonuses}
           onChange={(event) => bonus.onToggle(event.target.checked)}
           disabled={isSubmitting || !canRedeem}
-          className="h-4 w-4 rounded border-white/50 bg-white/10 text-brand-forest focus:ring-white/40 disabled:opacity-50"
+          style={{ accentColor: "#f3e5a8" }}
+          className="h-4 w-4 rounded border-white/50 bg-white/10 focus:ring-[#f3e5a8]/40 disabled:opacity-50"
         />
         {bonus.labels.useBonuses}
       </label>
       {bonus.useBonuses ? (
         <div className="mt-3 flex gap-2">
           <input
-            type="number"
-            min={0}
-            max={bonus.maxRedeem}
-            step={1}
-            value={bonus.redeemAmount}
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            value={draft}
             onChange={(event) => {
-              const next = Number(event.target.value);
-              bonus.onAmountChange(
-                Number.isFinite(next) ? Math.max(0, Math.floor(next)) : 0,
-              );
+              const digits = event.target.value.replace(/\D/g, "");
+              if (digits === "") {
+                setDraft("");
+                bonus.onAmountChange(0);
+                return;
+              }
+              const next = clampBonusAmount(digits, maxAllowed);
+              setDraft(String(next));
+              bonus.onAmountChange(next);
             }}
             disabled={isSubmitting}
             aria-label={bonus.labels.amount}
@@ -79,7 +109,10 @@ export function CheckoutBonusRedeemField({
             size="md"
             className={USE_MAX_CLASS}
             disabled={isSubmitting || !canRedeem}
-            onClick={bonus.onUseMax}
+            onClick={() => {
+              bonus.onUseMax();
+              setDraft(String(maxAllowed));
+            }}
           >
             {bonus.labels.useMax}
           </Button>
