@@ -1,5 +1,8 @@
-import Link from "next/link";
+"use client";
 
+import { useRouter } from "next/navigation";
+
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import type { CustomerOrderKind } from "@/features/orders/schemas/change-status";
 
 type KindFilterLabels = {
@@ -46,37 +49,28 @@ export function AdminOrderKindFilter({
   baseQuery,
   labels,
 }: AdminOrderKindFilterProps) {
-  return (
-    <div
-      role="tablist"
-      aria-label={labels.aria}
-      className="mb-4 flex flex-wrap gap-2"
-    >
-      {KIND_OPTIONS.map((kind) => {
-        const isActive = active === kind;
-        const label =
-          kind === "all"
-            ? labels.all
-            : kind === "personal"
-              ? labels.personal
-              : labels.group;
+  const router = useRouter();
 
-        return (
-          <Link
-            key={kind}
-            href={hrefForKind(locale, kind, baseQuery)}
-            role="tab"
-            aria-selected={isActive}
-            className={
-              isActive
-                ? "inline-flex h-9 items-center justify-center rounded-lg bg-gray-900 px-4 text-sm font-medium text-white"
-                : "inline-flex h-9 items-center justify-center rounded-lg border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-            }
-          >
-            {label}
-          </Link>
-        );
-      })}
+  const options = KIND_OPTIONS.map((kind) => ({
+    value: kind,
+    label:
+      kind === "all"
+        ? labels.all
+        : kind === "personal"
+          ? labels.personal
+          : labels.group,
+  }));
+
+  return (
+    <div className="mb-4">
+      <SegmentedControl
+        aria-label={labels.aria}
+        value={active}
+        options={options}
+        onSelect={(kind) => {
+          router.push(hrefForKind(locale, kind, baseQuery));
+        }}
+      />
     </div>
   );
 }
