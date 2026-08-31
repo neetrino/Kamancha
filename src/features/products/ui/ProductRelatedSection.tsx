@@ -120,14 +120,9 @@ export async function ProductRelatedSection({
 
   return (
     <section className="flex flex-col gap-7 pt-4 md:pt-8">
-      <div className="flex flex-col gap-1">
-        <h2 className="font-big-fat-boii text-[clamp(28px,3.5vw,38px)] leading-[1.15] font-normal tracking-[0.5px] text-white uppercase">
-          {labels.related}
-        </h2>
-        <p className="text-[15px] leading-6 text-white/60">
-          {labels.relatedSubtitle}
-        </p>
-      </div>
+      <h2 className="font-big-fat-boii text-[clamp(28px,3.5vw,38px)] leading-[1.15] font-normal tracking-[0.5px] text-white uppercase">
+        {labels.related}
+      </h2>
 
       <RelatedMobileRail
         items={items}
