@@ -18,7 +18,11 @@ export function orderStatusBadgeClass(status: string): string {
 
 export function groupOrderStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();
-  if (normalized === "OPEN" || normalized === "AWAITING_PAYMENTS") {
+  if (
+    normalized === "OPEN" ||
+    normalized === "AWAITING_PAYMENTS" ||
+    normalized === "PARTIALLY_PAID"
+  ) {
     return "bg-yellow-100 text-yellow-800";
   }
   if (

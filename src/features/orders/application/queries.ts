@@ -8,6 +8,7 @@ import {
   gte,
   ilike,
   inArray,
+  isNull,
   lte,
   or,
   sql,
@@ -58,6 +59,7 @@ export type AdminOrderListItem = {
   baseCurrency: string;
   placedAt: Date;
   isArchived: boolean;
+  isGroupOrder: boolean;
 };
 
 export type CustomerOrderListItem = AdminOrderListItem & {
@@ -126,11 +128,18 @@ function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
   return conditions.length > 0 ? and(...conditions) : undefined;
 }
 
-/** Lists orders for the admin surface with optional status/search filters. */
+/** Lists orders for the admin surface with optional personal/group kind filter. */
 export async function listAdminOrders(
   filters: AdminOrdersFilter,
 ): Promise<{ rows: AdminOrderListItem[]; total: number; pageSize: number }> {
-  const where = buildOrderFilters(filters);
+  const kind = filters.kind ?? "all";
+  const kindWhere =
+    kind === "personal"
+      ? isNull(orders.groupOrderId)
+      : kind === "group"
+        ? sql`${orders.groupOrderId} is not null`
+        : undefined;
+  const where = and(buildOrderFilters(filters), kindWhere);
   const offset = (filters.page - 1) * PAGE_SIZE;
 
   const [rows, [totalRow]] = await Promise.all([
@@ -147,6 +156,7 @@ export async function listAdminOrders(
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        groupOrderId: orders.groupOrderId,
       })
       .from(orders)
       .where(where)
@@ -157,11 +167,12 @@ export async function listAdminOrders(
   ]);
 
   return {
-    rows: rows.map(({ paymentMethodRaw, ...row }) => ({
+    rows: rows.map(({ paymentMethodRaw, groupOrderId, ...row }) => ({
       ...row,
       paymentMethod: paymentMethodRaw
         ? paymentMethodLabel(paymentMethodRaw)
         : null,
+      isGroupOrder: groupOrderId != null,
     })),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
@@ -207,6 +218,7 @@ export async function listCustomerOrders(
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
         itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
+        groupOrderId: orders.groupOrderId,
       })
       .from(orders)
       .where(where)
@@ -217,11 +229,12 @@ export async function listCustomerOrders(
   ]);
 
   return {
-    rows: rows.map(({ paymentMethodRaw, ...row }) => ({
+    rows: rows.map(({ paymentMethodRaw, groupOrderId, ...row }) => ({
       ...row,
       paymentMethod: paymentMethodRaw
         ? paymentMethodLabel(paymentMethodRaw)
         : null,
+      isGroupOrder: groupOrderId != null,
     })),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
@@ -413,7 +426,7 @@ export async function getAdminDashboardMetrics(input: {
         isArchived: orders.isArchived,
       })
       .from(orders)
-      .where(eq(orders.isArchived, false))
+      .where(and(eq(orders.isArchived, false), isNull(orders.groupOrderId)))
       .orderBy(desc(orders.placedAt))
       .limit(8),
     getDb()
@@ -450,6 +463,7 @@ export async function getAdminDashboardMetrics(input: {
       paymentMethod: paymentMethodRaw
         ? paymentMethodLabel(paymentMethodRaw)
         : null,
+      isGroupOrder: false,
     })),
     topProducts: topProductRows.map((row) => ({
       productId: row.productId ?? "unknown",

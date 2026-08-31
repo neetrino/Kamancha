@@ -1,11 +1,15 @@
-import { Package, ShoppingBag, Tag, TrendingUp } from "lucide-react";
+import { Package, ShoppingBag, Tag } from "lucide-react";
 
-import { Card } from "@/components/ui/Card";
-import { DASHBOARD_CARD_LIFT } from "@/features/admin/ui/DashboardStatsGrid";
+import {
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+  ADMIN_CHIP_FOREST,
+  ADMIN_CHIP_MINT,
+} from "@/features/admin/ui/admin-ui";
 import type {
   AnalyticsTopCategory,
   AnalyticsTopProduct,
-} from "@/features/analytics/application/queries";
+} from "@/features/analytics/application/top-rankings";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AnalyticsTopRankingsProps = {
@@ -15,22 +19,9 @@ type AnalyticsTopRankingsProps = {
   copy: Dictionary["admin"];
 };
 
-function RankBadge({
-  rank,
-  tone,
-}: {
-  rank: number;
-  tone: "amber" | "violet";
-}) {
-  const classes =
-    tone === "amber"
-      ? "bg-amber-400 text-white"
-      : "bg-violet-500 text-white";
-
+function RankBadge({ rank }: { rank: number }) {
   return (
-    <div
-      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${classes}`}
-    >
+    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-forest/10 text-[11px] font-bold text-brand-forest">
       {rank}
     </div>
   );
@@ -43,24 +34,26 @@ export function AnalyticsTopRankings({
   copy,
 }: AnalyticsTopRankingsProps) {
   return (
-    <div className="mb-6 grid gap-4 lg:grid-cols-2">
-      <Card className="rounded-2xl p-5 sm:p-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-gray-900">
+    <div className="mb-3 grid gap-3 lg:grid-cols-2">
+      <div className={`${ADMIN_CARD_CLASS} p-4 sm:p-5`}>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-base font-semibold text-gray-900">
             {copy.analytics.topProducts.title}
           </h2>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-            <TrendingUp className="h-4 w-4" aria-hidden />
+          <div
+            className={`flex h-8 w-8 items-center justify-center rounded-full ${ADMIN_CHIP_FOREST.bg} ${ADMIN_CHIP_FOREST.fg}`}
+          >
+            <ShoppingBag className="h-3.5 w-3.5" aria-hidden />
           </div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {products.map((product, index) => (
             <div
               key={product.productId}
-              className={`flex items-center gap-3 rounded-xl border border-blue-100 bg-blue-50/40 p-3 ${DASHBOARD_CARD_LIFT}`}
+              className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
             >
-              <RankBadge rank={index + 1} tone="amber" />
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
+              <RankBadge rank={index + 1} />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-gray-50">
                 {product.imageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element -- remote R2 URLs; admin list pattern
                   <img
@@ -69,23 +62,24 @@ export function AnalyticsTopRankings({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <Package className="h-5 w-5 text-gray-400" aria-hidden />
+                  <Package className="h-4 w-4 text-gray-400" aria-hidden />
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-gray-900">
+                <p className="truncate text-sm font-medium text-gray-900">
                   {product.title}
                 </p>
-                <p className="truncate text-xs text-gray-500">{product.sku}</p>
-                <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                  <span className="inline-flex items-center gap-1">
-                    <ShoppingBag className="h-3 w-3" aria-hidden />
+                <p className="truncate text-[11px] text-gray-500">
+                  {product.sku}
+                </p>
+                <p className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
+                  <span>
                     {copy.analytics.topProducts.sold.replace(
                       "{quantity}",
                       String(product.quantitySold),
                     )}
                   </span>
-                  <span>|</span>
+                  <span aria-hidden>|</span>
                   <span>
                     {copy.analytics.topProducts.orders.replace(
                       "{count}",
@@ -94,8 +88,8 @@ export function AnalyticsTopRankings({
                   </span>
                 </p>
               </div>
-              <p className="shrink-0 text-sm font-bold text-gray-900">
-                {formatMoney(product.unitPriceAmount)}
+              <p className="shrink-0 text-sm font-semibold text-gray-900">
+                {formatMoney(product.revenueAmount)}
               </p>
             </div>
           ))}
@@ -105,36 +99,38 @@ export function AnalyticsTopRankings({
             </p>
           ) : null}
         </div>
-      </Card>
+      </div>
 
-      <Card className="rounded-2xl p-5 sm:p-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-lg font-semibold text-gray-900">
+      <div className={`${ADMIN_CARD_CLASS} p-4 sm:p-5`}>
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="text-base font-semibold text-gray-900">
             {copy.analytics.topCategories.title}
           </h2>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
-            <Tag className="h-4 w-4" aria-hidden />
+          <div
+            className={`flex h-8 w-8 items-center justify-center rounded-full ${ADMIN_CHIP_MINT.bg} ${ADMIN_CHIP_MINT.fg}`}
+          >
+            <Tag className="h-3.5 w-3.5" aria-hidden />
           </div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {categories.map((category, index) => (
             <div
               key={category.categoryId}
-              className={`flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50/40 p-3 ${DASHBOARD_CARD_LIFT}`}
+              className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
             >
-              <RankBadge rank={index + 1} tone="violet" />
+              <RankBadge rank={index + 1} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-gray-900">
+                <p className="truncate text-sm font-medium text-gray-900">
                   {category.title}
                 </p>
-                <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                <p className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
                   <span>
                     {copy.analytics.topCategories.items.replace(
                       "{count}",
                       String(category.itemCount),
                     )}
                   </span>
-                  <span>|</span>
+                  <span aria-hidden>|</span>
                   <span>
                     {copy.analytics.topCategories.orders.replace(
                       "{count}",
@@ -143,7 +139,7 @@ export function AnalyticsTopRankings({
                   </span>
                 </p>
               </div>
-              <p className="shrink-0 text-sm font-bold text-gray-900">
+              <p className="shrink-0 text-sm font-semibold text-gray-900">
                 {formatMoney(category.revenueAmount)}
               </p>
             </div>
@@ -154,7 +150,7 @@ export function AnalyticsTopRankings({
             </p>
           ) : null}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

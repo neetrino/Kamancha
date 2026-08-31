@@ -16,11 +16,13 @@ type CustomerOrderRow = {
   totalAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
+  isGroupOrder?: boolean;
 };
 
 type CustomerOrdersTableProps = {
   orders: CustomerOrderRow[];
   emptyLabel: string;
+  groupOrderBadgeLabel?: string;
   statusLabels: OrderStatusLabels;
   onOpenOrder: (orderNumber: string) => void;
 };
@@ -69,6 +71,7 @@ function paymentStatusTextClass(status: string): string {
 export function CustomerOrdersTable({
   orders,
   emptyLabel,
+  groupOrderBadgeLabel,
   statusLabels,
   onOpenOrder,
 }: CustomerOrdersTableProps) {
@@ -94,6 +97,11 @@ export function CustomerOrdersTable({
             >
               <div className="min-w-0">
                 <p className="font-medium text-white">{order.orderNumber}</p>
+                {order.isGroupOrder && groupOrderBadgeLabel ? (
+                  <p className="mt-0.5 text-xs font-medium text-emerald-200">
+                    {groupOrderBadgeLabel}
+                  </p>
+                ) : null}
                 <p className="mt-1 text-xs text-white/80">
                   {new Date(order.placedAt)
                     .toISOString()

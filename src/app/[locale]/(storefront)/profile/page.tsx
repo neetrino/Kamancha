@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { claimGuestGroupOrderParticipantsForUser } from "@/features/group-orders/application/claim-guest-participants";
 import { getProfileDashboard } from "@/features/profile/application/dashboard-queries";
 import { ProfileRecentOrders } from "@/features/profile/ui/ProfileRecentOrders";
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
@@ -23,6 +24,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   }
 
   const user = await requireUser(locale);
+  await claimGuestGroupOrderParticipantsForUser(user.id);
   const dictionary = getDictionary(locale);
   const { stats, recentOrders } = await getProfileDashboard(user.id);
 
@@ -63,6 +65,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           totalAmount: order.totalAmount,
           itemsCount: order.itemsCount,
           placedAt: order.placedAt.toISOString(),
+          isGroupOrder: order.isGroupOrder,
         }))}
         dictionary={dictionary.profile}
         adminCopy={dictionary.admin}

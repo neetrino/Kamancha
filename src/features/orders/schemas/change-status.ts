@@ -21,7 +21,7 @@ export const adminOrdersFilterSchema = z.object({
   dateFrom: z.string().date().optional(),
   dateTo: z.string().date().optional(),
   q: z.string().trim().max(100).optional(),
-  /** Profile orders only — solo vs group-order linked rows. */
+  /** Solo vs group-order linked rows (admin + profile). */
   kind: z.enum(CUSTOMER_ORDER_KINDS).optional(),
   page: z.coerce.number().int().min(1).max(500).default(1),
 });

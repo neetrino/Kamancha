@@ -16,7 +16,19 @@ export {
   formatAnalyticsShortDate,
   formatPeriodDelta,
   matchAnalyticsPeriodPreset,
+  periodDeltaToneClass,
   rangeForAnalyticsPeriod,
   type AnalyticsDateRange,
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/domain/date-range";
+export {
+  buildAnalyticsDailySeries,
+  buildAnalyticsTrendSeries,
+  buildDashboardMonthlySeries,
+  parseDashboardChartRange,
+  rangeForDashboardChartRange,
+  rangeForDashboardMetricPeriod,
+  type DashboardChartRange,
+  type DashboardMetricPeriod,
+  type DashboardTrendPoint,
+} from "@/features/analytics/domain/dashboard-periods";

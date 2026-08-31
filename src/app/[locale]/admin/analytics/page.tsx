@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation";
 
-import {
-  ADMIN_PAGE_SUBTITLE,
-  ADMIN_PAGE_TITLE,
-} from "@/features/admin/ui/admin-form-classes";
+import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
+import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import { getAnalyticsSummary } from "@/features/analytics/application/queries";
 import {
   analyticsDateRangeSchema,
+  formatPeriodDelta,
   matchAnalyticsPeriodPreset,
   rangeForAnalyticsPeriod,
 } from "@/features/analytics/domain/date-range";
@@ -62,8 +61,8 @@ export default async function AdminAnalyticsPage({
 
   return (
     <section>
-      <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>{dictionary.admin.analytics.title}</h1>
+      <div className="mb-3">
+        <AdminPageTitle>{dictionary.admin.analytics.title}</AdminPageTitle>
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>
           {dictionary.admin.analytics.subtitle}
         </p>
@@ -82,8 +81,20 @@ export default async function AdminAnalyticsPage({
 
       <AnalyticsMetricCards
         orderCount={summary.orderCount}
+        orderDelta={formatPeriodDelta(
+          summary.orderCount,
+          summary.previousOrderCount,
+        )}
         revenueLabel={formatMoney(summary.revenueAmount)}
-        userCount={summary.userCount}
+        revenueDelta={formatPeriodDelta(
+          summary.revenueAmount,
+          summary.previousRevenueAmount,
+        )}
+        averageOrderLabel={formatMoney(summary.averageOrderValue)}
+        averageOrderDelta={formatPeriodDelta(
+          summary.averageOrderValue,
+          summary.previousAverageOrderValue,
+        )}
         copy={dictionary.admin}
       />
 
@@ -95,6 +106,8 @@ export default async function AdminAnalyticsPage({
       />
 
       <AnalyticsOrdersByDay
+        from={range.from}
+        to={range.to}
         rows={summary.dailyRows}
         formatMoney={formatMoney}
         copy={dictionary.admin}

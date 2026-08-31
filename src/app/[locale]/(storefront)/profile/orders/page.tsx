@@ -10,6 +10,7 @@ import {
 import { CustomerOrderKindFilter } from "@/features/orders/ui/CustomerOrderKindFilter";
 import { CustomerOrdersFilters } from "@/features/orders/ui/CustomerOrdersFilters";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
+import { claimGuestGroupOrderParticipantsForUser } from "@/features/group-orders/application/claim-guest-participants";
 import {
   PROFILE_PAGE_TITLE,
 } from "@/features/profile/ui/profile-surface";
@@ -60,6 +61,7 @@ export default async function OrdersPage({
   }
 
   const user = await requireUser(locale);
+  await claimGuestGroupOrderParticipantsForUser(user.id);
   const dictionary = getDictionary(locale);
 
   const raw = await searchParams;
@@ -134,6 +136,7 @@ export default async function OrdersPage({
           viewDetails: dictionary.profile.viewDetails,
           noOrders: dictionary.profile.noOrders,
           startShopping: dictionary.profile.startShopping,
+          groupOrderBadge: dictionary.profile.groupOrderBadge,
         }}
       />
 

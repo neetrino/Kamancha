@@ -1,129 +1,90 @@
 import Link from "next/link";
+
 import {
-  ClipboardList,
-  DollarSign,
-  Package,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
-import { Card } from "@/components/ui/Card";
+  ADMIN_CARD_CLASS,
+  ADMIN_CARD_HOVER_CLASS,
+  ADMIN_CHIP_FOREST,
+  ADMIN_CHIP_MINT,
+} from "@/features/admin/ui/admin-ui";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-
-/** Hover lift from ToonExpo analytics KPI cards. */
-export const DASHBOARD_CARD_LIFT =
-  "transition-[translate,box-shadow] duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:-translate-y-1 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0";
-
-type MetricTone = "teal" | "green" | "orange" | "accent";
-
-const TONE_BG: Record<MetricTone, string> = {
-  teal: "bg-[#d3f6f6]",
-  green: "bg-[#dff1f3]",
-  orange: "bg-[#fcefe5]",
-  accent: "bg-[#f3effd]",
-};
-
-const TONE_ICON: Record<MetricTone, string> = {
-  teal: "text-[#2bb5ad]",
-  green: "text-[#2a9d8f]",
-  orange: "text-[#f07a35]",
-  accent: "text-[#6b5ce7]",
-};
 
 type DashboardStatsGridProps = {
   locale: string;
-  copy: Dictionary["admin"]["dashboard"]["stats"];
   users: number;
   products: number;
-  orders: number;
-  revenueLabel: string;
-  revenueDelta?: string;
+  labels: Dictionary["admin"]["dashboard"];
 };
 
-function StatCard({
+function CompactStat({
   href,
   label,
   value,
-  hint,
-  tone,
-  icon: Icon,
+  iconBg,
+  iconColor,
+  iconPath,
 }: {
   href: string;
   label: string;
   value: string;
-  hint?: string;
-  tone: MetricTone;
-  icon: LucideIcon;
+  iconBg: string;
+  iconColor: string;
+  iconPath: string;
 }) {
   return (
-    <Link href={href} className="block h-full">
-      <Card
-        className={`flex h-full flex-row items-start gap-4 rounded-md border border-gray-200/70 p-4 shadow-sm sm:p-5 ${DASHBOARD_CARD_LIFT}`}
+    <Link
+      href={href}
+      className={`flex items-center gap-3 px-4 py-3 ${ADMIN_CARD_CLASS} ${ADMIN_CARD_HOVER_CLASS}`}
+    >
+      <div
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${iconBg}`}
       >
-        <div
-          className={`inline-flex size-12 shrink-0 items-center justify-center rounded-xl ${TONE_BG[tone]}`}
+        <svg
+          className={`h-4 w-4 ${iconColor}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          <Icon
-            className={`size-6 ${TONE_ICON[tone]}`}
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
             strokeWidth={2}
-            aria-hidden
+            d={iconPath}
           />
-        </div>
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <p className="text-[11px] font-medium tracking-[0.06em] text-gray-500 uppercase">
-            {label}
-          </p>
-          <p className="text-3xl leading-tight font-semibold tracking-tight text-gray-900">
-            {value}
-          </p>
-          <p className="min-h-4 text-xs text-gray-500">{hint ?? "\u00a0"}</p>
-        </div>
-      </Card>
+        </svg>
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-medium text-gray-500">{label}</p>
+        <p className="text-lg font-bold leading-tight text-gray-900">{value}</p>
+      </div>
     </Link>
   );
 }
 
 export function DashboardStatsGrid({
   locale,
-  copy,
   users,
   products,
-  orders,
-  revenueLabel,
-  revenueDelta,
+  labels,
 }: DashboardStatsGridProps) {
   const base = `/${locale}/admin`;
 
   return (
-    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-      <StatCard
+    <div className="mb-3 grid grid-cols-2 gap-3">
+      <CompactStat
         href={`${base}/users`}
-        label={copy.users}
+        label={labels.users}
         value={String(users)}
-        tone="teal"
-        icon={Users}
+        iconBg={ADMIN_CHIP_FOREST.bg}
+        iconColor={ADMIN_CHIP_FOREST.fg}
+        iconPath="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
       />
-      <StatCard
+      <CompactStat
         href={`${base}/products`}
-        label={copy.activeProducts}
+        label={labels.activeProducts}
         value={String(products)}
-        tone="green"
-        icon={Package}
-      />
-      <StatCard
-        href={`${base}/orders`}
-        label={copy.ordersRange}
-        value={String(orders)}
-        tone="orange"
-        icon={ClipboardList}
-      />
-      <StatCard
-        href={`${base}/analytics`}
-        label={copy.revenueRange}
-        value={revenueLabel}
-        hint={revenueDelta}
-        tone="accent"
-        icon={DollarSign}
+        iconBg={ADMIN_CHIP_MINT.bg}
+        iconColor={ADMIN_CHIP_MINT.fg}
+        iconPath="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
       />
     </div>
   );

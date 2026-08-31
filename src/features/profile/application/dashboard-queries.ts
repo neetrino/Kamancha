@@ -26,6 +26,7 @@ export type ProfileRecentOrder = {
   totalAmount: number;
   placedAt: Date;
   itemsCount: number;
+  isGroupOrder: boolean;
 };
 
 /** Aggregated order stats for the profile dashboard (SQL, not full-row scan). */
@@ -71,7 +72,7 @@ export async function listRecentProfileOrders(
   userId: string,
   limit: number = RECENT_ORDERS_LIMIT,
 ): Promise<ProfileRecentOrder[]> {
-  return getDb()
+  const rows = await getDb()
     .select({
       id: orders.id,
       orderNumber: orders.orderNumber,
@@ -79,11 +80,17 @@ export async function listRecentProfileOrders(
       totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
       placedAt: orders.placedAt,
       itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
+      groupOrderId: orders.groupOrderId,
     })
     .from(orders)
     .where(customerOrdersVisibilitySql(userId))
     .orderBy(desc(orders.placedAt))
     .limit(limit);
+
+  return rows.map(({ groupOrderId, ...row }) => ({
+    ...row,
+    isGroupOrder: groupOrderId != null,
+  }));
 }
 
 /** Parallel dashboard payload — stats + recent rows. */

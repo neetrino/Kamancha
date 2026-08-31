@@ -87,6 +87,7 @@
   "ordersKindAll": "Все",
   "ordersKindPersonal": "Личные",
   "ordersKindGroup": "Групповые",
+  "groupOrderBadge": "Групповой",
   "orderNumber": "Заказ",
   "status": "Статус",
   "total": "Итого",

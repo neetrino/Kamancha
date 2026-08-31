@@ -64,6 +64,13 @@
       "when": 1788240000000,
       "tag": "0008_store_popups",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788250000000,
+      "tag": "0009_group_order_partially_paid",
+      "breakpoints": true
     }
   ]
 }

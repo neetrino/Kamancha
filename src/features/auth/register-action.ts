@@ -13,6 +13,7 @@ import {
   type AuthFieldErrors,
 } from "@/features/auth/auth-action-state";
 import { registerSchema } from "@/features/auth/schemas";
+import { claimGuestGroupOrderParticipantsForUser } from "@/features/group-orders/application/claim-guest-participants";
 import { createSession } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/password";
 import { createId } from "@/lib/id";
@@ -103,5 +104,6 @@ export async function registerAction(
   }
 
   await createSession(user.id);
+  await claimGuestGroupOrderParticipantsForUser(user.id);
   redirect(`/${locale}/profile`);
 }

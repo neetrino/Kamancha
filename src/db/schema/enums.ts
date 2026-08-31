@@ -144,6 +144,7 @@ export const groupOrderStatusEnum = pgEnum("group_order_status", [
   "LOCKED",
   "AWAITING_PAYMENTS",
   "CHECKOUT",
+  "PARTIALLY_PAID",
   "PAID",
   "PREPARING",
   "COMPLETED",

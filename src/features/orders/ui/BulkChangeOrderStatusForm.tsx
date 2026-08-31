@@ -40,6 +40,7 @@ type BulkOrderRow = {
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;
+  isGroupOrder: boolean;
 };
 
 type BulkChangeOrderStatusFormProps = {
@@ -229,6 +230,11 @@ export function BulkChangeOrderStatusForm({
                       <span className="font-medium text-gray-900">
                         {order.orderNumber}
                       </span>
+                      {order.isGroupOrder ? (
+                        <span className="ml-2 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium uppercase text-indigo-700">
+                          {copy.orders.table.groupOrderBadge}
+                        </span>
+                      ) : null}
                       {order.isArchived ? (
                         <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
                           {copy.orders.table.archivedBadge}

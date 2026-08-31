@@ -87,6 +87,7 @@
   "ordersKindAll": "All",
   "ordersKindPersonal": "Personal",
   "ordersKindGroup": "Group",
+  "groupOrderBadge": "Group",
   "orderNumber": "Order",
   "status": "Status",
   "total": "Total",

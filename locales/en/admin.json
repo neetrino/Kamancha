@@ -109,14 +109,30 @@
     "selectedProducts": "{count} selected products"
   },
   "dashboard": {
-    "welcome": "Welcome to the admin dashboard",
-    "stats": {
-      "users": "Users",
-      "activeProducts": "Active products",
-      "ordersRange": "Orders (range)",
-      "revenueRange": "Revenue (range)"
-    },
-    "revenueDeltaVsPrev": "{delta} vs prev",
+    "welcomeLead": "Welcome to the",
+    "welcomeAccent": "admin dashboard",
+    "users": "Users",
+    "activeProducts": "Active products",
+    "ordersRange": "Orders (range)",
+    "revenueRange": "Revenue (range)",
+    "periodsTitle": "Sales by period",
+    "viewAnalytics": "Full analytics",
+    "periodToday": "Today",
+    "periodWeek": "Week",
+    "periodMonth": "Month",
+    "periodQuarter": "Quarter",
+    "aov": "Avg. order",
+    "chartTitle": "Revenue & orders trend",
+    "chartSubtitle": "Monthly performance over the selected range",
+    "chartRangeLabel": "Chart range",
+    "chartRange6Months": "6 months",
+    "chartRangeYear": "Year",
+    "chartRevenue": "Revenue",
+    "chartOrders": "Orders",
+    "chartAria": "Monthly revenue and orders trend chart",
+    "chartEmpty": "No orders in this chart range yet.",
+    "chartEmptyShort": "—",
+    "chartBestMonth": "Best month",
     "recentOrders": "Recent orders",
     "topProducts": "Top products",
     "viewAll": "View all",
@@ -125,17 +141,23 @@
     "soldCount": "{quantity} sold",
     "quickActions": "Quick actions",
     "addProduct": "Add product",
-    "addProductSubtitle": "Create a new product",
+    "addProductHint": "Create a new product",
     "manageOrders": "Manage orders",
-    "manageOrdersSubtitle": "View all orders",
+    "manageOrdersHint": "View all orders",
     "manageUsers": "Manage users",
-    "manageUsersSubtitle": "View all users",
+    "manageUsersHint": "View all users",
     "settings": "Settings",
-    "settingsSubtitle": "Configure store"
+    "settingsHint": "Configure store"
   },
   "orders": {
     "title": "Orders",
     "breadcrumb": "Orders",
+    "kindFilter": {
+      "aria": "Order type",
+      "all": "All",
+      "personal": "Personal",
+      "group": "Group"
+    },
     "filters": {
       "orderStatusAria": "Order status",
       "allStatuses": "All statuses",
@@ -169,7 +191,8 @@
       "paymentMethod": "Payment method",
       "total": "Total",
       "placed": "Placed",
-      "archivedBadge": "Archived"
+      "archivedBadge": "Archived",
+      "groupOrderBadge": "Group"
     },
     "inlineStatus": {
       "changeOrderAria": "Change order status",
@@ -690,6 +713,7 @@
     "metrics": {
       "totalOrders": "Total Orders",
       "totalRevenue": "Total Revenue",
+      "averageOrderValue": "Avg. order",
       "totalUsers": "Total Users"
     },
     "topProducts": {

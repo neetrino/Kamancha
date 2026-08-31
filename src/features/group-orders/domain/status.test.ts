@@ -36,7 +36,16 @@ describe("group order status", () => {
     expect(isGroupOrderBagActive("LOCKED")).toBe(true);
     expect(isGroupOrderBagActive("AWAITING_PAYMENTS")).toBe(true);
     expect(isGroupOrderBagActive("CHECKOUT")).toBe(false);
+    expect(isGroupOrderBagActive("PARTIALLY_PAID")).toBe(false);
     expect(isGroupOrderBagActive("PAID")).toBe(false);
+  });
+
+  it("allows CHECKOUT → PARTIALLY_PAID and PARTIALLY_PAID → PAID", () => {
+    expect(canTransitionGroupOrderStatus("CHECKOUT", "PARTIALLY_PAID")).toBe(
+      true,
+    );
+    expect(canTransitionGroupOrderStatus("CHECKOUT", "PAID")).toBe(true);
+    expect(canTransitionGroupOrderStatus("PARTIALLY_PAID", "PAID")).toBe(true);
   });
 
   it("dissolves organizer-pays when organizer leaves an open order", () => {

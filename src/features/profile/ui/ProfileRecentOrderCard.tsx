@@ -16,6 +16,8 @@ type ProfileRecentOrderCardProps = {
   placedOnLine: string;
   orderNumberLabel: string;
   viewDetailsLabel: string;
+  groupOrderBadgeLabel?: string;
+  isGroupOrder?: boolean;
   onViewDetails: () => void;
 };
 
@@ -37,6 +39,8 @@ export function ProfileRecentOrderCard({
   placedOnLine,
   orderNumberLabel,
   viewDetailsLabel,
+  groupOrderBadgeLabel,
+  isGroupOrder = false,
   onViewDetails,
 }: ProfileRecentOrderCardProps) {
   return (
@@ -48,9 +52,16 @@ export function ProfileRecentOrderCard({
       className={`profile-order-card flex h-full w-full min-w-0 cursor-pointer flex-col items-stretch p-4 text-left transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-5 ${PROFILE_INNER_CARD}`}
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="min-w-0 font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
-          {orderNumberLabel} {orderNumber}
-        </h3>
+        <div className="min-w-0">
+          <h3 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
+            {orderNumberLabel} {orderNumber}
+          </h3>
+          {isGroupOrder && groupOrderBadgeLabel ? (
+            <p className="mt-1 text-xs font-medium text-brand-forest">
+              {groupOrderBadgeLabel}
+            </p>
+          ) : null}
+        </div>
         <span className={`${PROFILE_STATUS_BADGE} shrink-0`}>{status}</span>
       </div>
       <p className="mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest sm:text-xl">

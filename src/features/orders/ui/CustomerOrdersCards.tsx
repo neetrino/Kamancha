@@ -22,6 +22,7 @@ type CustomerOrdersCardItem = {
   baseCurrency: string;
   placedAt: string | Date;
   itemsCount: number;
+  isGroupOrder?: boolean;
 };
 
 type CustomerOrdersCardsLabels = {
@@ -32,6 +33,7 @@ type CustomerOrdersCardsLabels = {
   viewDetails: string;
   noOrders: string;
   startShopping: string;
+  groupOrderBadge: string;
   statusLabels: OrderStatusLabels;
 };
 
@@ -92,6 +94,8 @@ export function CustomerOrdersCards({
             placedOnLine={`${labels.placedOn} ${formatShortDate(order.placedAt, locale)}`}
             orderNumberLabel={labels.orderNumber}
             viewDetailsLabel={labels.viewDetails}
+            groupOrderBadgeLabel={labels.groupOrderBadge}
+            isGroupOrder={order.isGroupOrder}
             onViewDetails={() => onOpenOrder(order.orderNumber)}
           />
         </li>

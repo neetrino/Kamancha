@@ -4,7 +4,11 @@ import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { listAdminOrders } from "@/features/orders/application/queries";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
-import { adminOrdersFilterSchema } from "@/features/orders/schemas/change-status";
+import {
+  adminOrdersFilterSchema,
+  type CustomerOrderKind,
+} from "@/features/orders/schemas/change-status";
+import { AdminOrderKindFilter } from "@/features/orders/ui/AdminOrderKindFilter";
 import { AdminOrdersFilters } from "@/features/orders/ui/AdminOrdersFilters";
 import { AdminOrdersView } from "@/features/orders/ui/AdminOrdersView";
 import { isLocale } from "@/lib/i18n/config";
@@ -29,6 +33,7 @@ function buildOrdersQuery(
     q?: string;
     status?: OrderStatus;
     paymentStatus?: string;
+    kind: CustomerOrderKind;
     page: number;
   },
   page: number,
@@ -37,6 +42,7 @@ function buildOrdersQuery(
   if (filters.q) params.set("q", filters.q);
   if (filters.status) params.set("status", filters.status);
   if (filters.paymentStatus) params.set("paymentStatus", filters.paymentStatus);
+  if (filters.kind !== "all") params.set("kind", filters.kind);
   params.set("page", String(page));
   return params.toString();
 }
@@ -59,11 +65,12 @@ export default async function AdminOrdersPage({
     paymentStatus: firstParam(raw.paymentStatus) || undefined,
     archived: "active",
     q: firstParam(raw.q) || undefined,
+    kind: firstParam(raw.kind) || "all",
     page: firstParam(raw.page) ?? "1",
   });
 
   const filters = parsed.success
-    ? parsed.data
+    ? { ...parsed.data, kind: parsed.data.kind ?? ("all" as const) }
     : {
         page: 1 as const,
         archived: "active" as const,
@@ -72,6 +79,7 @@ export default async function AdminOrdersPage({
         dateFrom: undefined,
         dateTo: undefined,
         q: undefined,
+        kind: "all" as const,
       };
 
   const { rows, total, pageSize } = await listAdminOrders(filters);
@@ -83,10 +91,27 @@ export default async function AdminOrdersPage({
         <h1 className={ADMIN_PAGE_TITLE}>{copy.orders.title}</h1>
       </div>
 
+      <AdminOrderKindFilter
+        locale={locale}
+        active={filters.kind}
+        baseQuery={{
+          q: filters.q,
+          status: filters.status,
+          paymentStatus: filters.paymentStatus,
+        }}
+        labels={{
+          all: copy.orders.kindFilter.all,
+          personal: copy.orders.kindFilter.personal,
+          group: copy.orders.kindFilter.group,
+          aria: copy.orders.kindFilter.aria,
+        }}
+      />
+
       <AdminOrdersFilters
         total={total}
         status={filters.status}
         paymentStatus={filters.paymentStatus}
+        kind={filters.kind}
         q={filters.q}
         copy={copy}
       />

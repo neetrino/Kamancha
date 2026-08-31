@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 
-import {
-  buildAnalyticsCsv,
-  getAnalyticsSummary,
-} from "@/features/analytics/application/queries";
+import { getAnalyticsSummary } from "@/features/analytics/application/queries";
+import { buildAnalyticsCsv } from "@/features/analytics/domain/csv";
 import { analyticsDateRangeSchema } from "@/features/analytics/domain/date-range";
 import { getCurrentUser } from "@/lib/auth/session";
 
