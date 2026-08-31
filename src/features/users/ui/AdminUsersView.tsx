@@ -10,6 +10,7 @@ import {
   ConfirmDialog,
 } from "@/components/ui/ConfirmDialog";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
+import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import {
   ADMIN_BADGE,
 } from "@/features/admin/ui/status-badge";
@@ -60,8 +61,7 @@ function roleFilterHref(
 }
 
 function formatCreated(value: Date | string): string {
-  const date = new Date(value);
-  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  return formatAdminPlacedParts(value).date;
 }
 
 function displayName(user: AdminUserListItem): string {

@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -12,6 +12,7 @@ import {
 import type { LocaleTranslation, TranslationsJson } from "@/db/schema/catalog";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { buildInvitePath } from "@/features/group-orders/application/money";
+import type { AdminGroupOrdersFilterInput } from "@/features/group-orders/schemas";
 import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
 import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
@@ -291,17 +292,50 @@ export type AdminGroupOrderListItem = {
   orderId: string | null;
 };
 
-export async function listAdminGroupOrders(input?: {
-  limit?: number;
-  offset?: number;
-}): Promise<AdminGroupOrderListItem[]> {
-  const limit = input?.limit ?? 50;
-  const offset = input?.offset ?? 0;
+export type AdminGroupOrderListResult = {
+  rows: AdminGroupOrderListItem[];
+  total: number;
+};
+
+export async function listAdminGroupOrders(
+  filters: AdminGroupOrdersFilterInput & {
+    limit?: number;
+    offset?: number;
+  } = {},
+): Promise<AdminGroupOrderListResult> {
+  const limit = Math.min(filters.limit ?? 100, 200);
+  const offset = Math.max(filters.offset ?? 0, 0);
   const db = getDb();
+
+  const conditions = [];
+  if (filters.status) {
+    conditions.push(eq(groupOrders.status, filters.status));
+  }
+  if (filters.paymentMode) {
+    conditions.push(eq(groupOrders.paymentMode, filters.paymentMode));
+  }
+  if (filters.q?.trim()) {
+    const pattern = `%${filters.q.trim()}%`;
+    conditions.push(
+      or(
+        ilike(groupOrders.organizerDisplayName, pattern),
+        sql`cast(${groupOrders.id} as text) ilike ${pattern}`,
+        sql`cast(${groupOrders.inviteToken} as text) ilike ${pattern}`,
+      ),
+    );
+  }
+  const where =
+    conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [countRow] = await db
+    .select({ total: sql<number>`count(*)::int` })
+    .from(groupOrders)
+    .where(where);
 
   const rows = await db
     .select()
     .from(groupOrders)
+    .where(where)
     .orderBy(desc(groupOrders.createdAt))
     .limit(limit)
     .offset(offset);
@@ -329,7 +363,11 @@ export async function listAdminGroupOrders(input?: {
       orderId: row.orderId,
     });
   }
-  return result;
+
+  return {
+    rows: result,
+    total: countRow?.total ?? 0,
+  };
 }
 
 export async function getAdminGroupOrderDetail(input: {

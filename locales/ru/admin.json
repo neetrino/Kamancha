@@ -924,7 +924,28 @@
     "markPaid": "Отметить как оплачено",
     "closeJoins": "Закрыть присоединение",
     "cancel": "Отменить групповой заказ",
-    "actionFailed": "Не удалось выполнить действие."
+    "actionFailed": "Не удалось выполнить действие.",
+    "filters": {
+      "searchPlaceholder": "Поиск по организатору или ID",
+      "searchAria": "Поиск групповых заказов",
+      "allStatuses": "Все статусы",
+      "statusAria": "Фильтр по статусу",
+      "allModes": "Все режимы оплаты",
+      "modeAria": "Фильтр по режиму оплаты",
+      "modeOrganizerPays": "Организатор платит за всех",
+      "modeSplit": "Разделить между участниками",
+      "total": "{total} групповых заказов",
+      "statusOpen": "Открыт",
+      "statusLocked": "Заблокирован",
+      "statusAwaitingPayments": "Ожидает оплаты",
+      "statusCheckout": "Оформление",
+      "statusPartiallyPaid": "Частично оплачен",
+      "statusPaid": "Оплачен",
+      "statusPreparing": "Готовится",
+      "statusCompleted": "Завершён",
+      "statusExpired": "Истёк",
+      "statusCancelled": "Отменён"
+    }
   },
   "settings": {
     "title": "Настройки магазина",

@@ -924,7 +924,28 @@
     "markPaid": "Նշել որպես վճարված",
     "closeJoins": "Փակել միացումները",
     "cancel": "Չեղարկել խմբային պատվերը",
-    "actionFailed": "Գործողությունը ձախողվեց։"
+    "actionFailed": "Գործողությունը ձախողվեց։",
+    "filters": {
+      "searchPlaceholder": "Որոնել ըստ կազմակերպչի կամ ID",
+      "searchAria": "Որոնել խմբային պատվերներ",
+      "allStatuses": "Բոլոր կարգավիճակները",
+      "statusAria": "Ֆիլտր ըստ կարգավիճակի",
+      "allModes": "Բոլոր ռեժիմները",
+      "modeAria": "Ֆիլտր ըստ վճարման ռեժիմի",
+      "modeOrganizerPays": "Կազմակերպիչը վճարում է ամենը",
+      "modeSplit": "Բաժանված մասնակիցների միջև",
+      "total": "{total} խմբային պատվեր",
+      "statusOpen": "Բաց",
+      "statusLocked": "Կողպված",
+      "statusAwaitingPayments": "Սպասում է վճարման",
+      "statusCheckout": "Վճարում",
+      "statusPartiallyPaid": "Մասամբ վճարված",
+      "statusPaid": "Վճարված",
+      "statusPreparing": "Պատրաստվում է",
+      "statusCompleted": "Ավարտված",
+      "statusExpired": "Ժամկետանց",
+      "statusCancelled": "Չեղարկված"
+    }
   },
   "settings": {
     "title": "Խանութի կարգավորումներ",

@@ -1,5 +1,6 @@
 "use client";
 
+import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import {
   localizeOrderStatus,
   localizePaymentStatus,
@@ -88,7 +89,9 @@ export function CustomerOrdersTable({
   return (
     <section className={PROFILE_SECTION}>
       <ul className="relative z-[2]">
-        {orders.map((order) => (
+        {orders.map((order) => {
+          const placed = formatAdminPlacedParts(order.placedAt);
+          return (
           <li key={order.id} className={ROW_RULE}>
             <button
               type="button"
@@ -103,11 +106,7 @@ export function CustomerOrdersTable({
                   </p>
                 ) : null}
                 <p className="mt-1 text-xs text-white/80">
-                  {new Date(order.placedAt)
-                    .toISOString()
-                    .slice(0, 16)
-                    .replace("T", " ")}{" "}
-                  UTC
+                  {placed.date} {placed.time}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2 sm:justify-end">
@@ -130,7 +129,8 @@ export function CustomerOrdersTable({
               </div>
             </button>
           </li>
-        ))}
+          );
+        })}
       </ul>
       <p className="relative z-[2] pt-3 pl-4 text-sm text-white">
         {orders.length} order{orders.length === 1 ? "" : "s"} on this page

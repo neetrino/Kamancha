@@ -24,6 +24,7 @@ import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Currency } from "@/lib/money/currency";
+import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 
 type AdminGroupOrdersViewProps = {
   locale: Locale;
@@ -100,7 +101,9 @@ export function AdminGroupOrdersView({
                 </td>
               </tr>
             ) : (
-              rows.map((row) => (
+              rows.map((row) => {
+                const placed = formatAdminPlacedParts(row.createdAt);
+                return (
                 <tr
                   key={row.id}
                   className="cursor-pointer border-b border-gray-50 hover:bg-gray-50"
@@ -124,11 +127,13 @@ export function AdminGroupOrdersView({
                   <td className="px-4 py-3 text-center">
                     {row.deliveryAmount} ֏
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500">
-                    {new Date(row.createdAt).toLocaleString()}
+                  <td className="px-4 py-3 text-center">
+                    <p className="text-sm text-gray-700">{placed.time}</p>
+                    <p className="text-xs text-gray-500">{placed.date}</p>
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>
@@ -282,15 +287,17 @@ export function AdminGroupOrdersView({
                 </button>
                 {activityOpen ? (
                   <ul className="mt-3 space-y-1.5 text-xs text-gray-500">
-                    {detail.events.map((event) => (
+                    {detail.events.map((event) => {
+                      const placed = formatAdminPlacedParts(event.createdAt);
+                      return (
                       <li key={event.id}>
-                        {new Date(event.createdAt).toLocaleString()} —{" "}
-                        {event.eventType}
+                        {placed.time} {placed.date} — {event.eventType}
                         {event.fromState || event.toState
                           ? ` (${event.fromState ?? "—"} → ${event.toState ?? "—"})`
                           : ""}
                       </li>
-                    ))}
+                      );
+                    })}
                   </ul>
                 ) : null}
               </section>

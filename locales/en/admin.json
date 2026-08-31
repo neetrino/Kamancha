@@ -924,7 +924,28 @@
     "markPaid": "Mark paid",
     "closeJoins": "Close joins",
     "cancel": "Cancel group order",
-    "actionFailed": "Action failed."
+    "actionFailed": "Action failed.",
+    "filters": {
+      "searchPlaceholder": "Search by organizer or ID",
+      "searchAria": "Search group orders",
+      "allStatuses": "All statuses",
+      "statusAria": "Filter by status",
+      "allModes": "All payment modes",
+      "modeAria": "Filter by payment mode",
+      "modeOrganizerPays": "Organizer pays all",
+      "modeSplit": "Split per participant",
+      "total": "{total} group orders",
+      "statusOpen": "Open",
+      "statusLocked": "Locked",
+      "statusAwaitingPayments": "Awaiting payments",
+      "statusCheckout": "Checkout",
+      "statusPartiallyPaid": "Partially paid",
+      "statusPaid": "Paid",
+      "statusPreparing": "Preparing",
+      "statusCompleted": "Completed",
+      "statusExpired": "Expired",
+      "statusCancelled": "Cancelled"
+    }
   },
   "settings": {
     "title": "Store settings",
