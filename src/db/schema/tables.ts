@@ -18,6 +18,7 @@ export const CANONICAL_TABLES = [
   "gift_cards",
   "gift_card_transactions",
   "hero_slides",
+  "store_popups",
   "blog_posts",
   "carts",
   "cart_items",

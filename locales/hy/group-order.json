@@ -70,6 +70,7 @@
   "activeSessionBanner": "Դուք մասնակցում եք {name}-ի խմբային պատվերին",
   "viewGroupOrder": "Դիտել",
   "leaveSession": "Դուրս գալ",
+  "organizerCancelledAlert": "Խմբային պատվերի ստեղծողը չեղարկել է պատվերը։",
   "addingToGroup": "Ավելացվում է խմբային պատվերին…",
   "addedToGroup": "Ավելացված է խմբային պատվերին",
   "organizer": "Կազմակերպիչ",

@@ -14,7 +14,8 @@
     "blog": "Բլոգ",
     "messages": "Հաղորդագրություններ",
     "settings": "Կարգավորումներ",
-    "giftCards": "Gift Card-եր"
+    "giftCards": "Gift Card-եր",
+    "popups": "Popup-ներ"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -39,7 +40,15 @@
       "dateTimePlaceholder": "ՕՕ.ԱԱ.ՏՏՏՏ ժ:ր",
       "today": "Այսօր",
       "time": "Ժամ",
-      "weekdaysShort": ["Երկ", "Երք", "Չրք", "Հնգ", "Ուրբ", "Շբթ", "Կիր"]
+      "weekdaysShort": [
+        "Երկ",
+        "Երք",
+        "Չրք",
+        "Հնգ",
+        "Ուրբ",
+        "Շբթ",
+        "Կիր"
+      ]
     },
     "search": "Որոնել",
     "filter": "Զտել",
@@ -93,7 +102,8 @@
       "post": "հրապարակումը",
       "denomination": "անվանումը",
       "closedDate": "փակ օրը",
-      "modifier": "հավելումը"
+      "modifier": "հավելումը",
+      "popup": "popup-ը"
     },
     "selectedProduct": "ընտրված ապրանքը",
     "selectedProducts": "{count} ընտրված ապրանք"
@@ -725,6 +735,37 @@
       "editAria": "Խմբագրել հերոս սլայդը",
       "title": "Վերնագիր",
       "subtitle": "Ենթավերնագիր",
+      "uploadImage": "Վերբեռնել պատկեր",
+      "uploadImageButton": "+ Վերբեռնել պատկեր",
+      "changeImage": "Փոխել պատկերը",
+      "remove": "Հեռացնել",
+      "create": "Ստեղծել",
+      "edit": "Խմբագրել"
+    }
+  },
+  "popups": {
+    "title": "Popup-ներ",
+    "count": "{count} popup",
+    "countPlural": "{count} popup",
+    "createPopup": "Ստեղծել popup",
+    "listHeading": "Popup-ներ ({count})",
+    "noImage": "Պատկեր չկա",
+    "active": "ԱԿՏԻՎ",
+    "inactive": "ԱՆԱԿՏԻՎ",
+    "empty": "Դեռևս popup-ներ չկան։",
+    "editAria": "Խմբագրել {title}",
+    "deleteAria": "Ջնջել {title}",
+    "activateAria": "Ակտիվացնել popup-ը",
+    "deactivateAria": "Ապաակտիվացնել popup-ը",
+    "drawer": {
+      "createTitle": "Ստեղծել popup",
+      "editTitle": "Խմբագրել popup-ը",
+      "createAria": "Ստեղծել popup",
+      "editAria": "Խմբագրել popup-ը",
+      "title": "Վերնագիր",
+      "linkUrl": "Հղում (ոչ պարտադիր)",
+      "linkUrlPlaceholder": "/hy/products կամ https://…",
+      "linkUrlHint": "Նկարի վրա սեղմելիս բացվող հասցե։",
       "uploadImage": "Վերբեռնել պատկեր",
       "uploadImageButton": "+ Վերբեռնել պատկեր",
       "changeImage": "Փոխել պատկերը",

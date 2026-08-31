@@ -11,6 +11,9 @@ export const changeOrderStatusSchema = z.object({
 
 export type ChangeOrderStatusInput = z.infer<typeof changeOrderStatusSchema>;
 
+export const CUSTOMER_ORDER_KINDS = ["all", "personal", "group"] as const;
+export type CustomerOrderKind = (typeof CUSTOMER_ORDER_KINDS)[number];
+
 export const adminOrdersFilterSchema = z.object({
   status: z.enum(ORDER_STATUSES).optional(),
   paymentStatus: z.enum(PAYMENT_STATUSES).optional(),
@@ -18,6 +21,8 @@ export const adminOrdersFilterSchema = z.object({
   dateFrom: z.string().date().optional(),
   dateTo: z.string().date().optional(),
   q: z.string().trim().max(100).optional(),
+  /** Profile orders only — solo vs group-order linked rows. */
+  kind: z.enum(CUSTOMER_ORDER_KINDS).optional(),
   page: z.coerce.number().int().min(1).max(500).default(1),
 });
 

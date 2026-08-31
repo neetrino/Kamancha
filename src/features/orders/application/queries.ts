@@ -24,6 +24,11 @@ import {
   products,
   users,
 } from "@/db/schema";
+import {
+  customerOrderDisplayAmountSql,
+  customerOrderItemsCountSql,
+  customerOrdersVisibilitySql,
+} from "@/features/orders/application/customer-group-order-share";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
@@ -164,8 +169,9 @@ export async function listAdminOrders(
 }
 
 /**
- * Lists orders belonging to a single customer (profile surface).
- * Same shape as admin list rows; always scoped to `userId`.
+ * Lists orders for a customer profile surface.
+ * Includes owned orders and group orders where the user had merchandise.
+ * Group-order amounts/item counts are scoped to that participant's share.
  */
 export async function listCustomerOrders(
   userId: string,
@@ -176,9 +182,14 @@ export async function listCustomerOrders(
   pageSize: number;
 }> {
   const baseWhere = buildOrderFilters(filters);
-  const where = baseWhere
-    ? and(eq(orders.userId, userId), baseWhere)
-    : eq(orders.userId, userId);
+  const visibility = customerOrdersVisibilitySql(userId);
+  const kindWhere =
+    filters.kind === "personal"
+      ? sql`${orders.groupOrderId} is null`
+      : filters.kind === "group"
+        ? sql`${orders.groupOrderId} is not null`
+        : undefined;
+  const where = and(visibility, baseWhere, kindWhere);
   const offset = (filters.page - 1) * PAGE_SIZE;
 
   const [rows, [totalRow]] = await Promise.all([
@@ -191,20 +202,11 @@ export async function listCustomerOrders(
         paymentMethodRaw: latestPaymentMethodSql,
         contactName: orders.contactName,
         contactEmail: orders.contactEmail,
-        totalAmount: orders.totalAmount,
+        totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
-        itemsCount: sql<number>`
-          coalesce(
-            (
-              select sum(${orderItems.quantity})
-              from ${orderItems}
-              where ${orderItems.orderId} = ${orders.id}
-            ),
-            0
-          )
-        `.mapWith(Number),
+        itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
       })
       .from(orders)
       .where(where)

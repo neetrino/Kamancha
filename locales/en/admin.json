@@ -14,7 +14,8 @@
     "blog": "Blog",
     "messages": "Messages",
     "settings": "Settings",
-    "giftCards": "Gift cards"
+    "giftCards": "Gift cards",
+    "popups": "Popups"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -39,7 +40,15 @@
       "dateTimePlaceholder": "DD.MM.YYYY HH:mm",
       "today": "Today",
       "time": "Time",
-      "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+      "weekdaysShort": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
     },
     "search": "Search",
     "filter": "Filter",
@@ -93,7 +102,8 @@
       "post": "post",
       "denomination": "denomination",
       "closedDate": "closed date",
-      "modifier": "modifier"
+      "modifier": "modifier",
+      "popup": "popup"
     },
     "selectedProduct": "selected product",
     "selectedProducts": "{count} selected products"
@@ -725,6 +735,37 @@
       "editAria": "Edit hero slide",
       "title": "Title",
       "subtitle": "Subtitle",
+      "uploadImage": "Upload image",
+      "uploadImageButton": "+ Upload image",
+      "changeImage": "Change image",
+      "remove": "Remove",
+      "create": "Create",
+      "edit": "Edit"
+    }
+  },
+  "popups": {
+    "title": "Popups",
+    "count": "{count} popup",
+    "countPlural": "{count} popups",
+    "createPopup": "Create popup",
+    "listHeading": "Popups ({count})",
+    "noImage": "No image",
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "empty": "No popups yet.",
+    "editAria": "Edit {title}",
+    "deleteAria": "Delete {title}",
+    "activateAria": "Activate popup",
+    "deactivateAria": "Deactivate popup",
+    "drawer": {
+      "createTitle": "Create popup",
+      "editTitle": "Edit popup",
+      "createAria": "Create popup",
+      "editAria": "Edit popup",
+      "title": "Title",
+      "linkUrl": "Link (optional)",
+      "linkUrlPlaceholder": "/en/products or https://…",
+      "linkUrlHint": "URL opened when the image is clicked.",
       "uploadImage": "Upload image",
       "uploadImageButton": "+ Upload image",
       "changeImage": "Change image",

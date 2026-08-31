@@ -90,5 +90,21 @@ export function nextStatusAfterLock(
     : "AWAITING_PAYMENTS";
 }
 
+/**
+ * Organizer leaving an organizer-pays session dissolves the group for everyone.
+ * Split mode keeps the order (session cookie only is cleared).
+ */
+export function shouldDissolveGroupOrderOnOrganizerLeave(input: {
+  paymentMode: GroupOrderPaymentMode;
+  participantRole: string;
+  status: GroupOrderStatus;
+}): boolean {
+  return (
+    input.participantRole === "ORGANIZER" &&
+    input.paymentMode === "ORGANIZER_PAYS_ALL" &&
+    canTransitionGroupOrderStatus(input.status, "CANCELLED")
+  );
+}
+
 /** Default TTL for a new group-order session (48 hours). */
 export const GROUP_ORDER_DEFAULT_TTL_MS = 48 * 60 * 60 * 1000;

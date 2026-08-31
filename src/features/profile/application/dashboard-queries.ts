@@ -1,9 +1,14 @@
 import "server-only";
 
-import { count, desc, eq, sql } from "drizzle-orm";
+import { count, desc, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { orderItems, orders } from "@/db/schema";
+import { orders } from "@/db/schema";
+import {
+  customerOrderDisplayAmountSql,
+  customerOrderItemsCountSql,
+  customerOrdersVisibilitySql,
+} from "@/features/orders/application/customer-group-order-share";
 
 const RECENT_ORDERS_LIMIT = 5;
 
@@ -27,6 +32,9 @@ export type ProfileRecentOrder = {
 export async function getProfileDashboardStats(
   userId: string,
 ): Promise<ProfileDashboardStats> {
+  const visibility = customerOrdersVisibilitySql(userId);
+  const displayAmount = customerOrderDisplayAmountSql(userId);
+
   const [row] = await getDb()
     .select({
       totalOrders: count(),
@@ -40,7 +48,7 @@ export async function getProfileDashboardStats(
       `.mapWith(Number),
       totalSpent: sql<number>`
         coalesce(
-          sum(${orders.totalAmount}) filter (
+          sum(${displayAmount}) filter (
             where ${orders.status}::text not in ('CANCELLED', 'REFUNDED')
           ),
           0
@@ -48,7 +56,7 @@ export async function getProfileDashboardStats(
       `.mapWith(Number),
     })
     .from(orders)
-    .where(eq(orders.userId, userId));
+    .where(visibility);
 
   return {
     totalOrders: row?.totalOrders ?? 0,
@@ -68,21 +76,12 @@ export async function listRecentProfileOrders(
       id: orders.id,
       orderNumber: orders.orderNumber,
       status: orders.status,
-      totalAmount: orders.totalAmount,
+      totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
       placedAt: orders.placedAt,
-      itemsCount: sql<number>`
-        coalesce(
-          (
-            select sum(${orderItems.quantity})
-            from ${orderItems}
-            where ${orderItems.orderId} = ${orders.id}
-          ),
-          0
-        )
-      `.mapWith(Number),
+      itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
     })
     .from(orders)
-    .where(eq(orders.userId, userId))
+    .where(customerOrdersVisibilitySql(userId))
     .orderBy(desc(orders.placedAt))
     .limit(limit);
 }

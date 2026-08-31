@@ -25,6 +25,7 @@ export {
   type HeroTranslation,
   type HeroTranslationsJson,
 } from "@/db/schema/content";
+export { storePopups } from "@/db/schema/popups";
 export {
   cartItems,
   carts,

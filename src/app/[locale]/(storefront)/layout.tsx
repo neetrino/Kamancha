@@ -10,6 +10,7 @@ import { LiquidGlassOptics } from "@/components/ui/LiquidGlassOptics";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveGroupOrderBanner } from "@/features/group-orders/application/active-banner";
 import { ActiveGroupOrderBanner } from "@/features/group-orders/ui/ActiveGroupOrderBanner";
+import { PromoPopupIsland } from "@/features/popups/ui/PromoPopupIsland";
 import { StorefrontAlertHost } from "@/features/storefront-chrome/StorefrontAlertHost";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -58,6 +59,7 @@ export default async function StorefrontLayout({
             labels={dictionary.groupOrder}
             organizerDisplayName={groupBanner.organizerDisplayName}
             inviteToken={groupBanner.inviteToken}
+            isOrganizer={groupBanner.isOrganizer}
           />
         ) : null}
         <main className="storefront-main mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-[var(--mobile-bottom-nav-clearance)] sm:px-6 xl:px-8 xl:pb-10">
@@ -70,6 +72,7 @@ export default async function StorefrontLayout({
           dictionary={dictionary}
         />
         <StorefrontAlertHost />
+        <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
       </div>
     </div>
   );

@@ -14,7 +14,8 @@
     "blog": "Блог",
     "messages": "Сообщения",
     "settings": "Настройки",
-    "giftCards": "Подарочные карты"
+    "giftCards": "Подарочные карты",
+    "popups": "Popup"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -39,7 +40,15 @@
       "dateTimePlaceholder": "ДД.ММ.ГГГГ ЧЧ:ММ",
       "today": "Сегодня",
       "time": "Время",
-      "weekdaysShort": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+      "weekdaysShort": [
+        "Пн",
+        "Вт",
+        "Ср",
+        "Чт",
+        "Пт",
+        "Сб",
+        "Вс"
+      ]
     },
     "search": "Поиск",
     "filter": "Фильтр",
@@ -93,7 +102,8 @@
       "post": "публикацию",
       "denomination": "номинал",
       "closedDate": "закрытый день",
-      "modifier": "модификатор"
+      "modifier": "модификатор",
+      "popup": "popup"
     },
     "selectedProduct": "выбранный товар",
     "selectedProducts": "{count} выбранных товаров"
@@ -725,6 +735,37 @@
       "editAria": "Редактировать баннер",
       "title": "Заголовок",
       "subtitle": "Подзаголовок",
+      "uploadImage": "Загрузить изображение",
+      "uploadImageButton": "+ Загрузить изображение",
+      "changeImage": "Изменить изображение",
+      "remove": "Убрать",
+      "create": "Создать",
+      "edit": "Редактировать"
+    }
+  },
+  "popups": {
+    "title": "Popup",
+    "count": "{count} popup",
+    "countPlural": "{count} popup",
+    "createPopup": "Создать popup",
+    "listHeading": "Popup ({count})",
+    "noImage": "Нет изображения",
+    "active": "АКТИВЕН",
+    "inactive": "НЕАКТИВЕН",
+    "empty": "Popup пока нет.",
+    "editAria": "Редактировать {title}",
+    "deleteAria": "Удалить {title}",
+    "activateAria": "Активировать popup",
+    "deactivateAria": "Деактивировать popup",
+    "drawer": {
+      "createTitle": "Создать popup",
+      "editTitle": "Редактировать popup",
+      "createAria": "Создать popup",
+      "editAria": "Редактировать popup",
+      "title": "Заголовок",
+      "linkUrl": "Ссылка (необязательно)",
+      "linkUrlPlaceholder": "/ru/products или https://…",
+      "linkUrlHint": "Адрес, открываемый при клике по изображению.",
       "uploadImage": "Загрузить изображение",
       "uploadImageButton": "+ Загрузить изображение",
       "changeImage": "Изменить изображение",

@@ -34,9 +34,11 @@ export {
   calculateGiftCardRedeemAmount,
   giftCardLedgerTargetNet,
   giftCardRedeemErrorMessage,
+  isGiftCardRecipientActor,
   isGiftCardRedeemable,
   isValidGiftCardAmount,
   normalizeGiftCardCode,
+  type GiftCardRedeemActor,
   type GiftCardRedeemPreview,
   type GiftCardSettings,
 } from "@/features/gift-cards/domain/gift-card-rules";

@@ -44,11 +44,13 @@ export {
   bulkArchiveOrdersSchema,
   bulkChangeOrderStatusSchema,
   changeOrderStatusSchema,
+  CUSTOMER_ORDER_KINDS,
   type AddOrderNoteInput,
   type AdminOrdersFilter,
   type ArchiveOrderInput,
   type BulkArchiveOrdersInput,
   type BulkChangeOrderStatusInput,
   type ChangeOrderStatusInput,
+  type CustomerOrderKind,
 } from "@/features/orders/schemas/change-status";
 export { changePaymentStatusSchema } from "@/features/orders/schemas/change-payment-status";

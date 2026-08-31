@@ -39,22 +39,19 @@ export function CheckoutBonusRedeemField({
     "{amount}",
     bonus.formatMoney(bonus.availableBalance),
   );
+  const canRedeem = bonus.maxRedeem > 0;
 
   return (
     <div className="relative z-[2]">
-      <p className="mb-1 text-sm text-gray-900 xl:text-white/80">
-        {bonus.labels.title}
-      </p>
-      <p className="mb-3 text-sm text-gray-600 xl:text-white/70">
-        {availableText}
-      </p>
-      <label className="flex items-center gap-2 text-sm text-gray-900 xl:text-white">
+      <p className="mb-1 text-sm text-white/80">{bonus.labels.title}</p>
+      <p className="mb-3 text-sm text-white/70">{availableText}</p>
+      <label className="flex items-center gap-2 text-sm text-white">
         <input
           type="checkbox"
           checked={bonus.useBonuses}
           onChange={(event) => bonus.onToggle(event.target.checked)}
-          disabled={isSubmitting || bonus.maxRedeem <= 0}
-          className="h-4 w-4 rounded border-gray-300 text-gray-900 focus:ring-gray-400"
+          disabled={isSubmitting || !canRedeem}
+          className="h-4 w-4 rounded border-white/50 bg-white/10 text-brand-forest focus:ring-white/40 disabled:opacity-50"
         />
         {bonus.labels.useBonuses}
       </label>
@@ -81,7 +78,7 @@ export function CheckoutBonusRedeemField({
             variant="secondary"
             size="md"
             className={USE_MAX_CLASS}
-            disabled={isSubmitting || bonus.maxRedeem <= 0}
+            disabled={isSubmitting || !canRedeem}
             onClick={bonus.onUseMax}
           >
             {bonus.labels.useMax}

@@ -41,6 +41,35 @@ export type GiftCardRedeemPreview = {
   payableAfter: number;
 };
 
+/** Logged-in customer attempting to redeem a gift card. */
+export type GiftCardRedeemActor = {
+  userId: string;
+  email: string;
+};
+
+/**
+ * Gift cards are bound to the named recipient.
+ * Match by linked user id, or by recipient email when the account exists.
+ */
+export function isGiftCardRecipientActor(input: {
+  recipientUserId: string | null;
+  recipientEmail: string;
+  actor: GiftCardRedeemActor | null | undefined;
+}): boolean {
+  if (!input.actor) {
+    return false;
+  }
+  if (
+    input.recipientUserId != null &&
+    input.recipientUserId === input.actor.userId
+  ) {
+    return true;
+  }
+  const actorEmail = input.actor.email.trim().toLowerCase();
+  const recipientEmail = input.recipientEmail.trim().toLowerCase();
+  return Boolean(actorEmail) && actorEmail === recipientEmail;
+}
+
 /** Normalize gift card codes for lookup (uppercase, strip spaces). */
 export function normalizeGiftCardCode(raw: string): string {
   return raw.trim().toUpperCase().replace(/\s+/g, "");
@@ -151,6 +180,9 @@ export function giftCardRedeemErrorMessage(input: {
   balanceAmount?: number;
   expiresAt?: Date | null;
   now?: Date;
+  /** Card is otherwise redeemable but actor is missing or not the recipient. */
+  recipientDenied?: boolean;
+  actorPresent?: boolean;
 }): string {
   if (!input.found || input.status == null) {
     return "Gift card code was not found.";
@@ -173,6 +205,12 @@ export function giftCardRedeemErrorMessage(input: {
   }
   if (input.status === "USED" || (input.balanceAmount ?? 0) <= 0) {
     return "Gift card has no remaining balance.";
+  }
+  if (input.recipientDenied) {
+    if (!input.actorPresent) {
+      return "Sign in with the recipient account to use this gift card.";
+    }
+    return "This gift card can only be used by the recipient.";
   }
   return "Gift card is invalid, expired, or empty.";
 }

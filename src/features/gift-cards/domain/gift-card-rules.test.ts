@@ -7,6 +7,7 @@ import {
   calculateGiftCardRedeemAmount,
   giftCardLedgerTargetNet,
   giftCardRedeemErrorMessage,
+  isGiftCardRecipientActor,
   isGiftCardRedeemable,
   isValidGiftCardAmount,
   nextGiftCardBalance,
@@ -115,6 +116,57 @@ describe("gift-card-rules", () => {
         expiresAt: null,
       }),
     ).toBe("Gift card has no remaining balance.");
+    expect(
+      giftCardRedeemErrorMessage({
+        found: true,
+        status: "ACTIVE",
+        balanceAmount: 1000,
+        expiresAt: null,
+        recipientDenied: true,
+        actorPresent: false,
+      }),
+    ).toBe("Sign in with the recipient account to use this gift card.");
+    expect(
+      giftCardRedeemErrorMessage({
+        found: true,
+        status: "ACTIVE",
+        balanceAmount: 1000,
+        expiresAt: null,
+        recipientDenied: true,
+        actorPresent: true,
+      }),
+    ).toBe("This gift card can only be used by the recipient.");
+  });
+
+  it("allows only the recipient actor to redeem", () => {
+    expect(
+      isGiftCardRecipientActor({
+        recipientUserId: "u1",
+        recipientEmail: "gift@example.com",
+        actor: { userId: "u1", email: "other@example.com" },
+      }),
+    ).toBe(true);
+    expect(
+      isGiftCardRecipientActor({
+        recipientUserId: null,
+        recipientEmail: "gift@example.com",
+        actor: { userId: "u2", email: "gift@example.com" },
+      }),
+    ).toBe(true);
+    expect(
+      isGiftCardRecipientActor({
+        recipientUserId: "u1",
+        recipientEmail: "gift@example.com",
+        actor: { userId: "u2", email: "other@example.com" },
+      }),
+    ).toBe(false);
+    expect(
+      isGiftCardRecipientActor({
+        recipientUserId: "u1",
+        recipientEmail: "gift@example.com",
+        actor: null,
+      }),
+    ).toBe(false);
   });
 
   it("updates status from balance", () => {

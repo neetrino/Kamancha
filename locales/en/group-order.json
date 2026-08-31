@@ -70,6 +70,7 @@
   "activeSessionBanner": "You are in {name}'s group order",
   "viewGroupOrder": "View",
   "leaveSession": "Leave",
+  "organizerCancelledAlert": "The group order creator cancelled this order.",
   "addingToGroup": "Adding to group order…",
   "addedToGroup": "Added to group order",
   "organizer": "Organizer",

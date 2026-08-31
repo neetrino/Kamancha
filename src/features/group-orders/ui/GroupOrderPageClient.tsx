@@ -237,7 +237,16 @@ export function GroupOrderPageClient({
       );
       return;
     }
-    run(async () => cancelGroupOrderAction({ inviteToken }));
+    setError(null);
+    startTransition(async () => {
+      const result = await cancelGroupOrderAction({ inviteToken });
+      if (!result.ok) {
+        setError(result.error ?? labels.errorGeneric);
+        return;
+      }
+      router.push(`/${locale}`);
+      router.refresh();
+    });
   }
 
   async function copyLink(): Promise<void> {

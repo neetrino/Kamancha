@@ -32,6 +32,7 @@ export const mediaRoleEnum = pgEnum("media_role", [
   "HERO_DESKTOP",
   "HERO_MOBILE",
   "BRANDING",
+  "POPUP",
 ]);
 
 export const stockMovementReasonEnum = pgEnum("stock_movement_reason", [
