@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 
 const INPUT_CLASS =
-  "h-11 min-w-0 flex-1 rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 xl:rounded-lg";
+  "h-9 min-w-0 flex-1 rounded-[15px] border border-gray-200 bg-white px-3 text-sm text-gray-900 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 xl:rounded-lg";
 
 const USE_MAX_CLASS =
-  "h-11 shrink-0 rounded-[15px] border-gray-200 bg-white px-4 text-sm text-gray-900 hover:bg-gray-50 xl:rounded-lg";
+  "h-9 shrink-0 rounded-[15px] border-gray-200 bg-white px-3 text-sm text-gray-900 hover:bg-gray-50 xl:rounded-lg";
 
 export type CheckoutBonusRedeemState = {
   availableBalance: number;
@@ -67,22 +67,24 @@ export function CheckoutBonusRedeemField({
   }, [bonus.useBonuses, bonus.redeemAmount]);
 
   return (
-    <div className="relative z-[2]">
-      <p className="mb-1 text-sm text-white/80">{bonus.labels.title}</p>
-      <p className="mb-3 text-sm text-white/70">{availableText}</p>
-      <label className="flex items-center gap-2 text-sm text-white">
-        <input
-          type="checkbox"
-          checked={bonus.useBonuses}
-          onChange={(event) => bonus.onToggle(event.target.checked)}
-          disabled={isSubmitting || !canRedeem}
-          style={{ accentColor: "#f3e5a8" }}
-          className="h-4 w-4 rounded border-white/50 bg-white/10 focus:ring-[#f3e5a8]/40 disabled:opacity-50"
-        />
-        {bonus.labels.useBonuses}
-      </label>
+    <div className="relative z-[2] space-y-2">
+      <div className="flex items-center justify-between gap-3">
+        <label className="flex min-w-0 items-center gap-2 text-sm text-white">
+          <input
+            type="checkbox"
+            checked={bonus.useBonuses}
+            onChange={(event) => bonus.onToggle(event.target.checked)}
+            disabled={isSubmitting || !canRedeem}
+            style={{ accentColor: "#f3e5a8" }}
+            className="h-4 w-4 shrink-0 rounded border-white/50 bg-white/10 focus:ring-[#f3e5a8]/40 disabled:opacity-50"
+            aria-label={bonus.labels.useBonuses}
+          />
+          <span className="truncate font-semibold">{bonus.labels.title}</span>
+        </label>
+        <p className="shrink-0 text-sm text-white/70">{availableText}</p>
+      </div>
       {bonus.useBonuses ? (
-        <div className="mt-3 flex gap-2">
+        <div className="flex gap-2">
           <input
             type="text"
             inputMode="numeric"
@@ -101,6 +103,7 @@ export function CheckoutBonusRedeemField({
             }}
             disabled={isSubmitting}
             aria-label={bonus.labels.amount}
+            placeholder={bonus.labels.amount}
             className={INPUT_CLASS}
           />
           <Button

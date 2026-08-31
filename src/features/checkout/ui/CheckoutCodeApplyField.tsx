@@ -63,7 +63,7 @@ export function CheckoutCodeApplyField({
     <>
       <div className="relative z-[2] xl:hidden">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-sm text-white">{title}</p>
+          <p className="text-[15px] font-semibold text-white">{title}</p>
           <Button
             type="button"
             variant="secondary"

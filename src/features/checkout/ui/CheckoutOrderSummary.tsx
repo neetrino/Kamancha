@@ -232,7 +232,7 @@ export function CheckoutOrderSummary({
             </div>
           ) : null}
           {bonusEarnLabel != null && bonusEarnAmount != null && bonusEarnAmount > 0 ? (
-            <div className="flex justify-between text-[#f3e5a8]">
+            <div className="flex justify-between font-semibold text-[#f3e5a8]">
               <span>{bonusEarnLabel}</span>
               <span>+{bonusEarnAmount}</span>
             </div>
