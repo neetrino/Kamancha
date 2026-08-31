@@ -296,16 +296,16 @@ export type AdminGroupOrderListItem = {
 export type AdminGroupOrderListResult = {
   rows: AdminGroupOrderListItem[];
   total: number;
+  pageSize: number;
 };
 
+const PAGE_SIZE = 20;
+
 export async function listAdminGroupOrders(
-  filters: AdminGroupOrdersFilterInput & {
-    limit?: number;
-    offset?: number;
-  } = {},
+  filters: AdminGroupOrdersFilterInput = { page: 1 },
 ): Promise<AdminGroupOrderListResult> {
-  const limit = Math.min(filters.limit ?? 100, 200);
-  const offset = Math.max(filters.offset ?? 0, 0);
+  const page = filters.page ?? 1;
+  const offset = (page - 1) * PAGE_SIZE;
   const db = getDb();
 
   const conditions = [];
@@ -338,7 +338,7 @@ export async function listAdminGroupOrders(
     .from(groupOrders)
     .where(where)
     .orderBy(desc(groupOrders.createdAt))
-    .limit(limit)
+    .limit(PAGE_SIZE)
     .offset(offset);
 
   const result: AdminGroupOrderListItem[] = [];
@@ -376,6 +376,7 @@ export async function listAdminGroupOrders(
   return {
     rows: result,
     total: countRow?.total ?? 0,
+    pageSize: PAGE_SIZE,
   };
 }
 

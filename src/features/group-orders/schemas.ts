@@ -85,6 +85,7 @@ export const adminGroupOrdersFilterSchema = z.object({
   q: z.string().trim().max(120).optional(),
   status: z.enum(GROUP_ORDER_STATUSES).optional(),
   paymentMode: z.enum(GROUP_ORDER_PAYMENT_MODES).optional(),
+  page: z.coerce.number().int().min(1).max(500).default(1),
 });
 
 export type AdminGroupOrdersFilterInput = z.infer<

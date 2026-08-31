@@ -1,8 +1,12 @@
 import { notFound } from "next/navigation";
 
+import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { listAdminGroupOrders } from "@/features/group-orders/application/queries";
-import { adminGroupOrdersFilterSchema } from "@/features/group-orders/schemas";
+import {
+  adminGroupOrdersFilterSchema,
+  type AdminGroupOrdersFilterInput,
+} from "@/features/group-orders/schemas";
 import { AdminGroupOrdersFilters } from "@/features/group-orders/ui/AdminGroupOrdersFilters";
 import { AdminGroupOrdersView } from "@/features/group-orders/ui/AdminGroupOrdersView";
 import { requireAdmin } from "@/lib/auth/policies";
@@ -24,6 +28,18 @@ function firstParam(
   return value;
 }
 
+function buildGroupOrdersQuery(
+  filters: AdminGroupOrdersFilterInput,
+  page: number,
+): string {
+  const params = new URLSearchParams();
+  if (filters.q) params.set("q", filters.q);
+  if (filters.status) params.set("status", filters.status);
+  if (filters.paymentMode) params.set("paymentMode", filters.paymentMode);
+  params.set("page", String(page));
+  return params.toString();
+}
+
 export default async function AdminGroupOrdersPage({
   params,
   searchParams,
@@ -42,13 +58,14 @@ export default async function AdminGroupOrdersPage({
     q: firstParam(raw.q) || undefined,
     status: firstParam(raw.status) || undefined,
     paymentMode: firstParam(raw.paymentMode) || undefined,
+    page: firstParam(raw.page) ?? "1",
   });
-  const filters = parsed.success ? parsed.data : {};
+  const filters: AdminGroupOrdersFilterInput = parsed.success
+    ? parsed.data
+    : { page: 1 };
 
-  const { rows, total } = await listAdminGroupOrders({
-    ...filters,
-    limit: 100,
-  });
+  const { rows, total, pageSize } = await listAdminGroupOrders(filters);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="space-y-6">
@@ -67,6 +84,16 @@ export default async function AdminGroupOrdersPage({
         copy={copy}
         confirmCopy={dictionary.admin.confirm}
         commonCopy={dictionary.admin.common}
+      />
+      <AdminPagination
+        page={filters.page}
+        totalPages={totalPages}
+        ariaLabel={copy.title}
+        previousLabel={dictionary.admin.common.previous}
+        nextLabel={dictionary.admin.common.next}
+        pageOfLabel={dictionary.admin.common.pageOf}
+        prevHref={`/${locale}/admin/group-orders?${buildGroupOrdersQuery(filters, filters.page - 1)}`}
+        nextHref={`/${locale}/admin/group-orders?${buildGroupOrdersQuery(filters, filters.page + 1)}`}
       />
     </div>
   );
