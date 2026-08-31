@@ -60,10 +60,12 @@ export function ProfileRecentOrderCard({
             {totalLabel}
           </p>
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-1.5">
-          <span className={PROFILE_STATUS_BADGE}>{status}</span>
+        <div className="inline-flex shrink-0 flex-col items-stretch gap-1.5">
+          <span className={`${PROFILE_STATUS_BADGE} justify-center`}>
+            {status}
+          </span>
           {isGroupOrder && groupOrderBadgeLabel ? (
-            <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-emerald-600">
+            <span className="inline-flex items-center justify-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium normal-case text-emerald-500">
               {groupOrderBadgeLabel}
             </span>
           ) : null}
@@ -82,7 +84,7 @@ export function ProfileRecentOrderCard({
         </div>
       </div>
 
-      <div className="mt-auto w-full self-stretch pt-5">
+      <div className="mt-auto hidden w-full self-stretch pt-5 sm:block">
         <div
           className="profile-order-card-cta box-border flex w-full min-w-0 items-center gap-2 rounded-full bg-brand-forest py-0.5 pr-0.5 pl-3 font-big-fat-boii text-xs font-normal tracking-wide text-white uppercase"
           aria-hidden
