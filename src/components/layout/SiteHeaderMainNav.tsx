@@ -176,6 +176,7 @@ export function SiteHeaderMainNav({
                   locale={locale}
                   dictionary={dictionary}
                   navItems={navItems}
+                  user={user}
                   forestTrigger
                   triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
                   panelFooter={
