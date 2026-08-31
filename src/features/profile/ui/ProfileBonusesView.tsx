@@ -34,8 +34,6 @@ type BonusTransactionRow = {
 type ProfileBonusesViewProps = {
   locale: Locale;
   title: string;
-  /** Shorter title for desktop sidebar layout. */
-  titleShort: string;
   availableBalance: number;
   totalEarned: number;
   totalRedeemed: number;
@@ -62,7 +60,6 @@ function earnExpiryBadgeLabel(
 export function ProfileBonusesView({
   locale,
   title,
-  titleShort,
   availableBalance,
   totalEarned,
   totalRedeemed,
@@ -100,10 +97,7 @@ export function ProfileBonusesView({
   return (
     <>
       <section className="profile-sheet-keep-frame space-y-8">
-        <h1 className={PROFILE_PAGE_TITLE}>
-          <span className="xl:hidden">{title}</span>
-          <span className="hidden xl:inline">{titleShort}</span>
-        </h1>
+        <h1 className={PROFILE_PAGE_TITLE}>{title}</h1>
 
         <div className={`${PROFILE_STAT_GRID_THREE} overflow-visible`}>
           <ProfileStatCard

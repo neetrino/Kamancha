@@ -53,7 +53,7 @@ function buildNavItems(
     },
     {
       href: `/${locale}/profile/bonuses`,
-      label: dictionary.bonusesLabel,
+      label: dictionary.bonuses,
       icon: <Sparkles className="h-4 w-4" />,
     },
     {

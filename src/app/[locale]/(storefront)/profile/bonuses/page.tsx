@@ -31,7 +31,6 @@ export default async function ProfileBonusesPage({
     <ProfileBonusesView
       locale={rawLocale}
       title={dictionary.profile.bonuses}
-      titleShort={dictionary.profile.bonusesLabel}
       availableBalance={summary.availableBalance}
       totalEarned={summary.totalEarned}
       totalRedeemed={summary.totalRedeemed}

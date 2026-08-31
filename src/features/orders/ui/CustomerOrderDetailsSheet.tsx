@@ -244,11 +244,6 @@ function CustomerOrderSheetTotals({
     ? labels.couponDiscountWithCode.replace("{code}", detail.couponCode)
     : labels.couponDiscount;
 
-  const discountLabel =
-    detail.discountAmount > 0
-      ? `−${formatOrderDrawerMoney(detail.discountAmount, detail.baseCurrency)}`
-      : formatOrderDrawerMoney(0, detail.baseCurrency);
-
   return (
     <div className="border-t border-gray-200 px-6 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
       <dl className="space-y-2 text-sm">
@@ -262,16 +257,18 @@ function CustomerOrderSheetTotals({
           <dt>{labels.delivery}</dt>
           <dd className="tabular-nums text-gray-900">{shippingLabel}</dd>
         </div>
-        <div className="flex items-center justify-between text-gray-600">
-          <dt>{couponRowLabel}</dt>
-          <dd
-            className={`tabular-nums ${
-              detail.discountAmount > 0 ? "text-green-700" : "text-gray-900"
-            }`}
-          >
-            {discountLabel}
-          </dd>
-        </div>
+        {detail.discountAmount > 0 ? (
+          <div className="flex items-center justify-between text-gray-600">
+            <dt>{couponRowLabel}</dt>
+            <dd className="tabular-nums text-green-700">
+              −
+              {formatOrderDrawerMoney(
+                detail.discountAmount,
+                detail.baseCurrency,
+              )}
+            </dd>
+          </div>
+        ) : null}
         <div className="flex items-center justify-between pt-1 text-base font-bold text-gray-900">
           <dt>{labels.grandTotal}</dt>
           <dd className="tabular-nums">

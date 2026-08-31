@@ -161,7 +161,6 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         giftCardPayable: copy.giftCard.payable,
         giftCardApplied: copy.giftCard.applied,
         bonusTitle: copy.bonus.title,
-        bonusTitleShort: copy.bonus.titleShort,
         bonusAvailable: copy.bonus.available,
         bonusUse: copy.bonus.use,
         bonusAmount: copy.bonus.amount,

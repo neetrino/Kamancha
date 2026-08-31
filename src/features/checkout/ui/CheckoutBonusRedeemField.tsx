@@ -18,7 +18,6 @@ export type CheckoutBonusRedeemState = {
   onUseMax: () => void;
   labels: {
     title: string;
-    titleShort: string;
     available: string;
     useBonuses: string;
     amount: string;
@@ -44,10 +43,7 @@ export function CheckoutBonusRedeemField({
 
   return (
     <div className="relative z-[2]">
-      <p className="mb-1 text-sm text-white/80">
-        <span className="xl:hidden">{bonus.labels.title}</span>
-        <span className="hidden xl:inline">{bonus.labels.titleShort}</span>
-      </p>
+      <p className="mb-1 text-sm text-white/80">{bonus.labels.title}</p>
       <p className="mb-3 text-sm text-white/70">{availableText}</p>
       <label className="flex items-center gap-2 text-sm text-white">
         <input

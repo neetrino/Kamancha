@@ -100,7 +100,6 @@
   },
   "bonus": {
     "title": "Bonus balance",
-    "titleShort": "Bonuses",
     "available": "Available: {amount}",
     "use": "Use bonuses",
     "amount": "Bonus points to use",
