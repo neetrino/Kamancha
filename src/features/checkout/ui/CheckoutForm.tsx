@@ -95,6 +95,7 @@ type CheckoutLabels = {
   giftCardPayable: string;
   giftCardApplied: string;
   bonusTitle: string;
+  bonusTitleShort: string;
   bonusAvailable: string;
   bonusUse: string;
   bonusAmount: string;
@@ -561,6 +562,7 @@ export function CheckoutForm({
                     },
                     labels: {
                       title: labels.bonusTitle,
+                      titleShort: labels.bonusTitleShort,
                       available: labels.bonusAvailable,
                       useBonuses: labels.bonusUse,
                       amount: labels.bonusAmount,
