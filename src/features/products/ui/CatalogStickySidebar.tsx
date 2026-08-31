@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const SIDEBAR_WIDTH_PX = 280;
+/** Room for the visible scrollbar beside the filter (not over it). */
+const SIDEBAR_SCROLLBAR_GUTTER_PX = 10;
+const SIDEBAR_OUTER_WIDTH_PX = SIDEBAR_WIDTH_PX + SIDEBAR_SCROLLBAR_GUTTER_PX;
 /** Space between sticky header bottom and the category sidebar. */
 const HEADER_GAP_PX = 28;
 const FALLBACK_TOP_OFFSET_PX = 140;
@@ -34,7 +37,7 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
     position: "relative",
     top: 0,
     left: 0,
-    width: SIDEBAR_WIDTH_PX,
+    width: SIDEBAR_OUTER_WIDTH_PX,
     maxHeight: 0,
   });
   const [spacerHeight, setSpacerHeight] = useState(0);
@@ -51,7 +54,10 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
       setSpacerHeight(panelHeight);
 
       const left = anchorRect.left;
-      const width = anchorRect.width || SIDEBAR_WIDTH_PX;
+      const width = Math.max(
+        anchorRect.width || SIDEBAR_OUTER_WIDTH_PX,
+        SIDEBAR_OUTER_WIDTH_PX,
+      );
       const topOffset = readHeaderBottom() + HEADER_GAP_PX;
       const viewportBottomPad = 24;
       const maxHeight = Math.max(
@@ -109,12 +115,12 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
   return (
     <div
       ref={anchorRef}
-      className="relative hidden w-[280px] shrink-0 self-start xl:block"
+      className="relative hidden w-[290px] shrink-0 self-start xl:block"
       style={{ minHeight: spacerHeight || undefined }}
     >
       <div
         ref={panelRef}
-        className="z-20 overflow-y-auto overscroll-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        className="catalog-sidebar-scroll z-20 overflow-y-auto overscroll-contain pr-2.5"
         style={{
           position: style.position,
           top: style.position === "fixed" ? style.top : undefined,
@@ -123,7 +129,7 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
           maxHeight: style.maxHeight || undefined,
         }}
       >
-        {children}
+        <div className="w-[280px] max-w-[280px]">{children}</div>
       </div>
     </div>
   );
