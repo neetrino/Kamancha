@@ -86,23 +86,32 @@ describe("buildDashboardMonthlySeries", () => {
     expect(series).toEqual([
       {
         key: "2026-01",
-        label: "Jan 26",
+        label: "January 26",
         orderCount: 3,
         revenueAmount: 140,
       },
       {
         key: "2026-02",
-        label: "Feb 26",
+        label: "February 26",
         orderCount: 0,
         revenueAmount: 0,
       },
       {
         key: "2026-03",
-        label: "Mar 26",
+        label: "March 26",
         orderCount: 4,
         revenueAmount: 200,
       },
     ]);
+  });
+
+  it("localizes month labels for hy", () => {
+    const series = buildDashboardMonthlySeries(
+      [],
+      { from: "2026-03-01", to: "2026-03-31" },
+      "hy",
+    );
+    expect(series[0]?.label).toBe("Մարտ 26");
   });
 });
 

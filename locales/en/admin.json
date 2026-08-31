@@ -733,6 +733,7 @@
       "subtitle": "Daily Order Trends and Revenue",
       "chartAria": "Orders by day trend chart",
       "empty": "No orders in this range.",
+      "peakDay": "Best day",
       "ordersCount": "{count} orders",
       "revenue": "revenue"
     }

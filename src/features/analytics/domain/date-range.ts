@@ -1,6 +1,66 @@
 import { z } from "zod";
 
+import { defaultLocale, type Locale } from "@/lib/i18n/config";
+
 const MAX_RANGE_DAYS = 366;
+
+const MONTH_NAMES: Record<Locale, readonly string[]> = {
+  en: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
+  ru: [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ],
+  hy: [
+    "Հունվար",
+    "Փետրվար",
+    "Մարտ",
+    "Ապրիլ",
+    "Մայիս",
+    "Հունիս",
+    "Հուլիս",
+    "Օգոստոս",
+    "Սեպտեմբեր",
+    "Հոկտեմբեր",
+    "Նոյեմբեր",
+    "Դեկտեմբեր",
+  ],
+};
+
+function parseIsoCalendarParts(isoDate: string): {
+  year: number;
+  monthIndex: number;
+  day: number;
+} {
+  const [yearText, monthText, dayText] = isoDate.split("-");
+  return {
+    year: Number(yearText),
+    monthIndex: Number(monthText) - 1,
+    day: Number(dayText),
+  };
+}
 
 export const ANALYTICS_PERIOD_PRESETS = [
   "last_7_days",
@@ -103,23 +163,48 @@ export function matchAnalyticsPeriodPreset(
   return "custom";
 }
 
-/** Formats an ISO date for analytics headers (e.g. Jul 12, 2026). */
-export function formatAnalyticsDisplayDate(isoDate: string): string {
-  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
+/** Formats an ISO date for analytics headers (e.g. July 12, 2026). */
+export function formatAnalyticsDisplayDate(
+  isoDate: string,
+  locale: Locale = defaultLocale,
+): string {
+  const { year, monthIndex, day } = parseIsoCalendarParts(isoDate);
+  const month = MONTH_NAMES[locale][monthIndex] ?? isoDate;
+
+  switch (locale) {
+    case "en":
+      return `${month} ${day}, ${year}`;
+    case "ru":
+      return `${day} ${month} ${year} г.`;
+    case "hy":
+      return `${day} ${month}, ${year} թ.`;
+  }
 }
 
-/** Formats a short chart/list date (e.g. Jul 13). */
-export function formatAnalyticsShortDate(isoDate: string): string {
-  return new Date(`${isoDate}T00:00:00.000Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+/** Formats a short chart/list date (e.g. July 13). */
+export function formatAnalyticsShortDate(
+  isoDate: string,
+  locale: Locale = defaultLocale,
+): string {
+  const { monthIndex, day } = parseIsoCalendarParts(isoDate);
+  const month = MONTH_NAMES[locale][monthIndex] ?? isoDate;
+
+  switch (locale) {
+    case "en":
+      return `${month} ${day}`;
+    case "ru":
+    case "hy":
+      return `${day} ${month}`;
+  }
+}
+
+/** Formats a full month name for chart axis headers (e.g. July). */
+export function formatAnalyticsMonthShort(
+  isoDate: string,
+  locale: Locale = defaultLocale,
+): string {
+  const { monthIndex } = parseIsoCalendarParts(isoDate);
+  return MONTH_NAMES[locale][monthIndex] ?? isoDate;
 }
 
 /** Formats percent delta vs a previous numeric value. */

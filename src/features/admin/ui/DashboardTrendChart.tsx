@@ -18,11 +18,12 @@ import {
   type DashboardChartRange,
   type DashboardTrendPoint,
 } from "@/features/analytics/domain/dashboard-periods";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type DashboardTrendChartProps = {
-  locale: string;
+  locale: Locale;
   chart: DashboardChartRange;
   points: DashboardTrendPoint[];
   labels: Dictionary["admin"]["dashboard"];
@@ -169,9 +170,20 @@ export function DashboardTrendChart({
         </p>
       ) : (
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_15rem]">
-          <div className="min-w-0 rounded-[12px] bg-gradient-to-b from-gray-50 to-white p-2 ring-1 ring-gray-100/80">
-            <DashboardTrendSvg points={points} chartAria={labels.chartAria} />
-            <div className="mt-1 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500">
+          <div className="flex min-w-0 flex-col items-center justify-center rounded-[12px] bg-gradient-to-b from-gray-50 to-white p-3 ring-1 ring-gray-100/80 sm:p-4">
+            <DashboardTrendSvg
+              points={points}
+              chartAria={labels.chartAria}
+              locale={locale}
+              tooltip={{
+                revenueLabel: labels.chartRevenue,
+                ordersLabel: labels.chartOrders,
+                formatRevenue: (amount) =>
+                  formatMoneyAmount(amount, "AMD", locale),
+                formatOrders: (count) => String(count),
+              }}
+            />
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500">
               <span className="inline-flex items-center gap-1.5">
                 <span
                   className="h-2 w-2 rounded-full"
