@@ -257,23 +257,22 @@ export function CheckoutForm({
   const cashChangeDueFormatted =
     cashChangeDue != null ? formatMoney(cashChangeDue) : null;
 
-  const needsDeliveryAddress =
+  const shippingDistanceLabel =
     lockedDeliveryAmount == null &&
     !deliveryQuote.pending &&
-    (deliveryQuote.error != null || !deliveryQuote.distanceLabel);
+    deliveryQuote.distanceLabel &&
+    !deliveryQuote.error
+      ? deliveryQuote.distanceLabel
+      : null;
 
   const shippingFormatted =
     lockedDeliveryAmount != null
       ? formatMoney(lockedDeliveryAmount)
       : deliveryQuote.pending
         ? labels.calculatingDelivery
-        : deliveryQuote.distanceLabel && !deliveryQuote.error
-          ? `${formatMoney(shippingAmount)} (${deliveryQuote.distanceLabel})`
+        : shippingDistanceLabel
+          ? formatMoney(shippingAmount)
           : "—";
-
-  const shippingAddressPrompt = needsDeliveryAddress
-    ? labels.enterDeliveryAddress
-    : null;
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -508,7 +507,7 @@ export function CheckoutForm({
             totalLabel={labels.total}
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
-            shippingAddressPrompt={shippingAddressPrompt}
+            shippingDistanceLabel={shippingDistanceLabel}
             discountFormatted={
               discountAmount > 0 ? formatMoney(discountAmount) : null
             }

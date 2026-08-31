@@ -82,6 +82,7 @@
   "browseMenu": "Browse menu",
   "deliveryAddressPlaceholder": "Street, building, city…",
   "calculateDelivery": "Calculate delivery",
+  "calculatingDelivery": "Calculating delivery…",
   "deliveryQuoteReady": "Delivery: {amount} ({distance})",
   "deliverySplitHint": "Delivery is split among participants who have items. Any remainder goes to the organizer.",
   "deliveryOrganizerPaysHint": "If you pay for everyone, you cover the full delivery fee.",

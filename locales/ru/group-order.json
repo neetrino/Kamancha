@@ -82,6 +82,7 @@
   "browseMenu": "Смотреть меню",
   "deliveryAddressPlaceholder": "Улица, дом, город…",
   "calculateDelivery": "Рассчитать доставку",
+  "calculatingDelivery": "Расчёт доставки…",
   "deliveryQuoteReady": "Доставка: {amount} ({distance})",
   "deliverySplitHint": "Доставка делится между участниками с товарами. Остаток идёт организатору.",
   "deliveryOrganizerPaysHint": "Если вы платите за всех — всю доставку оплачиваете вы.",

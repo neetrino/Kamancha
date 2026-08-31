@@ -82,6 +82,7 @@
   "browseMenu": "Դիտել մենյուն",
   "deliveryAddressPlaceholder": "Փողոց, շենք, քաղաք…",
   "calculateDelivery": "Հաշվել առաքումը",
+  "calculatingDelivery": "Առաքման գինը հաշվվում է…",
   "deliveryQuoteReady": "Առաքում՝ {amount} ({distance})",
   "deliverySplitHint": "Առաքումը բաժանվում է այն մասնակիցների միջև, ովքեր ունեն ապրանքներ։ Մնացորդը գնում է կազմակերպչին։",
   "deliveryOrganizerPaysHint": "Եթե դուք եք վճարում բոլորի համար՝ առաքման ամբողջ գումարը ձեր վրա է։",

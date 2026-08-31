@@ -45,7 +45,8 @@ type CheckoutOrderSummaryProps = {
   totalLabel: string;
   subtotalFormatted: string;
   shippingFormatted: string;
-  shippingAddressPrompt: string | null;
+  /** Distance part shown smaller next to the shipping amount, e.g. "0.512 km". */
+  shippingDistanceLabel?: string | null;
   discountFormatted: string | null;
   changeFormatted: string | null;
   totalFormatted: string;
@@ -91,7 +92,7 @@ export function CheckoutOrderSummary({
   totalLabel,
   subtotalFormatted,
   shippingFormatted,
-  shippingAddressPrompt,
+  shippingDistanceLabel = null,
   discountFormatted,
   changeFormatted,
   totalFormatted,
@@ -210,7 +211,15 @@ export function CheckoutOrderSummary({
           ) : null}
           <div className="flex justify-between text-white">
             <span>{shippingLabel}</span>
-            <span className="text-right">{shippingFormatted}</span>
+            <span className="text-right">
+              {shippingFormatted}
+              {shippingDistanceLabel ? (
+                <span className="text-[calc(1em-2px)]">
+                  {" "}
+                  ({shippingDistanceLabel})
+                </span>
+              ) : null}
+            </span>
           </div>
           {changeFormatted ? (
             <div className="flex justify-between text-white">
@@ -227,19 +236,6 @@ export function CheckoutOrderSummary({
         </div>
 
         <div className="relative z-[2]">
-          {shippingAddressPrompt ? (
-            <button
-              type="button"
-              onClick={() => {
-                document
-                  .getElementById("checkout-shipping-address")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-              className={SUMMARY_ALERT_PILL_CLASS}
-            >
-              {shippingAddressPrompt}
-            </button>
-          ) : null}
           {error ? (
             <p className={SUMMARY_ALERT_PILL_CLASS} role="alert">
               {error}
