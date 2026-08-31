@@ -102,7 +102,7 @@ export function CustomerOrdersTable({
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="font-medium text-white">{order.orderNumber}</p>
                   {order.isGroupOrder && groupOrderBadgeLabel ? (
-                    <span className="inline-flex rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-brand-forest">
+                    <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-emerald-600">
                       {groupOrderBadgeLabel}
                     </span>
                   ) : null}

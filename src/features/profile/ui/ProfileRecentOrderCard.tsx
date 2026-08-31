@@ -63,7 +63,7 @@ export function ProfileRecentOrderCard({
         <div className="flex shrink-0 flex-col items-end gap-1.5">
           <span className={PROFILE_STATUS_BADGE}>{status}</span>
           {isGroupOrder && groupOrderBadgeLabel ? (
-            <span className="inline-flex rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-brand-forest shadow-sm ring-1 ring-gray-200">
+            <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-emerald-600">
               {groupOrderBadgeLabel}
             </span>
           ) : null}
