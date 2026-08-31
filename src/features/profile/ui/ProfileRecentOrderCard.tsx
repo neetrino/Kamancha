@@ -56,17 +56,19 @@ export function ProfileRecentOrderCard({
           <h3 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
             {orderNumberLabel} {orderNumber}
           </h3>
+          <p className="mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest sm:text-xl">
+            {totalLabel}
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <span className={PROFILE_STATUS_BADGE}>{status}</span>
           {isGroupOrder && groupOrderBadgeLabel ? (
-            <p className="mt-1 text-xs font-medium text-brand-forest">
+            <span className="inline-flex rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-brand-forest shadow-sm ring-1 ring-gray-200">
               {groupOrderBadgeLabel}
-            </p>
+            </span>
           ) : null}
         </div>
-        <span className={`${PROFILE_STATUS_BADGE} shrink-0`}>{status}</span>
       </div>
-      <p className="mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest sm:text-xl">
-        {totalLabel}
-      </p>
 
       <div className="my-4 h-px rounded-full bg-gray-200" aria-hidden />
 

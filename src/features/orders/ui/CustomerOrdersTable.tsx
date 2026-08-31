@@ -99,12 +99,14 @@ export function CustomerOrdersTable({
               className="flex w-full flex-col gap-2 py-4 text-left transition-colors hover:opacity-90 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
             >
               <div className="min-w-0">
-                <p className="font-medium text-white">{order.orderNumber}</p>
-                {order.isGroupOrder && groupOrderBadgeLabel ? (
-                  <p className="mt-0.5 text-xs font-medium text-emerald-200">
-                    {groupOrderBadgeLabel}
-                  </p>
-                ) : null}
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-medium text-white">{order.orderNumber}</p>
+                  {order.isGroupOrder && groupOrderBadgeLabel ? (
+                    <span className="inline-flex rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-brand-forest">
+                      {groupOrderBadgeLabel}
+                    </span>
+                  ) : null}
+                </div>
                 <p className="mt-1 text-xs text-white/80">
                   {placed.date} {placed.time}
                 </p>
