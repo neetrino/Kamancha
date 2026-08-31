@@ -171,17 +171,17 @@ export function MyGiftCardItem({
       className={`${PROFILE_INNER_CARD} h-full overflow-hidden rounded-3xl border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)]`}
     >
       <div className="space-y-5 px-5 py-5 sm:px-6 sm:py-6">
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-3">
           <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-forest text-white">
             <Gift className="size-5" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
-            <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between xl:gap-3">
-              <p className="font-big-fat-boii text-lg leading-none font-normal tracking-wide text-gray-900 uppercase sm:text-xl">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+              <p className="min-w-0 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-gray-900 uppercase sm:text-xl">
                 {card.code}
               </p>
               <span
-                className={`inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${statusBadgeClass(card.status)}`}
+                className={`inline-flex w-fit shrink-0 items-center justify-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${statusBadgeClass(card.status)}`}
               >
                 <span
                   className={`size-1.5 rounded-full ${statusDotClass(card.status)}`}
