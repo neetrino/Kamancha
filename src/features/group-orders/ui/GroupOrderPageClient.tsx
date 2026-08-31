@@ -237,7 +237,16 @@ export function GroupOrderPageClient({
       );
       return;
     }
-    run(async () => cancelGroupOrderAction({ inviteToken }));
+    setError(null);
+    startTransition(async () => {
+      const result = await cancelGroupOrderAction({ inviteToken });
+      if (!result.ok) {
+        setError(result.error ?? labels.errorGeneric);
+        return;
+      }
+      router.push(`/${locale}`);
+      router.refresh();
+    });
   }
 
   async function copyLink(): Promise<void> {
@@ -695,6 +704,7 @@ export function GroupOrderPageClient({
             view.status !== "CANCELLED" &&
             view.status !== "COMPLETED" &&
             view.status !== "PAID" &&
+            view.status !== "PARTIALLY_PAID" &&
             view.status !== "PREPARING" &&
             !(canEdit && view.currentParticipantId && !iAmReady) ? (
               <KamanchaPillButton
@@ -706,7 +716,9 @@ export function GroupOrderPageClient({
               />
             ) : null}
 
-            {isOrganizer && view.status === "CHECKOUT" ? (
+            {isOrganizer &&
+            (view.status === "CHECKOUT" ||
+              view.status === "AWAITING_PAYMENTS") ? (
               <KamanchaPillButton
                 type="button"
                 variant="light"
@@ -730,7 +742,8 @@ export function GroupOrderPageClient({
             ) : null}
 
             {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-            view.status === "AWAITING_PAYMENTS" &&
+            (view.status === "AWAITING_PAYMENTS" ||
+              view.status === "PARTIALLY_PAID") &&
             !isOrganizer &&
             view.currentParticipantId &&
             currentParticipant &&
@@ -753,7 +766,8 @@ export function GroupOrderPageClient({
             ) : null}
 
             {view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-            view.status === "AWAITING_PAYMENTS" &&
+            (view.status === "AWAITING_PAYMENTS" ||
+              view.status === "PARTIALLY_PAID") &&
             !isOrganizer &&
             view.currentParticipantId &&
             currentParticipant &&

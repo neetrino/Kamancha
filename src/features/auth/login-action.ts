@@ -13,6 +13,7 @@ import {
   type AuthFieldErrors,
 } from "@/features/auth/auth-action-state";
 import { loginSchema } from "@/features/auth/schemas";
+import { claimGuestGroupOrderParticipantsForUser } from "@/features/group-orders/application/claim-guest-participants";
 import { createSession } from "@/lib/auth/session";
 import { verifyPassword } from "@/lib/auth/password";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
@@ -89,5 +90,6 @@ export async function loginAction(
   await createSession(user.id, {
     persistent: parsed.data.rememberMe === "on",
   });
+  await claimGuestGroupOrderParticipantsForUser(user.id);
   redirect(resolveSafeNextPath(locale, formData.get("next")));
 }

@@ -26,6 +26,7 @@ type CustomerOrderDetailsSheetProps = {
   isLoading: boolean;
   copy: Dictionary["admin"];
   includeAdminDetails?: boolean;
+  groupOrderBadgeLabel?: string;
 };
 
 /**
@@ -39,6 +40,7 @@ export function CustomerOrderDetailsSheet({
   isLoading,
   copy,
   includeAdminDetails = false,
+  groupOrderBadgeLabel,
 }: CustomerOrderDetailsSheetProps) {
   const d = copy.orders.drawer;
 
@@ -59,6 +61,11 @@ export function CustomerOrderDetailsSheet({
         {detail ? (
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <p className="text-sm text-gray-500">#{detail.orderNumber}</p>
+            {detail.isGroupOrder && groupOrderBadgeLabel ? (
+              <span className="inline-flex rounded-full bg-brand-forest/10 px-3 py-1 text-xs font-medium text-brand-forest">
+                {groupOrderBadgeLabel}
+              </span>
+            ) : null}
             <span
               className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
             >

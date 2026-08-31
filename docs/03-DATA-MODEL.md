@@ -120,6 +120,7 @@ Entity ownership-ը պահվում է typed nullable FKs-ով՝
 - `category_id`
 - `hero_slide_id`
 - `blog_post_id`
+- `popup_id`
 
 `CHECK` constraint-ը պահանջում է՝ ready entity media-ի համար ճիշտ մեկ owner, pending upload-ի համար owner-ի ժամանակավոր բացակայություն, branding asset-ի համար explicit `purpose`։ Generic `owner_type + owner_id` polymorphic կապ չի օգտագործվում, որպեսզի foreign key protection-ը չկորչի։
 
@@ -127,7 +128,8 @@ Partial unique constraints՝
 
 - մեկ primary media per product,
 - մեկ desktop և մեկ mobile media role per hero slide,
-- մեկ cover media per blog post/category՝ ըստ role policy-ի։
+- մեկ cover media per blog post/category՝ ըստ role policy-ի,
+- մեկ `POPUP` media per store popup։
 
 Full CDN URL չի պահվում. URL-ը կառուցվում է config-ից։
 
@@ -187,7 +189,11 @@ Direct unexplained stock overwrite չի թույլատրվում։
 
 `translations JSONB`՝ locale title/subtitle/button label, validated button URL, sort order, active և timestamps։ Desktop/mobile assets-ը resolve են լինում `media_assets.hero_slide_id + role`-ով։
 
-### 7.2 `blog_posts`
+### 7.2 `store_popups`
+
+Admin title, optional click-through `link_url`, `is_active` և timestamps։ Միաժամանակ միայն մեկ ակտիվ popup (partial unique index)։ Պատկերը `media_assets.popup_id + role=POPUP`։
+
+### 7.3 `blog_posts`
 
 Author, status, publish timestamp, `translations JSONB` (title/slug/excerpt/sanitized content/SEO), `tags JSONB`/validated string array և timestamps/archive state։ Locale slug expression indexes-ը unique են։ Cover-ը `media_assets` relation է։
 

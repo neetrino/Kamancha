@@ -3,12 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
-import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
-import {
-  ADMIN_LABEL,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_CARD_CLASS } from "@/features/admin/ui/admin-ui";
 import {
   ANALYTICS_PERIOD_PRESETS,
   formatAnalyticsDisplayDate,
@@ -45,7 +43,7 @@ function AnalyticsPeriodCardForm({
     ? "custom"
     : preset;
 
-  const presetLabel = (p: AnalyticsPeriodPreset): string => {
+  const presetLabel = (next: AnalyticsPeriodPreset): string => {
     const map: Record<AnalyticsPeriodPreset, string> = {
       last_7_days: copy.analytics.period.last7Days,
       last_30_days: copy.analytics.period.last30Days,
@@ -53,7 +51,7 @@ function AnalyticsPeriodCardForm({
       this_month: copy.analytics.period.thisMonth,
       custom: copy.analytics.period.customRange,
     };
-    return map[p];
+    return map[next];
   };
 
   function navigate(nextFrom: string, nextTo: string): void {
@@ -86,14 +84,22 @@ function AnalyticsPeriodCardForm({
   }
 
   return (
-    <Card className="mb-6 rounded-2xl p-5 sm:p-6">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        <h2 className="text-lg font-semibold text-gray-900">
-          {copy.analytics.period.title}
-        </h2>
-        <p className="text-sm font-medium text-gray-500">
-          {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
-        </p>
+    <div className={`mb-3 ${ADMIN_CARD_CLASS} p-4 sm:p-5`}>
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+            {copy.analytics.period.title}
+          </h2>
+          <p className="mt-1 text-sm font-medium text-gray-700">
+            {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
+          </p>
+        </div>
+        <a
+          href={`/api/exports/admin/analytics?${exportQuery}`}
+          className="rounded-[12px] px-3 py-1.5 text-xs font-medium text-brand-forest ring-1 ring-brand-forest/20 hover:bg-brand-forest/5"
+        >
+          {copy.analytics.period.downloadCsv}
+        </a>
       </div>
 
       <div className="max-w-md">
@@ -113,7 +119,7 @@ function AnalyticsPeriodCardForm({
       {selectedPreset === "custom" ? (
         <form
           onSubmit={onCustomSubmit}
-          className="mt-4 flex flex-wrap items-end gap-3"
+          className="mt-3 flex flex-wrap items-end gap-3"
         >
           <label className="min-w-[140px] flex-1">
             <span className={ADMIN_LABEL}>{copy.analytics.period.from}</span>
@@ -140,27 +146,19 @@ function AnalyticsPeriodCardForm({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-brand-forest px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="rounded-[12px] bg-brand-forest px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {copy.analytics.period.apply}
           </button>
         </form>
       ) : null}
 
-      <div className="mt-4 flex flex-wrap items-center gap-4">
-        <a
-          href={`/api/exports/admin/analytics?${exportQuery}`}
-          className="text-sm font-medium text-gray-700 underline-offset-2 hover:underline"
-        >
-          {copy.analytics.period.downloadCsv}
-        </a>
-        {rangeInvalid ? (
-          <p className="text-sm text-red-700">
-            {copy.analytics.period.invalidRange}
-          </p>
-        ) : null}
-      </div>
-    </Card>
+      {rangeInvalid ? (
+        <p className="mt-3 text-sm text-red-700">
+          {copy.analytics.period.invalidRange}
+        </p>
+      ) : null}
+    </div>
   );
 }
 

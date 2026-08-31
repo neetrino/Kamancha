@@ -39,6 +39,7 @@ export type AdminOrderDetailView = {
   deliveryLabel: string | null;
   couponCode: string | null;
   isPickup: boolean;
+  isGroupOrder: boolean;
   storeName: string;
   shippingMethod: string;
   addressLine: string;
@@ -94,6 +95,7 @@ export function toAdminOrderDetailView(
     deliveryLabel: order.deliveryLabelSnapshot,
     couponCode: order.promotionCodeSnapshot,
     isPickup,
+    isGroupOrder: order.groupOrderId != null,
     storeName,
     shippingMethod: isPickup
       ? "pickup"

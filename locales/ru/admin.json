@@ -14,7 +14,8 @@
     "blog": "Блог",
     "messages": "Сообщения",
     "settings": "Настройки",
-    "giftCards": "Подарочные карты"
+    "giftCards": "Подарочные карты",
+    "popups": "Popup"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -39,7 +40,15 @@
       "dateTimePlaceholder": "ДД.ММ.ГГГГ ЧЧ:ММ",
       "today": "Сегодня",
       "time": "Время",
-      "weekdaysShort": ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+      "weekdaysShort": [
+        "Пн",
+        "Вт",
+        "Ср",
+        "Чт",
+        "Пт",
+        "Сб",
+        "Вс"
+      ]
     },
     "search": "Поиск",
     "filter": "Фильтр",
@@ -93,20 +102,37 @@
       "post": "публикацию",
       "denomination": "номинал",
       "closedDate": "закрытый день",
-      "modifier": "модификатор"
+      "modifier": "модификатор",
+      "popup": "popup"
     },
     "selectedProduct": "выбранный товар",
     "selectedProducts": "{count} выбранных товаров"
   },
   "dashboard": {
-    "welcome": "Добро пожаловать в панель управления",
-    "stats": {
-      "users": "Пользователи",
-      "activeProducts": "Активные товары",
-      "ordersRange": "Заказы (период)",
-      "revenueRange": "Выручка (период)"
-    },
-    "revenueDeltaVsPrev": "{delta} к пред. периоду",
+    "welcomeLead": "Добро пожаловать в",
+    "welcomeAccent": "панель управления",
+    "users": "Пользователи",
+    "activeProducts": "Активные товары",
+    "ordersRange": "Заказы (период)",
+    "revenueRange": "Выручка (период)",
+    "periodsTitle": "Продажи по периодам",
+    "viewAnalytics": "Полная аналитика",
+    "periodToday": "Сегодня",
+    "periodWeek": "Неделя",
+    "periodMonth": "Месяц",
+    "periodQuarter": "Квартал",
+    "aov": "Средний чек",
+    "chartTitle": "Динамика выручки и заказов",
+    "chartSubtitle": "Помесячная динамика за выбранный период",
+    "chartRangeLabel": "Период графика",
+    "chartRange6Months": "6 месяцев",
+    "chartRangeYear": "Год",
+    "chartRevenue": "Выручка",
+    "chartOrders": "Заказы",
+    "chartAria": "График помесячной выручки и заказов",
+    "chartEmpty": "В этом периоде пока нет заказов.",
+    "chartEmptyShort": "—",
+    "chartBestMonth": "Лучший месяц",
     "recentOrders": "Последние заказы",
     "topProducts": "Популярные товары",
     "viewAll": "Показать все",
@@ -115,17 +141,23 @@
     "soldCount": "Продано: {quantity}",
     "quickActions": "Быстрые действия",
     "addProduct": "Добавить товар",
-    "addProductSubtitle": "Создать новый товар",
+    "addProductHint": "Создать новый товар",
     "manageOrders": "Управление заказами",
-    "manageOrdersSubtitle": "Посмотреть все заказы",
+    "manageOrdersHint": "Посмотреть все заказы",
     "manageUsers": "Управление пользователями",
-    "manageUsersSubtitle": "Посмотреть всех пользователей",
+    "manageUsersHint": "Посмотреть всех пользователей",
     "settings": "Настройки",
-    "settingsSubtitle": "Настроить магазин"
+    "settingsHint": "Настроить магазин"
   },
   "orders": {
     "title": "Заказы",
     "breadcrumb": "Заказы",
+    "kindFilter": {
+      "aria": "Тип заказов",
+      "all": "Все",
+      "personal": "Личные",
+      "group": "Групповые"
+    },
     "filters": {
       "orderStatusAria": "Статус заказа",
       "allStatuses": "Все статусы",
@@ -159,7 +191,8 @@
       "paymentMethod": "Способ оплаты",
       "total": "Итого",
       "placed": "Размещён",
-      "archivedBadge": "В архиве"
+      "archivedBadge": "В архиве",
+      "groupOrderBadge": "Групповой"
     },
     "inlineStatus": {
       "changeOrderAria": "Изменить статус заказа",
@@ -680,6 +713,7 @@
     "metrics": {
       "totalOrders": "Всего заказов",
       "totalRevenue": "Общая выручка",
+      "averageOrderValue": "Средний чек",
       "totalUsers": "Всего пользователей"
     },
     "topProducts": {
@@ -725,6 +759,37 @@
       "editAria": "Редактировать баннер",
       "title": "Заголовок",
       "subtitle": "Подзаголовок",
+      "uploadImage": "Загрузить изображение",
+      "uploadImageButton": "+ Загрузить изображение",
+      "changeImage": "Изменить изображение",
+      "remove": "Убрать",
+      "create": "Создать",
+      "edit": "Редактировать"
+    }
+  },
+  "popups": {
+    "title": "Popup",
+    "count": "{count} popup",
+    "countPlural": "{count} popup",
+    "createPopup": "Создать popup",
+    "listHeading": "Popup ({count})",
+    "noImage": "Нет изображения",
+    "active": "АКТИВЕН",
+    "inactive": "НЕАКТИВЕН",
+    "empty": "Popup пока нет.",
+    "editAria": "Редактировать {title}",
+    "deleteAria": "Удалить {title}",
+    "activateAria": "Активировать popup",
+    "deactivateAria": "Деактивировать popup",
+    "drawer": {
+      "createTitle": "Создать popup",
+      "editTitle": "Редактировать popup",
+      "createAria": "Создать popup",
+      "editAria": "Редактировать popup",
+      "title": "Заголовок",
+      "linkUrl": "Ссылка (необязательно)",
+      "linkUrlPlaceholder": "/ru/products или https://…",
+      "linkUrlHint": "Адрес, открываемый при клике по изображению.",
       "uploadImage": "Загрузить изображение",
       "uploadImageButton": "+ Загрузить изображение",
       "changeImage": "Изменить изображение",

@@ -6,9 +6,12 @@ import {
   cartItems,
   groupOrderItemModifiers,
   groupOrderItems,
+  groupOrders,
 } from "@/db/schema";
 import { getOrCreateCart } from "@/features/cart/cart";
 import { assertOrganizerAccess } from "@/features/group-orders/application/access";
+import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
+import { canTransitionGroupOrderStatus } from "@/features/group-orders/domain/status";
 import { createId } from "@/lib/id";
 
 export type PrepareGroupOrderCheckoutResult =
@@ -18,6 +21,9 @@ export type PrepareGroupOrderCheckoutResult =
 /**
  * Copies locked group-order lines into the organizer's personal cart
  * so the standard storefront checkout page can be used.
+ *
+ * Organizer may proceed from AWAITING_PAYMENTS even when some guests are
+ * still unpaid (cash collection) — checkout then settles to PARTIALLY_PAID.
  */
 export async function prepareGroupOrderCheckout(
   inviteToken: string,
@@ -25,14 +31,35 @@ export async function prepareGroupOrderCheckout(
   const access = await assertOrganizerAccess(inviteToken);
   if (!access.ok) return access;
 
-  if (access.groupOrder.status !== "CHECKOUT") {
+  const db = getDb();
+  let status = access.groupOrder.status;
+
+  if (status === "AWAITING_PAYMENTS") {
+    if (!canTransitionGroupOrderStatus("AWAITING_PAYMENTS", "CHECKOUT")) {
+      return { ok: false, error: "Cannot proceed to checkout yet." };
+    }
+    await db
+      .update(groupOrders)
+      .set({ status: "CHECKOUT", updatedAt: new Date() })
+      .where(eq(groupOrders.id, access.groupOrder.id));
+    await appendGroupOrderEvent(db, {
+      groupOrderId: access.groupOrder.id,
+      eventType: "STATUS_CHANGE",
+      fromState: "AWAITING_PAYMENTS",
+      toState: "CHECKOUT",
+      actorParticipantId: access.participant.id,
+      payload: { source: "organizer_proceed_checkout" },
+    });
+    status = "CHECKOUT";
+  }
+
+  if (status !== "CHECKOUT") {
     return {
       ok: false,
       error: "Group order is not ready for checkout yet.",
     };
   }
 
-  const db = getDb();
   const lines = await db
     .select()
     .from(groupOrderItems)

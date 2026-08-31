@@ -8,6 +8,7 @@ import {
   peekGuestCartToken,
 } from "@/features/cart/guest-token";
 import { peekGroupOrderSession } from "@/features/group-orders/session";
+import { claimOrResolveParticipantForUser } from "@/features/group-orders/application/claim-guest-participants";
 import { getCurrentUser } from "@/lib/auth/session";
 
 type GroupOrderRow = typeof groupOrders.$inferSelect;
@@ -92,6 +93,14 @@ export async function assertParticipantAccess(
       )
       .limit(1);
     if (byCookie) {
+      const user = await getCurrentUser();
+      if (user) {
+        const resolved = await claimOrResolveParticipantForUser({
+          userId: user.id,
+          participant: byCookie,
+        });
+        return { ok: true, groupOrder, participant: resolved };
+      }
       return { ok: true, groupOrder, participant: byCookie };
     }
   }

@@ -6,6 +6,7 @@ import { Users } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { leaveGroupOrderSessionAction } from "@/features/group-orders/actions";
+import { GroupOrderRemoteCancelWatcher } from "@/features/group-orders/ui/GroupOrderRemoteCancelWatcher";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -14,6 +15,7 @@ type ActiveGroupOrderBannerProps = {
   labels: Dictionary["groupOrder"];
   organizerDisplayName: string;
   inviteToken: string;
+  isOrganizer: boolean;
 };
 
 export function ActiveGroupOrderBanner({
@@ -21,12 +23,19 @@ export function ActiveGroupOrderBanner({
   labels,
   organizerDisplayName,
   inviteToken,
+  isOrganizer,
 }: ActiveGroupOrderBannerProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   return (
     <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-3 sm:px-6 lg:px-8">
+      <GroupOrderRemoteCancelWatcher
+        inviteToken={inviteToken}
+        locale={locale}
+        enabled={!isOrganizer}
+        cancelledMessage={labels.organizerCancelledAlert}
+      />
       <div className="liquid-glass isolate overflow-hidden rounded-2xl px-4 py-2.5">
         <div className="relative z-[2] flex flex-col gap-2 text-sm text-white sm:flex-row sm:items-center sm:justify-between">
           <p className="inline-flex items-center gap-2 font-medium">
@@ -48,6 +57,7 @@ export function ActiveGroupOrderBanner({
               onClick={() => {
                 startTransition(async () => {
                   await leaveGroupOrderSessionAction();
+                  router.push(`/${locale}`);
                   router.refresh();
                 });
               }}

@@ -473,6 +473,7 @@ export async function createOrderAction(
         tx,
         input.giftCardCode,
         payableBeforeGiftCard,
+        user ? { userId: user.id, email: user.email } : null,
       );
       const totalAmount = Math.max(
         0,

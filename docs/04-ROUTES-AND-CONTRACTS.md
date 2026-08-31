@@ -67,6 +67,7 @@
 |---|---|
 | `/[locale]/admin` | Dashboard |
 | `/[locale]/admin/hero` | Hero slide management |
+| `/[locale]/admin/popups` | Storefront promo popup CRUD |
 | `/[locale]/admin/orders` | Order list/bulk actions |
 | `/[locale]/admin/orders/[orderNumber]` | Detail/deep-link drawer |
 | `/[locale]/admin/products` | Product list/create/edit drawer routes |

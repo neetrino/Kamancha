@@ -8,12 +8,14 @@ import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
+import type { CustomerOrderKind } from "@/features/orders/schemas/change-status";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminOrdersFiltersProps = {
   total: number;
   status?: OrderStatus;
   paymentStatus?: string;
+  kind?: CustomerOrderKind;
   q?: string;
   copy: Dictionary["admin"];
 };
@@ -22,6 +24,7 @@ export function AdminOrdersFilters({
   total,
   status,
   paymentStatus,
+  kind = "all",
   q,
   copy,
 }: AdminOrdersFiltersProps) {
@@ -61,6 +64,9 @@ export function AdminOrdersFilters({
         method="get"
         className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-nowrap sm:items-center"
       >
+        {kind !== "all" ? (
+          <input type="hidden" name="kind" value={kind} />
+        ) : null}
         <SelectDropdown
           name="status"
           ariaLabel={f.orderStatusAria}

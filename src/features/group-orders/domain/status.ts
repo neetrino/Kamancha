@@ -4,6 +4,7 @@ export const GROUP_ORDER_STATUSES = [
   "LOCKED",
   "AWAITING_PAYMENTS",
   "CHECKOUT",
+  "PARTIALLY_PAID",
   "PAID",
   "PREPARING",
   "COMPLETED",
@@ -23,12 +24,14 @@ export type GroupOrderPaymentMode = (typeof GROUP_ORDER_PAYMENT_MODES)[number];
 /**
  * Allowed transitions. Terminal: EXPIRED, CANCELLED, COMPLETED.
  * Organizer-pays flow may skip AWAITING_PAYMENTS (OPEN → LOCKED → CHECKOUT).
+ * CHECKOUT → PARTIALLY_PAID when some (not all) owing participants are settled.
  */
 const TRANSITIONS: Record<GroupOrderStatus, readonly GroupOrderStatus[]> = {
   OPEN: ["LOCKED", "EXPIRED", "CANCELLED"],
   LOCKED: ["AWAITING_PAYMENTS", "CHECKOUT", "OPEN", "CANCELLED", "EXPIRED"],
   AWAITING_PAYMENTS: ["CHECKOUT", "CANCELLED", "EXPIRED"],
-  CHECKOUT: ["PAID", "CANCELLED", "EXPIRED"],
+  CHECKOUT: ["PARTIALLY_PAID", "PAID", "CANCELLED", "EXPIRED"],
+  PARTIALLY_PAID: ["PAID", "PREPARING", "CANCELLED"],
   PAID: ["PREPARING", "CANCELLED"],
   PREPARING: ["COMPLETED", "CANCELLED"],
   COMPLETED: [],
@@ -88,6 +91,22 @@ export function nextStatusAfterLock(
   return paymentMode === "ORGANIZER_PAYS_ALL"
     ? "CHECKOUT"
     : "AWAITING_PAYMENTS";
+}
+
+/**
+ * Organizer leaving an organizer-pays session dissolves the group for everyone.
+ * Split mode keeps the order (session cookie only is cleared).
+ */
+export function shouldDissolveGroupOrderOnOrganizerLeave(input: {
+  paymentMode: GroupOrderPaymentMode;
+  participantRole: string;
+  status: GroupOrderStatus;
+}): boolean {
+  return (
+    input.participantRole === "ORGANIZER" &&
+    input.paymentMode === "ORGANIZER_PAYS_ALL" &&
+    canTransitionGroupOrderStatus(input.status, "CANCELLED")
+  );
 }
 
 /** Default TTL for a new group-order session (48 hours). */

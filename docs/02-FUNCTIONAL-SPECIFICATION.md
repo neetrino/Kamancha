@@ -219,6 +219,13 @@
 - Media upload-ը R2 lifecycle-ով է; reorder-ը atomic կամ conflict-safe է։
 - Public home cache/tag-ը invalid է դառնում publish-affecting mutation-ից հետո։
 
+## 11.1 Admin storefront popups
+
+- List + create/edit/delete/active toggle։
+- Fields՝ admin title, image (required), optional click-through URL։
+- Միաժամանակ միայն մեկ ակտիվ popup։ Storefront-ում երևում է բոլոր էջերում; փակելուց հետո նույն browser session-ում չի կրկնվում։
+- Media՝ `media_assets.popup_id` + `POPUP` role; cache tag `popups`։
+
 ## 12. Admin orders
 
 | ID | Պահանջ / acceptance criteria |

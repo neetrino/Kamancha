@@ -7,6 +7,7 @@ import { Search } from "lucide-react";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
+import type { CustomerOrderKind } from "@/features/orders/schemas/change-status";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type CustomerOrdersFiltersProps = {
@@ -14,6 +15,7 @@ type CustomerOrdersFiltersProps = {
   totalLabel: string;
   status?: OrderStatus;
   paymentStatus?: string;
+  kind?: CustomerOrderKind;
   q?: string;
   copy: Dictionary["admin"]["orders"]["filters"];
   searchPlaceholder: string;
@@ -25,6 +27,7 @@ export function CustomerOrdersFilters({
   totalLabel,
   status,
   paymentStatus,
+  kind = "all",
   q,
   copy,
   searchPlaceholder,
@@ -64,6 +67,9 @@ export function CustomerOrdersFilters({
         method="get"
         className="relative z-[2] flex flex-col gap-3 xl:flex-row xl:flex-nowrap xl:items-center"
       >
+        {kind !== "all" ? (
+          <input type="hidden" name="kind" value={kind} />
+        ) : null}
         <SelectDropdown
           name="status"
           ariaLabel={copy.orderStatusAria}

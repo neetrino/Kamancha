@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 import { giftCards } from "@/db/schema";
 import type { DbTransaction } from "@/db/transaction";
@@ -6,8 +6,10 @@ import { redeemGiftCardForOrder } from "@/features/gift-cards/application/gift-c
 import {
   calculateGiftCardRedeemAmount,
   giftCardRedeemErrorMessage,
+  isGiftCardRecipientActor,
   isGiftCardRedeemable,
   normalizeGiftCardCode,
+  type GiftCardRedeemActor,
 } from "@/features/gift-cards/domain/gift-card-rules";
 
 export type CheckoutGiftCardApplication = {
@@ -27,6 +29,7 @@ export async function lockAndQuoteGiftCardForCheckout(
   tx: DbTransaction,
   rawCode: string | undefined,
   payableBeforeGiftCard: number,
+  actor: GiftCardRedeemActor | null,
 ): Promise<CheckoutGiftCardApplication> {
   if (!rawCode?.trim()) {
     return EMPTY_GIFT_CARD;
@@ -56,6 +59,37 @@ export async function lockAndQuoteGiftCardForCheckout(
         expiresAt: card?.expiresAt ?? null,
       }),
     );
+  }
+
+  if (
+    !isGiftCardRecipientActor({
+      recipientUserId: card.recipientUserId,
+      recipientEmail: card.recipientEmail,
+      actor,
+    })
+  ) {
+    throw new Error(
+      giftCardRedeemErrorMessage({
+        found: true,
+        status: card.status,
+        balanceAmount: card.balanceAmount,
+        expiresAt: card.expiresAt,
+        recipientDenied: true,
+        actorPresent: Boolean(actor),
+      }),
+    );
+  }
+
+  if (actor && card.recipientUserId == null) {
+    await tx
+      .update(giftCards)
+      .set({ recipientUserId: actor.userId, updatedAt: new Date() })
+      .where(
+        and(
+          eq(giftCards.id, card.id),
+          sql`${giftCards.recipientUserId} is null`,
+        ),
+      );
   }
 
   const giftCardAmount = calculateGiftCardRedeemAmount({

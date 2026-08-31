@@ -19,6 +19,7 @@ type CustomerOrdersViewOrder = {
   baseCurrency: string;
   placedAt: string | Date;
   itemsCount: number;
+  isGroupOrder: boolean;
 };
 
 type CustomerOrdersViewProps = {
@@ -34,6 +35,7 @@ type CustomerOrdersViewProps = {
     | "viewDetails"
     | "noOrders"
     | "startShopping"
+    | "groupOrderBadge"
   >;
 };
 
@@ -90,6 +92,7 @@ export function CustomerOrdersView({
         <CustomerOrdersTable
           orders={orders}
           emptyLabel={profileCopy.noOrders}
+          groupOrderBadgeLabel={profileCopy.groupOrderBadge}
           statusLabels={copy.orders.statusLabels}
           onOpenOrder={openOrder}
         />
@@ -101,6 +104,7 @@ export function CustomerOrdersView({
         error={error}
         isLoading={isPending}
         copy={copy}
+        groupOrderBadgeLabel={profileCopy.groupOrderBadge}
       />
     </>
   );

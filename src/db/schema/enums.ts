@@ -32,6 +32,7 @@ export const mediaRoleEnum = pgEnum("media_role", [
   "HERO_DESKTOP",
   "HERO_MOBILE",
   "BRANDING",
+  "POPUP",
 ]);
 
 export const stockMovementReasonEnum = pgEnum("stock_movement_reason", [
@@ -143,6 +144,7 @@ export const groupOrderStatusEnum = pgEnum("group_order_status", [
   "LOCKED",
   "AWAITING_PAYMENTS",
   "CHECKOUT",
+  "PARTIALLY_PAID",
   "PAID",
   "PREPARING",
   "COMPLETED",

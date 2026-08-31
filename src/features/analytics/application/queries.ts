@@ -12,7 +12,7 @@ import {
 
 import { getProviders } from "@/config/providers";
 import { getDb } from "@/db/client";
-import { orders, users } from "@/db/schema";
+import { orders } from "@/db/schema";
 import {
   queryTopCategories,
   queryTopSellingProducts,
@@ -23,13 +23,6 @@ import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { getStoreRevenue } from "@/features/settings/application/queries";
 import type { Locale } from "@/lib/i18n/config";
-
-export type {
-  AnalyticsTopCategory,
-  AnalyticsTopProduct,
-} from "@/features/analytics/application/top-rankings";
-export type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
-export { buildAnalyticsCsv, guardCsvCell } from "@/features/analytics/domain/csv";
 
 const CACHE_TTL_SECONDS = 300;
 const cacheKeys = new Set<string>();
@@ -42,7 +35,6 @@ export type AnalyticsSummary = {
   orderCount: number;
   revenueAmount: number;
   averageOrderValue: number;
-  userCount: number;
   previousOrderCount: number;
   previousRevenueAmount: number;
   previousAverageOrderValue: number;
@@ -86,7 +78,7 @@ function averageOrderValue(revenue: number, orderCount: number): number {
 }
 
 function cacheKey(from: string, to: string, locale: Locale): string {
-  return `analytics:${locale}:${from}:${to}`;
+  return `analytics:v2:${locale}:${from}:${to}`;
 }
 
 async function queryPeriodMetrics(input: {
@@ -164,7 +156,7 @@ async function computeAnalyticsSummary(input: {
   const revenueStatuses = revenue.statuses as OrderStatus[];
   const bounds = periodBounds(input.from, input.to);
 
-  const [current, previous, dailyRows, [usersRow], topProducts, topCategories] =
+  const [current, previous, dailyRows, topProducts, topCategories] =
     await Promise.all([
       queryPeriodMetrics({
         start: bounds.start,
@@ -181,7 +173,6 @@ async function computeAnalyticsSummary(input: {
         to: input.to,
         revenueStatuses,
       }),
-      getDb().select({ value: count() }).from(users),
       queryTopSellingProducts({
         start: bounds.start,
         end: bounds.end,
@@ -206,7 +197,6 @@ async function computeAnalyticsSummary(input: {
       current.revenueAmount,
       current.orderCount,
     ),
-    userCount: usersRow?.value ?? 0,
     previousOrderCount: previous.orderCount,
     previousRevenueAmount: previous.revenueAmount,
     previousAverageOrderValue: averageOrderValue(

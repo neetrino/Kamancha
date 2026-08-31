@@ -118,7 +118,10 @@ export async function previewGiftCardAction(
     Math.max(0, merchandiseAfterDiscount - bonusRedeemedAmount) +
     deliveryAmount;
 
-  const evaluated = await evaluateGiftCardForRedeem(parsed.data.giftCardCode);
+  const evaluated = await evaluateGiftCardForRedeem(
+    parsed.data.giftCardCode,
+    user ? { userId: user.id, email: user.email } : null,
+  );
   if (!evaluated.ok) {
     return { ok: false, error: evaluated.error };
   }

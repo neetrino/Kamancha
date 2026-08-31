@@ -16,7 +16,10 @@ import {
   nextStatusAfterLock,
   type GroupOrderStatus,
 } from "@/features/group-orders/domain/status";
-import { advanceSplitGroupOrderIfAllPaid } from "@/features/group-orders/application/advance-after-payments";
+import {
+  advancePartiallyPaidGroupOrderIfAllPaid,
+  advanceSplitGroupOrderIfAllPaid,
+} from "@/features/group-orders/application/advance-after-payments";
 import { isSuccessfulParticipantPayment } from "@/features/group-orders/domain/spend-limit";
 
 export type ManageResult = { ok: true } | { ok: false; error: string };
@@ -298,6 +301,12 @@ export async function markParticipantPaid(input: {
   });
 
   await advanceSplitGroupOrderIfAllPaid({
+    db,
+    groupOrderId: input.groupOrderId,
+    actorUserId: input.actorUserId ?? null,
+  });
+
+  await advancePartiallyPaidGroupOrderIfAllPaid({
     db,
     groupOrderId: input.groupOrderId,
     actorUserId: input.actorUserId ?? null,

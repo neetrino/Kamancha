@@ -20,6 +20,7 @@ type AdminOrdersViewOrder = {
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;
+  isGroupOrder: boolean;
 };
 
 type AdminOrdersViewProps = {

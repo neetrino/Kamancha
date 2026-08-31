@@ -5,6 +5,7 @@ import { groupOrderParticipants, groupOrders, orders } from "@/db/schema";
 import type { DbTransaction } from "@/db/transaction";
 import { assertOrganizerAccess } from "@/features/group-orders/application/access";
 import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
+import { settlementStatusAfterCheckout } from "@/features/group-orders/domain/settlement";
 import { canTransitionGroupOrderStatus } from "@/features/group-orders/domain/status";
 import { peekGroupOrderSession } from "@/features/group-orders/session";
 
@@ -12,8 +13,8 @@ type DbLike = ReturnType<typeof getDb> | DbTransaction;
 
 /**
  * If the organizer is finishing a group order via standard checkout,
- * link the created order, mark the organizer share paid, and mark the
- * group session PAID.
+ * link the created order, mark the organizer share paid, and set the
+ * group session to PAID or PARTIALLY_PAID from participant settlement.
  */
 export async function completeGroupOrderAfterStandardCheckout(input: {
   orderId: string;
@@ -32,20 +33,28 @@ export async function completeGroupOrderAfterStandardCheckout(input: {
   if (access.groupOrder.status !== "CHECKOUT") {
     return { completed: false };
   }
-  if (!canTransitionGroupOrderStatus("CHECKOUT", "PAID")) {
-    return { completed: false };
-  }
 
   const db = input.tx ?? getDb();
 
-  await db
-    .update(groupOrders)
-    .set({
-      status: "PAID",
-      orderId: input.orderId,
-      updatedAt: new Date(),
+  const active = await db
+    .select({
+      id: groupOrderParticipants.id,
+      status: groupOrderParticipants.status,
+      finalAmount: groupOrderParticipants.finalAmount,
+      paymentStatus: groupOrderParticipants.paymentStatus,
     })
-    .where(eq(groupOrders.id, access.groupOrder.id));
+    .from(groupOrderParticipants)
+    .where(eq(groupOrderParticipants.groupOrderId, access.groupOrder.id));
+
+  const afterOrganizerPaid = active.map((row) =>
+    row.id === access.participant.id
+      ? { ...row, paymentStatus: "PAID" }
+      : row,
+  );
+  const nextStatus = settlementStatusAfterCheckout(afterOrganizerPaid);
+  if (!canTransitionGroupOrderStatus("CHECKOUT", nextStatus)) {
+    return { completed: false };
+  }
 
   await db
     .update(groupOrderParticipants)
@@ -61,6 +70,15 @@ export async function completeGroupOrderAfterStandardCheckout(input: {
     );
 
   await db
+    .update(groupOrders)
+    .set({
+      status: nextStatus,
+      orderId: input.orderId,
+      updatedAt: new Date(),
+    })
+    .where(eq(groupOrders.id, access.groupOrder.id));
+
+  await db
     .update(orders)
     .set({ groupOrderId: access.groupOrder.id })
     .where(eq(orders.id, input.orderId));
@@ -69,7 +87,7 @@ export async function completeGroupOrderAfterStandardCheckout(input: {
     groupOrderId: access.groupOrder.id,
     eventType: "STATUS_CHANGE",
     fromState: "CHECKOUT",
-    toState: "PAID",
+    toState: nextStatus,
     actorParticipantId: access.participant.id,
     payload: {
       orderId: input.orderId,

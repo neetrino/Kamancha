@@ -26,6 +26,7 @@ type RecentOrder = {
   totalAmount: number;
   itemsCount: number;
   placedAt: string;
+  isGroupOrder: boolean;
 };
 
 type ProfileRecentOrdersProps = {
@@ -86,6 +87,8 @@ function RecentOrdersBody({
             placedOnLine={`${dictionary.placedOn} ${formatShortDate(order.placedAt, locale)}`}
             orderNumberLabel={dictionary.orderNumber}
             viewDetailsLabel={dictionary.viewDetails}
+            groupOrderBadgeLabel={dictionary.groupOrderBadge}
+            isGroupOrder={order.isGroupOrder}
             onViewDetails={() => onOpenOrder(order.orderNumber)}
           />
         </li>
@@ -158,6 +161,7 @@ export function ProfileRecentOrders({
         error={error}
         isLoading={isPending}
         copy={adminCopy}
+        groupOrderBadgeLabel={dictionary.groupOrderBadge}
       />
     </>
   );

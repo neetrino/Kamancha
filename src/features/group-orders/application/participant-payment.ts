@@ -3,7 +3,10 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { groupOrderParticipants } from "@/db/schema";
 import { assertParticipantAccess } from "@/features/group-orders/application/access";
-import { advanceSplitGroupOrderIfAllPaid } from "@/features/group-orders/application/advance-after-payments";
+import {
+  advancePartiallyPaidGroupOrderIfAllPaid,
+  advanceSplitGroupOrderIfAllPaid,
+} from "@/features/group-orders/application/advance-after-payments";
 import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
 import { isSuccessfulParticipantPayment } from "@/features/group-orders/domain/spend-limit";
 import type { CheckoutOnlineProvider } from "@/features/checkout/domain/payment-methods";
@@ -53,7 +56,10 @@ export async function completeParticipantCardPayment(input: {
       error: "The organizer pays their share on the checkout page.",
     };
   }
-  if (groupOrder.status !== "AWAITING_PAYMENTS") {
+  if (
+    groupOrder.status !== "AWAITING_PAYMENTS" &&
+    groupOrder.status !== "PARTIALLY_PAID"
+  ) {
     return {
       ok: false,
       error: "This group order is not awaiting payments.",
@@ -103,7 +109,16 @@ export async function completeParticipantCardPayment(input: {
     actorParticipantId: participant.id,
   });
 
-  return { ok: true, advancedToCheckout: advanced };
+  const partial = await advancePartiallyPaidGroupOrderIfAllPaid({
+    db,
+    groupOrderId: groupOrder.id,
+    actorParticipantId: participant.id,
+  });
+
+  return {
+    ok: true,
+    advancedToCheckout: advanced || partial.advanced,
+  };
 }
 
 export async function getParticipantPaymentContext(input: {
@@ -125,6 +140,7 @@ export async function getParticipantPaymentContext(input: {
   }
   if (
     groupOrder.status !== "AWAITING_PAYMENTS" &&
+    groupOrder.status !== "PARTIALLY_PAID" &&
     !isSuccessfulParticipantPayment(participant.paymentStatus)
   ) {
     return { ok: false, error: "This group order is not awaiting payments." };

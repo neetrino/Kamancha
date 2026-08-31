@@ -12,6 +12,7 @@ import {
   setGroupOrderDeliveryAddress,
   updateGroupOrderItemQuantity,
 } from "@/features/group-orders/application/items";
+import { dissolveOrganizerPaysAllOnLeave } from "@/features/group-orders/application/leave";
 import {
   cancelGroupOrder,
   lockGroupOrder,
@@ -45,6 +46,7 @@ import { clearGroupOrderSession } from "@/features/group-orders/session";
 import { markParticipantPaid } from "@/features/group-orders/application/manage";
 import { prepareGroupOrderCheckout } from "@/features/group-orders/application/prepare-checkout";
 import { completeParticipantCardPayment } from "@/features/group-orders/application/participant-payment";
+import { getGroupOrderStatusByInvite } from "@/features/group-orders/application/active-banner";
 import { requireAdmin } from "@/lib/auth/policies";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
@@ -198,9 +200,20 @@ export async function loadGroupOrderDetailAction(
   return getGroupOrderDetailByInvite({ inviteToken, locale, currency });
 }
 
+export async function getGroupOrderStatusAction(inviteToken: string) {
+  const parsed = groupOrderInviteTokenSchema.safeParse({ inviteToken });
+  if (!parsed.success) return null;
+  return getGroupOrderStatusByInvite(parsed.data.inviteToken);
+}
+
 export async function leaveGroupOrderSessionAction() {
+  const { dissolvedInviteToken } = await dissolveOrganizerPaysAllOnLeave();
   await clearGroupOrderSession();
-  revalidatePath("/", "layout");
+  if (dissolvedInviteToken) {
+    revalidateGroupOrder(dissolvedInviteToken);
+  } else {
+    revalidatePath("/", "layout");
+  }
   return { ok: true as const };
 }
 

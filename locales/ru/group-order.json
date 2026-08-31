@@ -70,6 +70,7 @@
   "activeSessionBanner": "Вы в групповом заказе {name}",
   "viewGroupOrder": "Открыть",
   "leaveSession": "Выйти",
+  "organizerCancelledAlert": "Создатель группового заказа отменил заказ.",
   "addingToGroup": "Добавляем в групповой заказ…",
   "addedToGroup": "Добавлено в групповой заказ",
   "organizer": "Организатор",

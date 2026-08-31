@@ -14,7 +14,8 @@
     "blog": "Բլոգ",
     "messages": "Հաղորդագրություններ",
     "settings": "Կարգավորումներ",
-    "giftCards": "Gift Card-եր"
+    "giftCards": "Gift Card-եր",
+    "popups": "Popup-ներ"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -39,7 +40,15 @@
       "dateTimePlaceholder": "ՕՕ.ԱԱ.ՏՏՏՏ ժ:ր",
       "today": "Այսօր",
       "time": "Ժամ",
-      "weekdaysShort": ["Երկ", "Երք", "Չրք", "Հնգ", "Ուրբ", "Շբթ", "Կիր"]
+      "weekdaysShort": [
+        "Երկ",
+        "Երք",
+        "Չրք",
+        "Հնգ",
+        "Ուրբ",
+        "Շբթ",
+        "Կիր"
+      ]
     },
     "search": "Որոնել",
     "filter": "Զտել",
@@ -93,20 +102,37 @@
       "post": "հրապարակումը",
       "denomination": "անվանումը",
       "closedDate": "փակ օրը",
-      "modifier": "հավելումը"
+      "modifier": "հավելումը",
+      "popup": "popup-ը"
     },
     "selectedProduct": "ընտրված ապրանքը",
     "selectedProducts": "{count} ընտրված ապրանք"
   },
   "dashboard": {
-    "welcome": "Բարի գալուստ կառավարման վահանակ",
-    "stats": {
-      "users": "Օգտատերեր",
-      "activeProducts": "Ակտիվ ապրանքներ",
-      "ordersRange": "Պատվերներ (ժամանակահատված)",
-      "revenueRange": "Եկամուտ (ժամանակահատված)"
-    },
-    "revenueDeltaVsPrev": "{delta}՝ նախորդի համեմատ",
+    "welcomeLead": "Բարի գալուստ",
+    "welcomeAccent": "ադմին վահանակ",
+    "users": "Օգտատերեր",
+    "activeProducts": "Ակտիվ ապրանքներ",
+    "ordersRange": "Պատվերներ (ժամանակահատված)",
+    "revenueRange": "Եկամուտ (ժամանակահատված)",
+    "periodsTitle": "Վաճառքներ ըստ ժամանակահատվածի",
+    "viewAnalytics": "Ամբողջական վերլուծություն",
+    "periodToday": "Այսօր",
+    "periodWeek": "Շաբաթ",
+    "periodMonth": "Ամիս",
+    "periodQuarter": "Եռամսյակ",
+    "aov": "Միջին պատվեր",
+    "chartTitle": "Եկամտի և պատվերների դինամիկա",
+    "chartSubtitle": "Ամսական ցուցանիշներ ընտրված ժամանակահատվածում",
+    "chartRangeLabel": "Գրաֆիկի ժամանակահատված",
+    "chartRange6Months": "6 ամիս",
+    "chartRangeYear": "Տարի",
+    "chartRevenue": "Եկամուտ",
+    "chartOrders": "Պատվերներ",
+    "chartAria": "Ամսական եկամտի և պատվերների գրաֆիկ",
+    "chartEmpty": "Այս ժամանակահատվածում դեռ պատվերներ չկան։",
+    "chartEmptyShort": "—",
+    "chartBestMonth": "Լավագույն ամիս",
     "recentOrders": "Վերջին պատվերներ",
     "topProducts": "Առաջատար ապրանքներ",
     "viewAll": "Դիտել բոլորը",
@@ -115,17 +141,23 @@
     "soldCount": "Վաճառվել է {quantity}",
     "quickActions": "Արագ գործողություններ",
     "addProduct": "Ավելացնել ապրանք",
-    "addProductSubtitle": "Ստեղծել նոր ապրանք",
+    "addProductHint": "Ստեղծել նոր ապրանք",
     "manageOrders": "Կառավարել պատվերները",
-    "manageOrdersSubtitle": "Դիտել բոլոր պատվերները",
+    "manageOrdersHint": "Դիտել բոլոր պատվերները",
     "manageUsers": "Կառավարել օգտատերերին",
-    "manageUsersSubtitle": "Դիտել բոլոր օգտատերերին",
+    "manageUsersHint": "Դիտել բոլոր օգտատերերին",
     "settings": "Կարգավորումներ",
-    "settingsSubtitle": "Կարգավորել խանութը"
+    "settingsHint": "Կարգավորել խանութը"
   },
   "orders": {
     "title": "Պատվերներ",
     "breadcrumb": "Պատվերներ",
+    "kindFilter": {
+      "aria": "Պատվերների տեսակ",
+      "all": "Բոլորը",
+      "personal": "Անհատական",
+      "group": "Խմբակային"
+    },
     "filters": {
       "orderStatusAria": "Պատվերի կարգավիճակ",
       "allStatuses": "Բոլոր կարգավիճակները",
@@ -159,7 +191,8 @@
       "paymentMethod": "Վճարման եղանակ",
       "total": "Ընդամենը",
       "placed": "Տեղադրված",
-      "archivedBadge": "Արխիվացված"
+      "archivedBadge": "Արխիվացված",
+      "groupOrderBadge": "Խմբակային"
     },
     "inlineStatus": {
       "changeOrderAria": "Փոխել պատվերի կարգավիճակը",
@@ -680,6 +713,7 @@
     "metrics": {
       "totalOrders": "Ընդամենը պատվերներ",
       "totalRevenue": "Ընդհանուր եկամուտ",
+      "averageOrderValue": "Միջին պատվեր",
       "totalUsers": "Ընդամենը օգտատերեր"
     },
     "topProducts": {
@@ -725,6 +759,37 @@
       "editAria": "Խմբագրել հերոս սլայդը",
       "title": "Վերնագիր",
       "subtitle": "Ենթավերնագիր",
+      "uploadImage": "Վերբեռնել պատկեր",
+      "uploadImageButton": "+ Վերբեռնել պատկեր",
+      "changeImage": "Փոխել պատկերը",
+      "remove": "Հեռացնել",
+      "create": "Ստեղծել",
+      "edit": "Խմբագրել"
+    }
+  },
+  "popups": {
+    "title": "Popup-ներ",
+    "count": "{count} popup",
+    "countPlural": "{count} popup",
+    "createPopup": "Ստեղծել popup",
+    "listHeading": "Popup-ներ ({count})",
+    "noImage": "Պատկեր չկա",
+    "active": "ԱԿՏԻՎ",
+    "inactive": "ԱՆԱԿՏԻՎ",
+    "empty": "Դեռևս popup-ներ չկան։",
+    "editAria": "Խմբագրել {title}",
+    "deleteAria": "Ջնջել {title}",
+    "activateAria": "Ակտիվացնել popup-ը",
+    "deactivateAria": "Ապաակտիվացնել popup-ը",
+    "drawer": {
+      "createTitle": "Ստեղծել popup",
+      "editTitle": "Խմբագրել popup-ը",
+      "createAria": "Ստեղծել popup",
+      "editAria": "Խմբագրել popup-ը",
+      "title": "Վերնագիր",
+      "linkUrl": "Հղում (ոչ պարտադիր)",
+      "linkUrlPlaceholder": "/hy/products կամ https://…",
+      "linkUrlHint": "Նկարի վրա սեղմելիս բացվող հասցե։",
       "uploadImage": "Վերբեռնել պատկեր",
       "uploadImageButton": "+ Վերբեռնել պատկեր",
       "changeImage": "Փոխել պատկերը",

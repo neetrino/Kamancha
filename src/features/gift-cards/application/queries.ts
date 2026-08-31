@@ -6,8 +6,10 @@ import { getDb } from "@/db/client";
 import { giftCardTransactions, giftCards, users } from "@/db/schema";
 import {
   isGiftCardRedeemable,
+  isGiftCardRecipientActor,
   giftCardRedeemErrorMessage,
   normalizeGiftCardCode,
+  type GiftCardRedeemActor,
 } from "@/features/gift-cards/domain/gift-card-rules";
 
 export type GiftCardTransactionView = {
@@ -183,14 +185,17 @@ export async function listAdminGiftCards(
 }
 
 /** Preview helper for checkout — returns null when not redeemable. */
-export async function getRedeemableGiftCardByCode(rawCode: string): Promise<{
+export async function getRedeemableGiftCardByCode(
+  rawCode: string,
+  actor: GiftCardRedeemActor | null,
+): Promise<{
   id: string;
   code: string;
   initialAmount: number;
   balanceAmount: number;
   expiresAt: Date | null;
 } | null> {
-  const evaluated = await evaluateGiftCardForRedeem(rawCode);
+  const evaluated = await evaluateGiftCardForRedeem(rawCode, actor);
   return evaluated.ok ? evaluated.card : null;
 }
 
@@ -213,8 +218,31 @@ export type EvaluateGiftCardForRedeemResult =
 /** Resolves a gift card for redeem with a specific user-facing error. */
 export async function evaluateGiftCardForRedeem(
   rawCode: string,
+  actor: GiftCardRedeemActor | null = null,
 ): Promise<EvaluateGiftCardForRedeemResult> {
-  const card = await findGiftCardByCode(rawCode);
+  const code = normalizeGiftCardCode(rawCode);
+  if (!code) {
+    return {
+      ok: false,
+      error: giftCardRedeemErrorMessage({ found: false }),
+    };
+  }
+
+  const [card] = await getDb()
+    .select({
+      id: giftCards.id,
+      code: giftCards.code,
+      initialAmount: giftCards.initialAmount,
+      balanceAmount: giftCards.balanceAmount,
+      status: giftCards.status,
+      expiresAt: giftCards.expiresAt,
+      recipientUserId: giftCards.recipientUserId,
+      recipientEmail: giftCards.recipientEmail,
+    })
+    .from(giftCards)
+    .where(eq(giftCards.code, code))
+    .limit(1);
+
   if (!card) {
     return {
       ok: false,
@@ -236,6 +264,26 @@ export async function evaluateGiftCardForRedeem(
         status: card.status,
         balanceAmount: card.balanceAmount,
         expiresAt: card.expiresAt,
+      }),
+    };
+  }
+
+  if (
+    !isGiftCardRecipientActor({
+      recipientUserId: card.recipientUserId,
+      recipientEmail: card.recipientEmail,
+      actor,
+    })
+  ) {
+    return {
+      ok: false,
+      error: giftCardRedeemErrorMessage({
+        found: true,
+        status: card.status,
+        balanceAmount: card.balanceAmount,
+        expiresAt: card.expiresAt,
+        recipientDenied: true,
+        actorPresent: Boolean(actor),
       }),
     };
   }
