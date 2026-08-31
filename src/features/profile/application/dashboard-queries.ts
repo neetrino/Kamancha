@@ -10,7 +10,7 @@ import {
   customerOrdersVisibilitySql,
 } from "@/features/orders/application/customer-group-order-share";
 
-const RECENT_ORDERS_LIMIT = 5;
+const RECENT_ORDERS_LIMIT = 6;
 
 export type ProfileDashboardStats = {
   totalOrders: number;
