@@ -51,10 +51,10 @@ export function AuthPageShell({
     : instant;
 
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-6 sm:pt-8">
+    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-1 sm:pt-8 max-xl:-mt-4">
       <ContactHands lowerLeft={lowerLeftHand} raiseLeft={raiseLeftHand} />
       <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pb-8 sm:px-6 xl:px-8">
-        <section className="relative z-[1] mx-auto flex max-w-[633px] flex-col items-center pt-2">
+        <section className="relative z-[1] mx-auto flex max-w-[633px] flex-col items-center pt-0 sm:pt-2">
           <motion.div
             className="mb-2 flex items-center justify-center gap-2"
             aria-hidden
@@ -67,7 +67,7 @@ export function AuthPageShell({
             <span className="size-1.5 rounded-full bg-white" />
           </motion.div>
           <motion.h1
-            className="mb-8 text-center font-big-fat-boii text-[44px] leading-[1.1] font-bold tracking-wide text-white uppercase sm:text-[52px] md:text-[62px]"
+            className="mb-5 text-center font-big-fat-boii text-[44px] leading-[1.1] font-bold tracking-wide text-white uppercase sm:mb-8 sm:text-[52px] md:text-[62px]"
             initial={
               playMotion
                 ? { opacity: 0, y: 18, filter: "blur(4px)" }
@@ -79,7 +79,7 @@ export function AuthPageShell({
             {title}
           </motion.h1>
           <motion.div
-            className={`w-full rounded-[30px] bg-white px-5 pt-10 pb-0 ${
+            className={`w-full rounded-[30px] bg-white px-5 pt-8 pb-0 sm:pt-10 ${
               compactForm ? "max-w-[520px]" : ""
             }`}
             initial={playMotion ? { opacity: 0, y: 28 } : false}
