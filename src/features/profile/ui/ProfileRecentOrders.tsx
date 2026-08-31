@@ -7,6 +7,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
 import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
+import { localizeOrderStatus } from "@/features/orders/ui/localize-order-status";
 import { ProfileRecentOrderCard } from "@/features/profile/ui/ProfileRecentOrderCard";
 import {
   PROFILE_CARD_GRID,
@@ -43,11 +44,13 @@ function RecentOrdersBody({
   locale,
   orders,
   dictionary,
+  statusLabels,
   onOpenOrder,
 }: {
   locale: Locale;
   orders: RecentOrder[];
   dictionary: Dictionary["profile"];
+  statusLabels: Dictionary["admin"]["orders"]["statusLabels"];
   onOpenOrder: (orderNumber: string) => void;
 }) {
   if (orders.length === 0) {
@@ -73,7 +76,7 @@ function RecentOrdersBody({
         <li key={order.id} className="min-w-0 w-full">
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
-            status={order.status}
+            status={localizeOrderStatus(order.status, statusLabels)}
             totalLabel={formatMoneyAmount(order.totalAmount, "AMD", locale)}
             metaLine={formatItemCount(
               order.itemsCount,
@@ -144,6 +147,7 @@ export function ProfileRecentOrders({
           locale={locale}
           orders={orders}
           dictionary={dictionary}
+          statusLabels={adminCopy.orders.statusLabels}
           onOpenOrder={openOrder}
         />
       </div>

@@ -8,9 +8,3 @@ export function formatOrderDrawerMoney(
   const symbol = isCurrency(currency) ? currencySymbols[currency] : currency;
   return `${amount.toLocaleString("en-US")} ${symbol}`;
 }
-
-/** Title-cases status tokens like PENDING → Pending. */
-export function formatOrderStatusLabel(status: string): string {
-  if (!status) return status;
-  return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
-}
