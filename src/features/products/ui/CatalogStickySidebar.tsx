@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 const SIDEBAR_WIDTH_PX = 280;
-/** Room for the visible scrollbar beside the filter (not over it). */
-const SIDEBAR_SCROLLBAR_GUTTER_PX = 10;
-const SIDEBAR_OUTER_WIDTH_PX = SIDEBAR_WIDTH_PX + SIDEBAR_SCROLLBAR_GUTTER_PX;
 /** Space between sticky header bottom and the category sidebar. */
 const HEADER_GAP_PX = 28;
 const FALLBACK_TOP_OFFSET_PX = 140;
+const THUMB_MIN_PX = 20;
+const THUMB_MAX_PX = 70;
+/** Gap between custom scrollbar and category list. */
+const SCROLLBAR_GAP_PX = 12;
 
 type CatalogStickySidebarProps = {
   children: ReactNode;
@@ -23,10 +30,18 @@ function readHeaderBottom(): number {
 /**
  * Catalog filter sidebar that stays pinned while the product grid scrolls.
  * Uses fixed positioning (CSS sticky fails under storefront overflow ancestors).
+ * Custom left scrollbar appears on hover without shifting the 280px filter column.
  */
 export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+  const [thumb, setThumb] = useState({
+    top: 0,
+    height: 0,
+    canScroll: false,
+  });
   const [style, setStyle] = useState<{
     position: "relative" | "fixed";
     top: number;
@@ -37,10 +52,32 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
     position: "relative",
     top: 0,
     left: 0,
-    width: SIDEBAR_OUTER_WIDTH_PX,
+    width: SIDEBAR_WIDTH_PX,
     maxHeight: 0,
   });
   const [spacerHeight, setSpacerHeight] = useState(0);
+
+  const syncThumb = useCallback((): void => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    const canScroll = scrollHeight > clientHeight + 1;
+    if (!canScroll) {
+      setThumb({ top: 0, height: 0, canScroll: false });
+      return;
+    }
+    const proportional = (clientHeight / scrollHeight) * clientHeight;
+    const height = Math.min(
+      THUMB_MAX_PX,
+      Math.max(THUMB_MIN_PX, proportional * 0.55),
+    );
+    const maxTop = Math.max(0, clientHeight - height);
+    const top =
+      scrollHeight === clientHeight
+        ? 0
+        : (scrollTop / (scrollHeight - clientHeight)) * maxTop;
+    setThumb({ top, height, canScroll: true });
+  }, []);
 
   useEffect(() => {
     function update(): void {
@@ -54,10 +91,7 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
       setSpacerHeight(panelHeight);
 
       const left = anchorRect.left;
-      const width = Math.max(
-        anchorRect.width || SIDEBAR_OUTER_WIDTH_PX,
-        SIDEBAR_OUTER_WIDTH_PX,
-      );
+      const width = anchorRect.width || SIDEBAR_WIDTH_PX;
       const topOffset = readHeaderBottom() + HEADER_GAP_PX;
       const viewportBottomPad = 24;
       const maxHeight = Math.max(
@@ -73,6 +107,7 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
           width,
           maxHeight,
         });
+        syncThumb();
         return;
       }
 
@@ -90,6 +125,7 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
         width,
         maxHeight,
       });
+      syncThumb();
     }
 
     update();
@@ -98,9 +134,11 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
 
     const panel = panelRef.current;
     const anchor = anchorRef.current;
+    const scroll = scrollRef.current;
     const observer = new ResizeObserver(update);
     if (panel) observer.observe(panel);
     if (anchor) observer.observe(anchor);
+    if (scroll) observer.observe(scroll);
 
     const header = document.querySelector("[data-site-header]");
     if (header) observer.observe(header);
@@ -110,17 +148,17 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
       window.removeEventListener("resize", update);
       observer.disconnect();
     };
-  }, []);
+  }, [syncThumb]);
 
   return (
     <div
       ref={anchorRef}
-      className="relative hidden w-[290px] shrink-0 self-start xl:block"
+      className="relative hidden w-[280px] shrink-0 self-start xl:block"
       style={{ minHeight: spacerHeight || undefined }}
     >
       <div
         ref={panelRef}
-        className="catalog-sidebar-scroll z-20 overflow-y-auto overscroll-contain pr-2.5"
+        className="z-20"
         style={{
           position: style.position,
           top: style.position === "fixed" ? style.top : undefined,
@@ -128,8 +166,32 @@ export function CatalogStickySidebar({ children }: CatalogStickySidebarProps) {
           width: style.width,
           maxHeight: style.maxHeight || undefined,
         }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        <div className="w-[280px] max-w-[280px]">{children}</div>
+        <div
+          className={`catalog-sidebar-rail absolute top-0 bottom-0 w-1 overflow-hidden transition-opacity duration-150 ${
+            hovered && thumb.canScroll ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ right: `calc(100% + ${SCROLLBAR_GAP_PX}px)` }}
+          aria-hidden
+        >
+          <div
+            className="absolute inset-x-0 rounded-full bg-white/40"
+            style={{
+              top: thumb.top,
+              height: thumb.height,
+            }}
+          />
+        </div>
+        <div
+          ref={scrollRef}
+          className="catalog-sidebar-scroll h-full min-h-0 w-full overflow-y-auto overscroll-contain"
+          style={{ maxHeight: style.maxHeight || undefined }}
+          onScroll={syncThumb}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
