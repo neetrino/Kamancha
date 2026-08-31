@@ -28,8 +28,15 @@ describe("calculateDistanceDeliveryFee", () => {
 });
 
 describe("formatDistanceKmLabel", () => {
-  it("formats meters as kilometers with three decimals", () => {
-    expect(formatDistanceKmLabel(1101)).toBe("1.101 km");
-    expect(formatDistanceKmLabel(0)).toBe("0.000 km");
+  it("shows one decimal under 1 km and whole km otherwise", () => {
+    expect(formatDistanceKmLabel(568)).toBe("0.6 km");
+    expect(formatDistanceKmLabel(4123)).toBe("4 km");
+    expect(formatDistanceKmLabel(1101)).toBe("1 km");
+    expect(formatDistanceKmLabel(0)).toBe("0.0 km");
+  });
+
+  it("uses the provided unit label", () => {
+    expect(formatDistanceKmLabel(568, "կմ")).toBe("0.6 կմ");
+    expect(formatDistanceKmLabel(4123, "км")).toBe("4 км");
   });
 });

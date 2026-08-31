@@ -104,7 +104,8 @@
     "use": "Use bonuses",
     "amount": "Bonus points to use",
     "useMax": "Use max",
-    "applied": "Bonuses"
+    "applied": "Bonuses",
+    "earn": "Loyalty points"
   },
   "summary": {
     "subtotal": "Subtotal",

@@ -13,11 +13,15 @@ import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummar
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
 import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
 import {
+  calculateBonusEarnAmount,
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
 } from "@/features/bonuses/domain/bonus-rules";
 import { previewGiftCardAction } from "@/features/gift-cards/application/preview-gift-card";
-import type { GiftCardRedeemPreview } from "@/features/gift-cards/domain/gift-card-rules";
+import {
+  bonusEligibleAfterGiftCard,
+  type GiftCardRedeemPreview,
+} from "@/features/gift-cards/domain/gift-card-rules";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
 import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
 import {
@@ -100,6 +104,7 @@ type CheckoutLabels = {
   bonusAmount: string;
   bonusUseMax: string;
   bonusApplied: string;
+  bonusEarn: string;
   discount: string;
   subtotal: string;
   shipping: string;
@@ -131,6 +136,7 @@ type CheckoutFormProps = {
   hasItems: boolean;
   bonusAvailableBalance?: number | null;
   bonusMaxRedeemPercent?: number;
+  bonusAccrualPercent?: number;
   splitOthersPrepaid?: boolean;
   othersPrepaidAmount?: number;
   lockedDeliveryAmount?: number | null;
@@ -152,6 +158,7 @@ export function CheckoutForm({
   hasItems,
   bonusAvailableBalance = null,
   bonusMaxRedeemPercent = 0,
+  bonusAccrualPercent = 0,
   splitOthersPrepaid = false,
   othersPrepaidAmount = 0,
   lockedDeliveryAmount = null,
@@ -166,6 +173,7 @@ export function CheckoutForm({
     useState<CashChangeSelection>(CASH_CHANGE_NONE);
   const deliveryQuote = useDistanceDeliveryQuote(
     lockedDeliveryAmount != null ? "" : line1,
+    locale,
   );
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod>("cash_on_delivery");
@@ -244,6 +252,17 @@ export function CheckoutForm({
   const afterGiftCard = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
   const prepaidApplied = splitOthersPrepaid ? othersPrepaidAmount : 0;
   const totalAmount = Math.max(0, afterGiftCard - prepaidApplied);
+  const bonusEarnAmount =
+    bonusAvailableBalance == null
+      ? null
+      : calculateBonusEarnAmount(
+          bonusEligibleAfterGiftCard({
+            subtotalAmount,
+            discountAmount,
+            giftCardAmount: giftCardRedeem,
+          }),
+          bonusAccrualPercent,
+        );
   const selectedCashChange: CashChangeSelection =
     cashChangeAmount !== CASH_CHANGE_NONE &&
     computeCashChangeDue(cashChangeAmount, totalAmount) != null
@@ -500,6 +519,16 @@ export function CheckoutForm({
             giftCardPayableLabel={labels.giftCardPayable}
             giftCardAppliedLabel={labels.giftCardApplied}
             bonusAppliedLabel={labels.bonusApplied}
+            bonusEarnLabel={
+              bonusEarnAmount != null && bonusEarnAmount > 0
+                ? labels.bonusEarn
+                : null
+            }
+            bonusEarnAmount={
+              bonusEarnAmount != null && bonusEarnAmount > 0
+                ? bonusEarnAmount
+                : null
+            }
             discountLabel={labels.discount}
             subtotalLabel={labels.subtotal}
             shippingLabel={labels.shipping}

@@ -161,6 +161,7 @@ export function GroupOrderPageClient({
       void setDeliveryAddressAction({
         inviteToken,
         deliveryAddress: trimmed,
+        locale,
         deliveryLat: deliveryPoint?.lat,
         deliveryLng: deliveryPoint?.lng,
       }).then((result) => {
@@ -186,6 +187,7 @@ export function GroupOrderPageClient({
     initialView,
     inviteToken,
     labels.errorGeneric,
+    locale,
     router,
   ]);
 

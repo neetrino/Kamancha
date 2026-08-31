@@ -13,6 +13,8 @@ import {
   geocodeAddress,
   getDrivingDistanceMeters,
 } from "@/lib/maps/google-maps";
+import { isLocale, type Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { logger } from "@/lib/observability/logger";
 
 export type DistanceDeliveryQuote = {
@@ -35,6 +37,7 @@ export type QuoteDistanceDeliveryResult =
  */
 export async function quoteDistanceDelivery(
   destinationAddress: string,
+  locale: Locale = "en",
 ): Promise<QuoteDistanceDeliveryResult> {
   const parsed = quoteDistanceDeliverySchema.safeParse({
     line1: destinationAddress,
@@ -68,12 +71,16 @@ export async function quoteDistanceDelivery(
       distance.distanceMeters,
       settings.pricePerKmAmount,
     );
+    const unitLabel = getDictionary(locale).units.km;
 
     return {
       ok: true,
       quote: {
         distanceMeters: distance.distanceMeters,
-        distanceLabel: formatDistanceKmLabel(distance.distanceMeters),
+        distanceLabel: formatDistanceKmLabel(
+          distance.distanceMeters,
+          unitLabel,
+        ),
         pricePerKmAmount: settings.pricePerKmAmount,
         deliveryAmount,
         destinationFormattedAddress: destination.formattedAddress,
@@ -98,6 +105,8 @@ export async function quoteDistanceDelivery(
 /** Server action wrapper for checkout UI debounce quoting. */
 export async function quoteDistanceDeliveryAction(
   line1: string,
+  locale: string,
 ): Promise<QuoteDistanceDeliveryResult> {
-  return quoteDistanceDelivery(line1);
+  const resolvedLocale: Locale = isLocale(locale) ? locale : "en";
+  return quoteDistanceDelivery(line1, resolvedLocale);
 }

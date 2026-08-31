@@ -38,6 +38,8 @@ type CheckoutOrderSummaryProps = {
   giftCardPayableLabel: string;
   giftCardAppliedLabel: string;
   bonusAppliedLabel: string;
+  bonusEarnLabel: string | null;
+  bonusEarnAmount: number | null;
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
@@ -45,7 +47,7 @@ type CheckoutOrderSummaryProps = {
   totalLabel: string;
   subtotalFormatted: string;
   shippingFormatted: string;
-  /** Distance part shown smaller next to the shipping amount, e.g. "0.512 km". */
+  /** Distance part shown smaller next to the shipping amount, e.g. "0.6 km". */
   shippingDistanceLabel?: string | null;
   discountFormatted: string | null;
   changeFormatted: string | null;
@@ -85,6 +87,8 @@ export function CheckoutOrderSummary({
   giftCardPayableLabel,
   giftCardAppliedLabel,
   bonusAppliedLabel,
+  bonusEarnLabel,
+  bonusEarnAmount,
   discountLabel,
   subtotalLabel,
   shippingLabel,
@@ -225,6 +229,12 @@ export function CheckoutOrderSummary({
             <div className="flex justify-between text-white">
               <span>{changeLabel}</span>
               <span>{changeFormatted}</span>
+            </div>
+          ) : null}
+          {bonusEarnLabel != null && bonusEarnAmount != null && bonusEarnAmount > 0 ? (
+            <div className="flex justify-between text-[#f3e5a8]">
+              <span>{bonusEarnLabel}</span>
+              <span>+{bonusEarnAmount}</span>
             </div>
           ) : null}
           <div className="border-t border-white/40 pt-4">

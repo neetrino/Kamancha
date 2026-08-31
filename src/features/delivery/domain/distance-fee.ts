@@ -21,8 +21,15 @@ export function calculateDistanceDeliveryFee(
   return Math.round((meters * rate) / 1000);
 }
 
-/** Formats meters as a stable km label for UI/snapshots (3 decimal places). */
-export function formatDistanceKmLabel(distanceMeters: number): string {
+/** Formats meters as a compact km label (<1 km → 1 decimal, else whole km). */
+export function formatDistanceKmLabel(
+  distanceMeters: number,
+  unitLabel = "km",
+): string {
   const km = Math.round(distanceMeters) / 1000;
-  return `${km.toFixed(3)} km`;
+  const amount =
+    km < 1
+      ? (Math.round(km * 10) / 10).toFixed(1)
+      : String(Math.round(km));
+  return `${amount} ${unitLabel}`;
 }

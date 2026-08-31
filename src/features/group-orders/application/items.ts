@@ -260,6 +260,7 @@ export async function markParticipantItemsReady(input: {
 export async function setGroupOrderDeliveryAddress(input: {
   inviteToken: string;
   deliveryAddress: string;
+  locale: "hy" | "en" | "ru";
   deliveryLat?: number;
   deliveryLng?: number;
 }): Promise<
@@ -283,7 +284,7 @@ export async function setGroupOrderDeliveryAddress(input: {
   const { quoteDistanceDelivery } = await import(
     "@/features/delivery/application/quote-distance-delivery"
   );
-  const quoted = await quoteDistanceDelivery(address);
+  const quoted = await quoteDistanceDelivery(address, input.locale);
   if (!quoted.ok) {
     return { ok: false, error: quoted.error };
   }
