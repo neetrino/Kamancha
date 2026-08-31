@@ -17,12 +17,16 @@ type SegmentedOption<T extends string> = {
 /** `sm` — compact mobile pills; `md` — form control matching field height. */
 type SegmentedControlSize = "sm" | "md";
 
+/** `default` — gray track; `onDark` — translucent white track for glass/dark surfaces. */
+type SegmentedControlTone = "default" | "onDark";
+
 type SegmentedControlProps<T extends string> = {
   "aria-label": string;
   value: T;
   options: readonly SegmentedOption<T>[];
   disabled?: boolean;
   size?: SegmentedControlSize;
+  tone?: SegmentedControlTone;
   /**
    * Equal-width full track (mobile locale/currency).
    * Default fits each segment to its label (admin forms).
@@ -46,6 +50,21 @@ const SIZE_RADIUS_CLASS: Record<SegmentedControlSize, string> = {
   md: "rounded-[15px]",
 };
 
+const TONE_TRACK_CLASS: Record<SegmentedControlTone, string> = {
+  default: "bg-gray-100",
+  onDark: "border border-white/50 bg-white/25",
+};
+
+const TONE_SELECTED_CLASS: Record<SegmentedControlTone, string> = {
+  default: "font-bold text-brand-forest",
+  onDark: "font-bold text-brand-forest",
+};
+
+const TONE_IDLE_CLASS: Record<SegmentedControlTone, string> = {
+  default: "font-semibold text-gray-500 hover:text-gray-800",
+  onDark: "font-semibold text-white hover:text-white",
+};
+
 const INDICATOR_CLASS =
   "pointer-events-none absolute top-1 bottom-1 bg-white shadow-sm duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 
@@ -58,6 +77,7 @@ export function SegmentedControl<T extends string>({
   options,
   disabled = false,
   size = "md",
+  tone = "default",
   fullWidth = false,
   onSelect,
   renderOption,
@@ -110,7 +130,7 @@ export function SegmentedControl<T extends string>({
       ref={containerRef}
       role="group"
       aria-label={ariaLabel}
-      className={`relative flex items-center ${SIZE_RADIUS_CLASS[size]} bg-gray-100 p-1 ${
+      className={`relative flex items-center ${SIZE_RADIUS_CLASS[size]} ${TONE_TRACK_CLASS[tone]} p-1 ${
         fullWidth ? "w-full" : "w-fit max-w-full"
       }`}
     >
@@ -130,8 +150,8 @@ export function SegmentedControl<T extends string>({
           fullWidth ? "flex-1" : "flex-none"
         } ${SIZE_OPTION_CLASS[size]} transition-colors duration-300`;
         const className = selected
-          ? `${base} font-bold text-brand-forest`
-          : `${base} font-semibold text-gray-500 hover:text-gray-800`;
+          ? `${base} ${TONE_SELECTED_CLASS[tone]}`
+          : `${base} ${TONE_IDLE_CLASS[tone]}`;
 
         if (renderOption) {
           return (

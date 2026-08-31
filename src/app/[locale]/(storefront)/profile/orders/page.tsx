@@ -94,21 +94,23 @@ export default async function OrdersPage({
     <section className="profile-sheet-keep-frame space-y-6">
       <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.orders}</h1>
 
-      <CustomerOrderKindFilter
-        locale={locale}
-        active={filters.kind}
-        baseQuery={{
-          q: filters.q,
-          status: filters.status,
-          paymentStatus: filters.paymentStatus,
-        }}
-        labels={{
-          all: dictionary.profile.ordersKindAll,
-          personal: dictionary.profile.ordersKindPersonal,
-          group: dictionary.profile.ordersKindGroup,
-          aria: dictionary.profile.ordersKindAria,
-        }}
-      />
+      <div className="xl:hidden">
+        <CustomerOrderKindFilter
+          locale={locale}
+          active={filters.kind}
+          baseQuery={{
+            q: filters.q,
+            status: filters.status,
+            paymentStatus: filters.paymentStatus,
+          }}
+          labels={{
+            all: dictionary.profile.ordersKindAll,
+            personal: dictionary.profile.ordersKindPersonal,
+            group: dictionary.profile.ordersKindGroup,
+            aria: dictionary.profile.ordersKindAria,
+          }}
+        />
+      </div>
 
       <div className="hidden xl:block">
         <CustomerOrdersFilters
@@ -121,6 +123,24 @@ export default async function OrdersPage({
           copy={dictionary.admin.orders.filters}
           searchPlaceholder={dictionary.profile.ordersSearchPlaceholder}
           searchAria={dictionary.profile.ordersSearchAria}
+          kindFilter={
+            <CustomerOrderKindFilter
+              locale={locale}
+              active={filters.kind}
+              baseQuery={{
+                q: filters.q,
+                status: filters.status,
+                paymentStatus: filters.paymentStatus,
+              }}
+              labels={{
+                all: dictionary.profile.ordersKindAll,
+                personal: dictionary.profile.ordersKindPersonal,
+                group: dictionary.profile.ordersKindGroup,
+                aria: dictionary.profile.ordersKindAria,
+              }}
+              tone="onDark"
+            />
+          }
         />
       </div>
 
