@@ -44,7 +44,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
       "(min-width:1280px) 220px, (min-width:1024px) 20vw, (min-width:640px) 40vw, 50vw",
     badge:
       "top-[4px] left-[1px] h-6 min-w-[4.25rem] bg-[#84d086] px-1.5 text-[10px] text-[#132814]",
-    wishlist: "top-[-4px] right-[4px] size-10",
+    wishlist: "top-[-4px] right-[1px] size-10",
     wishlistSize: "lg",
     body: "min-h-[5.5rem] gap-1 px-2.5 pt-2 pb-3.5",
     title: "text-[13px] leading-5",
@@ -62,7 +62,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     imageSizes: "201px",
     badge:
       "top-[4px] left-[1px] h-6 min-w-[4.75rem] bg-[#140900] px-2 text-[11px] text-white",
-    wishlist: "top-[-4px] right-[4px] size-10",
+    wishlist: "top-0 right-1.5 size-10",
     wishlistSize: "lg",
     body: "gap-1 px-[13px] pt-2 pb-3",
     title: "text-[16px] leading-[22px]",
@@ -84,7 +84,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
       "(min-width: 1280px) 287px, (min-width: 744px) 33vw, 50vw",
     badge:
       "top-[4px] left-[1px] h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814] xl:top-1.5 xl:left-2",
-    wishlist: "top-[-4px] right-[4px] size-10 xl:top-0.5 xl:right-1.5",
+    wishlist: "top-[-4px] right-[1px] size-10 xl:top-0.5 xl:right-1.5",
     wishlistSize: "lg",
     body: "gap-0.5 px-2.5 pt-1.5 pb-3 xl:gap-0 xl:px-[17px] xl:pt-2 xl:pb-5",
     title: "text-[13px] leading-5 xl:text-[16px] xl:leading-[30px]",

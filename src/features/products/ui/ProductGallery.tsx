@@ -292,7 +292,7 @@ export function ProductGallery({
           isSignedIn={isSignedIn}
           label={wishlistLabel}
           size="lg"
-          className="absolute top-3 right-3 z-10 size-11 bg-white text-brand-forest shadow-sm hover:bg-white/90"
+          className="absolute top-3 right-2 z-10 size-11 bg-white text-brand-forest shadow-sm hover:bg-white/90 xl:right-3"
         />
 
         {canCycle ? (
