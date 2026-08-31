@@ -83,7 +83,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     imageSizes:
       "(min-width: 1280px) 287px, (min-width: 744px) 33vw, 50vw",
     badge:
-      "top-1.5 left-2 h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814]",
+      "top-1.5 left-[2px] h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814] xl:left-2",
     wishlist: "top-0.5 right-1.5 size-10",
     wishlistSize: "lg",
     body: "gap-0.5 px-2.5 pt-1.5 pb-3 xl:gap-0 xl:px-[17px] xl:pt-2 xl:pb-5",
