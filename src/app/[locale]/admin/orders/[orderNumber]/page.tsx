@@ -25,7 +25,6 @@ import {
 import { getAdminOrderByNumber } from "@/features/orders/application/queries";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { mediaPublicUrl } from "@/lib/media/public-url";
 
 type AdminOrderDetailPageProps = {
   params: Promise<{ locale: string; orderNumber: string }>;
@@ -152,17 +151,9 @@ export default async function AdminOrderDetailPage({
                 </div>
               ) : null}
               {address.cashChangeAmount != null ? (
-                <div className="flex items-center gap-2">
+                <div className="flex gap-2">
                   <dt className="text-gray-500">{d.cashChange}</dt>
-                  <dd className="flex items-center gap-2 font-medium text-gray-900">
-                    {address.cashChangeImageKey ? (
-                      // eslint-disable-next-line @next/next/no-img-element -- CDN/local media URL
-                      <img
-                        src={mediaPublicUrl(address.cashChangeImageKey)}
-                        alt=""
-                        className="h-8 w-12 rounded object-contain"
-                      />
-                    ) : null}
+                  <dd className="font-medium text-gray-900">
                     {formatMoney(address.cashChangeAmount, order.baseCurrency)}
                   </dd>
                 </div>

@@ -1,7 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
-
 import { computeCashChangeDue } from "@/features/delivery/domain/cash-change";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
@@ -39,19 +37,7 @@ export function CustomerOrderSheetPayment({
           {changeDue != null ? (
             <PaymentRow
               label={labels.prepareChange}
-              value={
-                <span className="inline-flex items-center gap-2">
-                  {detail.cashChangeImageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- CDN/local media URL
-                    <img
-                      src={detail.cashChangeImageUrl}
-                      alt=""
-                      className="h-8 w-12 rounded object-contain"
-                    />
-                  ) : null}
-                  {formatOrderDrawerMoney(changeDue, detail.baseCurrency)}
-                </span>
-              }
+              value={formatOrderDrawerMoney(changeDue, detail.baseCurrency)}
             />
           ) : null}
         </>
@@ -65,7 +51,7 @@ function PaymentRow({
   value,
 }: {
   label: string;
-  value: ReactNode;
+  value: string;
 }) {
   return (
     <p className="flex flex-wrap items-baseline gap-x-1.5 text-gray-900">

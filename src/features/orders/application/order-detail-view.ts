@@ -48,7 +48,6 @@ export type AdminOrderDetailView = {
   intercomCode: string | null;
   scheduledDelivery: string | null;
   cashChangeAmount: number | null;
-  cashChangeImageUrl: string | null;
   paymentMethod: string;
   paymentAmount: number;
   items: AdminOrderDetailItemView[];
@@ -119,9 +118,6 @@ export function toAdminOrderDetailView(
       typeof order.shippingAddress.cashChangeAmount === "number"
         ? order.shippingAddress.cashChangeAmount
         : null,
-    cashChangeImageUrl: order.shippingAddress.cashChangeImageKey
-      ? mediaPublicUrl(order.shippingAddress.cashChangeImageKey)
-      : null,
     paymentMethod: latestPayment
       ? paymentMethodLabel(latestPayment.method)
       : "—",
