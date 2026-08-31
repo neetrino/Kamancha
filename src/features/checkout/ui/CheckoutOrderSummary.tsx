@@ -198,11 +198,9 @@ export function CheckoutOrderSummary({
             </div>
           ) : null}
           {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
-            <div className="flex justify-between text-white">
+            <div className="flex justify-between text-red-300">
               <span>{bonusAppliedLabel}</span>
-              <span className="text-emerald-200">
-                -{formatMoney(bonus.redeemAmount)}
-              </span>
+              <span>-{formatMoney(bonus.redeemAmount)}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (
