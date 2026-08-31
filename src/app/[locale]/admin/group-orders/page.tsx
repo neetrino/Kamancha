@@ -33,7 +33,8 @@ export default async function AdminGroupOrdersPage({
   const locale = rawLocale as Locale;
 
   await requireAdmin(locale);
-  const copy = getDictionary(locale).admin.groupOrders;
+  const dictionary = getDictionary(locale);
+  const copy = dictionary.admin.groupOrders;
   const currency = await getSelectedCurrency();
 
   const raw = await searchParams;
@@ -64,6 +65,8 @@ export default async function AdminGroupOrdersPage({
         currency={currency}
         rows={rows}
         copy={copy}
+        confirmCopy={dictionary.admin.confirm}
+        commonCopy={dictionary.admin.common}
       />
     </div>
   );

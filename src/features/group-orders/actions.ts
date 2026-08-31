@@ -27,6 +27,7 @@ import {
 } from "@/features/group-orders/application/queries";
 import {
   addGroupOrderItemSchema,
+  adminBulkCancelGroupOrdersSchema,
   adminGroupOrderIdSchema,
   adminMarkParticipantPaidSchema,
   completeParticipantCardPaymentSchema,
@@ -265,6 +266,49 @@ export async function adminCancelGroupOrderAction(
   });
   revalidateGroupOrder(row.inviteToken);
   return { ok: true as const };
+}
+
+export async function adminBulkCancelGroupOrdersAction(
+  raw: unknown,
+  locale: Locale,
+) {
+  await requireAdmin(locale);
+  const parsed = adminBulkCancelGroupOrdersSchema.safeParse(raw);
+  if (!parsed.success) return { ok: false as const, error: "Invalid input." };
+
+  const db = getDb();
+  const user = await getCurrentUser();
+  let cancelled = 0;
+  let skipped = 0;
+
+  for (const groupOrderId of parsed.data.groupOrderIds) {
+    const [row] = await db
+      .select()
+      .from(groupOrders)
+      .where(eq(groupOrders.id, groupOrderId))
+      .limit(1);
+    if (!row || !canTransitionGroupOrderStatus(row.status, "CANCELLED")) {
+      skipped += 1;
+      continue;
+    }
+    await db
+      .update(groupOrders)
+      .set({ status: "CANCELLED", updatedAt: new Date() })
+      .where(eq(groupOrders.id, row.id));
+    await appendGroupOrderEvent(db, {
+      groupOrderId: row.id,
+      eventType: "ADMIN_ACTION",
+      fromState: row.status,
+      toState: "CANCELLED",
+      actorUserId: user?.id ?? null,
+      payload: { action: "bulk_cancel" },
+    });
+    revalidateGroupOrder(row.inviteToken);
+    cancelled += 1;
+  }
+
+  revalidatePath(`/${locale}/admin/group-orders`);
+  return { ok: true as const, cancelled, skipped };
 }
 
 export async function adminCloseJoinsAction(raw: unknown, locale: Locale) {

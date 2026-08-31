@@ -288,6 +288,7 @@ export type AdminGroupOrderListItem = {
   status: string;
   participantCount: number;
   deliveryAmount: number;
+  totalAmount: number;
   createdAt: string;
   orderId: string | null;
 };
@@ -343,7 +344,10 @@ export async function listAdminGroupOrders(
   const result: AdminGroupOrderListItem[] = [];
   for (const row of rows) {
     const participants = await db
-      .select({ id: groupOrderParticipants.id })
+      .select({
+        id: groupOrderParticipants.id,
+        subtotalAmount: groupOrderParticipants.subtotalAmount,
+      })
       .from(groupOrderParticipants)
       .where(
         and(
@@ -351,6 +355,10 @@ export async function listAdminGroupOrders(
           eq(groupOrderParticipants.status, "ACTIVE"),
         ),
       );
+    const merchandiseTotal = participants.reduce(
+      (sum, participant) => sum + participant.subtotalAmount,
+      0,
+    );
     result.push({
       id: row.id,
       inviteToken: row.inviteToken,
@@ -359,6 +367,7 @@ export async function listAdminGroupOrders(
       status: row.status,
       participantCount: participants.length,
       deliveryAmount: row.deliveryAmount,
+      totalAmount: merchandiseTotal + row.deliveryAmount,
       createdAt: row.createdAt.toISOString(),
       orderId: row.orderId,
     });

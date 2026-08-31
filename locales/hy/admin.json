@@ -910,6 +910,7 @@
     "mode": "Ռեժիմ",
     "status": "Կարգավիճակ",
     "participants": "Մասնակիցներ",
+    "total": "Ընդամենը",
     "delivery": "Առաքում",
     "created": "Ստեղծված",
     "empty": "Դեռևս խմբային պատվերներ չկան։",
@@ -925,6 +926,16 @@
     "closeJoins": "Փակել միացումները",
     "cancel": "Չեղարկել խմբային պատվերը",
     "actionFailed": "Գործողությունը ձախողվեց։",
+    "bulk": {
+      "deleteSelected": "Չեղարկել ընտրվածները",
+      "selectAllAria": "Ընտրել բոլոր խմբային պատվերները էջում",
+      "selectOneAria": "Ընտրել խմբային պատվեր {id}",
+      "selectedOnPage": "Էջում ընտրված է {count}",
+      "cancelledSummary": "Չեղարկվել է {cancelled}, բաց է թողնվել {skipped}։",
+      "deleteConfirm": "Վստա՞հ եք, որ ցանկանում եք չեղարկել ընտրված {count} խմբային պատվերը։ Այս գործողությունը հնարավոր չէ հետարկել։",
+      "entitySingular": "խմբային պատվեր",
+      "entityPlural": "խմբային պատվեր"
+    },
     "filters": {
       "searchPlaceholder": "Որոնել ըստ կազմակերպչի կամ ID",
       "searchAria": "Որոնել խմբային պատվերներ",

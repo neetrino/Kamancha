@@ -95,6 +95,10 @@ export const adminGroupOrderIdSchema = z.object({
   groupOrderId: z.string().uuid(),
 });
 
+export const adminBulkCancelGroupOrdersSchema = z.object({
+  groupOrderIds: z.array(z.string().uuid()).min(1).max(100),
+});
+
 export const adminMarkParticipantPaidSchema = z.object({
   groupOrderId: z.string().uuid(),
   participantId: z.string().uuid(),

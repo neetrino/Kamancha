@@ -910,6 +910,7 @@
     "mode": "Режим",
     "status": "Статус",
     "participants": "Участники",
+    "total": "Итого",
     "delivery": "Доставка",
     "created": "Создан",
     "empty": "Групповых заказов пока нет.",
@@ -925,6 +926,16 @@
     "closeJoins": "Закрыть присоединение",
     "cancel": "Отменить групповой заказ",
     "actionFailed": "Не удалось выполнить действие.",
+    "bulk": {
+      "deleteSelected": "Отменить выбранные",
+      "selectAllAria": "Выбрать все групповые заказы на странице",
+      "selectOneAria": "Выбрать групповой заказ {id}",
+      "selectedOnPage": "Выбрано на странице: {count}",
+      "cancelledSummary": "Отменено {cancelled}, пропущено {skipped}.",
+      "deleteConfirm": "Отменить {count} выбранных групповых заказов? Это действие нельзя отменить.",
+      "entitySingular": "групповой заказ",
+      "entityPlural": "групповых заказов"
+    },
     "filters": {
       "searchPlaceholder": "Поиск по организатору или ID",
       "searchAria": "Поиск групповых заказов",
