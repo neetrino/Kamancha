@@ -13,6 +13,7 @@ export {
   analyticsPeriodLabel,
   defaultAnalyticsDateRange,
   formatAnalyticsDisplayDate,
+  formatAnalyticsMonthShort,
   formatAnalyticsShortDate,
   formatPeriodDelta,
   matchAnalyticsPeriodPreset,

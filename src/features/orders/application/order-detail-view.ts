@@ -1,5 +1,6 @@
 import "server-only";
 
+import { formatDeliverySlotDisplay } from "@/features/delivery/domain/delivery-schedule";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 import { getStoreIdentity } from "@/features/settings/application/queries";
 import {
@@ -48,7 +49,6 @@ export type AdminOrderDetailView = {
   intercomCode: string | null;
   scheduledDelivery: string | null;
   cashChangeAmount: number | null;
-  cashChangeImageUrl: string | null;
   paymentMethod: string;
   paymentAmount: number;
   items: AdminOrderDetailItemView[];
@@ -110,7 +110,11 @@ export function toAdminOrderDetailView(
       order.shippingAddress.scheduledDeliveryDate &&
       order.shippingAddress.scheduledDeliveryStart &&
       order.shippingAddress.scheduledDeliveryEnd
-        ? `${order.shippingAddress.scheduledDeliveryDate} ${order.shippingAddress.scheduledDeliveryStart}–${order.shippingAddress.scheduledDeliveryEnd}`
+        ? formatDeliverySlotDisplay(
+            order.shippingAddress.scheduledDeliveryDate,
+            order.shippingAddress.scheduledDeliveryStart,
+            order.shippingAddress.scheduledDeliveryEnd,
+          )
         : order.deliveryEstimateSnapshot &&
             /\d{4}-\d{2}-\d{2}/.test(order.deliveryEstimateSnapshot)
           ? order.deliveryEstimateSnapshot
@@ -119,9 +123,6 @@ export function toAdminOrderDetailView(
       typeof order.shippingAddress.cashChangeAmount === "number"
         ? order.shippingAddress.cashChangeAmount
         : null,
-    cashChangeImageUrl: order.shippingAddress.cashChangeImageKey
-      ? mediaPublicUrl(order.shippingAddress.cashChangeImageKey)
-      : null,
     paymentMethod: latestPayment
       ? paymentMethodLabel(latestPayment.method)
       : "—",

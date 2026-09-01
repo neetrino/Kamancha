@@ -159,7 +159,10 @@ export async function createOrderAction(
         groupCheckout.deliveryAmount,
       );
     } else {
-      const quoted = await quoteDistanceDelivery(input.line1 ?? "");
+      const quoted = await quoteDistanceDelivery(
+        input.line1 ?? "",
+        input.locale,
+      );
       if (!quoted.ok) {
         return { ok: false, error: quoted.error };
       }

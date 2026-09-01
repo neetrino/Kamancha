@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   formatAnalyticsDisplayDate,
+  formatAnalyticsMonthShort,
   matchAnalyticsPeriodPreset,
   rangeForAnalyticsPeriod,
 } from "@/features/analytics/domain/date-range";
@@ -26,6 +27,17 @@ describe("rangeForAnalyticsPeriod", () => {
 
 describe("formatAnalyticsDisplayDate", () => {
   it("formats UTC ISO dates for headers", () => {
-    expect(formatAnalyticsDisplayDate("2026-07-12")).toBe("Jul 12, 2026");
+    expect(formatAnalyticsDisplayDate("2026-07-12", "en")).toBe("July 12, 2026");
+    expect(formatAnalyticsDisplayDate("2026-07-12", "hy")).toBe(
+      "12 Հուլիս, 2026 թ.",
+    );
+  });
+});
+
+describe("formatAnalyticsMonthShort", () => {
+  it("returns localized month names", () => {
+    expect(formatAnalyticsMonthShort("2026-08-01", "hy")).toBe("Օգոստոս");
+    expect(formatAnalyticsMonthShort("2026-08-01", "ru")).toBe("Август");
+    expect(formatAnalyticsMonthShort("2026-08-01", "en")).toBe("August");
   });
 });

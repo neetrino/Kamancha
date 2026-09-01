@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import {
   Copy,
   Share2,
@@ -69,6 +69,7 @@ const PRODUCT_THUMB_RADIUS_PX = 16;
 const PRODUCT_CARD_MIN_PX = 200;
 const PRODUCT_CARD_MAX_PX = 320;
 const PRODUCT_TITLE_MAX_PX = 180;
+const DELIVERY_QUOTE_DEBOUNCE_MS = 600;
 
 type PendingConfirm =
   | { kind: "participant"; id: string; name: string }
@@ -140,6 +141,55 @@ export function GroupOrderPageClient({
     null,
   );
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [deliveryQuotePending, setDeliveryQuotePending] = useState(false);
+  const lastQuotedAddressRef = useRef(
+    (initialView?.deliveryAddress ?? "").trim(),
+  );
+
+  useEffect(() => {
+    if (!initialView) return;
+    if (initialView.currentParticipantRole !== "ORGANIZER") return;
+    if (initialView.status !== "OPEN") return;
+
+    const trimmed = deliveryAddress.trim();
+    if (trimmed.length < 3) return;
+    if (trimmed === lastQuotedAddressRef.current) return;
+
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      setDeliveryQuotePending(true);
+      void setDeliveryAddressAction({
+        inviteToken,
+        deliveryAddress: trimmed,
+        locale,
+        deliveryLat: deliveryPoint?.lat,
+        deliveryLng: deliveryPoint?.lng,
+      }).then((result) => {
+        if (cancelled) return;
+        setDeliveryQuotePending(false);
+        if (!result.ok) {
+          setError(result.error ?? labels.errorGeneric);
+          return;
+        }
+        lastQuotedAddressRef.current = trimmed;
+        setError(null);
+        router.refresh();
+      });
+    }, DELIVERY_QUOTE_DEBOUNCE_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [
+    deliveryAddress,
+    deliveryPoint,
+    initialView,
+    inviteToken,
+    labels.errorGeneric,
+    locale,
+    router,
+  ]);
 
   if (!initialView) {
     return (
@@ -454,36 +504,27 @@ export function GroupOrderPageClient({
                 ? labels.deliverySplitHint
                 : labels.deliveryOrganizerPaysHint}
             </p>
+            {deliveryQuotePending ? (
+              <p className="text-sm text-white/70">{labels.calculatingDelivery}</p>
+            ) : null}
             {view.deliveryAmount > 0 ? (
               <p className="text-base font-semibold text-[#f3e5a8] sm:text-lg">
                 {labels.deliveryQuoteReady
                   .replace("{amount}", view.deliveryFormatted)
                   .replace(
-                    "{distance}",
-                    view.deliveryDistanceLabel ?? "—",
-                  )}
+                    "({distance})",
+                    "",
+                  )
+                  .replace("{distance}", "")
+                  .trimEnd()}
+                {view.deliveryDistanceLabel ? (
+                  <span className="text-[calc(1em-2px)] font-semibold">
+                    {" "}
+                    ({view.deliveryDistanceLabel})
+                  </span>
+                ) : null}
               </p>
             ) : null}
-            <div className="flex justify-end">
-              <KamanchaPillButton
-                type="button"
-                variant="light"
-                size="compact"
-                label={labels.calculateDelivery}
-                className="!h-11 !min-h-11 !w-auto min-w-[180px] max-w-none px-7 text-[14px] leading-5 sm:max-w-none"
-                disabled={pending || deliveryAddress.trim().length < 3}
-                onClick={() =>
-                  run(async () =>
-                    setDeliveryAddressAction({
-                      inviteToken,
-                      deliveryAddress: deliveryAddress.trim(),
-                      deliveryLat: deliveryPoint?.lat,
-                      deliveryLng: deliveryPoint?.lng,
-                    }),
-                  )
-                }
-              />
-            </div>
           </div>
           </div>
         </section>
@@ -512,8 +553,8 @@ export function GroupOrderPageClient({
                   {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
                     <p className="mt-0.5 text-xs text-white/70">
                       {labels.deliveryShare}:{" "}
-                      {participant.deliveryShareFormatted} · {labels.total}:{" "}
-                      {participant.finalAmountFormatted}
+                      {participant.deliveryShareFormatted} · {labels.subtotal}:{" "}
+                      {participant.subtotalFormatted}
                     </p>
                   ) : null}
                 </div>
@@ -547,28 +588,25 @@ export function GroupOrderPageClient({
                       </button>
                     ) : null}
                   </div>
-                  <p className="text-right text-sm text-white">
-                    {(view.paymentMode === "ORGANIZER_PAYS_ALL"
-                      ? participant.finalAmountFormatted
-                      : participant.subtotalFormatted)}{" "}
-                    ·{" "}
-                    {paymentLabel(
-                      view.paymentMode === "ORGANIZER_PAYS_ALL" &&
-                        participant.paymentStatus === "NOT_REQUIRED"
-                        ? "PENDING"
-                        : participant.paymentStatus,
-                      labels,
-                      {
-                        paysAtCheckout:
-                          view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-                          participant.role === "ORGANIZER" &&
-                          participant.paymentStatus !== "PAID" &&
-                          participant.paymentStatus !== "MARKED_RECEIVED" &&
-                          (view.status === "AWAITING_PAYMENTS" ||
-                            view.status === "CHECKOUT"),
-                      },
-                    )}
-                  </p>
+                  {view.paymentMode === "ORGANIZER_PAYS_ALL" &&
+                  participant.role !== "ORGANIZER" ? null : (
+                    <p className="text-right text-sm text-white">
+                      {participant.finalAmountFormatted} ·{" "}
+                      {paymentLabel(
+                        participant.paymentStatus,
+                        labels,
+                        {
+                          paysAtCheckout:
+                            view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+                            participant.role === "ORGANIZER" &&
+                            participant.paymentStatus !== "PAID" &&
+                            participant.paymentStatus !== "MARKED_RECEIVED" &&
+                            (view.status === "AWAITING_PAYMENTS" ||
+                              view.status === "CHECKOUT"),
+                        },
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
 

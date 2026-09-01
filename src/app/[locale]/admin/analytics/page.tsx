@@ -4,6 +4,10 @@ import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
 import { ADMIN_PAGE_SUBTITLE } from "@/features/admin/ui/admin-form-classes";
 import { getAnalyticsSummary } from "@/features/analytics/application/queries";
 import {
+  buildAnalyticsTrendSeries,
+  countAnalyticsRangeDays,
+} from "@/features/analytics/domain/dashboard-periods";
+import {
   analyticsDateRangeSchema,
   formatPeriodDelta,
   matchAnalyticsPeriodPreset,
@@ -59,6 +63,13 @@ export default async function AdminAnalyticsPage({
   const formatMoney = (amount: number): string =>
     formatMoneyAmount(amount, "AMD", locale);
 
+  const trendPoints = buildAnalyticsTrendSeries(
+    summary.dailyRows,
+    range,
+    locale,
+  );
+  const aggregatedMonthly = countAnalyticsRangeDays(range) > 45;
+
   return (
     <section>
       <div className="mb-3">
@@ -98,17 +109,16 @@ export default async function AdminAnalyticsPage({
         copy={dictionary.admin}
       />
 
-      <AnalyticsTopRankings
-        products={summary.topProducts}
-        categories={summary.topCategories}
-        formatMoney={formatMoney}
+      <AnalyticsOrdersByDay
+        locale={locale}
+        points={trendPoints}
+        aggregatedMonthly={aggregatedMonthly}
         copy={dictionary.admin}
       />
 
-      <AnalyticsOrdersByDay
-        from={range.from}
-        to={range.to}
-        rows={summary.dailyRows}
+      <AnalyticsTopRankings
+        products={summary.topProducts}
+        categories={summary.topCategories}
         formatMoney={formatMoney}
         copy={dictionary.admin}
       />

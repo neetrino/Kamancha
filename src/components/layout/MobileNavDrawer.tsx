@@ -15,6 +15,7 @@ import { Menu, X } from "lucide-react";
 
 import { HeaderMenuIcon } from "@/components/layout/storefront-nav-icons";
 import { AppLink } from "@/components/ui/AppLink";
+import type { SessionUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
@@ -40,6 +41,7 @@ type MobileNavDrawerProps = {
   locale: Locale;
   dictionary: Dictionary;
   navItems: readonly NavItem[];
+  user?: SessionUser | null;
   /** Override the menu trigger button classes (home header pill). */
   triggerClassName?: string;
   /** Extra controls inside the panel (locale/currency on home). */
@@ -63,6 +65,7 @@ export function MobileNavDrawer({
   locale,
   dictionary,
   navItems,
+  user = null,
   triggerClassName,
   panelFooter,
   forestTrigger = false,
@@ -267,15 +270,11 @@ export function MobileNavDrawer({
   }, [rendered]);
 
   const homeHref = `/${locale}`;
-  const productsHref = `/${locale}/products`;
   const legalHref = `/${locale}/legal`;
   const legalActive =
     pathname === legalHref || pathname.startsWith(`${legalHref}/`);
   const drawerNavItems = navItems.filter(
-    (item) =>
-      item.href !== homeHref &&
-      item.href !== `${homeHref}/` &&
-      item.href !== productsHref,
+    (item) => item.href !== homeHref && item.href !== `${homeHref}/`,
   );
 
   return (
@@ -396,6 +395,23 @@ export function MobileNavDrawer({
                     >
                       {dictionary.nav.policy}
                     </AppLink>
+
+                    <div className="px-1 pb-2 pt-1">
+                      <AppLink
+                        href={
+                          user
+                            ? `/${locale}/profile`
+                            : `/${locale}/login`
+                        }
+                        prefetchPolicy="intent"
+                        className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#dcecc6] px-8 font-big-fat-boii text-base font-normal tracking-wide text-brand-forest transition-colors hover:bg-[#d0e4b8]"
+                        onClick={() => setOpen(false)}
+                      >
+                        {user
+                          ? dictionary.header.profile
+                          : dictionary.header.login}
+                      </AppLink>
+                    </div>
                   </div>
 
                   {panelFooter ? (

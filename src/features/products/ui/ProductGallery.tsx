@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
@@ -75,6 +75,7 @@ export function ProductGallery({
   const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
   const [zoomed, setZoomed] = useState(false);
   const portalReady = useIsClient();
+  const mobileScrollerRef = useRef<HTMLDivElement>(null);
   const selectedIndex = Math.max(
     0,
     galleryImages.findIndex((image) => image.id === selectedId),
@@ -93,6 +94,25 @@ export function ProductGallery({
         (currentIndex + offset + galleryImages.length) % galleryImages.length;
       return galleryImages[nextIndex]?.id ?? currentId;
     });
+  }
+
+  function syncSelectedFromMobileScroll(): void {
+    const el = mobileScrollerRef.current;
+    if (!el || el.clientWidth <= 0) return;
+    const index = Math.round(el.scrollLeft / el.clientWidth);
+    const nextId = galleryImages[index]?.id;
+    if (nextId != null) {
+      setSelectedId(nextId);
+    }
+  }
+
+  function selectImage(imageId: string): void {
+    setSelectedId(imageId);
+    const el = mobileScrollerRef.current;
+    if (!el || el.clientWidth <= 0) return;
+    const index = galleryImages.findIndex((image) => image.id === imageId);
+    if (index < 0) return;
+    el.scrollTo({ left: index * el.clientWidth, behavior: "smooth" });
   }
 
   function closeZoom(): void {
@@ -212,29 +232,55 @@ export function ProductGallery({
   return (
     <div className="flex w-full flex-col gap-4 xl:w-[min(100%,640px)] xl:shrink-0">
       <div className="group relative aspect-[520/420] w-full overflow-hidden rounded-[30px] border-[3px] border-white bg-white">
-        {selected ? (
-          <Image
-            src={selected.url}
-            alt={selected.alt || title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 640px"
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-brand-forest/40">
-            No image
-          </div>
-        )}
+        {/* Mobile: swipe / scroll through images */}
+        <div
+          ref={mobileScrollerRef}
+          onScroll={syncSelectedFromMobileScroll}
+          className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain xl:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {galleryImages.map((image, index) => (
+            <div
+              key={image.id}
+              className="relative h-full w-full shrink-0 snap-center"
+            >
+              <Image
+                src={image.url}
+                alt={image.alt || title}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={index === 0}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop: selected image */}
+        <div className="relative hidden h-full w-full xl:block">
+          {selected ? (
+            <Image
+              src={selected.url}
+              alt={selected.alt || title}
+              fill
+              sizes="640px"
+              className="object-cover"
+              priority
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-sm text-brand-forest/40">
+              No image
+            </div>
+          )}
+        </div>
 
         {discountPercent != null ? (
-          <span className="absolute top-3 left-3 z-10 inline-flex h-[33px] min-w-24 items-center justify-center rounded-[30px] bg-[#84d086] px-3 text-sm font-bold text-[#132814]">
+          <span className="pointer-events-none absolute top-3 left-3 z-10 inline-flex h-[33px] min-w-24 items-center justify-center rounded-[30px] bg-[#84d086] px-3 text-sm font-bold text-[#132814]">
             {formatDiscountOff(discountOffLabel, discountPercent)}
           </span>
         ) : null}
 
         {!inStock ? (
-          <span className="absolute top-3 left-3 z-10 rounded-[30px] bg-[#132814]/90 px-3 py-1.5 text-sm font-semibold text-white">
+          <span className="pointer-events-none absolute top-3 left-3 z-10 rounded-[30px] bg-[#132814]/90 px-3 py-1.5 text-sm font-semibold text-white">
             {outOfStockLabel}
           </span>
         ) : null}
@@ -246,7 +292,7 @@ export function ProductGallery({
           isSignedIn={isSignedIn}
           label={wishlistLabel}
           size="lg"
-          className="absolute top-3 right-3 z-10 size-11 bg-white text-brand-forest shadow-sm hover:bg-white/90"
+          className="absolute top-3 right-2 z-10 size-11 bg-white text-brand-forest shadow-sm hover:bg-white/90 xl:right-3"
         />
 
         {canCycle ? (
@@ -255,7 +301,7 @@ export function ProductGallery({
               type="button"
               aria-label={previousImageLabel}
               onClick={() => goToOffset(-1)}
-              className="absolute top-1/2 left-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-100 shadow-md transition hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:opacity-0 md:group-hover:opacity-100"
+              className="absolute top-1/2 left-3 z-10 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-0 shadow-md transition group-hover:opacity-100 hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white xl:flex"
             >
               <ChevronLeft className="size-6" aria-hidden />
             </button>
@@ -263,7 +309,7 @@ export function ProductGallery({
               type="button"
               aria-label={nextImageLabel}
               onClick={() => goToOffset(1)}
-              className="absolute top-1/2 right-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-100 shadow-md transition hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:opacity-0 md:group-hover:opacity-100"
+              className="absolute top-1/2 right-3 z-10 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white opacity-0 shadow-md transition group-hover:opacity-100 hover:bg-black/65 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white xl:flex"
             >
               <ChevronRight className="size-6" aria-hidden />
             </button>
@@ -293,7 +339,7 @@ export function ProductGallery({
               >
                 <button
                   type="button"
-                  onClick={() => setSelectedId(image.id)}
+                  onClick={() => selectImage(image.id)}
                   aria-label={image.alt || title}
                   aria-pressed={isActive}
                   className={`relative size-full overflow-hidden rounded-2xl transition ${

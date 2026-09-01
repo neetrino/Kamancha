@@ -5,6 +5,7 @@ import {
   formatAnalyticsShortDate,
   type AnalyticsDateRange,
 } from "@/features/analytics/domain/date-range";
+import type { Locale } from "@/lib/i18n/config";
 
 export const DASHBOARD_METRIC_PERIODS = [
   "today",
@@ -54,12 +55,58 @@ function monthKeyFromIso(isoDate: string): string {
   return isoDate.slice(0, 7);
 }
 
-function formatMonthLabel(monthKey: string): string {
-  return new Date(`${monthKey}-01T12:00:00.000Z`).toLocaleDateString("en-US", {
-    month: "short",
-    year: "2-digit",
-    timeZone: "UTC",
-  });
+const CHART_MONTH_NAMES: Record<Locale, readonly string[]> = {
+  en: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
+  ru: [
+    "Январь",
+    "Февраль",
+    "Март",
+    "Апрель",
+    "Май",
+    "Июнь",
+    "Июль",
+    "Август",
+    "Сентябрь",
+    "Октябрь",
+    "Ноябрь",
+    "Декабрь",
+  ],
+  hy: [
+    "Հունվար",
+    "Փետրվար",
+    "Մարտ",
+    "Ապրիլ",
+    "Մայիս",
+    "Հունիս",
+    "Հուլիս",
+    "Օգոստոս",
+    "Սեպտեմբեր",
+    "Հոկտեմբեր",
+    "Նոյեմբեր",
+    "Դեկտեմբեր",
+  ],
+};
+
+function formatMonthLabel(monthKey: string, locale: Locale = "en"): string {
+  const [yearText, monthText] = monthKey.split("-");
+  const year = Number(yearText);
+  const monthIndex = Number(monthText) - 1;
+  const monthName = CHART_MONTH_NAMES[locale][monthIndex] ?? monthKey;
+  const yearShort = String(year).slice(-2);
+  return `${monthName} ${yearShort}`;
 }
 
 function listMonthKeys(from: string, to: string): string[] {
@@ -154,6 +201,7 @@ function listDayKeys(from: string, to: string): string[] {
 export function buildAnalyticsDailySeries(
   rows: AnalyticsCsvRow[],
   range: AnalyticsDateRange,
+  locale: Locale = "en",
 ): DashboardTrendPoint[] {
   const byDate = new Map<
     string,
@@ -174,7 +222,7 @@ export function buildAnalyticsDailySeries(
     };
     return {
       key,
-      label: formatAnalyticsShortDate(key),
+      label: formatAnalyticsShortDate(key, locale),
       orderCount: totalsForDay.orderCount,
       revenueAmount: Math.round(totalsForDay.revenueAmount * 100) / 100,
     };
@@ -187,11 +235,12 @@ export function buildAnalyticsDailySeries(
 export function buildAnalyticsTrendSeries(
   rows: AnalyticsCsvRow[],
   range: AnalyticsDateRange,
+  locale: Locale = "en",
 ): DashboardTrendPoint[] {
   if (countAnalyticsRangeDays(range) > ANALYTICS_DAILY_SERIES_MAX_DAYS) {
-    return buildDashboardMonthlySeries(rows, range);
+    return buildDashboardMonthlySeries(rows, range, locale);
   }
-  return buildAnalyticsDailySeries(rows, range);
+  return buildAnalyticsDailySeries(rows, range, locale);
 }
 
 /**
@@ -201,6 +250,7 @@ export function buildAnalyticsTrendSeries(
 export function buildDashboardMonthlySeries(
   rows: AnalyticsCsvRow[],
   range: AnalyticsDateRange,
+  locale: Locale = "en",
 ): DashboardTrendPoint[] {
   const totals = new Map<
     string,
@@ -222,7 +272,7 @@ export function buildDashboardMonthlySeries(
     };
     return {
       key,
-      label: formatMonthLabel(key),
+      label: formatMonthLabel(key, locale),
       orderCount: totalsForMonth.orderCount,
       revenueAmount: Math.round(totalsForMonth.revenueAmount * 100) / 100,
     };

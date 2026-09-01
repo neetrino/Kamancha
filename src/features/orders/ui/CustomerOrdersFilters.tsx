@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { Search } from "lucide-react";
 
@@ -20,6 +20,8 @@ type CustomerOrdersFiltersProps = {
   copy: Dictionary["admin"]["orders"]["filters"];
   searchPlaceholder: string;
   searchAria: string;
+  /** Kind pills (All / Personal / Group) — shown on one line with the total. */
+  kindFilter?: ReactNode;
 };
 
 export function CustomerOrdersFilters({
@@ -32,6 +34,7 @@ export function CustomerOrdersFilters({
   copy,
   searchPlaceholder,
   searchAria,
+  kindFilter,
 }: CustomerOrdersFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [statusValue, setStatusValue] = useState(status ?? "");
@@ -76,7 +79,8 @@ export function CustomerOrdersFilters({
           value={statusValue}
           allLabel={copy.allStatuses}
           options={orderStatusFilters}
-          className="w-full xl:w-[180px] xl:shrink-0"
+          className="w-full shrink-0 xl:w-auto"
+          fitContent
           onValueChange={applyStatus}
         />
         <SelectDropdown
@@ -85,7 +89,8 @@ export function CustomerOrdersFilters({
           value={paymentValue}
           allLabel={copy.allPaymentStatuses}
           options={paymentStatusFilters}
-          className="w-full xl:w-[200px] xl:shrink-0"
+          className="w-full shrink-0 xl:w-auto"
+          fitContent
           onValueChange={applyPayment}
         />
         <div
@@ -101,7 +106,8 @@ export function CustomerOrdersFilters({
           />
         </div>
       </form>
-      <div className="relative z-[2] mt-4 border-t border-white/35 pt-3">
+      <div className="relative z-[2] mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-white/35 pt-3">
+        {kindFilter}
         <p className="text-sm text-white">
           {totalLabel}: {total}
         </p>

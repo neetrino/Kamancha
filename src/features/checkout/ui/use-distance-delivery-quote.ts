@@ -17,7 +17,10 @@ export type DeliveryQuoteState = {
 /**
  * Debounced distance-delivery quote for the checkout address field.
  */
-export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
+export function useDistanceDeliveryQuote(
+  line1: string,
+  locale: string,
+): DeliveryQuoteState {
   const [deliveryAmount, setDeliveryAmount] = useState(0);
   const [distanceLabel, setDistanceLabel] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -36,7 +39,7 @@ export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
     let cancelled = false;
     const timer = window.setTimeout(() => {
       setPending(true);
-      void quoteDistanceDeliveryAction(trimmed).then((result) => {
+      void quoteDistanceDeliveryAction(trimmed, locale).then((result) => {
         if (cancelled) return;
         setPending(false);
         if (!result.ok) {
@@ -55,7 +58,7 @@ export function useDistanceDeliveryQuote(line1: string): DeliveryQuoteState {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [line1]);
+  }, [line1, locale]);
 
   return { deliveryAmount, distanceLabel, pending, error };
 }

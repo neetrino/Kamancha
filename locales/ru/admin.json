@@ -733,6 +733,7 @@
       "subtitle": "Динамика заказов и выручки по дням",
       "chartAria": "График динамики заказов по дням",
       "empty": "В этом периоде нет заказов.",
+      "peakDay": "Лучший день",
       "ordersCount": "{count} заказов",
       "revenue": "выручка"
     }
@@ -909,6 +910,7 @@
     "mode": "Режим",
     "status": "Статус",
     "participants": "Участники",
+    "total": "Итого",
     "delivery": "Доставка",
     "created": "Создан",
     "empty": "Групповых заказов пока нет.",
@@ -923,7 +925,38 @@
     "markPaid": "Отметить как оплачено",
     "closeJoins": "Закрыть присоединение",
     "cancel": "Отменить групповой заказ",
-    "actionFailed": "Не удалось выполнить действие."
+    "actionFailed": "Не удалось выполнить действие.",
+    "bulk": {
+      "deleteSelected": "Отменить выбранные",
+      "selectAllAria": "Выбрать все групповые заказы на странице",
+      "selectOneAria": "Выбрать групповой заказ {id}",
+      "selectedOnPage": "Выбрано на странице: {count}",
+      "cancelledSummary": "Отменено {cancelled}, пропущено {skipped}.",
+      "deleteConfirm": "Отменить {count} выбранных групповых заказов? Это действие нельзя отменить.",
+      "entitySingular": "групповой заказ",
+      "entityPlural": "групповых заказов"
+    },
+    "filters": {
+      "searchPlaceholder": "Поиск по организатору или ID",
+      "searchAria": "Поиск групповых заказов",
+      "allStatuses": "Все статусы",
+      "statusAria": "Фильтр по статусу",
+      "allModes": "Все режимы оплаты",
+      "modeAria": "Фильтр по режиму оплаты",
+      "modeOrganizerPays": "Организатор платит за всех",
+      "modeSplit": "Разделить между участниками",
+      "total": "{total} групповых заказов",
+      "statusOpen": "Открыт",
+      "statusLocked": "Заблокирован",
+      "statusAwaitingPayments": "Ожидает оплаты",
+      "statusCheckout": "Оформление",
+      "statusPartiallyPaid": "Частично оплачен",
+      "statusPaid": "Оплачен",
+      "statusPreparing": "Готовится",
+      "statusCompleted": "Завершён",
+      "statusExpired": "Истёк",
+      "statusCancelled": "Отменён"
+    }
   },
   "settings": {
     "title": "Настройки магазина",

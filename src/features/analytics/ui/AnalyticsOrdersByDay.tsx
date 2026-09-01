@@ -1,118 +1,187 @@
-import { BarChart3 } from "lucide-react";
+"use client";
+
+import { TrendingUp } from "lucide-react";
 
 import {
   ADMIN_CARD_CLASS,
-  ADMIN_CHIP_FOREST,
+  ADMIN_CARD_HOVER_CLASS,
 } from "@/features/admin/ui/admin-ui";
 import {
   DASHBOARD_ORDERS_COLOR,
   DASHBOARD_REVENUE_COLOR,
   DashboardTrendSvg,
 } from "@/features/admin/ui/DashboardTrendSvg";
-import type { AnalyticsCsvRow } from "@/features/analytics/domain/csv";
-import { buildAnalyticsTrendSeries } from "@/features/analytics/domain/dashboard-periods";
-import { formatAnalyticsShortDate } from "@/features/analytics/domain/date-range";
+import type { DashboardTrendPoint } from "@/features/analytics/domain/dashboard-periods";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type AnalyticsOrdersByDayProps = {
-  from: string;
-  to: string;
-  rows: AnalyticsCsvRow[];
-  formatMoney: (amount: number) => string;
+  locale: Locale;
+  points: DashboardTrendPoint[];
+  aggregatedMonthly: boolean;
   copy: Dictionary["admin"];
 };
 
-export function AnalyticsOrdersByDay({
-  from,
-  to,
-  rows,
-  formatMoney,
-  copy,
-}: AnalyticsOrdersByDayProps) {
-  const trendPoints = buildAnalyticsTrendSeries(rows, { from, to });
-  const maxOrders = Math.max(...rows.map((row) => row.orderCount), 1);
+function pickBestPoint(
+  points: DashboardTrendPoint[],
+): DashboardTrendPoint | null {
+  if (points.length === 0) {
+    return null;
+  }
+  return points.reduce((best, point) =>
+    point.revenueAmount > best.revenueAmount ? point : best,
+  );
+}
+
+function StackStat({
+  label,
+  value,
+  hint,
+  tone,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+  tone: "forest" | "mint" | "ink" | "surface";
+}) {
+  const toneClass =
+    tone === "forest"
+      ? "bg-brand-forest/10 ring-brand-forest/15"
+      : tone === "mint"
+        ? "bg-emerald-50 ring-emerald-200/60"
+        : tone === "ink"
+          ? "bg-gray-900/5 ring-gray-200"
+          : "bg-gray-100 ring-gray-100";
 
   return (
-    <div className={`${ADMIN_CARD_CLASS} p-4 sm:p-5`}>
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-base font-semibold text-gray-900">
-            {copy.analytics.ordersByDay.title}
-          </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            {copy.analytics.ordersByDay.subtitle}
-          </p>
+    <div
+      className={`rounded-[12px] px-3.5 py-3 ring-1 ${toneClass} ${ADMIN_CARD_HOVER_CLASS}`}
+    >
+      <p className="text-[11px] font-medium text-gray-500">{label}</p>
+      <p className="mt-1 break-words text-base font-bold leading-snug text-gray-900">
+        {value}
+      </p>
+      {hint ? (
+        <p className="mt-1 break-words text-[11px] leading-snug text-gray-500">
+          {hint}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+export function AnalyticsOrdersByDay({
+  locale,
+  points,
+  aggregatedMonthly,
+  copy,
+}: AnalyticsOrdersByDayProps) {
+  const ordersByDay = copy.analytics.ordersByDay;
+  const dashboard = copy.dashboard;
+
+  const totalRevenue = points.reduce(
+    (sum, point) => sum + point.revenueAmount,
+    0,
+  );
+  const totalOrders = points.reduce((sum, point) => sum + point.orderCount, 0);
+  const averageOrderValue =
+    totalOrders > 0
+      ? Math.round((totalRevenue / totalOrders) * 100) / 100
+      : 0;
+  const bestPoint = pickBestPoint(points);
+
+  const isEmpty = points.every(
+    (point) => point.orderCount === 0 && point.revenueAmount === 0,
+  );
+
+  const peakLabel = aggregatedMonthly
+    ? dashboard.chartBestMonth
+    : ordersByDay.peakDay;
+
+  return (
+    <div className={`mb-3 ${ADMIN_CARD_CLASS} p-4`}>
+      <div className="mb-3 flex min-w-0 items-center gap-2">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-forest/10 text-brand-forest">
+          <TrendingUp className="h-4 w-4" aria-hidden />
         </div>
-        <div
-          className={`flex h-8 w-8 items-center justify-center rounded-full ${ADMIN_CHIP_FOREST.bg} ${ADMIN_CHIP_FOREST.fg}`}
-        >
-          <BarChart3 className="h-3.5 w-3.5" aria-hidden />
+        <div className="min-w-0">
+          <h2 className="text-base font-semibold text-gray-900">
+            {ordersByDay.title}
+          </h2>
+          <p className="text-xs text-gray-500">{ordersByDay.subtitle}</p>
         </div>
       </div>
 
-      {rows.length === 0 ? (
-        <p className="py-12 text-center text-sm text-gray-500">
-          {copy.analytics.ordersByDay.empty}
+      {isEmpty ? (
+        <p className="py-8 text-center text-sm text-gray-500">
+          {ordersByDay.empty}
         </p>
       ) : (
-        <>
-          <div className="rounded-[12px] bg-gray-50/70 p-3 ring-1 ring-gray-100">
-            <div className="mb-2 flex flex-wrap items-center gap-4 text-[11px] text-gray-500">
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-stretch">
+          <div className="order-2 flex min-w-0 flex-col items-center justify-center rounded-[12px] bg-gradient-to-b from-gray-50/70 to-white p-3 ring-1 ring-gray-100/80 lg:order-1">
+            <DashboardTrendSvg
+              points={points}
+              chartAria={ordersByDay.chartAria}
+              locale={locale}
+              tooltip={{
+                revenueLabel: dashboard.chartRevenue,
+                ordersLabel: dashboard.chartOrders,
+                formatRevenue: (amount) =>
+                  formatMoneyAmount(amount, "AMD", locale),
+                formatOrders: (count) => String(count),
+              }}
+            />
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500">
               <span className="inline-flex items-center gap-1.5">
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{ backgroundColor: DASHBOARD_REVENUE_COLOR }}
                 />
-                {copy.analytics.ordersByDay.revenue}
+                {dashboard.chartRevenue}
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span
                   className="h-2 w-2 rounded-full"
                   style={{ backgroundColor: DASHBOARD_ORDERS_COLOR }}
                 />
-                {copy.analytics.metrics.totalOrders}
+                {dashboard.chartOrders}
               </span>
             </div>
-            <DashboardTrendSvg
-              points={trendPoints}
-              chartAria={copy.analytics.ordersByDay.chartAria}
-            />
           </div>
 
-          <div className="mt-4 space-y-2">
-            {rows.map((row) => {
-              const widthPct = Math.max(
-                8,
-                Math.round((row.orderCount / maxOrders) * 100),
-              );
-              return (
-                <div
-                  key={row.date}
-                  className="grid grid-cols-[5rem_1fr_auto] items-center gap-3"
-                >
-                  <p className="text-sm font-medium text-gray-700">
-                    {formatAnalyticsShortDate(row.date)}
-                  </p>
-                  <div className="relative h-8 overflow-hidden rounded-[10px] bg-gray-100">
-                    <div
-                      className="absolute inset-y-0 left-0 rounded-[10px] bg-brand-forest/80"
-                      style={{ width: `${widthPct}%` }}
-                    />
-                    <span className="relative z-10 ml-3 inline-flex h-full items-center text-xs font-semibold text-white">
-                      {copy.analytics.ordersByDay.ordersCount.replace(
-                        "{count}",
-                        String(row.orderCount),
-                      )}
-                    </span>
-                  </div>
-                  <p className="text-right text-sm font-medium text-gray-900">
-                    {formatMoney(row.revenueAmount)}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="order-1 flex flex-col gap-2 lg:order-2">
+            <StackStat
+              label={dashboard.chartRevenue}
+              value={formatMoneyAmount(totalRevenue, "AMD", locale)}
+              tone="forest"
+            />
+            <StackStat
+              label={dashboard.chartOrders}
+              value={String(totalOrders)}
+              tone="mint"
+            />
+            <StackStat
+              label={dashboard.aov}
+              value={formatMoneyAmount(averageOrderValue, "AMD", locale)}
+              tone="ink"
+            />
+            <StackStat
+              label={peakLabel}
+              value={
+                bestPoint && bestPoint.revenueAmount > 0
+                  ? bestPoint.label
+                  : dashboard.chartEmptyShort
+              }
+              hint={
+                bestPoint && bestPoint.revenueAmount > 0
+                  ? formatMoneyAmount(bestPoint.revenueAmount, "AMD", locale)
+                  : undefined
+              }
+              tone="surface"
+            />
           </div>
-        </>
+        </div>
       )}
     </div>
   );

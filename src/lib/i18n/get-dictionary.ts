@@ -72,6 +72,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     nav: namespaces.common.nav,
     header: namespaces.common.header,
     footer: namespaces.common.footer,
+    units: namespaces.common.units,
     admin: namespaces.admin,
     home: namespaces.home,
     contact: namespaces.contact,

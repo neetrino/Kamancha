@@ -1,5 +1,6 @@
 "use client";
 
+import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import {
   localizeOrderStatus,
   localizePaymentStatus,
@@ -88,7 +89,9 @@ export function CustomerOrdersTable({
   return (
     <section className={PROFILE_SECTION}>
       <ul className="relative z-[2]">
-        {orders.map((order) => (
+        {orders.map((order) => {
+          const placed = formatAdminPlacedParts(order.placedAt);
+          return (
           <li key={order.id} className={ROW_RULE}>
             <button
               type="button"
@@ -96,18 +99,16 @@ export function CustomerOrdersTable({
               className="flex w-full flex-col gap-2 py-4 text-left transition-colors hover:opacity-90 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
             >
               <div className="min-w-0">
-                <p className="font-medium text-white">{order.orderNumber}</p>
-                {order.isGroupOrder && groupOrderBadgeLabel ? (
-                  <p className="mt-0.5 text-xs font-medium text-emerald-200">
-                    {groupOrderBadgeLabel}
-                  </p>
-                ) : null}
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-medium text-white">{order.orderNumber}</p>
+                  {order.isGroupOrder && groupOrderBadgeLabel ? (
+                    <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-emerald-500">
+                      {groupOrderBadgeLabel}
+                    </span>
+                  ) : null}
+                </div>
                 <p className="mt-1 text-xs text-white/80">
-                  {new Date(order.placedAt)
-                    .toISOString()
-                    .slice(0, 16)
-                    .replace("T", " ")}{" "}
-                  UTC
+                  {placed.date} {placed.time}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2 sm:justify-end">
@@ -130,7 +131,8 @@ export function CustomerOrdersTable({
               </div>
             </button>
           </li>
-        ))}
+          );
+        })}
       </ul>
       <p className="relative z-[2] pt-3 pl-4 text-sm text-white">
         {orders.length} order{orders.length === 1 ? "" : "s"} on this page

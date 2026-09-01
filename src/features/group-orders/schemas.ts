@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 import { GROUP_ORDER_SPEND_LIMIT_MAX } from "@/features/group-orders/domain/spend-limit";
-import { GROUP_ORDER_PAYMENT_MODES } from "@/features/group-orders/domain/status";
+import {
+  GROUP_ORDER_PAYMENT_MODES,
+  GROUP_ORDER_STATUSES,
+} from "@/features/group-orders/domain/status";
 
 const spendLimitAmountSchema = z
   .number()
@@ -73,13 +76,29 @@ export const setDeliveryAmountSchema = z.object({
 export const setDeliveryAddressSchema = z.object({
   inviteToken: z.string().uuid(),
   deliveryAddress: z.string().trim().min(3).max(300),
+  locale: z.enum(["hy", "en", "ru"]),
   /** Map pin — used for distance when present (avoids re-geocoding vague labels). */
   deliveryLat: z.number().finite().min(-90).max(90).optional(),
   deliveryLng: z.number().finite().min(-180).max(180).optional(),
 });
 
+export const adminGroupOrdersFilterSchema = z.object({
+  q: z.string().trim().max(120).optional(),
+  status: z.enum(GROUP_ORDER_STATUSES).optional(),
+  paymentMode: z.enum(GROUP_ORDER_PAYMENT_MODES).optional(),
+  page: z.coerce.number().int().min(1).max(500).default(1),
+});
+
+export type AdminGroupOrdersFilterInput = z.infer<
+  typeof adminGroupOrdersFilterSchema
+>;
+
 export const adminGroupOrderIdSchema = z.object({
   groupOrderId: z.string().uuid(),
+});
+
+export const adminBulkCancelGroupOrdersSchema = z.object({
+  groupOrderIds: z.array(z.string().uuid()).min(1).max(100),
 });
 
 export const adminMarkParticipantPaidSchema = z.object({

@@ -88,7 +88,7 @@
     "applying": "Применение…"
   },
   "giftCard": {
-    "title": "Код подарочной карты",
+    "title": "Есть код Gift Card?",
     "placeholder": "KAM-XXXX-XXXX",
     "apply": "Применить",
     "applying": "Применение…",
@@ -104,7 +104,8 @@
     "use": "Использовать бонусы",
     "amount": "Количество бонусов",
     "useMax": "Максимум",
-    "applied": "Бонусы"
+    "applied": "Бонусы",
+    "earn": "Бонусные баллы"
   },
   "summary": {
     "subtotal": "Подытог",

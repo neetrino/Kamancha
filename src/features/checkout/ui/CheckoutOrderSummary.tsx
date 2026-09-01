@@ -38,6 +38,8 @@ type CheckoutOrderSummaryProps = {
   giftCardPayableLabel: string;
   giftCardAppliedLabel: string;
   bonusAppliedLabel: string;
+  bonusEarnLabel: string | null;
+  bonusEarnAmount: number | null;
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
@@ -45,7 +47,8 @@ type CheckoutOrderSummaryProps = {
   totalLabel: string;
   subtotalFormatted: string;
   shippingFormatted: string;
-  shippingAddressPrompt: string | null;
+  /** Distance part shown smaller next to the shipping amount, e.g. "0.6 km". */
+  shippingDistanceLabel?: string | null;
   discountFormatted: string | null;
   changeFormatted: string | null;
   totalFormatted: string;
@@ -84,6 +87,8 @@ export function CheckoutOrderSummary({
   giftCardPayableLabel,
   giftCardAppliedLabel,
   bonusAppliedLabel,
+  bonusEarnLabel,
+  bonusEarnAmount,
   discountLabel,
   subtotalLabel,
   shippingLabel,
@@ -91,7 +96,7 @@ export function CheckoutOrderSummary({
   totalLabel,
   subtotalFormatted,
   shippingFormatted,
-  shippingAddressPrompt,
+  shippingDistanceLabel = null,
   discountFormatted,
   changeFormatted,
   totalFormatted,
@@ -193,11 +198,9 @@ export function CheckoutOrderSummary({
             </div>
           ) : null}
           {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
-            <div className="flex justify-between text-white">
+            <div className="flex justify-between text-red-300">
               <span>{bonusAppliedLabel}</span>
-              <span className="text-emerald-200">
-                -{formatMoney(bonus.redeemAmount)}
-              </span>
+              <span>-{formatMoney(bonus.redeemAmount)}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (
@@ -210,12 +213,26 @@ export function CheckoutOrderSummary({
           ) : null}
           <div className="flex justify-between text-white">
             <span>{shippingLabel}</span>
-            <span className="text-right">{shippingFormatted}</span>
+            <span className="text-right">
+              {shippingFormatted}
+              {shippingDistanceLabel ? (
+                <span className="text-[calc(1em-2px)]">
+                  {" "}
+                  ({shippingDistanceLabel})
+                </span>
+              ) : null}
+            </span>
           </div>
           {changeFormatted ? (
             <div className="flex justify-between text-white">
               <span>{changeLabel}</span>
               <span>{changeFormatted}</span>
+            </div>
+          ) : null}
+          {bonusEarnLabel != null && bonusEarnAmount != null && bonusEarnAmount > 0 ? (
+            <div className="flex justify-between font-semibold text-[#f3e5a8]">
+              <span>{bonusEarnLabel}</span>
+              <span>+{bonusEarnAmount}</span>
             </div>
           ) : null}
           <div className="border-t border-white/40 pt-4">
@@ -227,19 +244,6 @@ export function CheckoutOrderSummary({
         </div>
 
         <div className="relative z-[2]">
-          {shippingAddressPrompt ? (
-            <button
-              type="button"
-              onClick={() => {
-                document
-                  .getElementById("checkout-shipping-address")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-              className={SUMMARY_ALERT_PILL_CLASS}
-            >
-              {shippingAddressPrompt}
-            </button>
-          ) : null}
           {error ? (
             <p className={SUMMARY_ALERT_PILL_CLASS} role="alert">
               {error}

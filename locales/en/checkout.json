@@ -88,7 +88,7 @@
     "applying": "Applying…"
   },
   "giftCard": {
-    "title": "Gift card code",
+    "title": "Have a Gift Card code?",
     "placeholder": "KAM-XXXX-XXXX",
     "apply": "Apply",
     "applying": "Applying…",
@@ -104,7 +104,8 @@
     "use": "Use bonuses",
     "amount": "Bonus points to use",
     "useMax": "Use max",
-    "applied": "Bonuses"
+    "applied": "Bonuses",
+    "earn": "Loyalty points"
   },
   "summary": {
     "subtotal": "Subtotal",

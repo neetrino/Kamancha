@@ -20,7 +20,7 @@ type CardLayoutClasses = {
 
 const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
   fixed: {
-    article: "h-[419px] w-[300px] shrink-0 rounded-[37px]",
+    article: "h-[419px] w-[300px] shrink-0 rounded-[30px]",
     image: "mx-[6px] mt-[7px] h-[220px] rounded-[30px]",
     imageSizes: "287px",
     badge:
@@ -39,12 +39,12 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
   },
   fluid: {
     article: "h-auto w-full rounded-[24px]",
-    image: "mx-1 mt-1 aspect-[5/4] rounded-[16px]",
+    image: "mx-1 mt-1 aspect-[5/4] rounded-[24px]",
     imageSizes:
       "(min-width:1280px) 220px, (min-width:1024px) 20vw, (min-width:640px) 40vw, 50vw",
     badge:
-      "top-1.5 left-1.5 h-6 min-w-[4.25rem] bg-[#84d086] px-1.5 text-[10px] text-[#132814]",
-    wishlist: "top-1.5 right-1.5 size-10",
+      "top-[4px] left-[1px] h-6 min-w-[4.25rem] bg-[#84d086] px-1.5 text-[10px] text-[#132814]",
+    wishlist: "top-[-4px] right-[1px] size-10",
     wishlistSize: "lg",
     body: "min-h-[5.5rem] gap-1 px-2.5 pt-2 pb-3.5",
     title: "text-[13px] leading-5",
@@ -57,12 +57,12 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     cart: "size-12 sm:size-11",
   },
   compact: {
-    article: "h-[302px] w-full rounded-[26px]",
-    image: "mx-[6px] mt-[7px] h-[166px] rounded-[30px]",
+    article: "h-[302px] w-full rounded-[27px]",
+    image: "mx-[6px] mt-[7px] h-[166px] rounded-[27px]",
     imageSizes: "201px",
     badge:
-      "top-2 left-1.5 h-6 min-w-[4.75rem] bg-[#140900] px-2 text-[11px] text-white",
-    wishlist: "top-0.5 right-1 size-10",
+      "top-[4px] left-[1px] h-6 min-w-[4.75rem] bg-[#140900] px-2 text-[11px] text-white",
+    wishlist: "top-0 right-1.5 size-10",
     wishlistSize: "lg",
     body: "gap-1 px-[13px] pt-2 pb-3",
     title: "text-[16px] leading-[22px]",
@@ -79,12 +79,12 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     article:
       "h-auto w-full rounded-[26px] xl:h-[419px] xl:max-w-[300px] xl:rounded-[37px]",
     image:
-      "mx-[6px] mt-[7px] aspect-[287/220] rounded-[30px] xl:h-[220px] xl:aspect-auto",
+      "mx-[6px] mt-[7px] aspect-[287/220] rounded-[26px] xl:h-[220px] xl:aspect-auto xl:rounded-[37px]",
     imageSizes:
       "(min-width: 1280px) 287px, (min-width: 744px) 33vw, 50vw",
     badge:
-      "top-1.5 left-2 h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814]",
-    wishlist: "top-0.5 right-1.5 size-10",
+      "top-[4px] left-[1px] h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814] xl:top-1.5 xl:left-2",
+    wishlist: "top-[-4px] right-[1px] size-10 xl:top-0.5 xl:right-1.5",
     wishlistSize: "lg",
     body: "gap-0.5 px-2.5 pt-1.5 pb-3 xl:gap-0 xl:px-[17px] xl:pt-2 xl:pb-5",
     title: "text-[13px] leading-5 xl:text-[16px] xl:leading-[30px]",

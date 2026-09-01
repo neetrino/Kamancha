@@ -94,7 +94,7 @@ export function CurrencySwitcher({
             role="menuitem"
             disabled={pending}
             aria-current={selected ? "true" : undefined}
-            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-50"
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-800 transition-colors hover:bg-[#dcecc6] hover:text-brand-forest disabled:opacity-50"
             onClick={() => {
               startTransition(async () => {
                 await setCurrencyAction(item);

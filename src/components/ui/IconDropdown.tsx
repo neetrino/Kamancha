@@ -130,7 +130,7 @@ export function IconDropdown({
             id={menuId}
             role="menu"
             aria-label={label}
-            className="w-full overflow-hidden rounded-2xl border border-gray-100 bg-white py-1"
+            className="w-full overflow-hidden rounded-2xl border border-gray-100 bg-white"
           >
             <div
               className="flex w-full flex-col"

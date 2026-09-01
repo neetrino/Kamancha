@@ -22,7 +22,7 @@ export function CatalogPageHeader({
   return (
     <header
       data-node-id="103:2412"
-      className="flex flex-col items-start pb-4 pt-2 sm:pt-4 md:pb-8 md:pt-2"
+      className="flex flex-col items-start pb-[14px] pt-[5px] sm:pb-4 sm:pt-4 md:pb-8 md:pt-2"
     >
       <Reveal immediate>
         <h1 data-node-id="103:2420" className={HEADING_SIZE_CLASS[headingSize]}>

@@ -63,7 +63,7 @@ export function CheckoutCodeApplyField({
     <>
       <div className="relative z-[2] xl:hidden">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-sm text-gray-900">{title}</p>
+          <p className="text-[15px] font-semibold text-white">{title}</p>
           <Button
             type="button"
             variant="secondary"
@@ -90,7 +90,6 @@ export function CheckoutCodeApplyField({
       </div>
 
       <div className="relative z-[2] hidden xl:block">
-        <p className="mb-3 text-sm text-white/80">{title}</p>
         <div className="flex gap-2">
           <input
             type="text"
@@ -98,7 +97,7 @@ export function CheckoutCodeApplyField({
             value={draft}
             onChange={(event) => onDraftChange(event.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={placeholder}
+            placeholder={title}
             aria-label={title}
             autoComplete="off"
             disabled={disabled}

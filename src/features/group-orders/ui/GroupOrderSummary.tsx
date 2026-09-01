@@ -65,9 +65,6 @@ export function GroupOrderSummary({
   actions,
 }: GroupOrderSummaryProps) {
   const stickyTop = useSummaryStickyTop();
-  const deliveryValue = view.deliveryDistanceLabel
-    ? `${view.deliveryFormatted} · ${view.deliveryDistanceLabel}`
-    : view.deliveryFormatted;
   const showDeliveryShare =
     view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
     view.currentParticipantId != null &&
@@ -116,7 +113,18 @@ export function GroupOrderSummary({
             label={labels.deliveryAddressLabel}
             value={view.deliveryAddress ?? labels.noDeliveryAddress}
           />
-          <SummaryRow label={labels.delivery} value={deliveryValue} />
+          <div className="flex justify-between gap-4 text-white">
+            <span>{labels.delivery}</span>
+            <span className="text-right">
+              {view.deliveryFormatted}
+              {view.deliveryDistanceLabel ? (
+                <span className="text-[calc(1em-2px)]">
+                  {" "}
+                  ({view.deliveryDistanceLabel})
+                </span>
+              ) : null}
+            </span>
+          </div>
           {showDeliveryShare && currentParticipant ? (
             <SummaryRow
               label={labels.yourDeliveryShare}

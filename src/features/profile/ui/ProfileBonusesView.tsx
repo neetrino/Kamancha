@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useState, useTransition, type KeyboardEvent } from "react";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
@@ -15,18 +14,16 @@ import {
   PROFILE_SECTION,
   PROFILE_SECTION_TITLE,
   PROFILE_STAT_GRID_THREE,
-  PROFILE_STATUS_BADGE,
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { formatShortDate, formatShortDateTime } from "@/lib/i18n/format-date";
+import { formatShortDateTime } from "@/lib/i18n/format-date";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type BonusTransactionRow = {
   id: string;
   type: string;
   delta: number;
-  expiresAt: string | null;
   createdAt: string;
   orderNumber: string | null;
 };
@@ -46,15 +43,14 @@ function typeLabel(type: string, labels: Record<string, string>): string {
   return labels[type] ?? type;
 }
 
-function earnExpiryBadgeLabel(
-  expiresAt: string | null,
-  copy: Dictionary["profile"]["bonusesPage"],
-  locale: Locale,
-): string {
-  if (!expiresAt) {
-    return copy.noExpiry;
+function handleCardKeyDown(
+  event: KeyboardEvent<HTMLElement>,
+  onOpen: () => void,
+): void {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    onOpen();
   }
-  return copy.expires.replace("{date}", formatShortDate(expiresAt, locale));
 }
 
 export function ProfileBonusesView({
@@ -125,54 +121,50 @@ export function ProfileBonusesView({
             <ul className={`relative z-[2] ${PROFILE_CARD_GRID}`}>
               {transactions.map((row) => {
                 const positive = row.delta > 0;
+                const canOpenOrder = row.orderNumber != null;
                 return (
-                  <li
-                    key={row.id}
-                    className={`${PROFILE_INNER_CARD} flex h-full min-w-0 flex-col p-4 sm:p-5`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
+                  <li key={row.id} className="min-w-0">
+                    <div
+                      role={canOpenOrder ? "button" : undefined}
+                      tabIndex={canOpenOrder ? 0 : undefined}
+                      onClick={
+                        canOpenOrder
+                          ? () => openOrder(row.orderNumber!)
+                          : undefined
+                      }
+                      onKeyDown={
+                        canOpenOrder
+                          ? (event) =>
+                              handleCardKeyDown(event, () =>
+                                openOrder(row.orderNumber!),
+                              )
+                          : undefined
+                      }
+                      className={`${PROFILE_INNER_CARD} flex h-full min-w-0 flex-col p-4 sm:p-5 ${
+                        canOpenOrder
+                          ? "cursor-pointer transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                          : ""
+                      }`}
+                    >
                       <p className="min-w-0 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
                         {typeLabel(row.type, copy.types)}
                       </p>
-                      {row.type === "EARN" ? (
-                        <span className={`${PROFILE_STATUS_BADGE} shrink-0 normal-case`}>
-                          {earnExpiryBadgeLabel(row.expiresAt, copy, locale)}
-                        </span>
-                      ) : null}
-                    </div>
-                    <p
-                      className={
-                        positive
-                          ? "mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest sm:text-xl"
-                          : "mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-gray-900 sm:text-xl"
-                      }
-                    >
-                      {positive ? "+" : ""}
-                      {formatMoneyAmount(row.delta, "AMD", locale)}
-                    </p>
-
-                    <div className="my-4 h-px rounded-full bg-gray-200" aria-hidden />
-
-                    <div className="space-y-1.5 text-xs text-gray-500">
-                      <p>{formatShortDateTime(row.createdAt, locale)}</p>
-                    </div>
-
-                    {row.orderNumber ? (
-                      <div className="mt-auto pt-5">
-                        <button
-                          type="button"
-                          onClick={() => openOrder(row.orderNumber!)}
-                          className="flex min-h-9 w-full items-center gap-2 rounded-full bg-brand-forest py-0.5 pr-0.5 pl-3 font-big-fat-boii text-xs font-normal tracking-wide text-white uppercase"
+                      <div className="mt-2 flex items-baseline justify-between gap-3">
+                        <p
+                          className={
+                            positive
+                              ? "font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest sm:text-xl"
+                              : "font-big-fat-boii text-lg leading-none font-normal tracking-wide text-red-600 sm:text-xl"
+                          }
                         >
-                          <span className="min-w-0 flex-1 truncate text-center">
-                            {copy.order} {row.orderNumber}
-                          </span>
-                          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-brand-forest">
-                            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                          </span>
-                        </button>
+                          {positive ? "+" : ""}
+                          {formatMoneyAmount(row.delta, "AMD", locale)}
+                        </p>
+                        <p className="shrink-0 text-xs text-gray-500">
+                          {formatShortDateTime(row.createdAt, locale)}
+                        </p>
                       </div>
-                    ) : null}
+                    </div>
                   </li>
                 );
               })}

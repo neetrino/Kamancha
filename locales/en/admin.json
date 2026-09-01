@@ -733,6 +733,7 @@
       "subtitle": "Daily Order Trends and Revenue",
       "chartAria": "Orders by day trend chart",
       "empty": "No orders in this range.",
+      "peakDay": "Best day",
       "ordersCount": "{count} orders",
       "revenue": "revenue"
     }
@@ -909,6 +910,7 @@
     "mode": "Mode",
     "status": "Status",
     "participants": "Participants",
+    "total": "Total",
     "delivery": "Delivery",
     "created": "Created",
     "empty": "No group orders yet.",
@@ -923,7 +925,38 @@
     "markPaid": "Mark paid",
     "closeJoins": "Close joins",
     "cancel": "Cancel group order",
-    "actionFailed": "Action failed."
+    "actionFailed": "Action failed.",
+    "bulk": {
+      "deleteSelected": "Cancel selected",
+      "selectAllAria": "Select all group orders on page",
+      "selectOneAria": "Select group order {id}",
+      "selectedOnPage": "{count} selected on this page",
+      "cancelledSummary": "Cancelled {cancelled}, skipped {skipped}.",
+      "deleteConfirm": "Are you sure you want to cancel {count} selected group order{plural}? This action cannot be undone.",
+      "entitySingular": "group order",
+      "entityPlural": "group orders"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by organizer or ID",
+      "searchAria": "Search group orders",
+      "allStatuses": "All statuses",
+      "statusAria": "Filter by status",
+      "allModes": "All payment modes",
+      "modeAria": "Filter by payment mode",
+      "modeOrganizerPays": "Organizer pays all",
+      "modeSplit": "Split per participant",
+      "total": "{total} group orders",
+      "statusOpen": "Open",
+      "statusLocked": "Locked",
+      "statusAwaitingPayments": "Awaiting payments",
+      "statusCheckout": "Checkout",
+      "statusPartiallyPaid": "Partially paid",
+      "statusPaid": "Paid",
+      "statusPreparing": "Preparing",
+      "statusCompleted": "Completed",
+      "statusExpired": "Expired",
+      "statusCancelled": "Cancelled"
+    }
   },
   "settings": {
     "title": "Store settings",

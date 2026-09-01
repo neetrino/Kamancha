@@ -7,7 +7,6 @@ import type { DbTransaction } from "@/db/transaction";
 import {
   calculateBonusEarnAmount,
   nextBonusBalance,
-  resolveEarnExpiresAt,
   type BonusSettings,
 } from "@/features/bonuses/domain/bonus-rules";
 import { createId } from "@/lib/id";
@@ -167,8 +166,8 @@ export async function earnBonusesForOrder(input: {
   }
 
   const now = input.now ?? new Date();
-  const expiresAt = resolveEarnExpiresAt(now, input.settings.expiryDays);
 
+  // Loyalty points never expire (not temporary).
   await writeLedgerEntry({
     tx: input.tx,
     userId: input.userId,
@@ -177,7 +176,7 @@ export async function earnBonusesForOrder(input: {
     delta: amount,
     actorUserId: input.actorUserId,
     correlationId: input.correlationId,
-    expiresAt,
+    expiresAt: null,
     now,
   });
 

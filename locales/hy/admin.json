@@ -733,6 +733,7 @@
       "subtitle": "Պատվերների և եկամտի օրական միտումներ",
       "chartAria": "Պատվերների օրական միտումների գծապատկեր",
       "empty": "Այս ժամանակահատվածում պատվերներ չկան։",
+      "peakDay": "Լավագույն օր",
       "ordersCount": "{count} պատվեր",
       "revenue": "եկամուտ"
     }
@@ -909,6 +910,7 @@
     "mode": "Ռեժիմ",
     "status": "Կարգավիճակ",
     "participants": "Մասնակիցներ",
+    "total": "Ընդամենը",
     "delivery": "Առաքում",
     "created": "Ստեղծված",
     "empty": "Դեռևս խմբային պատվերներ չկան։",
@@ -923,7 +925,38 @@
     "markPaid": "Նշել որպես վճարված",
     "closeJoins": "Փակել միացումները",
     "cancel": "Չեղարկել խմբային պատվերը",
-    "actionFailed": "Գործողությունը ձախողվեց։"
+    "actionFailed": "Գործողությունը ձախողվեց։",
+    "bulk": {
+      "deleteSelected": "Չեղարկել ընտրվածները",
+      "selectAllAria": "Ընտրել բոլոր խմբային պատվերները էջում",
+      "selectOneAria": "Ընտրել խմբային պատվեր {id}",
+      "selectedOnPage": "Էջում ընտրված է {count}",
+      "cancelledSummary": "Չեղարկվել է {cancelled}, բաց է թողնվել {skipped}։",
+      "deleteConfirm": "Վստա՞հ եք, որ ցանկանում եք չեղարկել ընտրված {count} խմբային պատվերը։ Այս գործողությունը հնարավոր չէ հետարկել։",
+      "entitySingular": "խմբային պատվեր",
+      "entityPlural": "խմբային պատվեր"
+    },
+    "filters": {
+      "searchPlaceholder": "Որոնել ըստ կազմակերպչի կամ ID",
+      "searchAria": "Որոնել խմբային պատվերներ",
+      "allStatuses": "Բոլոր կարգավիճակները",
+      "statusAria": "Ֆիլտր ըստ կարգավիճակի",
+      "allModes": "Բոլոր ռեժիմները",
+      "modeAria": "Ֆիլտր ըստ վճարման ռեժիմի",
+      "modeOrganizerPays": "Կազմակերպիչը վճարում է ամենը",
+      "modeSplit": "Բաժանված մասնակիցների միջև",
+      "total": "{total} խմբային պատվեր",
+      "statusOpen": "Բաց",
+      "statusLocked": "Կողպված",
+      "statusAwaitingPayments": "Սպասում է վճարման",
+      "statusCheckout": "Վճարում",
+      "statusPartiallyPaid": "Մասամբ վճարված",
+      "statusPaid": "Վճարված",
+      "statusPreparing": "Պատրաստվում է",
+      "statusCompleted": "Ավարտված",
+      "statusExpired": "Ժամկետանց",
+      "statusCancelled": "Չեղարկված"
+    }
   },
   "settings": {
     "title": "Խանութի կարգավորումներ",

@@ -2,9 +2,9 @@ import type { Currency } from "@/lib/money/currency";
 import { currencySymbols } from "@/lib/money/currency";
 import { getCurrencyMeta } from "@/lib/money/currency-meta";
 
-/** Dot thousands (1.000) — Armenian/European grouping, SSR-stable. */
-const GROUP_SEPARATOR = ".";
-/** Comma decimals when fraction digits > 0 (avoids clash with grouping dots). */
+/** Thin space thousands (1 000) — same as Grill.am, SSR-stable. */
+const GROUP_SEPARATOR = "\u00A0";
+/** Comma decimals when fraction digits > 0. */
 const DECIMAL_SEPARATOR = ",";
 
 /**

@@ -33,7 +33,7 @@ export const bonusTransactions = pgTable(
     /** Signed delta applied to the user balance. */
     delta: integer("delta").notNull(),
     resultingBalance: integer("resulting_balance").notNull(),
-    /** Present on EARN rows when store expiry policy is configured. */
+    /** Always null for loyalty points — they never expire. */
     expiresAt: timestamp("expires_at", {
       withTimezone: true,
       mode: "date",

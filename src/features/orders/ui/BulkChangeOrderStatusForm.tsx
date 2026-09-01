@@ -23,6 +23,7 @@ import {
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
@@ -49,25 +50,6 @@ type BulkChangeOrderStatusFormProps = {
   onOpenOrder: (orderNumber: string) => void;
   copy: Dictionary["admin"];
 };
-
-function formatPlacedParts(value: string | Date): {
-  time: string;
-  date: string;
-} {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return { time: "—", date: "—" };
-  }
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return {
-    time: `${hours}:${minutes}`,
-    date: `${year}-${month}-${day}`,
-  };
-}
 
 export function BulkChangeOrderStatusForm({
   locale,
@@ -203,7 +185,7 @@ export function BulkChangeOrderStatusForm({
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
               {orders.map((order) => {
-                const placed = formatPlacedParts(order.placedAt);
+                const placed = formatAdminPlacedParts(order.placedAt);
                 return (
                   <tr
                     key={order.id}

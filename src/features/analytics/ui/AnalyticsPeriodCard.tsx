@@ -14,6 +14,7 @@ import {
   type AnalyticsPeriodPreset,
 } from "@/features/analytics/domain/date-range";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 
 type AnalyticsPeriodCardProps = {
   locale: string;
@@ -42,6 +43,7 @@ function AnalyticsPeriodCardForm({
   const selectedPreset: AnalyticsPeriodPreset = forceCustom
     ? "custom"
     : preset;
+  const resolvedLocale: Locale = isLocale(locale) ? locale : defaultLocale;
 
   const presetLabel = (next: AnalyticsPeriodPreset): string => {
     const map: Record<AnalyticsPeriodPreset, string> = {
@@ -85,14 +87,30 @@ function AnalyticsPeriodCardForm({
 
   return (
     <div className={`mb-3 ${ADMIN_CARD_CLASS} p-4 sm:p-5`}>
-      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
-        <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
             {copy.analytics.period.title}
           </h2>
-          <p className="mt-1 text-sm font-medium text-gray-700">
-            {formatAnalyticsDisplayDate(from)} – {formatAnalyticsDisplayDate(to)}
-          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <SelectDropdown
+              ariaLabel={copy.analytics.period.aria}
+              value={selectedPreset}
+              options={ANALYTICS_PERIOD_PRESETS.map((option) => ({
+                label: presetLabel(option),
+                value: option,
+              }))}
+              disabled={pending}
+              deferChange={false}
+              fitContent
+              className="shrink-0"
+              onValueChange={onPeriodChange}
+            />
+            <p className="text-sm font-medium text-gray-700">
+              {formatAnalyticsDisplayDate(from, resolvedLocale)} –{" "}
+              {formatAnalyticsDisplayDate(to, resolvedLocale)}
+            </p>
+          </div>
         </div>
         <a
           href={`/api/exports/admin/analytics?${exportQuery}`}
@@ -100,20 +118,6 @@ function AnalyticsPeriodCardForm({
         >
           {copy.analytics.period.downloadCsv}
         </a>
-      </div>
-
-      <div className="max-w-md">
-        <SelectDropdown
-          ariaLabel={copy.analytics.period.aria}
-          value={selectedPreset}
-          options={ANALYTICS_PERIOD_PRESETS.map((option) => ({
-            label: presetLabel(option),
-            value: option,
-          }))}
-          disabled={pending}
-          deferChange={false}
-          onValueChange={onPeriodChange}
-        />
       </div>
 
       {selectedPreset === "custom" ? (
@@ -146,7 +150,7 @@ function AnalyticsPeriodCardForm({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-[12px] bg-brand-forest px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="h-11 shrink-0 rounded-2xl bg-brand-forest px-4 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {copy.analytics.period.apply}
           </button>

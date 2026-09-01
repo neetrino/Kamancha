@@ -226,15 +226,6 @@ export function parseBonusSettings(value: unknown): BonusSettings {
   }
 
   const record = value as Record<string, unknown>;
-  const expiryRaw = record.expiryDays;
-  let expiryDays: number | null = DEFAULT_BONUS_SETTINGS.expiryDays;
-  if (expiryRaw === null || expiryRaw === undefined || expiryRaw === "") {
-    expiryDays = null;
-  } else {
-    const days = typeof expiryRaw === "number" ? expiryRaw : Number(expiryRaw);
-    expiryDays =
-      Number.isInteger(days) && days > 0 && days <= 3650 ? days : null;
-  }
 
   return {
     accrualPercent: parsePercentInRange(
@@ -249,7 +240,6 @@ export function parseBonusSettings(value: unknown): BonusSettings {
       1,
       100,
     ),
-    expiryDays,
   };
 }
 

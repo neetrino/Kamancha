@@ -90,7 +90,8 @@ export default async function AdminPage({
   const chartRange = rangeForDashboardChartRange(chart);
   const monthRange = rangeForDashboardMetricPeriod("month");
 
-  const copy = getDictionary(locale).admin.dashboard;
+  const dictionary = getDictionary(locale);
+  const copy = dictionary.admin.dashboard;
   const [
     metrics,
     chartSummary,
@@ -122,6 +123,7 @@ export default async function AdminPage({
   const trendPoints = buildDashboardMonthlySeries(
     chartSummary.dailyRows,
     chartRange,
+    locale,
   );
 
   const snapshots: DashboardPeriodSnapshot[] = [
@@ -169,7 +171,7 @@ export default async function AdminPage({
             contactEmail: order.contactEmail,
             totalAmount: order.totalAmount,
           }))}
-          labels={copy}
+          copy={dictionary.admin}
         />
 
         <div className={`${ADMIN_CARD_CLASS} p-4`}>

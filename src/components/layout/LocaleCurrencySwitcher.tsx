@@ -48,8 +48,8 @@ function replaceLocaleInPath(pathname: string, nextLocale: Locale): string {
 
 function optionClassName(selected: boolean): string {
   return selected
-    ? "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm font-semibold text-brand-forest bg-gray-100 transition-colors"
-    : "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm text-gray-500 transition-colors hover:bg-gray-50 hover:text-brand-forest";
+    ? "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm font-semibold text-brand-forest bg-[#dcecc6] transition-colors"
+    : "flex w-full justify-center whitespace-nowrap rounded-lg px-2.5 py-1.5 text-center text-sm text-gray-500 transition-colors hover:bg-[#dcecc6] hover:text-brand-forest";
 }
 
 /**
@@ -242,12 +242,12 @@ export function LocaleCurrencySwitcher({
           }`}
           style={{ transitionDuration: `${DROPDOWN_ANIMATION_MS}ms` }}
         >
-          <div className="flex w-max overflow-hidden rounded-xl border border-gray-100 bg-white py-2">
+          <div className="flex w-max overflow-hidden rounded-xl border border-gray-100 bg-white">
             <div className="w-max border-r border-gray-100">
-              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
+              <p className="whitespace-nowrap px-3 pt-2 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
                 {languageLabel}
               </p>
-              <ul role="listbox" aria-label={languageLabel} className="px-1.5">
+              <ul role="listbox" aria-label={languageLabel} className="px-1.5 pb-1.5">
                 {locales.map((code) => {
                   const selected = code === locale;
                   return (
@@ -267,10 +267,10 @@ export function LocaleCurrencySwitcher({
             </div>
 
             <div className="w-max">
-              <p className="whitespace-nowrap px-3 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
+              <p className="whitespace-nowrap px-3 pt-2 pb-1 text-center text-[11px] font-semibold tracking-wide text-gray-500 uppercase">
                 {currencyLabel}
               </p>
-              <ul role="listbox" aria-label={currencyLabel} className="px-1.5">
+              <ul role="listbox" aria-label={currencyLabel} className="px-1.5 pb-1.5">
                 {currencies.map((code) => {
                   const selected = code === currency;
                   return (

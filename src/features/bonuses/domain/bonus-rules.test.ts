@@ -6,7 +6,6 @@ import {
   calculateMaxRedeemAmount,
   clampBonusRedeemRequest,
   nextBonusBalance,
-  resolveEarnExpiresAt,
 } from "@/features/bonuses/domain/bonus-rules";
 
 describe("bonus rules", () => {
@@ -46,13 +45,5 @@ describe("bonus rules", () => {
     expect(clampBonusRedeemRequest(-10, 3_000)).toBe(0);
     expect(nextBonusBalance(100, -150)).toBe(0);
     expect(nextBonusBalance(100, 50)).toBe(150);
-  });
-
-  it("resolves expiry dates from policy", () => {
-    const now = new Date("2026-01-01T00:00:00.000Z");
-    expect(resolveEarnExpiresAt(now, null)).toBeNull();
-    expect(resolveEarnExpiresAt(now, 30)?.toISOString()).toBe(
-      "2026-01-31T00:00:00.000Z",
-    );
   });
 });

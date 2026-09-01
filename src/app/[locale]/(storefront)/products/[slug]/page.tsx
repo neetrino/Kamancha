@@ -138,8 +138,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <ProductDetailView
       locale={locale}
       product={product}
-      priceFormatted={price.formatted}
+      priceAmount={product.priceAmount}
+      initialPriceFormatted={price.formatted}
       compareAtFormatted={compareAt?.formatted ?? null}
+      currency={currency}
+      fxRate={price.rate}
       ratingAverage={ratingSummary?.average ?? null}
       ratingCount={ratingSummary?.count ?? 0}
       isSignedIn={isSignedIn}

@@ -314,3 +314,16 @@ export function formatDeliverySlotSnapshot(
 ): string {
   return `${selected.date} ${selected.startTime}–${selected.endTime}`;
 }
+
+/** Customer-facing slot label: `17:00–18:00, 05.09.2026`. */
+export function formatDeliverySlotDisplay(
+  date: string,
+  startTime: string,
+  endTime: string,
+): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date.trim());
+  const dateLabel = match
+    ? `${match[3]}.${match[2]}.${match[1]}`
+    : date.trim();
+  return `${startTime}–${endTime}, ${dateLabel}`;
+}

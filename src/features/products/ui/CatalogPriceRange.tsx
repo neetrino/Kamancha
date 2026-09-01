@@ -21,7 +21,11 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function formatBound(value: number, symbol: string): string {
-  return `${value.toLocaleString("en-US")}${symbol}`;
+  const grouped = String(Math.round(value)).replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    "\u00A0",
+  );
+  return `${grouped}${symbol}`;
 }
 
 /**

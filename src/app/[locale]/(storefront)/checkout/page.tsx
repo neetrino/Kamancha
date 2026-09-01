@@ -101,6 +101,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       lockedDeliveryAmount={groupCheckoutFlags.lockedDeliveryAmount}
       bonusAvailableBalance={bonusBalance}
       bonusMaxRedeemPercent={bonusSettings.maxRedeemPercent}
+      bonusAccrualPercent={bonusSettings.accrualPercent}
       labels={{
         title: copy.title,
         productsInOrder: copy.productsInOrder,
@@ -166,6 +167,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         bonusAmount: copy.bonus.amount,
         bonusUseMax: copy.bonus.useMax,
         bonusApplied: copy.bonus.applied,
+        bonusEarn: copy.bonus.earn,
         discount: copy.summary.discount,
         subtotal: copy.summary.subtotal,
         shipping: copy.summary.shipping,

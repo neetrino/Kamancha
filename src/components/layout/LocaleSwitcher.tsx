@@ -123,8 +123,8 @@ export function LocaleSwitcher({
             aria-current={selected ? "page" : undefined}
             className={
               selected
-                ? "flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-50"
-                : "flex w-full items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                ? "flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-[#dcecc6] hover:text-brand-forest"
+                : "flex w-full items-center gap-3 px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-[#dcecc6] hover:text-brand-forest"
             }
           >
             <span

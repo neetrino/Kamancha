@@ -826,6 +826,22 @@ html {
 }
 
 /* Catalog dual price-range thumbs (pointer-events on thumbs only). */
+/* Catalog sidebar: hide native scrollbar; custom left rail is in the component. */
+.catalog-sidebar-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.catalog-sidebar-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.catalog-sidebar-rail {
+  pointer-events: none;
+}
+
 .catalog-price-range {
   pointer-events: none;
 }

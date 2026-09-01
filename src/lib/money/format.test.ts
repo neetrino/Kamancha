@@ -2,12 +2,15 @@ import { describe, expect, it } from "vitest";
 
 import { formatMoneyAmount } from "@/lib/money/format";
 
+const NBSP = "\u00A0";
+
 describe("formatMoneyAmount", () => {
-  it("formats AMD with dot thousands and a stable currency symbol", () => {
-    expect(formatMoneyAmount(12_500, "AMD", "hy")).toBe("12.500 ֏");
-    expect(formatMoneyAmount(12_500, "AMD", "en")).toBe("12.500 ֏");
-    expect(formatMoneyAmount(1_000, "AMD", "hy")).toBe("1.000 ֏");
-    expect(formatMoneyAmount(10_000, "AMD", "hy")).toBe("10.000 ֏");
+  it("formats AMD with space thousands and a stable currency symbol", () => {
+    expect(formatMoneyAmount(12_500, "AMD", "hy")).toBe(`12${NBSP}500 ֏`);
+    expect(formatMoneyAmount(12_500, "AMD", "en")).toBe(`12${NBSP}500 ֏`);
+    expect(formatMoneyAmount(1_000, "AMD", "hy")).toBe(`1${NBSP}000 ֏`);
+    expect(formatMoneyAmount(10_000, "AMD", "hy")).toBe(`10${NBSP}000 ֏`);
+    expect(formatMoneyAmount(29_000, "AMD", "hy")).toBe(`29${NBSP}000 ֏`);
   });
 
   it("formats USD from minor units with comma decimals", () => {
@@ -19,6 +22,6 @@ describe("formatMoneyAmount", () => {
     expect(formatMoneyAmount(amount, "AMD", "hy")).toBe(
       formatMoneyAmount(amount, "AMD", "en"),
     );
-    expect(formatMoneyAmount(amount, "AMD", "hy")).toBe("1.234 ֏");
+    expect(formatMoneyAmount(amount, "AMD", "hy")).toBe(`1${NBSP}234 ֏`);
   });
 });

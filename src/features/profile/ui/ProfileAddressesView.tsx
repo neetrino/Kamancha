@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
+import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import {
@@ -27,6 +28,15 @@ type AddressFormState = {
   isDefault: boolean;
 };
 
+type MapPickerLabels = {
+  openMap: string;
+  title: string;
+  hint: string;
+  confirm: string;
+  cancel: string;
+  resolving: string;
+};
+
 type ProfileAddressesViewProps = {
   locale: string;
   addresses: CustomerAddressListItem[];
@@ -48,8 +58,30 @@ type ProfileAddressesViewProps = {
     add: string;
     update: string;
     saving: string;
+    map: MapPickerLabels;
   };
 };
+
+/** Splits a Google formatted address into street + city when possible. */
+function applyMapAddress(
+  formatted: string,
+  prev: AddressFormState,
+): AddressFormState {
+  const parts = formatted
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (parts.length < 2) {
+    return { ...prev, line1: formatted };
+  }
+
+  const last = parts[parts.length - 1] ?? "";
+  const looksLikeCountry = /armenia|հայաստան|армения/i.test(last);
+  const cityIndex = looksLikeCountry ? parts.length - 2 : parts.length - 1;
+  const city = parts[cityIndex] ?? prev.city;
+  const line1 = parts.slice(0, cityIndex).join(", ") || formatted;
+  return { ...prev, line1, city };
+}
 
 const emptyForm: AddressFormState = {
   line1: "",
@@ -185,20 +217,23 @@ export function ProfileAddressesView({
             <h2 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
               {editingId ? labels.formEditTitle : labels.formAddTitle}
             </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
-              <label className={PROFILE_LABEL}>
+            <div className="flex items-end gap-2 sm:gap-3">
+              <label className={`${PROFILE_LABEL} min-w-0 flex-1`}>
                 {labels.line1}
                 <input
                   required
                   value={form.line1}
                   onChange={(event) =>
-                    setForm((prev) => ({ ...prev, line1: event.target.value }))
+                    setForm((prev) => ({
+                      ...prev,
+                      line1: event.target.value,
+                    }))
                   }
                   className={PROFILE_FIELD}
                   autoComplete="street-address"
                 />
               </label>
-              <label className={PROFILE_LABEL}>
+              <label className={`${PROFILE_LABEL} w-[7.5rem] shrink-0 sm:w-40`}>
                 {labels.city}
                 <input
                   required
@@ -210,6 +245,14 @@ export function ProfileAddressesView({
                   autoComplete="address-level2"
                 />
               </label>
+              <AddressMapPicker
+                addressValue={form.line1}
+                disabled={isPending}
+                onAddressSelected={(formatted) => {
+                  setForm((prev) => applyMapAddress(formatted, prev));
+                }}
+                labels={labels.map}
+              />
             </div>
             <label className="flex cursor-pointer items-center gap-3">
               <input
