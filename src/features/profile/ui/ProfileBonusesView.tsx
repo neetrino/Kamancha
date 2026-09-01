@@ -14,18 +14,16 @@ import {
   PROFILE_SECTION,
   PROFILE_SECTION_TITLE,
   PROFILE_STAT_GRID_THREE,
-  PROFILE_STATUS_BADGE,
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { formatShortDate, formatShortDateTime } from "@/lib/i18n/format-date";
+import { formatShortDateTime } from "@/lib/i18n/format-date";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 type BonusTransactionRow = {
   id: string;
   type: string;
   delta: number;
-  expiresAt: string | null;
   createdAt: string;
   orderNumber: string | null;
 };
@@ -43,17 +41,6 @@ type ProfileBonusesViewProps = {
 
 function typeLabel(type: string, labels: Record<string, string>): string {
   return labels[type] ?? type;
-}
-
-function earnExpiryBadgeLabel(
-  expiresAt: string | null,
-  copy: Dictionary["profile"]["bonusesPage"],
-  locale: Locale,
-): string {
-  if (!expiresAt) {
-    return copy.noExpiry;
-  }
-  return copy.expires.replace("{date}", formatShortDate(expiresAt, locale));
 }
 
 function handleCardKeyDown(
@@ -159,18 +146,9 @@ export function ProfileBonusesView({
                           : ""
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="min-w-0 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-                          {typeLabel(row.type, copy.types)}
-                        </p>
-                        {row.type === "EARN" ? (
-                          <span
-                            className={`${PROFILE_STATUS_BADGE} shrink-0 normal-case`}
-                          >
-                            {earnExpiryBadgeLabel(row.expiresAt, copy, locale)}
-                          </span>
-                        ) : null}
-                      </div>
+                      <p className="min-w-0 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+                        {typeLabel(row.type, copy.types)}
+                      </p>
                       <div className="mt-2 flex items-baseline justify-between gap-3">
                         <p
                           className={

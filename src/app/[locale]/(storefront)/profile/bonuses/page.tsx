@@ -38,7 +38,6 @@ export default async function ProfileBonusesPage({
         id: row.id,
         type: row.type,
         delta: row.delta,
-        expiresAt: row.expiresAt?.toISOString() ?? null,
         createdAt: row.createdAt.toISOString(),
         orderNumber: row.orderNumber,
       }))}

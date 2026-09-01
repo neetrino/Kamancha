@@ -11,14 +11,11 @@ export type BonusSettings = {
   accrualPercent: number;
   /** Max share of post-discount merchandise total payable with bonuses (1–100). */
   maxRedeemPercent: number;
-  /** Days until earned bonuses expire; null = no expiry. */
-  expiryDays: number | null;
 };
 
 export const DEFAULT_BONUS_SETTINGS: BonusSettings = {
   accrualPercent: DEFAULT_BONUS_ACCRUAL_PERCENT,
   maxRedeemPercent: DEFAULT_BONUS_MAX_REDEEM_PERCENT,
-  expiryDays: null,
 };
 
 /** Merchandise amount eligible for accrual/redeem caps (excludes delivery). */
@@ -80,14 +77,3 @@ export function nextBonusBalance(
   return Math.max(0, currentBalance + delta);
 }
 
-export function resolveEarnExpiresAt(
-  now: Date,
-  expiryDays: number | null,
-): Date | null {
-  if (expiryDays == null || expiryDays <= 0) {
-    return null;
-  }
-  const expires = new Date(now);
-  expires.setUTCDate(expires.getUTCDate() + expiryDays);
-  return expires;
-}

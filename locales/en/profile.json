@@ -12,8 +12,6 @@
     "history": "Bonus history",
     "empty": "No bonus activity yet.",
     "order": "Order",
-    "expires": "Expires {date}",
-    "noExpiry": "No expiry",
     "types": {
       "EARN": "Earned",
       "REDEEM": "Redeemed",
