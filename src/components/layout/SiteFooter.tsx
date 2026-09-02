@@ -74,11 +74,62 @@ function FooterColumn({
   );
 }
 
+const COPYRIGHT_LINE_ONE_PREFIX = "Copyright";
+const COPYRIGHT_CREATED_BY = "Created by";
+const COPYRIGHT_COMPANY = "Neetrino IT Company";
+const COPYRIGHT_COMPANY_HREF = "https://neetrino.com";
+
+/** Big Fat Boii maps © and | but those glyphs have empty outlines. */
+function CopyrightSymbol() {
+  return <span className="font-sans">©</span>;
+}
+
+function CopyrightPipe() {
+  return (
+    <span aria-hidden className="font-sans">
+      |
+    </span>
+  );
+}
+
+function FooterCopyright() {
+  const year = new Date().getFullYear();
+
+  return (
+    <div
+      data-node-id="22:388"
+      className="mx-auto flex w-full max-w-[1280px] items-center justify-center pt-4 pb-2 xl:pt-8 xl:pb-4"
+    >
+      <p
+        data-node-id="22:390"
+        className="max-w-full text-center font-big-fat-boii text-[12px] leading-5 font-normal text-white/40 xl:text-[14px] xl:whitespace-nowrap"
+      >
+        <span className="block xl:inline">
+          {COPYRIGHT_LINE_ONE_PREFIX} <CopyrightSymbol /> {year}{" "}
+          <CopyrightPipe /> All Rights Reserved <CopyrightPipe />
+        </span>
+        <span className="hidden xl:inline"> </span>
+        <span className="block xl:inline">
+          {COPYRIGHT_CREATED_BY}{" "}
+          <a
+            href={COPYRIGHT_COMPANY_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white transition-colors hover:text-white/80"
+          >
+            {COPYRIGHT_COMPANY}
+          </a>
+        </span>
+      </p>
+    </div>
+  );
+}
+
 /**
  * Storefront footer — Figma 22:337 / container 22:338.
+ * Full columns: desktop only. Copyright also at the end on mobile.
  */
 export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
-  const year = new Date().getFullYear();
   const { footer, contact } = dictionary;
 
   const navigationLinks: FooterLink[] = [
@@ -99,12 +150,12 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   return (
     <footer
       data-node-id="22:337"
-      className="storefront-footer relative z-[2] mt-auto hidden bg-transparent pt-20 xl:block xl:pt-36"
+      className="storefront-footer relative z-[2] mt-auto bg-transparent pb-[calc(var(--mobile-bottom-nav-height)+var(--mobile-bottom-nav-bottom-inset)+1rem)] xl:pb-0 xl:pt-36"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 px-5">
         <div
           data-node-id="22:338"
-          className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-x-8 gap-y-12 border-b border-white/12 pb-[65px] sm:grid-cols-2 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,0.95fr)] lg:gap-x-[40px]"
+          className="mx-auto hidden w-full max-w-[1280px] grid-cols-1 gap-x-8 gap-y-12 border-b border-white/12 pb-[65px] sm:grid-cols-2 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,0.95fr)] lg:gap-x-[40px] xl:grid"
         >
           {/* Brand column — 22:339 */}
           <div
@@ -210,27 +261,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
         </div>
 
-        {/* Copyright bar — Figma 22:388 */}
-        <div
-          data-node-id="22:388"
-          className="mx-auto flex w-full max-w-[1280px] items-center justify-center pt-8 pb-4"
-        >
-          <p
-            data-node-id="22:390"
-            className="max-w-full text-center font-big-fat-boii text-[14px] leading-5 font-normal text-white/40 sm:whitespace-nowrap"
-          >
-            {footer.copyrightBefore.replace("{year}", String(year))}{" "}
-            <a
-              href="https://neetrino.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white transition-colors hover:text-white/80"
-            >
-              {footer.copyrightCompany}
-            </a>
-            {footer.copyrightAfter ? ` ${footer.copyrightAfter}` : null}
-          </p>
-        </div>
+        <FooterCopyright />
       </div>
     </footer>
   );
