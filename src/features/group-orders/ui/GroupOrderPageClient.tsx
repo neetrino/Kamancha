@@ -347,10 +347,12 @@ export function GroupOrderPageClient({
       <div className="grid grid-cols-1 items-stretch gap-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
       <div className="space-y-6">
       <section className="liquid-glass isolate overflow-hidden rounded-3xl p-4">
-        <div className="flex flex-col gap-3">
-          <p className={BLOCK_TITLE}>{labels.inviteLink}</p>
-          <p className="truncate text-xs text-white">{view.invitePath}</p>
-          <div className="flex flex-wrap justify-end gap-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="min-w-0 flex-1 space-y-1">
+            <p className={BLOCK_TITLE}>{labels.inviteLink}</p>
+            <p className="truncate text-xs text-white">{view.invitePath}</p>
+          </div>
+          <div className="flex flex-wrap justify-end gap-2 sm:shrink-0">
             <button
               type="button"
               className={GLASS_PILL_BUTTON}
