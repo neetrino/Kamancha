@@ -1,8 +1,11 @@
 {
   "title": "OUR STORY",
-  "intro": "Kamancha is more than just a restaurant. It is a harmonious blend of Armenian culture, music, and gastronomy. We take age-old traditions and present them to the modern world, keeping the warmth that belongs only to an Armenian hearth.",
-  "introSecond": "Every dish is prepared with love, using local fresh produce and spices brought from different corners of Armenia.",
+  "intro": "Located in the heart of Yerevan, Kamancha restaurant was founded in 2019 with the idea of bringing Armenian cuisine and traditional music together under one roof.",
+  "introSecond": "In our kitchen, traditional recipes from different regions of Armenia meet innovative approaches — preserving the distinctiveness of Armenian flavors while revealing their diversity in a new way. Live national music completes the experience, turning every visit into an opportunity to connect with Armenian culture.",
+  "introThird": "Our goal is to take hospitality to a new level, because Armenian cuisine is not only about dishes. It is about people, families, and friends united by traditions passed around the table, sincere conversations, and memories created together. At Kamancha, we believe Armenian hospitality has a special quality that can warm every heart.",
+  "founderBio": "Areg Gevorgyan is an Armenian restaurateur, entrepreneur, and the founder-director of Kamancha restaurants, Restormania, and the Pideh project. His professional work focuses mainly on developing the restaurant business, Armenian gastronomy, and hospitality.",
+  "mission": "Kamancha is more than just a restaurant. It is a harmonious blend of Armenian culture, music, and gastronomy. We take age-old traditions and present them to the modern world, keeping the warmth that belongs only to an Armenian hearth.",
   "heroImageAlt": "Woman playing the kamancha",
-  "dressImageAlt": "Traditional Armenian dress",
-  "rugImageAlt": "Armenian rug"
+  "founderImageAlt": "Areg Gevorgyan, founder of Kamancha",
+  "coupleImageAlt": "Guests dining at Kamancha restaurant"
 }

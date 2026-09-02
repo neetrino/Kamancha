@@ -29,7 +29,7 @@ const springSoft: Transition = {
 };
 
 /**
- * About hero — Figma 362:289–362:291 with cropped portrait 362:282 (887×1774).
+ * About hero — Figma 362:289–362:290 with cropped portrait 362:282 (887×1774).
  */
 export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
   const playMotion = usePlayHomeMotion();
@@ -65,21 +65,14 @@ export function AboutHeroSection({ copy }: AboutHeroSectionProps) {
             </StaggerItem>
 
             <StaggerItem>
-              <p
+              <div
                 data-node-id="362:290"
-                className="mt-8 max-w-[777px] text-[16px] leading-[26px] text-[#c2c9bd] sm:mt-10"
+                className="mt-8 flex max-w-[777px] flex-col gap-6 text-[16px] leading-[26px] text-[#c2c9bd] sm:mt-10"
               >
-                {copy.intro}
-              </p>
-            </StaggerItem>
-
-            <StaggerItem>
-              <p
-                data-node-id="362:291"
-                className="mt-6 max-w-[650px] text-[16px] leading-[26px] text-[#c2c9bd]"
-              >
-                {copy.introSecond}
-              </p>
+                <p>{copy.intro}</p>
+                <p>{copy.introSecond}</p>
+                <p>{copy.introThird}</p>
+              </div>
             </StaggerItem>
           </Stagger>
         </div>
