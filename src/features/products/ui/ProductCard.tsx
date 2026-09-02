@@ -92,24 +92,24 @@ export function ProductCard({
       data-node-id={catalog ? "103:3029" : "22:230"}
       className={`group relative flex flex-col overflow-hidden bg-white transition-[translate,box-shadow] duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:z-10 hover:-translate-y-2 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${ui.article} ${className}`}
     >
-      <div className={`relative z-[1] shrink-0 ${ui.image}`}>
-        <div className="absolute inset-0 overflow-hidden rounded-[inherit] bg-neutral-100">
-          <AppLink
-            href={href}
-            prefetchPolicy={priority ? "intent" : "auto"}
-            className="absolute inset-0 block"
-          >
-            <Image
-              src={storefrontProductImageSrc(imageUrl)}
-              alt={title}
-              fill
-              sizes={ui.imageSizes}
-              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-              priority={priority}
-              loading={priority ? undefined : "lazy"}
-            />
-          </AppLink>
-        </div>
+      <div
+        className={`relative z-[1] isolate shrink-0 bg-neutral-100 ${ui.image}`}
+      >
+        <AppLink
+          href={href}
+          prefetchPolicy={priority ? "intent" : "auto"}
+          className="absolute inset-0 block"
+        >
+          <Image
+            src={storefrontProductImageSrc(imageUrl)}
+            alt={title}
+            fill
+            sizes={ui.imageSizes}
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+            priority={priority}
+            loading={priority ? undefined : "lazy"}
+          />
+        </AppLink>
 
         {discountPercent != null ? (
           <span
