@@ -32,5 +32,6 @@
   "hqTitle": "Главный офис:",
   "hoursEverydayLabel": "Каждый день:",
   "hoursEverydayTime": "10:00-00:00",
-  "mapTitle": "Расположение магазина"
+  "mapTitle": "Наши адреса",
+  "mapUnavailable": "Карта недоступна. Откройте адрес в Google Maps."
 }
