@@ -64,11 +64,9 @@ const SECTION_TITLE =
 const SETTINGS_FIELD_TITLE =
   "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase whitespace-nowrap xl:text-base xl:tracking-wide xl:leading-normal xl:whitespace-normal";
 
-const PRODUCT_THUMB_PX = 96;
-const PRODUCT_THUMB_RADIUS_PX = 16;
-const PRODUCT_CARD_MIN_PX = 200;
-const PRODUCT_CARD_MAX_PX = 320;
-const PRODUCT_TITLE_MAX_PX = 180;
+const PRODUCT_THUMB_PX = 80;
+const PRODUCT_THUMB_RADIUS_PX = 14;
+const PRODUCT_CARD_WIDTH_PX = 260;
 const DELIVERY_QUOTE_DEBOUNCE_MS = 600;
 
 type PendingConfirm =
@@ -535,79 +533,104 @@ export function GroupOrderPageClient({
           {labels.participants}
         </h2>
         <ul className="space-y-4">
-          {view.participants.map((participant) => (
+          {view.participants.map((participant) => {
+            const showParticipantPayment =
+              !(
+                view.paymentMode === "ORGANIZER_PAYS_ALL" &&
+                participant.role !== "ORGANIZER"
+              );
+            const participantPaymentText = showParticipantPayment
+              ? `${participant.finalAmountFormatted} · ${paymentLabel(
+                  participant.paymentStatus,
+                  labels,
+                  {
+                    paysAtCheckout:
+                      view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
+                      participant.role === "ORGANIZER" &&
+                      participant.paymentStatus !== "PAID" &&
+                      participant.paymentStatus !== "MARKED_RECEIVED" &&
+                      (view.status === "AWAITING_PAYMENTS" ||
+                        view.status === "CHECKOUT"),
+                  },
+                )}`
+              : null;
+
+            return (
             <li
               key={participant.id}
               className="liquid-glass isolate overflow-hidden rounded-3xl p-4"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className={BLOCK_TITLE}>
-                    {participant.displayName}
-                    {participant.role === "ORGANIZER" ? (
-                      <span className="ml-2 text-xs font-normal text-white/70">
-                        ({labels.organizer})
-                      </span>
-                    ) : null}
-                  </p>
-                  {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
-                    <p className="mt-0.5 text-xs text-white/70">
-                      {labels.deliveryShare}:{" "}
-                      {participant.deliveryShareFormatted} · {labels.subtotal}:{" "}
-                      {participant.subtotalFormatted}
+              <div className="space-y-2 sm:space-y-0">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className={`${BLOCK_TITLE} break-words`}>
+                      {participant.displayName}
+                      {participant.role === "ORGANIZER" ? (
+                        <span className="ml-2 text-xs font-normal tracking-normal text-white/70 normal-case">
+                          ({labels.organizer})
+                        </span>
+                      ) : null}
                     </p>
-                  ) : null}
-                </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <div className="flex items-center gap-1">
-                    <p
-                      className={`inline-flex rounded-full bg-white px-3.5 py-1 text-xs font-medium ${
-                        participant.itemsReady
-                          ? "text-brand-forest"
-                          : "text-amber-500"
-                      }`}
-                    >
-                      {participant.itemsReady ? labels.ready : labels.notReady}
-                    </p>
-                    {isOrganizer &&
-                    participant.role !== "ORGANIZER" &&
-                    canEdit ? (
-                      <button
-                        type="button"
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
-                        aria-label={labels.removeParticipant}
-                        onClick={() =>
-                          setPendingConfirm({
-                            kind: "participant",
-                            id: participant.id,
-                            name: participant.displayName,
-                          })
-                        }
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                    {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
+                      <p className="mt-0.5 hidden text-sm text-white/70 sm:block">
+                        {labels.deliveryShare}:{" "}
+                        {participant.deliveryShareFormatted} · {labels.subtotal}:{" "}
+                        {participant.subtotalFormatted}
+                      </p>
                     ) : null}
                   </div>
-                  {view.paymentMode === "ORGANIZER_PAYS_ALL" &&
-                  participant.role !== "ORGANIZER" ? null : (
-                    <p className="text-right text-sm text-white">
-                      {participant.finalAmountFormatted} ·{" "}
-                      {paymentLabel(
-                        participant.paymentStatus,
-                        labels,
-                        {
-                          paysAtCheckout:
-                            view.paymentMode === "SPLIT_PER_PARTICIPANT" &&
-                            participant.role === "ORGANIZER" &&
-                            participant.paymentStatus !== "PAID" &&
-                            participant.paymentStatus !== "MARKED_RECEIVED" &&
-                            (view.status === "AWAITING_PAYMENTS" ||
-                              view.status === "CHECKOUT"),
-                        },
-                      )}
-                    </p>
-                  )}
+                  <div className="flex max-w-[55%] shrink-0 flex-col items-end gap-1 sm:max-w-[45%]">
+                    <div className="flex items-center gap-1">
+                      <p
+                        className={`inline-flex max-w-full rounded-full bg-white px-2.5 py-1 text-center text-[11px] leading-tight font-medium sm:px-3.5 sm:text-xs sm:leading-normal ${
+                          participant.itemsReady
+                            ? "text-brand-forest"
+                            : "text-amber-500"
+                        }`}
+                      >
+                        {participant.itemsReady
+                          ? labels.ready
+                          : labels.notReady}
+                      </p>
+                      {isOrganizer &&
+                      participant.role !== "ORGANIZER" &&
+                      canEdit ? (
+                        <button
+                          type="button"
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white/60 hover:bg-white/15 hover:text-red-300"
+                          aria-label={labels.removeParticipant}
+                          onClick={() =>
+                            setPendingConfirm({
+                              kind: "participant",
+                              id: participant.id,
+                              name: participant.displayName,
+                            })
+                          }
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      ) : null}
+                    </div>
+                    {participantPaymentText ? (
+                      <p className="hidden break-words text-right text-sm text-white sm:block">
+                        {participantPaymentText}
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
+
+                {view.paymentMode === "SPLIT_PER_PARTICIPANT" ? (
+                  <p className="whitespace-nowrap text-xs text-white/70 sm:hidden">
+                    {labels.deliveryShare}: {participant.deliveryShareFormatted}{" "}
+                    · {labels.subtotal}: {participant.subtotalFormatted}
+                  </p>
+                ) : null}
+
+                {participantPaymentText ? (
+                  <p className="break-words text-sm text-white sm:hidden">
+                    {participantPaymentText}
+                  </p>
+                ) : null}
               </div>
 
               {participant.items.length === 0 ? (
@@ -615,7 +638,7 @@ export function GroupOrderPageClient({
               ) : (
                 <ul className="relative z-[2] mt-3 flex gap-3 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {participant.items.map((item) => (
-                    <li key={item.id}>
+                    <li key={item.id} className="min-w-0 shrink-0">
                       <GroupOrderProductCard
                         item={item}
                         removeItemLabel={labels.removeItem}
@@ -637,7 +660,8 @@ export function GroupOrderPageClient({
                 </ul>
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
 
@@ -975,18 +999,15 @@ function GroupOrderProductCard({
 
   return (
     <article
-      className="isolate w-max shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
-      style={{
-        minWidth: PRODUCT_CARD_MIN_PX,
-        maxWidth: PRODUCT_CARD_MAX_PX,
-      }}
+      className="isolate shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
+      style={{ width: `min(100%, ${PRODUCT_CARD_WIDTH_PX}px)` }}
     >
-      <div className="relative z-[2] flex items-stretch gap-3">
+      <div className="relative z-[2] flex items-start gap-3">
         <div
-          className="relative block shrink-0 self-stretch overflow-hidden"
+          className="relative shrink-0 overflow-hidden"
           style={{
             width: PRODUCT_THUMB_PX,
-            minHeight: PRODUCT_THUMB_PX,
+            height: PRODUCT_THUMB_PX,
             borderRadius: PRODUCT_THUMB_RADIUS_PX,
           }}
         >
@@ -999,13 +1020,10 @@ function GroupOrderProductCard({
           />
         </div>
 
-        <div className="flex w-max min-w-0 max-w-full flex-1 flex-col justify-between gap-2">
-          <div className="flex items-start justify-between gap-2">
-            <div className="w-max min-w-0 max-w-full">
-              <p
-                className="line-clamp-2 w-max text-sm font-medium text-gray-900"
-                style={{ maxWidth: PRODUCT_TITLE_MAX_PX }}
-              >
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex items-start gap-2">
+            <div className="min-w-0 flex-1">
+              <p className="line-clamp-2 text-sm leading-snug font-medium text-gray-900">
                 {item.title}
               </p>
               {item.modifierSummary ? (
@@ -1024,7 +1042,7 @@ function GroupOrderProductCard({
               <button
                 type="button"
                 onClick={() => onRemove(item.id)}
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
                 aria-label={removeItemLabel}
               >
                 <X className="h-4 w-4" aria-hidden="true" />
@@ -1032,11 +1050,9 @@ function GroupOrderProductCard({
             ) : null}
           </div>
 
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="inline-flex h-6 min-w-[24px] shrink-0 items-center justify-center rounded-full border border-gray-200 bg-sky-50/70 px-2 text-[11px] font-semibold text-gray-900">
-              ×{item.quantity}
-            </span>
-          </div>
+          <span className="inline-flex h-6 w-fit min-w-[24px] items-center justify-center rounded-full border border-gray-200 bg-sky-50/70 px-2 text-[11px] font-semibold text-gray-900">
+            ×{item.quantity}
+          </span>
         </div>
       </div>
     </article>
