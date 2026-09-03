@@ -73,6 +73,15 @@ type MyGiftCardsViewProps = {
   copy: MyGiftCardsViewCopy;
 };
 
+type GiftCardSectionId = "mine" | "used" | "others";
+
+type GiftCardSection = {
+  id: GiftCardSectionId;
+  title: string;
+  items: MyGiftCardsViewProps["details"];
+  showBalance: boolean;
+};
+
 export function MyGiftCardsView({
   locale,
   settings,
@@ -87,9 +96,7 @@ export function MyGiftCardsView({
   const [openHistoryCardId, setOpenHistoryCardId] = useState<string | null>(
     null,
   );
-  const [activeSectionId, setActiveSectionId] = useState<"mine" | "used" | "others">(
-    "mine",
-  );
+  const [activeSectionId, setActiveSectionId] = useState<GiftCardSectionId>("mine");
   const normalizedViewerEmail = viewerEmail.trim().toLowerCase();
 
   const isOwnedByViewer = (card: GiftCardListItem, detail: GiftCardDetail | null) =>
@@ -124,7 +131,7 @@ export function MyGiftCardsView({
     return !isOwnedByViewer(card, detail);
   });
 
-  const groupedCards = [
+  const groupedCards: [GiftCardSection, GiftCardSection, GiftCardSection] = [
     { id: "mine", title: copy.sections.mine, items: myCards, showBalance: true },
     {
       id: "used",
