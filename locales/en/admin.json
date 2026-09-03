@@ -244,7 +244,13 @@
       "freeStorePickup": "Free (Store Pickup)",
       "couponDiscount": "Coupon discount",
       "couponDiscountWithCode": "Coupon discount ({code})",
-      "grandTotal": "Total"
+      "bonusEarned": "Bonus earned",
+      "grandTotal": "Total",
+      "groupParticipants": "Participants",
+      "participantSubtotal": "Subtotal",
+      "participantDelivery": "Delivery",
+      "participantTotal": "Total",
+      "participantNoItems": "No items for this participant."
     },
     "detail": {
       "customer": "Customer",
@@ -667,7 +673,29 @@
       "unknownRole": "Unknown role.",
       "unknownStatus": "Unknown status.",
       "recentOrders": "Recent orders",
-      "noOrders": "No orders."
+      "noOrders": "No orders.",
+      "bonuses": {
+        "title": "Bonuses",
+        "available": "Available balance",
+        "totalEarned": "Total earned",
+        "totalRedeemed": "Total redeemed",
+        "empty": "No bonus activity yet.",
+        "order": "Order",
+        "types": {
+          "EARN": "Earned",
+          "REDEEM": "Redeemed",
+          "REVERSAL_EARN": "Earn reversed",
+          "REVERSAL_REDEEM": "Redeem reversed",
+          "EXPIRE": "Expired"
+        }
+      },
+      "giftCards": {
+        "title": "Gift cards",
+        "empty": "No gift cards.",
+        "rolePurchaser": "Purchaser",
+        "roleRecipient": "Recipient",
+        "roleBoth": "Purchaser & recipient"
+      }
     },
     "roleLabels": {
       "admin": "Admin",

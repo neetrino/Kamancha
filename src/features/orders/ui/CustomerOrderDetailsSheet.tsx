@@ -27,6 +27,8 @@ type CustomerOrderDetailsSheetProps = {
   copy: Dictionary["admin"];
   includeAdminDetails?: boolean;
   groupOrderBadgeLabel?: string;
+  /** SideSheet panel width classes (default: narrow profile drawer). */
+  panelClassName?: string;
 };
 
 /**
@@ -41,6 +43,7 @@ export function CustomerOrderDetailsSheet({
   copy,
   includeAdminDetails = false,
   groupOrderBadgeLabel,
+  panelClassName = "w-[87%] max-w-[420px]",
 }: CustomerOrderDetailsSheetProps) {
   const d = copy.orders.drawer;
 
@@ -49,7 +52,7 @@ export function CustomerOrderDetailsSheet({
       open={open}
       onClose={onClose}
       ariaLabel={d.ariaLabel}
-      panelClassName="w-[87%] max-w-[420px]"
+      panelClassName={panelClassName}
       zIndexClassName="z-[200]"
       backdropBlur
       closeButtonClassName="side-sheet-close-stroke bg-[#335329] text-white hover:bg-[#2c4823]"
@@ -109,6 +112,7 @@ export function CustomerOrderDetailsSheet({
 }
 
 type DrawerLabels = Dictionary["admin"]["orders"]["drawer"];
+type DrawerOrderItem = AdminOrderDetailView["items"][number];
 
 function CustomerOrderSheetBody({
   detail,
@@ -119,6 +123,11 @@ function CustomerOrderSheetBody({
   labels: DrawerLabels;
   includeAdminDetails: boolean;
 }) {
+  const showGroupParticipants =
+    includeAdminDetails &&
+    detail.isGroupOrder &&
+    detail.groupParticipants.length > 0;
+
   return (
     <div className="space-y-4">
       {includeAdminDetails ? (
@@ -181,50 +190,111 @@ function CustomerOrderSheetBody({
       </section>
 
 
-      <section className="space-y-3">
-        <h3 className="px-1 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-          {labels.items}
-        </h3>
-        <ul className="space-y-3">
-          {detail.items.map((item) => (
-            <li
-              key={item.id}
-              className="overflow-hidden rounded-[20px] border border-gray-200 bg-white p-3"
-            >
-              <div className="flex items-stretch gap-3">
-                <OrderItemThumb title={item.title} imageUrl={item.imageUrl} />
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <p className="line-clamp-2 text-sm font-medium text-gray-900">
-                    {item.title}
+      {showGroupParticipants ? (
+        <section className="space-y-3">
+          <h3 className="px-1 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+            {labels.groupParticipants}
+          </h3>
+          <div className="space-y-3">
+            {detail.groupParticipants.map((participant) => (
+              <article
+                key={participant.id}
+                className={`${PROFILE_INNER_CARD} space-y-3 p-4`}
+              >
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {participant.displayName}
                   </p>
-                  {item.modifiers.length > 0 ? (
-                    <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
-                      {item.modifiers
-                        .map((modifier) =>
-                          modifier.kind === "ADDITION"
-                            ? `+ ${modifier.name}`
-                            : `− ${modifier.name}`,
-                        )
-                        .join(", ")}
-                    </p>
-                  ) : null}
-                  <p className="mt-1 text-sm font-semibold text-gray-900">
-                    {formatOrderDrawerMoney(
-                      item.lineTotalAmount,
-                      item.currency,
-                    )}
-                  </p>
-                  <p className="mt-0.5 text-xs text-gray-500">
-                    {formatOrderDrawerMoney(item.unitPriceAmount, item.currency)}{" "}
-                    × {item.quantity}
-                  </p>
+                  <dl className="grid grid-cols-3 gap-2 text-xs text-gray-600">
+                    <div>
+                      <dt>{labels.participantSubtotal}</dt>
+                      <dd className="font-semibold text-gray-900">
+                        {formatOrderDrawerMoney(
+                          participant.subtotalAmount,
+                          detail.baseCurrency,
+                        )}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>{labels.participantDelivery}</dt>
+                      <dd className="font-semibold text-gray-900">
+                        {formatOrderDrawerMoney(
+                          participant.deliveryShareAmount,
+                          detail.baseCurrency,
+                        )}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>{labels.participantTotal}</dt>
+                      <dd className="font-semibold text-gray-900">
+                        {formatOrderDrawerMoney(
+                          participant.finalAmount,
+                          detail.baseCurrency,
+                        )}
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+                {participant.items.length > 0 ? (
+                  <OrderItemsList items={participant.items} />
+                ) : (
+                  <p className="text-xs text-gray-500">
+                    {labels.participantNoItems}
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section className="space-y-3">
+          <h3 className="px-1 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+            {labels.items}
+          </h3>
+          <OrderItemsList items={detail.items} />
+        </section>
+      )}
     </div>
+  );
+}
+
+function OrderItemsList({ items }: { items: DrawerOrderItem[] }) {
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => (
+        <li
+          key={item.id}
+          className="overflow-hidden rounded-[20px] border border-gray-200 bg-white p-3"
+        >
+          <div className="flex items-stretch gap-3">
+            <OrderItemThumb title={item.title} imageUrl={item.imageUrl} />
+            <div className="flex min-w-0 flex-1 flex-col">
+              <p className="line-clamp-2 text-sm font-medium text-gray-900">
+                {item.title}
+              </p>
+              {item.modifiers.length > 0 ? (
+                <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
+                  {item.modifiers
+                    .map((modifier) =>
+                      modifier.kind === "ADDITION"
+                        ? `+ ${modifier.name}`
+                        : `− ${modifier.name}`,
+                    )
+                    .join(", ")}
+                </p>
+              ) : null}
+              <p className="mt-1 text-sm font-semibold text-gray-900">
+                {formatOrderDrawerMoney(item.lineTotalAmount, item.currency)}
+              </p>
+              <p className="mt-0.5 text-xs text-gray-500">
+                {formatOrderDrawerMoney(item.unitPriceAmount, item.currency)} ×{" "}
+                {item.quantity}
+              </p>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -268,6 +338,12 @@ function CustomerOrderSheetTotals({
             </dd>
           </div>
         ) : null}
+        <div className="flex items-center justify-between text-gray-600">
+          <dt>{labels.bonusEarned}</dt>
+          <dd className="tabular-nums text-brand-forest">
+            +{detail.bonusEarnedAmount}
+          </dd>
+        </div>
         <div className="flex items-center justify-between pt-1 text-base font-bold text-gray-900">
           <dt>{labels.grandTotal}</dt>
           <dd className="tabular-nums">

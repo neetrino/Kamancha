@@ -386,12 +386,6 @@ export function CartDrawer({
                 {view?.subtotalFormatted ?? "—"}
               </dd>
             </div>
-            <div className="flex items-center justify-between text-gray-600">
-              <dt>{labels.shipping}</dt>
-              <dd className="tabular-nums text-gray-900">
-                {view?.shippingFormatted ?? "—"}
-              </dd>
-            </div>
             <div className="flex items-center justify-between pt-1 text-base font-bold text-gray-900">
               <dt>{labels.total}</dt>
               <dd className="tabular-nums">{view?.totalFormatted ?? "—"}</dd>

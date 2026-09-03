@@ -52,3 +52,5 @@ Implementation follows `docs/08-IMPLEMENTATION-PLAN.md`. Production deploy and p
 
 MIT — see `LICENSE`.
 
+_Maintenance note: harmless documentation touch to trigger a fresh remote push._
+

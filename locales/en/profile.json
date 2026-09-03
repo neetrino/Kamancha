@@ -23,6 +23,11 @@
   "giftCardsPage": {
     "buy": "Buy gift card",
     "empty": "No gift cards yet.",
+    "sections": {
+      "mine": "My gift cards",
+      "usedByMe": "Used by me",
+      "boughtForOthers": "Purchased by me for others"
+    },
     "history": "Transaction history",
     "status": "Status",
     "balance": "Balance",
