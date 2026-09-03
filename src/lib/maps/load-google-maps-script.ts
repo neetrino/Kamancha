@@ -1,37 +1,82 @@
 "use client";
 
+type GoogleLatLngLiteral = { lat: number; lng: number };
+
+type GoogleMapStyle = {
+  featureType?: string;
+  elementType?: string;
+  stylers: Array<Record<string, string | number | boolean>>;
+};
+
+type GoogleMapOptions = {
+  center: GoogleLatLngLiteral;
+  zoom: number;
+  mapTypeControl?: boolean;
+  streetViewControl?: boolean;
+  fullscreenControl?: boolean;
+  zoomControl?: boolean;
+  clickableIcons?: boolean;
+  disableDefaultUI?: boolean;
+  gestureHandling?: "auto" | "cooperative" | "greedy" | "none";
+  styles?: GoogleMapStyle[];
+};
+
+type GoogleLatLngBounds = {
+  extend: (point: GoogleLatLngLiteral) => void;
+};
+
 type GoogleMapsNamespace = {
-  Map: new (
-    element: HTMLElement,
-    options: {
-      center: { lat: number; lng: number };
-      zoom: number;
-      mapTypeControl?: boolean;
-      streetViewControl?: boolean;
-      fullscreenControl?: boolean;
-    },
-  ) => GoogleMapInstance;
+  Map: new (element: HTMLElement, options: GoogleMapOptions) => GoogleMapInstance;
   Marker: new (options: {
     map: GoogleMapInstance;
-    position: { lat: number; lng: number };
+    position: GoogleLatLngLiteral;
     draggable?: boolean;
+    title?: string;
+    icon?:
+      | string
+      | {
+          url: string;
+          scaledSize?: GoogleSize;
+          size?: GoogleSize;
+          anchor?: GooglePoint;
+        };
   }) => GoogleMarkerInstance;
+  LatLngBounds: new () => GoogleLatLngBounds;
+  Size: new (width: number, height: number) => GoogleSize;
+  Point: new (x: number, y: number) => GooglePoint;
   event: {
     addListener: (
       instance: GoogleMapInstance | GoogleMarkerInstance,
       eventName: string,
-      handler: (event: { latLng?: { lat: () => number; lng: () => number } | null }) => void,
+      handler: (event: {
+        latLng?: { lat: () => number; lng: () => number } | null;
+      }) => void,
     ) => void;
+    trigger: (instance: GoogleMapInstance, eventName: string) => void;
   };
 };
 
+type GoogleSize = {
+  width: number;
+  height: number;
+};
+
+type GooglePoint = {
+  x: number;
+  y: number;
+};
+
 type GoogleMapInstance = {
-  setCenter: (position: { lat: number; lng: number }) => void;
+  setCenter: (position: GoogleLatLngLiteral) => void;
   setZoom: (zoom: number) => void;
+  fitBounds: (
+    bounds: GoogleLatLngBounds,
+    padding?: number | { top: number; right: number; bottom: number; left: number },
+  ) => void;
 };
 
 type GoogleMarkerInstance = {
-  setPosition: (position: { lat: number; lng: number }) => void;
+  setPosition: (position: GoogleLatLngLiteral) => void;
   getPosition: () => { lat: () => number; lng: () => number } | null;
 };
 
@@ -93,4 +138,10 @@ export function loadGoogleMapsScript(apiKey: string): Promise<GoogleMapsNamespac
   });
 }
 
-export type { GoogleMapsNamespace, GoogleMapInstance, GoogleMarkerInstance };
+export type {
+  GoogleMapsNamespace,
+  GoogleMapInstance,
+  GoogleMarkerInstance,
+  GoogleMapStyle,
+  GoogleLatLngLiteral,
+};

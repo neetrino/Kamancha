@@ -76,21 +76,21 @@ export function GroupOrderSummary({
       style={{ top: stickyTop }}
     >
       <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
-        <h2 className="relative z-[2] mb-6 flex items-start gap-2 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
+        <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase sm:flex sm:items-start sm:gap-2">
           {view.paymentMode === "ORGANIZER_PAYS_ALL" ? (
             <User
-              className="mt-1 h-5 w-5 shrink-0"
+              className="mr-2 inline-block h-5 w-5 shrink-0 align-[-0.15em] sm:mr-0 sm:mt-1 sm:align-top"
               strokeWidth={2.75}
               aria-hidden
             />
           ) : (
             <Users
-              className="mt-1 h-5 w-5 shrink-0"
+              className="mr-2 inline-block h-5 w-5 shrink-0 align-[-0.15em] sm:mr-0 sm:mt-1 sm:align-top"
               strokeWidth={2.75}
               aria-hidden
             />
           )}
-          <span>
+          <span className="sm:min-w-0">
             {view.paymentMode === "ORGANIZER_PAYS_ALL"
               ? labels.payingOrganizer.replace(
                   "{name}",

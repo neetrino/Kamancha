@@ -19,7 +19,7 @@ type ContactPillItem = {
 };
 
 const PILL_CLASS =
-  "flex min-h-16 items-center gap-3 rounded-[70px] bg-white py-2 pr-5 pl-2.5 text-left max-[743px]:w-full max-[743px]:max-w-none min-[744px]:w-fit min-[744px]:max-w-[min(100%,calc(100vw-2.5rem))]";
+  "flex min-h-16 items-center gap-3 rounded-[70px] bg-white py-2 pr-5 pl-2.5 text-left shadow-sm transition-[translate,box-shadow] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:-translate-y-1.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 max-[743px]:w-full max-[743px]:max-w-none min-[744px]:w-fit min-[744px]:max-w-[min(100%,calc(100vw-2.5rem))]";
 
 const ICON_WRAP_CLASS =
   "flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white";
@@ -58,7 +58,7 @@ function ContactPill({
         {...(isExternal
           ? { target: "_blank", rel: "noopener noreferrer" }
           : {})}
-        className={`${PILL_CLASS} transition-opacity hover:opacity-90`}
+        className={`${PILL_CLASS}`}
       >
         {inner}
       </a>
@@ -121,9 +121,9 @@ export function ContactInfo({ copy }: ContactInfoProps) {
   const pills = useMemo(() => buildContactPills(copy), [copy]);
 
   return (
-    <div data-node-id="267:221" className="w-full">
+    <div data-node-id="267:221" className="w-full min-[744px]:w-fit">
       <Stagger
-        className="flex w-full flex-col gap-3 min-[744px]:flex-row min-[744px]:flex-wrap min-[744px]:items-stretch min-[744px]:justify-center min-[744px]:gap-4"
+        className="flex w-full flex-col gap-3 min-[744px]:w-fit min-[744px]:flex-row min-[744px]:flex-wrap min-[744px]:items-stretch min-[744px]:justify-center min-[744px]:gap-4"
         {...STAGGER_PROPS}
       >
         {pills.map((item) => (

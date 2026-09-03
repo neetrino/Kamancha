@@ -32,5 +32,6 @@
   "hqTitle": "Headquarters:",
   "hoursEverydayLabel": "Every day:",
   "hoursEverydayTime": "10:00-00:00",
-  "mapTitle": "Store location"
+  "mapTitle": "Our locations",
+  "mapUnavailable": "Map is unavailable. Open the address in Google Maps."
 }

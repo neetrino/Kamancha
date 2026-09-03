@@ -32,5 +32,6 @@
   "hqTitle": "Գլխամաս՝",
   "hoursEverydayLabel": "Ամեն օր:",
   "hoursEverydayTime": "10:00-00:00",
-  "mapTitle": "Խանութի գտնվելու վայրը"
+  "mapTitle": "Մեր հասցեները",
+  "mapUnavailable": "Քարտեզը հասանելի չէ։ Բացեք հասցեն Google Maps-ում։"
 }

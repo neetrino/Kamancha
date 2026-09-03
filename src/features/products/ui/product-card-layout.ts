@@ -21,7 +21,7 @@ type CardLayoutClasses = {
 const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
   fixed: {
     article: "h-[419px] w-[300px] shrink-0 rounded-[30px]",
-    image: "mx-[6px] mt-[7px] h-[220px] rounded-[30px]",
+    image: "mx-[6px] mt-[7px] h-[220px] overflow-hidden rounded-[30px]",
     imageSizes: "287px",
     badge:
       "top-2 left-2 h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814]",
@@ -39,7 +39,8 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
   },
   fluid: {
     article: "h-auto w-full rounded-[24px]",
-    image: "mx-1 mt-1 aspect-[5/4] rounded-[24px]",
+    image:
+      "mx-1 mt-1 aspect-[5/4] w-[calc(100%-8px)] overflow-hidden rounded-[24px]",
     imageSizes:
       "(min-width:1280px) 220px, (min-width:1024px) 20vw, (min-width:640px) 40vw, 50vw",
     badge:
@@ -58,7 +59,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
   },
   compact: {
     article: "h-[302px] w-full rounded-[27px]",
-    image: "mx-[6px] mt-[7px] h-[166px] rounded-[27px]",
+    image: "mx-[6px] mt-[7px] h-[166px] overflow-hidden rounded-[27px]",
     imageSizes: "201px",
     badge:
       "top-[4px] left-[1px] h-6 min-w-[4.75rem] bg-[#140900] px-2 text-[11px] text-white",
@@ -78,8 +79,12 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
   catalog: {
     article:
       "h-auto w-full rounded-[26px] xl:h-[419px] xl:max-w-[300px] xl:rounded-[37px]",
+    /**
+     * Explicit width + aspect (and xl fixed height) so iOS Safari does not
+     * mis-size absolute/fill photos inside transformed grid cells.
+     */
     image:
-      "mx-[6px] mt-[7px] aspect-[287/220] rounded-[26px] xl:h-[220px] xl:aspect-auto xl:rounded-[37px]",
+      "mx-[6px] mt-[7px] aspect-[287/220] w-[calc(100%-12px)] overflow-hidden rounded-[26px] [transform:translateZ(0)] xl:h-[220px] xl:w-auto xl:aspect-auto xl:rounded-[37px]",
     imageSizes:
       "(min-width: 1280px) 287px, (min-width: 744px) 33vw, 50vw",
     badge:

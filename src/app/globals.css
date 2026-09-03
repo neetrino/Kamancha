@@ -656,9 +656,19 @@ html {
     display: none;
   }
 
+  /*
+   * Profile hub is short; do not stretch main / pin footer to the viewport
+   * bottom — that left a large empty band above copyright. Match other
+   * mobile pages: compact main padding, footer owns bottom-nav clearance.
+   */
   .storefront-shell:has(.profile-mobile-page) .storefront-main {
+    flex-grow: 0;
     padding-top: 0.5rem;
-    padding-bottom: var(--mobile-bottom-nav-clearance);
+    padding-bottom: 0.75rem;
+  }
+
+  .storefront-shell:has(.profile-mobile-page) .storefront-footer {
+    margin-top: 0;
   }
 
   /* Checkout + group order — Grill.am mobile inset (single 1.25rem; no double px). */

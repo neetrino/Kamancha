@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { AuthPageShell } from "@/features/auth/ui/AuthPageShell";
 import { ContactForm } from "@/features/contact/ui/ContactForm";
-import { ContactInfo } from "@/features/contact/ui/ContactInfo";
+import { ContactFooter } from "@/features/contact/ui/ContactFooter";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -25,8 +25,8 @@ export default async function ContactPage({ params }: ContactPageProps) {
       title={copy.heading}
       raiseLeftHand
       footer={
-        <div className="mt-15 mb-4 min-[744px]:mt-28 min-[744px]:sm:mt-32 xl:mt-36">
-          <ContactInfo copy={copy} />
+        <div className="mt-15 min-[744px]:mt-28 min-[744px]:sm:mt-32 xl:mt-36">
+          <ContactFooter copy={copy} />
         </div>
       }
     >
