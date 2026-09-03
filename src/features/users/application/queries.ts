@@ -1,9 +1,12 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray, or, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { orders, users } from "@/db/schema";
+import { giftCards, orders, users } from "@/db/schema";
+import { getCustomerBonusSummary } from "@/features/bonuses/application/queries";
+import type { CustomerBonusSummary } from "@/features/bonuses/application/queries";
+import type { GiftCardListItem } from "@/features/gift-cards/application/queries";
 import type { AdminUsersFilter } from "@/features/users/schemas/admin-users";
 
 const PAGE_SIZE = 20;
@@ -19,6 +22,11 @@ export type AdminUserListItem = {
   orderCount: number;
   lastLoginAt: Date | null;
   createdAt: Date;
+};
+
+export type AdminUserGiftCard = GiftCardListItem & {
+  purchaserUserId: string | null;
+  recipientUserId: string | null;
 };
 
 export type AdminUserDetail = {
@@ -45,6 +53,8 @@ export type AdminUserDetail = {
     baseCurrency: string;
     placedAt: Date;
   }>;
+  bonusSummary: CustomerBonusSummary;
+  giftCards: AdminUserGiftCard[];
 };
 
 /** Lists users for the admin surface with optional search/role/status filters. */
@@ -157,20 +167,56 @@ export async function getAdminUserById(
     return null;
   }
 
-  const recentOrders = await getDb()
-    .select({
-      id: orders.id,
-      orderNumber: orders.orderNumber,
-      status: orders.status,
-      paymentStatus: orders.paymentStatus,
-      totalAmount: orders.totalAmount,
-      baseCurrency: orders.baseCurrency,
-      placedAt: orders.placedAt,
-    })
-    .from(orders)
-    .where(eq(orders.userId, userId))
-    .orderBy(desc(orders.placedAt))
-    .limit(10);
+  const email = user.email.trim().toLowerCase();
 
-  return { user, recentOrders };
+  const [recentOrders, bonusSummary, giftCardRows] = await Promise.all([
+    getDb()
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        status: orders.status,
+        paymentStatus: orders.paymentStatus,
+        totalAmount: orders.totalAmount,
+        baseCurrency: orders.baseCurrency,
+        placedAt: orders.placedAt,
+      })
+      .from(orders)
+      .where(eq(orders.userId, userId))
+      .orderBy(desc(orders.placedAt))
+      .limit(10),
+    getCustomerBonusSummary(userId, { limit: 20 }),
+    getDb()
+      .select({
+        id: giftCards.id,
+        code: giftCards.code,
+        initialAmount: giftCards.initialAmount,
+        balanceAmount: giftCards.balanceAmount,
+        status: giftCards.status,
+        purchaserUserId: giftCards.purchaserUserId,
+        recipientUserId: giftCards.recipientUserId,
+        purchaserName: giftCards.purchaserName,
+        purchaserEmail: giftCards.purchaserEmail,
+        recipientName: giftCards.recipientName,
+        recipientEmail: giftCards.recipientEmail,
+        recipientPhone: giftCards.recipientPhone,
+        message: giftCards.message,
+        paymentMethod: giftCards.paymentMethod,
+        scheduledSendAt: giftCards.scheduledSendAt,
+        sentAt: giftCards.sentAt,
+        activatedAt: giftCards.activatedAt,
+        expiresAt: giftCards.expiresAt,
+        createdAt: giftCards.createdAt,
+      })
+      .from(giftCards)
+      .where(
+        or(
+          eq(giftCards.purchaserUserId, userId),
+          eq(giftCards.recipientUserId, userId),
+          email ? eq(giftCards.recipientEmail, email) : sql`false`,
+        ),
+      )
+      .orderBy(desc(giftCards.createdAt)),
+  ]);
+
+  return { user, recentOrders, bonusSummary, giftCards: giftCardRows };
 }

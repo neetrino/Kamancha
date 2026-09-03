@@ -1,12 +1,18 @@
 import "server-only";
 
 import { formatDeliverySlotDisplay } from "@/features/delivery/domain/delivery-schedule";
+import {
+  loadAdminGroupOrderParticipantsView,
+  type AdminGroupOrderParticipantView,
+} from "@/features/orders/application/group-order-participants-view";
+import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 import { getStoreIdentity } from "@/features/settings/application/queries";
 import {
   getAdminOrderByNumber,
   type AdminOrderDetail,
 } from "@/features/orders/application/queries";
+import type { Locale } from "@/lib/i18n/config";
 
 export type AdminOrderDetailItemView = {
   id: string;
@@ -36,6 +42,7 @@ export type AdminOrderDetailView = {
   subtotalAmount: number;
   deliveryAmount: number;
   discountAmount: number;
+  bonusEarnedAmount: number;
   totalAmount: number;
   deliveryLabel: string | null;
   couponCode: string | null;
@@ -52,6 +59,7 @@ export type AdminOrderDetailView = {
   paymentMethod: string;
   paymentAmount: number;
   items: AdminOrderDetailItemView[];
+  groupParticipants: AdminGroupOrderParticipantView[];
 };
 
 function formatAddressLine(
@@ -68,8 +76,6 @@ function formatAddressLine(
 
   return parts.join(", ");
 }
-
-import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 
 /** Maps a loaded order into a serializable admin drawer view. */
 export function toAdminOrderDetailView(
@@ -91,6 +97,7 @@ export function toAdminOrderDetailView(
     subtotalAmount: order.subtotalAmount,
     deliveryAmount: order.deliveryAmount,
     discountAmount: order.discountAmount,
+    bonusEarnedAmount: order.bonusEarnedAmount,
     totalAmount: order.totalAmount,
     deliveryLabel: order.deliveryLabelSnapshot,
     couponCode: order.promotionCodeSnapshot,
@@ -140,12 +147,14 @@ export function toAdminOrderDetailView(
       currency: item.currency,
       modifiers: item.modifiers,
     })),
+    groupParticipants: [],
   };
 }
 
 /** Loads order detail shaped for the admin drawer. */
 export async function getAdminOrderDetailView(
   orderNumber: string,
+  locale: Locale,
 ): Promise<AdminOrderDetailView | null> {
   const detail = await getAdminOrderByNumber(orderNumber);
   if (!detail) {
@@ -153,5 +162,20 @@ export async function getAdminOrderDetailView(
   }
 
   const identity = await getStoreIdentity();
-  return toAdminOrderDetailView(detail, identity.name);
+  const view = toAdminOrderDetailView(detail, identity.name);
+
+  if (!detail.order.groupOrderId) {
+    return view;
+  }
+
+  const groupParticipants = await loadAdminGroupOrderParticipantsView({
+    groupOrderId: detail.order.groupOrderId,
+    locale,
+    currency: detail.order.baseCurrency,
+  });
+
+  return {
+    ...view,
+    groupParticipants,
+  };
 }

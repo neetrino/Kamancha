@@ -69,6 +69,7 @@ export async function getCustomerOrderDetailAction(
     subtotalAmount: share.subtotalAmount,
     deliveryAmount: share.deliveryShareAmount,
     discountAmount: 0,
+    bonusEarnedAmount: 0,
     couponCode: null,
     totalAmount: share.finalAmount,
     paymentAmount: share.finalAmount,

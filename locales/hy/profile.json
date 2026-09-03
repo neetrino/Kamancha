@@ -13,8 +13,8 @@
     "empty": "Կուտակային միավորների շարժ դեռ չկա։",
     "order": "Պատվեր",
     "types": {
-      "EARN": "Կուտակում",
-      "REDEEM": "Օգտագործում",
+      "EARN": "Կուտակված",
+      "REDEEM": "Օգտագործված",
       "REVERSAL_EARN": "Կուտակման վերադարձ",
       "REVERSAL_REDEEM": "Օգտագործման վերադարձ",
       "EXPIRE": "Ժամկետի ավարտ"
@@ -23,6 +23,11 @@
   "giftCardsPage": {
     "buy": "Գնել Gift Card",
     "empty": "Gift Card դեռ չկա։",
+    "sections": {
+      "mine": "Իմ Gift Card-երը",
+      "usedByMe": "Իմ կողմից օգտագործված Gift Card-երը",
+      "boughtForOthers": "Ուրիշի համար իմ գնած Gift Card-երը"
+    },
     "history": "Գործարքների պատմություն",
     "status": "Կարգավիճակ",
     "balance": "Մնացորդ",

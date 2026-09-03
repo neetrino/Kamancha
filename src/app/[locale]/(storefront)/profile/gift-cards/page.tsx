@@ -43,12 +43,15 @@ export default async function MyGiftCardsPage({ params }: PageProps) {
     <MyGiftCardsView
       locale={rawLocale}
       settings={settings}
+      viewerUserId={user.id}
+      viewerEmail={user.email}
       defaultPurchaserName={`${user.firstName} ${user.lastName}`.trim()}
       details={details}
       copy={{
         title: dictionary.profile.giftCards,
         buy: copy.buy,
         empty: copy.empty,
+        sections: copy.sections,
         history: copy.history,
         status: copy.status,
         balance: copy.balance,

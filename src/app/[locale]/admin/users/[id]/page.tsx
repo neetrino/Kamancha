@@ -21,6 +21,8 @@ import {
   isUserRole,
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
+import { AdminUserBonuses } from "@/features/users/ui/AdminUserBonuses";
+import { AdminUserGiftCards } from "@/features/users/ui/AdminUserGiftCards";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
@@ -72,7 +74,7 @@ export default async function AdminUserDetailPage({
     notFound();
   }
 
-  const { user, recentOrders } = detail;
+  const { user, recentOrders, bonusSummary, giftCards } = detail;
   const role = isUserRole(user.role) ? user.role : null;
   const status = isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
@@ -176,6 +178,22 @@ export default async function AdminUserDetailPage({
           <p className="text-sm text-red-700">{t.users.detail.unknownStatus}</p>
         )}
       </div>
+
+      <AdminUserBonuses
+        locale={locale}
+        summary={bonusSummary}
+        copy={t.users.detail.bonuses}
+        adminCopy={t}
+      />
+
+      <AdminUserGiftCards
+        locale={locale}
+        userId={user.id}
+        userEmail={user.email}
+        cards={giftCards}
+        copy={t.users.detail.giftCards}
+        adminCopy={t}
+      />
 
       <AdminUserRecentOrders locale={locale} orders={recentOrders} copy={t} />
     </section>

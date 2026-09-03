@@ -36,6 +36,7 @@ type MyGiftCardItemProps = {
   locale: Locale;
   card: GiftCardListItem;
   detail: GiftCardDetail | null;
+  showBalance: boolean;
   copy: MyGiftCardItemCopy;
   historyOpen: boolean;
   onHistoryOpenChange: (open: boolean) => void;
@@ -157,6 +158,7 @@ export function MyGiftCardItem({
   locale,
   card,
   detail,
+  showBalance,
   copy,
   historyOpen,
   onHistoryOpenChange,
@@ -193,12 +195,14 @@ export function MyGiftCardItem({
           </div>
         </div>
 
-        <div>
-          <p className="text-sm text-gray-500">{copy.balance}</p>
-          <p className="mt-1 font-big-fat-boii text-3xl leading-none font-normal tracking-wide text-brand-forest sm:text-4xl">
-            {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
-          </p>
-        </div>
+        {showBalance ? (
+          <div>
+            <p className="text-sm text-gray-500">{copy.balance}</p>
+            <p className="mt-1 font-big-fat-boii text-3xl leading-none font-normal tracking-wide text-brand-forest sm:text-4xl">
+              {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
+            </p>
+          </div>
+        ) : null}
 
         <div className="space-y-3 border-t border-dashed border-gray-200 pt-4">
           <DetailRow

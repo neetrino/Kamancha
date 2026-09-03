@@ -244,7 +244,13 @@
       "freeStorePickup": "Անվճար (ինքնաառաքում)",
       "couponDiscount": "Կուպոնի զեղչ",
       "couponDiscountWithCode": "Կուպոնի զեղչ ({code})",
-      "grandTotal": "Ընդամենը"
+      "bonusEarned": "Ստացված բոնուս",
+      "grandTotal": "Ընդամենը",
+      "groupParticipants": "Մասնակիցներ",
+      "participantSubtotal": "Ենթագումար",
+      "participantDelivery": "Առաքում",
+      "participantTotal": "Ընդամենը",
+      "participantNoItems": "Այս մասնակցի համար ապրանքներ չկան։"
     },
     "detail": {
       "customer": "Հաճախորդ",
@@ -667,7 +673,29 @@
       "unknownRole": "Անհայտ դեր։",
       "unknownStatus": "Անհայտ կարգավիճակ։",
       "recentOrders": "Վերջին պատվերներ",
-      "noOrders": "Պատվերներ չկան։"
+      "noOrders": "Պատվերներ չկան։",
+      "bonuses": {
+        "title": "Բոնուսներ",
+        "available": "Հասանելի մնացորդ",
+        "totalEarned": "Ընդհանուր կուտակված",
+        "totalRedeemed": "Ընդհանուր օգտագործված",
+        "empty": "Բոնուսների շարժ դեռ չկա։",
+        "order": "Պատվեր",
+        "types": {
+          "EARN": "Կուտակում",
+          "REDEEM": "Օգտագործում",
+          "REVERSAL_EARN": "Կուտակման վերադարձ",
+          "REVERSAL_REDEEM": "Օգտագործման վերադարձ",
+          "EXPIRE": "Ժամկետի ավարտ"
+        }
+      },
+      "giftCards": {
+        "title": "Gift Card-եր",
+        "empty": "Gift Card դեռ չկա։",
+        "rolePurchaser": "Գնորդ",
+        "roleRecipient": "Ստացող",
+        "roleBoth": "Գնորդ և ստացող"
+      }
     },
     "roleLabels": {
       "admin": "Ադմին",

@@ -244,7 +244,13 @@
       "freeStorePickup": "Бесплатно (самовывоз)",
       "couponDiscount": "Скидка по купону",
       "couponDiscountWithCode": "Скидка по купону ({code})",
-      "grandTotal": "Итого"
+      "bonusEarned": "Начислено бонусов",
+      "grandTotal": "Итого",
+      "groupParticipants": "Участники",
+      "participantSubtotal": "Промежуточный итог",
+      "participantDelivery": "Доставка",
+      "participantTotal": "Итого",
+      "participantNoItems": "У этого участника нет товаров."
     },
     "detail": {
       "customer": "Клиент",
@@ -667,7 +673,29 @@
       "unknownRole": "Неизвестная роль.",
       "unknownStatus": "Неизвестный статус.",
       "recentOrders": "Последние заказы",
-      "noOrders": "Заказов нет."
+      "noOrders": "Заказов нет.",
+      "bonuses": {
+        "title": "Бонусы",
+        "available": "Доступный баланс",
+        "totalEarned": "Всего начислено",
+        "totalRedeemed": "Всего использовано",
+        "empty": "Истории бонусов пока нет.",
+        "order": "Заказ",
+        "types": {
+          "EARN": "Начисление",
+          "REDEEM": "Списание",
+          "REVERSAL_EARN": "Отмена начисления",
+          "REVERSAL_REDEEM": "Возврат списания",
+          "EXPIRE": "Истечение"
+        }
+      },
+      "giftCards": {
+        "title": "Подарочные карты",
+        "empty": "Подарочных карт пока нет.",
+        "rolePurchaser": "Покупатель",
+        "roleRecipient": "Получатель",
+        "roleBoth": "Покупатель и получатель"
+      }
     },
     "roleLabels": {
       "admin": "Админ",
