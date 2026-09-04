@@ -52,6 +52,7 @@ export default async function MyGiftCardsPage({ params }: PageProps) {
         buy: copy.buy,
         empty: copy.empty,
         sections: copy.sections,
+        sectionsSwitcher: copy.sectionsSwitcher,
         history: copy.history,
         status: copy.status,
         balance: copy.balance,

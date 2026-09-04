@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { BuyGiftCardDrawer } from "@/features/gift-cards/ui/BuyGiftCardDrawer";
 import type {
   GiftCardDetail,
@@ -23,6 +24,12 @@ type MyGiftCardsViewCopy = {
   buy: string;
   empty: string;
   sections: {
+    mine: string;
+    usedByMe: string;
+    boughtForOthers: string;
+  };
+  sectionsSwitcher: {
+    aria: string;
     mine: string;
     usedByMe: string;
     boughtForOthers: string;
@@ -172,7 +179,24 @@ export function MyGiftCardsView({
           <p className={PROFILE_BODY}>{copy.empty}</p>
         ) : (
           <div className="relative z-[2] space-y-5">
-            <div className="flex w-full flex-col gap-2.5 sm:flex-row">
+            <div className="sm:hidden">
+              <SegmentedControl
+                aria-label={copy.sectionsSwitcher.aria}
+                value={activeSection.id}
+                fullWidth
+                size="sm"
+                options={[
+                  { value: "mine", label: copy.sectionsSwitcher.mine },
+                  { value: "used", label: copy.sectionsSwitcher.usedByMe },
+                  { value: "others", label: copy.sectionsSwitcher.boughtForOthers },
+                ]}
+                onSelect={(sectionId) => {
+                  setActiveSectionId(sectionId);
+                  setOpenHistoryCardId(null);
+                }}
+              />
+            </div>
+            <div className="hidden w-full gap-2.5 sm:flex sm:flex-row">
               {groupedCards.map((section) => {
                 const isActive = section.id === activeSection.id;
                 const buttonClass = isActive ? PROFILE_PILL_LIGHT : PROFILE_PILL_GHOST;
