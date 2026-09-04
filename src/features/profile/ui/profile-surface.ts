@@ -22,7 +22,7 @@ export const PROFILE_LABEL =
   "relative z-[2] flex flex-col gap-1.5 text-sm font-medium text-gray-900 xl:text-white";
 
 export const PROFILE_BODY =
-  "relative z-[2] text-sm leading-relaxed text-gray-600 xl:text-gray-700";
+  "relative z-[2] text-sm leading-relaxed text-gray-600 xl:text-white";
 
 export const PROFILE_LINK =
   "font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase transition-opacity hover:opacity-80";
