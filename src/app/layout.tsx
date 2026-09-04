@@ -57,6 +57,33 @@ function resolveMetadataBase(): URL {
   return new URL("http://localhost:3000");
 }
 
+/**
+ * Same pattern as ToonExpo: explicit public PNG (not App Router
+ * `/opengraph-image?hash`). Prefer absolute R2 CDN URL so Telegram fetches
+ * an image without our CSP / X-Frame-Options (toonexpo.com uses CDN the same way).
+ */
+const SHARE_IMAGE_PATH = "/assets/brand/og-share.png";
+const SHARE_IMAGE_WIDTH = 1200;
+const SHARE_IMAGE_HEIGHT = 630;
+
+function resolveShareImageUrl(): string {
+  const fromHelper = staticAssetUrl(SHARE_IMAGE_PATH);
+  if (fromHelper.startsWith("http://") || fromHelper.startsWith("https://")) {
+    return fromHelper;
+  }
+
+  const r2Base =
+    process.env.R2_PUBLIC_BASE_URL?.replace(/\/$/, "") ||
+    process.env.NEXT_PUBLIC_STATIC_ASSET_BASE_URL?.replace(/\/$/, "");
+  if (r2Base) {
+    return `${r2Base}${SHARE_IMAGE_PATH}`;
+  }
+
+  return SHARE_IMAGE_PATH;
+}
+
+const shareImageUrl = resolveShareImageUrl();
+
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
   title: {
@@ -76,14 +103,21 @@ export const metadata: Metadata = {
     siteName: "Kamancha",
     title: "Kamancha",
     description: "Multilingual e-commerce storefront",
-    // Static RGB PNG (src/app/opengraph-image.png) — Telegram rejects many
-    // dynamic/RGBA opengraph-image routes that Instagram still accepts.
     url: "/",
+    images: [
+      {
+        url: shareImageUrl,
+        width: SHARE_IMAGE_WIDTH,
+        height: SHARE_IMAGE_HEIGHT,
+        alt: "Kamancha",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Kamancha",
     description: "Multilingual e-commerce storefront",
+    images: [shareImageUrl],
   },
 };
 
