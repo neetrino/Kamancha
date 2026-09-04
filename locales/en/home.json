@@ -13,6 +13,8 @@
   "emptyDiscounted": "No discounted products yet.",
   "previousCategory": "Previous category",
   "nextCategory": "Next category",
+  "previousFeatured": "Previous featured products",
+  "nextFeatured": "Next featured products",
   "familyDinner": {
     "headlineBefore": "dinner for ",
     "headlineAccent": "the whole family",
