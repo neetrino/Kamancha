@@ -76,6 +76,9 @@ export const metadata: Metadata = {
     siteName: "Kamancha",
     title: "Kamancha",
     description: "Multilingual e-commerce storefront",
+    // Static RGB PNG (src/app/opengraph-image.png) — Telegram rejects many
+    // dynamic/RGBA opengraph-image routes that Instagram still accepts.
+    url: "/",
   },
   twitter: {
     card: "summary_large_image",
