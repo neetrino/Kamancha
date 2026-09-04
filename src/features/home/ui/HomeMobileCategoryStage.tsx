@@ -14,6 +14,7 @@ import {
   type HomeMobileCategorySlide,
   type WheelDirection,
 } from "@/features/home/ui/HomeMobilePlateWheel";
+import { HomeMobileSidePlates } from "@/features/home/ui/HomeMobileSidePlates";
 import { HOME_HERO_PLATE_SRC } from "@/lib/brand/assets";
 
 export type { HomeMobileCategorySlide };
@@ -22,6 +23,9 @@ type HomeMobileCategoryStageProps = {
   current: HomeMobileCategorySlide;
   prev: HomeMobileCategorySlide | null;
   next: HomeMobileCategorySlide | null;
+  /** Outer neighbors for iPad side plates (left/right of the big plate). */
+  prevFar?: HomeMobileCategorySlide | null;
+  nextFar?: HomeMobileCategorySlide | null;
   productCountLabel: string;
   viewAllLabel: string;
   viewAllHref: string;
@@ -42,11 +46,14 @@ function formatProductCount(template: string, count: number): string {
 
 /**
  * Plated category carousel stage — Figma 181:482 / 196:214.
+ * iPad adds side dishes on the big plate rim (not the top arc).
  */
 export function HomeMobileCategoryStage({
   current,
   prev,
   next,
+  prevFar = null,
+  nextFar = null,
   productCountLabel,
   viewAllLabel,
   viewAllHref,
@@ -63,7 +70,7 @@ export function HomeMobileCategoryStage({
   const plateTransition = playMotion ? HOME_PLATE_WHEEL_SPRING : { duration: 0 };
 
   return (
-    <div className="relative mt-2 pt-6 pb-2">
+    <div className="relative mt-2 overflow-x-clip pt-6 pb-2">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-[-24px] z-0 h-[765px] overflow-x-clip"
@@ -84,6 +91,16 @@ export function HomeMobileCategoryStage({
           />
         </motion.div>
       </div>
+
+      {/*
+        Wheel: next is left, prev is right — side plates continue that mapping
+        further out on the big plate (iPad crosses).
+      */}
+      <HomeMobileSidePlates
+        left={nextFar}
+        right={prevFar}
+        direction={direction}
+      />
 
       <HomeReveal className="relative z-[1]">
         <HomeMobilePlateWheel

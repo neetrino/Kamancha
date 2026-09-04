@@ -4,7 +4,10 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 
 import { AppLink } from "@/components/ui/AppLink";
-import { plateWheelTransition, resolveWheelStepFromSwipe } from "@/features/home/ui/home-plate-motion";
+import {
+  plateWheelTransition,
+  resolveWheelStepFromSwipe,
+} from "@/features/home/ui/home-plate-motion";
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import { HOME_MOBILE_CATEGORY_DISH_SRC } from "@/lib/brand/assets";
 
@@ -102,7 +105,10 @@ export function HomeMobilePlateWheel({
       onPanEnd={
         canSwipe
           ? (_event, info) => {
-              const step = resolveWheelStepFromSwipe(info.offset.x, info.velocity.x);
+              const step = resolveWheelStepFromSwipe(
+                info.offset.x,
+                info.velocity.x,
+              );
               if (step) {
                 onStep?.(step);
               }

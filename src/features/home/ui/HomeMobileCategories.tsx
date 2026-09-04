@@ -47,6 +47,10 @@ export function HomeMobileCategories({
   const loops = count > 1;
   const prevSlide = loops ? categories[wrapIndex(index - 1, count)] : null;
   const nextSlide = loops ? categories[wrapIndex(index + 1, count)] : null;
+  const prevFarSlide =
+    count >= 3 ? categories[wrapIndex(index - 2, count)] : null;
+  const nextFarSlide =
+    count >= 3 ? categories[wrapIndex(index + 2, count)] : null;
 
   function moveBy(delta: WheelDirection): void {
     if (lockRef.current || !loops) {
@@ -75,6 +79,8 @@ export function HomeMobileCategories({
         current={current}
         prev={prevSlide ?? null}
         next={nextSlide ?? null}
+        prevFar={prevFarSlide ?? null}
+        nextFar={nextFarSlide ?? null}
         productCountLabel={productCountLabel}
         viewAllLabel={viewAllLabel}
         viewAllHref={current.href}
