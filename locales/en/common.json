@@ -56,5 +56,11 @@
   },
   "units": {
     "km": "km"
+  },
+  "music": {
+    "enable": "Enable music",
+    "disable": "Mute music",
+    "active": "Active",
+    "muted": "Muted"
   }
 }
