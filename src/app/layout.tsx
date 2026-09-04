@@ -84,13 +84,17 @@ function resolveShareImageUrl(): string {
 
 const shareImageUrl = resolveShareImageUrl();
 
+/** Default share / SEO blurb shown under the title in messenger previews. */
+const SITE_DESCRIPTION =
+  "Քամանչա՝ համ, երաժշտություն և ավանդույթներ՝ մեկ հարկի տակ։";
+
 export const metadata: Metadata = {
   metadataBase: resolveMetadataBase(),
   title: {
     default: "Kamancha",
     template: "%s · Kamancha",
   },
-  description: "Multilingual e-commerce storefront",
+  description: SITE_DESCRIPTION,
   icons: {
     icon: {
       url: staticAssetUrl("/assets/brand/favicon.svg"),
@@ -102,7 +106,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Kamancha",
     title: "Kamancha",
-    description: "Multilingual e-commerce storefront",
+    description: SITE_DESCRIPTION,
     url: "/",
     images: [
       {
@@ -116,7 +120,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Kamancha",
-    description: "Multilingual e-commerce storefront",
+    description: SITE_DESCRIPTION,
     images: [shareImageUrl],
   },
 };
