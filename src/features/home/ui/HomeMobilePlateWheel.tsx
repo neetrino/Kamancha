@@ -149,18 +149,18 @@ function PlateImage({
       : null;
   const src = photoUrl ?? HOME_MOBILE_CATEGORY_DISH_SRC;
 
+  /**
+   * Same frame for every category. `object-contain` = as large as possible
+   * inside the box without cropping (the “one more pixel would clip” limit).
+   */
   return (
-    <div className="relative size-full">
+    <div className="absolute top-1/2 left-1/2 size-[222px] -translate-x-1/2 -translate-y-1/2">
       <Image
         src={src}
         alt=""
         fill
         sizes="222px"
-        className={
-          photoUrl
-            ? "object-cover object-center"
-            : "object-contain object-center"
-        }
+        className="object-contain object-center"
         priority
       />
       {linked ? (
