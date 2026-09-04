@@ -36,9 +36,9 @@ const PLATE_W = 222;
 const PLATE_H = 154;
 
 const phoneSlotVariants: Variants = {
-  prev: { x: 181, y: 80, scale: 0.8, opacity: 0.8, rotate: 16, zIndex: 1 },
+  prev: { x: 181, y: 80, scale: 0.8, opacity: 1, rotate: 16, zIndex: 1 },
   current: { x: 0, y: 0, scale: 1, opacity: 1, rotate: 0, zIndex: 3 },
-  next: { x: -181, y: 80, scale: 0.8, opacity: 0.8, rotate: -16, zIndex: 1 },
+  next: { x: -181, y: 80, scale: 0.8, opacity: 1, rotate: -16, zIndex: 1 },
   /** Appear / vanish below the rim — not sideways. */
   enterForward: {
     x: -181,
@@ -79,18 +79,18 @@ const tabletSlotVariants: Variants = {
     x: -232,
     y: 212,
     scale: 0.78,
-    opacity: 0.95,
+    opacity: 1,
     rotate: -18,
     zIndex: 0,
   },
-  next: { x: -181, y: 80, scale: 0.8, opacity: 0.8, rotate: -16, zIndex: 1 },
+  next: { x: -181, y: 80, scale: 0.8, opacity: 1, rotate: -16, zIndex: 1 },
   current: { x: 0, y: 0, scale: 1, opacity: 1, rotate: 0, zIndex: 3 },
-  prev: { x: 181, y: 80, scale: 0.8, opacity: 0.8, rotate: 16, zIndex: 1 },
+  prev: { x: 181, y: 80, scale: 0.8, opacity: 1, rotate: 16, zIndex: 1 },
   prevFar: {
     x: 232,
     y: 212,
     scale: 0.78,
-    opacity: 0.95,
+    opacity: 1,
     rotate: 18,
     zIndex: 0,
   },
