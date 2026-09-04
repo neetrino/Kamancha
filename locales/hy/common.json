@@ -56,5 +56,11 @@
   },
   "units": {
     "km": "կմ"
+  },
+  "music": {
+    "enable": "Միացնել երաժշտությունը",
+    "disable": "Անջատել երաժշտությունը",
+    "active": "Active",
+    "muted": "Muted"
   }
 }
