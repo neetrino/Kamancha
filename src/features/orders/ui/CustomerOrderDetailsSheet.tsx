@@ -338,7 +338,7 @@ function CustomerOrderSheetTotals({
             </dd>
           </div>
         ) : null}
-        <div className="flex items-center justify-between text-brand-forest">
+        <div className="flex items-center justify-between font-bold text-brand-forest">
           <dt>{labels.bonusEarned}</dt>
           <dd className="tabular-nums">
             +{detail.bonusEarnedAmount}
