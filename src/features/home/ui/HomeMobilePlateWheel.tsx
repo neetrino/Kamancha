@@ -21,6 +21,7 @@ export type HomeMobileCategorySlide = {
   title: string;
   href: string;
   productCount: number;
+  imageUrl: string | null;
 };
 
 type HomeMobilePlateWheelProps = {
@@ -142,14 +143,24 @@ function PlateImage({
   slide: HomeMobileCategorySlide;
   linked: boolean;
 }) {
+  const photoUrl =
+    typeof slide.imageUrl === "string" && slide.imageUrl.length > 0
+      ? slide.imageUrl
+      : null;
+  const src = photoUrl ?? HOME_MOBILE_CATEGORY_DISH_SRC;
+
   return (
     <div className="relative size-full">
       <Image
-        src={HOME_MOBILE_CATEGORY_DISH_SRC}
+        src={src}
         alt=""
         fill
         sizes="222px"
-        className="object-contain object-center"
+        className={
+          photoUrl
+            ? "object-cover object-center"
+            : "object-contain object-center"
+        }
         priority
       />
       {linked ? (
