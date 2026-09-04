@@ -136,6 +136,13 @@ function exitVariant(direction: WheelDirection): string {
   return direction === 1 ? "exitForward" : "exitBackward";
 }
 
+/** Drink photos often fill the file edge-to-edge — show smaller than plated food. */
+const BEVERAGE_CATEGORY =
+  /ըմպել|խմել|drink|beverage|напит|cocktail|bar.?menu|բար.?մենյու/i;
+
+const PLATE_PHOTO_SIZE_PX = 222;
+const BEVERAGE_PHOTO_SIZE_PX = 168;
+
 function PlateImage({
   slide,
   linked,
@@ -148,18 +155,24 @@ function PlateImage({
       ? slide.imageUrl
       : null;
   const src = photoUrl ?? HOME_MOBILE_CATEGORY_DISH_SRC;
+  const compact =
+    BEVERAGE_CATEGORY.test(slide.title) || BEVERAGE_CATEGORY.test(slide.href);
+  const sizePx = compact ? BEVERAGE_PHOTO_SIZE_PX : PLATE_PHOTO_SIZE_PX;
 
   /**
-   * Same frame for every category. `object-contain` = as large as possible
-   * inside the box without cropping (the “one more pixel would clip” limit).
+   * Same layout for every category; beverages use a smaller contain frame so
+   * a tightly cropped mug does not dominate the wheel.
    */
   return (
-    <div className="absolute top-1/2 left-1/2 size-[222px] -translate-x-1/2 -translate-y-1/2">
+    <div
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      style={{ width: sizePx, height: sizePx }}
+    >
       <Image
         src={src}
         alt=""
         fill
-        sizes="222px"
+        sizes={`${sizePx}px`}
         className="object-contain object-center"
         priority
       />
