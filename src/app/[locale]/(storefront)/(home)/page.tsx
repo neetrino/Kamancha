@@ -161,6 +161,8 @@ async function HomeBelowFold({
         title={dictionary.home.categoriesTitle}
         productCountLabel={dictionary.home.categoryProductCount}
         emptyLabel={dictionary.home.emptyCategories}
+        previousLabel={dictionary.home.previousCategory}
+        nextLabel={dictionary.home.nextCategory}
         categories={categoryItems}
       />
 
@@ -170,6 +172,8 @@ async function HomeBelowFold({
         viewAllLabel={dictionary.home.viewAll}
         viewAllHref={`/${locale}/products`}
         emptyLabel={dictionary.home.emptyFeatured}
+        previousLabel={dictionary.home.previousFeatured}
+        nextLabel={dictionary.home.nextFeatured}
         wishlistLabel={dictionary.nav.wishlist}
         addToCartLabel={dictionary.product.addToCart}
         discountOffLabel={dictionary.home.discountOff}

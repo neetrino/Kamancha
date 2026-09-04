@@ -1,26 +1,31 @@
 import type { Transition } from "motion/react";
 
-import type { WheelDirection } from "@/features/home/ui/HomeMobilePlateWheel";
+/**
+ * Shared dish / rim timing — tween (not soft spring) so rotate+x stay on arc
+ * without overshoot that reads as crooked.
+ */
+export const HOME_PLATE_WHEEL_DURATION_S = 0.84;
 
-/** Shared spring for the mobile plate rim, dish wheel, and category pills. */
-export const HOME_PLATE_WHEEL_SPRING: Transition = {
-  type: "spring",
-  stiffness: 52,
-  damping: 24,
-  mass: 1,
+export const HOME_PLATE_WHEEL_EASE: [number, number, number, number] = [
+  0.33, 1, 0.32, 1,
+];
+
+export const HOME_PLATE_WHEEL_TRANSITION: Transition = {
+  type: "tween",
+  duration: HOME_PLATE_WHEEL_DURATION_S,
+  ease: HOME_PLATE_WHEEL_EASE,
 };
 
-/** Input lock while the rim spring settles. */
-export const HOME_PLATE_WHEEL_LOCK_MS = 560;
+/** @deprecated Alias — rim + dishes share the same tween. */
+export const HOME_PLATE_WHEEL_SPRING = HOME_PLATE_WHEEL_TRANSITION;
+
+/** Input lock while the wheel tween finishes. */
+export const HOME_PLATE_WHEEL_LOCK_MS = Math.ceil(
+  HOME_PLATE_WHEEL_DURATION_S * 1000 + 40,
+);
 
 /** Hero plate rim rotation per category step (matches dish arc travel). */
 export const HOME_PLATE_RIM_STEP_DEG = 13;
-
-/** Horizontal swipe distance before the carousel steps. */
-export const HOME_PLATE_SWIPE_OFFSET_PX = 36;
-
-/** Flick velocity that also advances the carousel. */
-export const HOME_PLATE_SWIPE_VELOCITY = 400;
 
 const INSTANT: Transition = { duration: 0 };
 
@@ -31,29 +36,7 @@ export function plateWheelTransition(playMotion: boolean): Transition {
   }
 
   return {
-    ...HOME_PLATE_WHEEL_SPRING,
+    ...HOME_PLATE_WHEEL_TRANSITION,
     zIndex: { duration: 0 },
   };
-}
-
-/** Map a horizontal swipe to the next carousel step, if any. */
-export function resolveWheelStepFromSwipe(
-  offsetX: number,
-  velocityX: number,
-): WheelDirection | null {
-  if (
-    offsetX <= -HOME_PLATE_SWIPE_OFFSET_PX ||
-    velocityX <= -HOME_PLATE_SWIPE_VELOCITY
-  ) {
-    return 1;
-  }
-
-  if (
-    offsetX >= HOME_PLATE_SWIPE_OFFSET_PX ||
-    velocityX >= HOME_PLATE_SWIPE_VELOCITY
-  ) {
-    return -1;
-  }
-
-  return null;
 }
