@@ -56,6 +56,10 @@ function CategoryLeafOrnaments() {
   );
 }
 
+/** Drink photos are often tall/tight — contain so the full mug is visible. */
+const BEVERAGE_CATEGORY =
+  /ըմպել|խմել|drink|beverage|напит|cocktail|bar.?menu|բար.?մենյու/i;
+
 /** Figma home category card 22:210 — 376×135 desktop row. */
 export function HomeCategoryCard({
   category,
@@ -66,6 +70,9 @@ export function HomeCategoryCard({
     productCountLabel,
     category.productCount,
   );
+  const showFullPhoto =
+    BEVERAGE_CATEGORY.test(category.title) ||
+    BEVERAGE_CATEGORY.test(category.href);
 
   return (
     <AppLink
@@ -82,7 +89,11 @@ export function HomeCategoryCard({
           alt=""
           fill
           sizes="178px"
-          className="object-cover object-center"
+          className={
+            showFullPhoto
+              ? "object-contain object-center"
+              : "object-cover object-center"
+          }
         />
       </div>
 
