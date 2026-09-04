@@ -54,8 +54,12 @@ type HomeStaggerProps = ComponentProps<typeof Stagger>;
 /** Parent for staggered scroll reveals. Pair with `HomeStaggerItem`. */
 export function HomeStagger({
   enabled,
-  amount = scrollRevealViewport.amount,
-  viewportMargin = scrollRevealViewport.viewportMargin,
+  /**
+   * Keep tiny — horizontal rails (`inline-flex`) are much wider than the
+   * viewport; a 0.2 area threshold never intersects on narrow covers (Z Fold).
+   */
+  amount = 0.01,
+  viewportMargin = "0px",
   ...rest
 }: HomeStaggerProps) {
   const playMotion = usePlayHomeMotion();

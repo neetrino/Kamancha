@@ -74,7 +74,6 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         copy={copy}
         includeAdminDetails
         groupOrderBadgeLabel={copy.orders.table.groupOrderBadge}
-        panelClassName="w-1/2 min-w-[16rem] max-w-none"
       />
     </>
   );
