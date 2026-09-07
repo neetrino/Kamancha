@@ -4,6 +4,7 @@ import {
   findCustomerGroupOrderShare,
   loadCustomerGroupOrderShareItems,
 } from "@/features/orders/application/customer-group-order-share";
+import { loadAdminGroupOrderParticipantsView } from "@/features/orders/application/group-order-participants-view";
 import {
   toAdminOrderDetailView,
   type AdminOrderDetailView,
@@ -17,7 +18,8 @@ import { err, ok, type Result } from "@/lib/result";
 /**
  * Customer-owned fetch of a single order for the profile order details drawer.
  * Returns NOT_FOUND when the order is missing or the user cannot access it.
- * Group-order participants see only their own share and bag lines.
+ * Group orders include all participants' bags (same layout as admin).
+ * Totals stay scoped to the viewer's share when they are a participant.
  */
 export async function getCustomerOrderDetailAction(
   locale: string,
@@ -52,7 +54,16 @@ export async function getCustomerOrderDetailAction(
   }
 
   const identity = await getStoreIdentity();
-  const view = toAdminOrderDetailView(loaded, identity.name);
+  let view = toAdminOrderDetailView(loaded, identity.name);
+
+  if (loaded.order.groupOrderId) {
+    const groupParticipants = await loadAdminGroupOrderParticipantsView({
+      groupOrderId: loaded.order.groupOrderId,
+      locale: locale as Locale,
+      currency: loaded.order.baseCurrency,
+    });
+    view = { ...view, groupParticipants };
+  }
 
   if (!share) {
     return ok(view);

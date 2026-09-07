@@ -124,9 +124,7 @@ function CustomerOrderSheetBody({
   includeAdminDetails: boolean;
 }) {
   const showGroupParticipants =
-    includeAdminDetails &&
-    detail.isGroupOrder &&
-    detail.groupParticipants.length > 0;
+    detail.isGroupOrder && detail.groupParticipants.length > 0;
 
   return (
     <div className="space-y-4">
@@ -202,9 +200,14 @@ function CustomerOrderSheetBody({
                 className={`${PROFILE_INNER_CARD} space-y-3 p-4`}
               >
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-gray-900">
-                    {participant.displayName}
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="min-w-0 font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase">
+                      {participant.displayName}
+                    </p>
+                    <p className="shrink-0 text-xs font-bold text-gray-500">
+                      {participant.paymentMethod ?? labels.paymentMethodNone}
+                    </p>
+                  </div>
                   <dl className="grid grid-cols-3 gap-2 text-xs text-gray-600">
                     <div>
                       <dt>{labels.participantSubtotal}</dt>

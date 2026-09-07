@@ -250,7 +250,8 @@
       "participantSubtotal": "Ենթագումար",
       "participantDelivery": "Առաքում",
       "participantTotal": "Ընդամենը",
-      "participantNoItems": "Այս մասնակցի համար ապրանքներ չկան։"
+      "participantNoItems": "Այս մասնակցի համար ապրանքներ չկան։",
+      "paymentMethodNone": "—"
     },
     "detail": {
       "customer": "Հաճախորդ",

@@ -250,7 +250,8 @@
       "participantSubtotal": "Subtotal",
       "participantDelivery": "Delivery",
       "participantTotal": "Total",
-      "participantNoItems": "No items for this participant."
+      "participantNoItems": "No items for this participant.",
+      "paymentMethodNone": "—"
     },
     "detail": {
       "customer": "Customer",

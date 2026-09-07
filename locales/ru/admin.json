@@ -250,7 +250,8 @@
       "participantSubtotal": "Промежуточный итог",
       "participantDelivery": "Доставка",
       "participantTotal": "Итого",
-      "participantNoItems": "У этого участника нет товаров."
+      "participantNoItems": "У этого участника нет товаров.",
+      "paymentMethodNone": "—"
     },
     "detail": {
       "customer": "Клиент",
