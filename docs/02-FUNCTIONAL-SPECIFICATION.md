@@ -92,7 +92,7 @@
 |---|---|
 | AUTH-001 | Login-ն ունի email, password, visibility toggle, forgot password, submit և register link։ |
 | AUTH-002 | Register-ն ունի first/last name, email, phone, password/confirm և required terms acceptance։ |
-| AUTH-003 | Password-ը min 8 նիշ է և ունի uppercase, lowercase, digit, special character; server validation-ը authoritative է։ |
+| AUTH-003 | Password-ը min 6 նիշ է և ունի առնվազն մեկ տառ (մեծատառ կամ փոքրատառ) և մեկ թիվ; server validation-ը authoritative է։ |
 | AUTH-004 | Email-ը normalized և case-insensitive unique է; duplicate/login errors-ը account enumeration չի բացահայտում։ |
 | AUTH-005 | Successful registration-ը ստեղծում է Customer account և single-use expiring email verification token։ |
 | AUTH-006 | Suspended/unverified account behavior-ը policy-ով սահմանված և generic/safe է։ |
@@ -289,10 +289,12 @@
 ## 16. Admin users
 
 - Filters՝ All, Admin, Customers, Active, Suspended։
+- Default list-ը չի ցուցադրում `ANONYMIZED` (soft-deleted) օգտատերերին; նրանք մնում են DB-ում retention/audit-ի համար։
 - Columns՝ user, contact, orders, role, status, created։
 - Actions՝ details, role change, suspend/activate, orders, restriction։
 - Admin-ը չի կարող հեռացնել իր սեփական վերջին ADMIN իրավունքը կամ համակարգը թողնել առանց active admin-ի։
 - Suspension-ը revoke է անում active sessions-ը։
+- Delete/bulk delete-ը anonymize է անում PII-ն (`anonymized+{id}@invalid.local`), ոչ hard delete։
 
 ## 17. Contact և messages
 
