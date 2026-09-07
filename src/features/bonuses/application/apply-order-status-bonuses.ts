@@ -14,7 +14,10 @@ import {
   reverseAllEarnBonusesForOrder,
   reverseRedeemBonusesForOrder,
 } from "@/features/bonuses/application/bonus-ledger";
-import { allocateParticipantBonusBases } from "@/features/bonuses/domain/group-bonus-allocation";
+import {
+  allocateParticipantBonusBases,
+  buildGroupOrderBonusShares,
+} from "@/features/bonuses/domain/group-bonus-allocation";
 import { bonusEligibleAfterGiftCard } from "@/features/gift-cards/domain/gift-card-rules";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { getStoreBonusSettings } from "@/features/settings/application/queries";
@@ -141,15 +144,15 @@ async function earnGroupOrderBonuses(input: {
       ),
     );
 
-  const shares = participants
-    .filter(
-      (participant): participant is typeof participant & { userId: string } =>
-        Boolean(participant.userId) && participant.subtotalAmount > 0,
-    )
-    .map((participant) => ({
-      userId: participant.userId,
-      merchandiseAmount: participant.subtotalAmount,
-    }));
+  /**
+   * Registered participants earn on their own merchandise. Guest merchandise
+   * cannot be credited to an account — those AMD are attributed to the
+   * organizer so the order-level eligible base still matches the ledger total.
+   */
+  const shares = buildGroupOrderBonusShares({
+    participants,
+    organizerUserId: groupOrder.organizerUserId,
+  });
 
   if (shares.length === 0) {
     return;
