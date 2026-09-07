@@ -8,7 +8,7 @@ export function paymentMethodLabel(method: string): string {
     return "Idram";
   }
   if (normalized === "ARCA") {
-    return "ArCa";
+    return "Card";
   }
   return method;
 }

@@ -10,21 +10,30 @@ type DrawerLabels = Dictionary["admin"]["orders"]["drawer"];
 type CustomerOrderSheetPaymentProps = {
   detail: AdminOrderDetailView;
   labels: DrawerLabels;
+  /** Hide order-level method when each group participant pays separately. */
+  hideMethod?: boolean;
 };
 
 /** Payment method, amount, and optional cash-change rows for the order sheet. */
 export function CustomerOrderSheetPayment({
   detail,
   labels,
+  hideMethod = false,
 }: CustomerOrderSheetPaymentProps) {
   const changeDue =
     detail.cashChangeAmount != null
       ? computeCashChangeDue(detail.cashChangeAmount, detail.paymentAmount)
       : null;
 
+  if (hideMethod && detail.cashChangeAmount == null) {
+    return null;
+  }
+
   return (
     <div className="space-y-1.5 border-t border-gray-100 pt-3 text-sm">
-      <PaymentRow label={labels.method} value={detail.paymentMethod} />
+      {hideMethod ? null : (
+        <PaymentRow label={labels.method} value={detail.paymentMethod} />
+      )}
       {detail.cashChangeAmount != null ? (
         <>
           <PaymentRow

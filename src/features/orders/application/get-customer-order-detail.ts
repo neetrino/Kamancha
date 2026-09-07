@@ -57,12 +57,17 @@ export async function getCustomerOrderDetailAction(
   let view = toAdminOrderDetailView(loaded, identity.name);
 
   if (loaded.order.groupOrderId) {
-    const groupParticipants = await loadAdminGroupOrderParticipantsView({
-      groupOrderId: loaded.order.groupOrderId,
-      locale: locale as Locale,
-      currency: loaded.order.baseCurrency,
-    });
-    view = { ...view, groupParticipants };
+    const { paymentMode, participants: groupParticipants } =
+      await loadAdminGroupOrderParticipantsView({
+        groupOrderId: loaded.order.groupOrderId,
+        locale: locale as Locale,
+        currency: loaded.order.baseCurrency,
+      });
+    view = {
+      ...view,
+      groupPaymentMode: paymentMode,
+      groupParticipants,
+    };
   }
 
   if (!share) {

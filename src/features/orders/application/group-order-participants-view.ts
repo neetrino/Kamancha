@@ -28,6 +28,15 @@ export type AdminGroupOrderParticipantView = {
   items: GroupParticipantItemView[];
 };
 
+export type GroupOrderPaymentMode =
+  | "ORGANIZER_PAYS_ALL"
+  | "SPLIT_PER_PARTICIPANT";
+
+export type AdminGroupOrderParticipantsBundle = {
+  paymentMode: GroupOrderPaymentMode;
+  participants: AdminGroupOrderParticipantView[];
+};
+
 function methodFromProviderOrCode(value: string | null | undefined): string | null {
   if (!value || !value.trim()) return null;
   return paymentMethodLabel(value);
@@ -38,17 +47,22 @@ export async function loadAdminGroupOrderParticipantsView(input: {
   groupOrderId: string;
   locale: Locale;
   currency: string;
-}): Promise<AdminGroupOrderParticipantView[]> {
+}): Promise<AdminGroupOrderParticipantsBundle> {
   const db = getDb();
 
   const [groupOrder] = await db
     .select({
       id: groupOrders.id,
       orderId: groupOrders.orderId,
+      paymentMode: groupOrders.paymentMode,
     })
     .from(groupOrders)
     .where(eq(groupOrders.id, input.groupOrderId))
     .limit(1);
+
+  if (!groupOrder) {
+    return { paymentMode: "ORGANIZER_PAYS_ALL", participants: [] };
+  }
 
   const participants = await db
     .select({
@@ -72,7 +86,10 @@ export async function loadAdminGroupOrderParticipantsView(input: {
     .orderBy(groupOrderParticipants.createdAt);
 
   if (participants.length === 0) {
-    return [];
+    return {
+      paymentMode: groupOrder.paymentMode,
+      participants: [],
+    };
   }
 
   const paymentIds = participants
@@ -169,47 +186,50 @@ export async function loadAdminGroupOrderParticipantsView(input: {
     orderPaymentRows[0]?.method ??
     null;
 
-  return Promise.all(
-    participants.map(async (participant) => {
-      const fromPaymentId = participant.paymentId
-        ? methodByPaymentId.get(participant.paymentId)
-        : undefined;
-      const fromParticipantPayment = methodByParticipantFromPayments.get(
-        participant.id,
-      );
-      const fromEvent = providerByParticipant.get(participant.id);
+  return {
+    paymentMode: groupOrder.paymentMode,
+    participants: await Promise.all(
+      participants.map(async (participant) => {
+        const fromPaymentId = participant.paymentId
+          ? methodByPaymentId.get(participant.paymentId)
+          : undefined;
+        const fromParticipantPayment = methodByParticipantFromPayments.get(
+          participant.id,
+        );
+        const fromEvent = providerByParticipant.get(participant.id);
 
-      let paymentMethod: string | null = null;
-      if (fromPaymentId) {
-        paymentMethod = methodFromProviderOrCode(fromPaymentId);
-      } else if (fromParticipantPayment) {
-        paymentMethod = methodFromProviderOrCode(fromParticipantPayment);
-      } else if (fromEvent) {
-        paymentMethod = methodFromProviderOrCode(fromEvent);
-      } else if (
-        participant.role === "ORGANIZER" &&
-        (participant.paymentStatus === "PAID" ||
-          participant.paymentStatus === "MARKED_RECEIVED") &&
-        checkoutMethod
-      ) {
-        paymentMethod = methodFromProviderOrCode(checkoutMethod);
-      } else if (participant.paymentStatus === "MARKED_RECEIVED") {
-        paymentMethod = methodFromProviderOrCode("CASH");
-      }
+        let paymentMethod: string | null = null;
+        if (fromPaymentId) {
+          paymentMethod = methodFromProviderOrCode(fromPaymentId);
+        } else if (fromParticipantPayment) {
+          paymentMethod = methodFromProviderOrCode(fromParticipantPayment);
+        } else if (fromEvent) {
+          paymentMethod = methodFromProviderOrCode(fromEvent);
+        } else if (
+          participant.role === "ORGANIZER" &&
+          (participant.paymentStatus === "PAID" ||
+            participant.paymentStatus === "MARKED_RECEIVED") &&
+          checkoutMethod
+        ) {
+          paymentMethod = methodFromProviderOrCode(checkoutMethod);
+        } else if (participant.paymentStatus === "MARKED_RECEIVED") {
+          paymentMethod = methodFromProviderOrCode("CASH");
+        }
 
-      return {
-        id: participant.id,
-        displayName: participant.displayName,
-        subtotalAmount: participant.subtotalAmount,
-        deliveryShareAmount: participant.deliveryShareAmount,
-        finalAmount: participant.finalAmount,
-        paymentMethod,
-        items: await loadCustomerGroupOrderShareItems({
-          participantId: participant.id,
-          locale: input.locale,
-          currency: input.currency,
-        }),
-      };
-    }),
-  );
+        return {
+          id: participant.id,
+          displayName: participant.displayName,
+          subtotalAmount: participant.subtotalAmount,
+          deliveryShareAmount: participant.deliveryShareAmount,
+          finalAmount: participant.finalAmount,
+          paymentMethod,
+          items: await loadCustomerGroupOrderShareItems({
+            participantId: participant.id,
+            locale: input.locale,
+            currency: input.currency,
+          }),
+        };
+      }),
+    ),
+  };
 }

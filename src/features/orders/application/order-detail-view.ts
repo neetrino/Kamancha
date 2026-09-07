@@ -48,6 +48,8 @@ export type AdminOrderDetailView = {
   couponCode: string | null;
   isPickup: boolean;
   isGroupOrder: boolean;
+  /** Present for group orders; null for regular orders. */
+  groupPaymentMode: "ORGANIZER_PAYS_ALL" | "SPLIT_PER_PARTICIPANT" | null;
   storeName: string;
   shippingMethod: string;
   addressLine: string;
@@ -103,6 +105,7 @@ export function toAdminOrderDetailView(
     couponCode: order.promotionCodeSnapshot,
     isPickup,
     isGroupOrder: order.groupOrderId != null,
+    groupPaymentMode: null,
     storeName,
     shippingMethod: isPickup
       ? "pickup"
@@ -168,14 +171,16 @@ export async function getAdminOrderDetailView(
     return view;
   }
 
-  const groupParticipants = await loadAdminGroupOrderParticipantsView({
-    groupOrderId: detail.order.groupOrderId,
-    locale,
-    currency: detail.order.baseCurrency,
-  });
+  const { paymentMode, participants: groupParticipants } =
+    await loadAdminGroupOrderParticipantsView({
+      groupOrderId: detail.order.groupOrderId,
+      locale,
+      currency: detail.order.baseCurrency,
+    });
 
   return {
     ...view,
+    groupPaymentMode: paymentMode,
     groupParticipants,
   };
 }

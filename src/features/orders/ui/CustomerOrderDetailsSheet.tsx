@@ -184,7 +184,11 @@ function CustomerOrderSheetBody({
             ) : null}
           </div>
         </div>
-        <CustomerOrderSheetPayment detail={detail} labels={labels} />
+        <CustomerOrderSheetPayment
+          detail={detail}
+          labels={labels}
+          hideMethod={detail.groupPaymentMode === "SPLIT_PER_PARTICIPANT"}
+        />
       </section>
 
 
