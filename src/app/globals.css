@@ -447,6 +447,17 @@ html {
   transform: translate(36px, -50%);
 }
 
+/* Cart checkout CTA: nudge ornaments outward on narrow screens so long labels clear. */
+@media (max-width: 639px) {
+  .kamancha-pill-button--cart-cta .kamancha-pill-ornament--left {
+    left: -14px;
+  }
+
+  .kamancha-pill-button--cart-cta .kamancha-pill-ornament--right {
+    right: -14px;
+  }
+}
+
 /**
  * Scrolled header edge stroke (Figma 173:143) — soft pale rim, stronger
  * only near the bottom curve (not a hard white line).

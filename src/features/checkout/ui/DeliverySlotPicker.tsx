@@ -180,7 +180,7 @@ export function DeliverySlotPicker({
 
   return (
     <div className="relative z-[2] space-y-4 overflow-hidden rounded-2xl bg-white p-4">
-      <h3 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+      <h3 className="relative z-[2] text-center font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase sm:text-left">
         {labels.title}
       </h3>
 
