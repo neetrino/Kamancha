@@ -94,7 +94,7 @@ export default async function AdminUserDetailPage({
       </div>
 
       <Card className="mb-4 p-5 sm:p-6">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+        <div className="grid gap-4 md:grid-cols-3 md:gap-x-8">
           <AdminDetailField
             icon={<Shield className={FIELD_ICON_CLASS} />}
             label={t.users.detail.roleLabel}
@@ -104,22 +104,6 @@ export default async function AdminUserDetailPage({
             >
               {userRoleLabel(user.role, t.users.roleLabels)}
             </span>
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
-            label={t.common.status}
-          >
-            <span
-              className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
-            >
-              {userStatusLabel(user.status, t.users.statusLabels)}
-            </span>
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<Mail className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.emailLabel}
-          >
-            {user.email}
           </AdminDetailField>
           <AdminDetailField
             icon={<Phone className={FIELD_ICON_CLASS} />}
@@ -133,6 +117,24 @@ export default async function AdminUserDetailPage({
           >
             {user.createdAt.toISOString().slice(0, 10)}
           </AdminDetailField>
+          <AdminDetailField
+            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
+            label={t.common.status}
+          >
+            <span
+              className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
+            >
+              {userStatusLabel(user.status, t.users.statusLabels)}
+            </span>
+          </AdminDetailField>
+          <div className="md:col-span-2">
+            <AdminDetailField
+              icon={<Mail className={FIELD_ICON_CLASS} />}
+              label={t.users.detail.emailLabel}
+            >
+              {user.email}
+            </AdminDetailField>
+          </div>
         </div>
       </Card>
 

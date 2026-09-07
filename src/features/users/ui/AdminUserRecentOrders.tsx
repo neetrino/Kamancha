@@ -15,6 +15,7 @@ import type { AdminOrderDetailView } from "@/features/orders/application/order-d
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
 import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type RecentOrder = {
   id: string;
@@ -23,6 +24,7 @@ type RecentOrder = {
   paymentStatus: string;
   totalAmount: number;
   baseCurrency: string;
+  bonusEarnedAmount: number;
 };
 
 type AdminUserRecentOrdersProps = {
@@ -83,6 +85,7 @@ export function AdminUserRecentOrders({
   return (
     <>
       <RecentOrdersCard
+        locale={locale}
         orders={orders}
         filteredOrders={filteredOrders}
         query={query}
@@ -104,6 +107,7 @@ export function AdminUserRecentOrders({
 }
 
 function RecentOrdersCard({
+  locale,
   orders,
   filteredOrders,
   query,
@@ -111,6 +115,7 @@ function RecentOrdersCard({
   copy,
   onOpenOrder,
 }: {
+  locale: string;
   orders: RecentOrder[];
   filteredOrders: RecentOrder[];
   query: string;
@@ -169,9 +174,21 @@ function RecentOrdersCard({
                   </span>
                 </div>
               </div>
-              <p className="mt-1 text-sm text-gray-600">
-                {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
-              </p>
+              <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2">
+                <p className="text-sm text-gray-600">
+                  {order.totalAmount.toLocaleString("en-US")}{" "}
+                  {order.baseCurrency}
+                </p>
+                <p
+                  className={
+                    order.bonusEarnedAmount > 0
+                      ? "text-sm font-semibold text-brand-forest"
+                      : "text-sm text-gray-400"
+                  }
+                >
+                  +{formatMoneyAmount(order.bonusEarnedAmount, "AMD", locale)}
+                </p>
+              </div>
             </button>
           ))}
         </div>

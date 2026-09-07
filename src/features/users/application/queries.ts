@@ -52,6 +52,7 @@ export type AdminUserDetail = {
     paymentStatus: string;
     totalAmount: number;
     baseCurrency: string;
+    bonusEarnedAmount: number;
     placedAt: Date;
   }>;
   bonusSummary: CustomerBonusSummary;
@@ -180,6 +181,7 @@ export async function getAdminUserById(
         paymentStatus: orders.paymentStatus,
         totalAmount: orders.totalAmount,
         baseCurrency: orders.baseCurrency,
+        bonusEarnedAmount: orders.bonusEarnedAmount,
         placedAt: orders.placedAt,
       })
       .from(orders)
