@@ -4,9 +4,7 @@ import {
   CalendarDays,
   ChevronLeft,
   CircleCheckBig,
-  LogIn,
   Mail,
-  MailCheck,
   Phone,
   Shield,
 } from "lucide-react";
@@ -128,22 +126,6 @@ export default async function AdminUserDetailPage({
             label={t.users.detail.phoneLabel}
           >
             {user.phone ?? t.common.none}
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<MailCheck className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.emailVerifiedLabel}
-          >
-            {user.emailVerifiedAt
-              ? user.emailVerifiedAt.toISOString().slice(0, 10)
-              : t.users.detail.emailVerifiedNo}
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<LogIn className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.lastLoginLabel}
-          >
-            {user.lastLoginAt
-              ? `${user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")} ${t.common.utc}`
-              : t.users.detail.lastLoginNever}
           </AdminDetailField>
           <AdminDetailField
             icon={<CalendarDays className={FIELD_ICON_CLASS} />}

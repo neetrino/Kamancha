@@ -149,16 +149,20 @@ export function AdminUserGiftCards({
                   className="rounded-lg border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
                   onClick={() => openDetail(card.id)}
                 >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <strong className="text-sm text-gray-900">{card.code}</strong>
-                    <span
-                      className={`${ADMIN_BADGE} ${giftCardStatusBadgeClass(card.status)}`}
-                    >
-                      {adminCopy.giftCards.statuses[card.status] ?? card.status}
-                    </span>
-                    <span className={`${ADMIN_BADGE} bg-blue-100 text-blue-800`}>
-                      {roleLabel}
-                    </span>
+                  <div className="flex items-start justify-between gap-2">
+                    <strong className="min-w-0 text-sm text-gray-900">
+                      {card.code}
+                    </strong>
+                    <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+                      <span
+                        className={`${ADMIN_BADGE} ${giftCardStatusBadgeClass(card.status)}`}
+                      >
+                        {adminCopy.giftCards.statuses[card.status] ?? card.status}
+                      </span>
+                      <span className={`${ADMIN_BADGE} bg-blue-100 text-blue-800`}>
+                        {roleLabel}
+                      </span>
+                    </div>
                   </div>
                   <p className="mt-2 text-sm font-semibold text-brand-forest">
                     {formatMoneyAmount(card.balanceAmount, "AMD", locale)}

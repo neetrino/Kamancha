@@ -110,20 +110,22 @@ function RecentOrdersCard({
               className="rounded-lg border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
               onClick={() => onOpenOrder(order.orderNumber)}
             >
-              <div className="flex flex-wrap items-center gap-2">
-                <strong className="text-sm text-gray-900">
+              <div className="flex items-start justify-between gap-2">
+                <strong className="min-w-0 text-sm text-gray-900">
                   {order.orderNumber}
                 </strong>
-                <span
-                  className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
-                >
-                  {order.status}
-                </span>
-                <span
-                  className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
-                >
-                  {order.paymentStatus}
-                </span>
+                <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+                  <span
+                    className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
+                  >
+                    {order.status}
+                  </span>
+                  <span
+                    className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
+                  >
+                    {order.paymentStatus}
+                  </span>
+                </div>
               </div>
               <p className="mt-1 text-sm text-gray-600">
                 {order.totalAmount.toLocaleString("en-US")} {order.baseCurrency}
