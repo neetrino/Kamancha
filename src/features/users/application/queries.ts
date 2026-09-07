@@ -1,6 +1,17 @@
 import "server-only";
 
-import { and, count, desc, eq, ilike, inArray, or, sql, type SQL } from "drizzle-orm";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  ne,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import { giftCards, orders, users } from "@/db/schema";
@@ -76,6 +87,9 @@ export async function listAdminUsers(
 
   if (filters.status) {
     conditions.push(eq(users.status, filters.status));
+  } else {
+    // Soft-deleted accounts stay in DB for retention; hide from the default list.
+    conditions.push(ne(users.status, "ANONYMIZED"));
   }
 
   if (filters.q) {
