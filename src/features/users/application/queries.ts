@@ -20,6 +20,7 @@ export type AdminUserListItem = {
   role: string;
   status: string;
   orderCount: number;
+  bonusBalance: number;
   lastLoginAt: Date | null;
   createdAt: Date;
 };
@@ -96,6 +97,7 @@ export async function listAdminUsers(
         lastName: users.lastName,
         role: users.role,
         status: users.status,
+        bonusBalance: users.bonusBalance,
         lastLoginAt: users.lastLoginAt,
         createdAt: users.createdAt,
       })

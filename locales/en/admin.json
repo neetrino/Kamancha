@@ -649,6 +649,7 @@
       "user": "User",
       "contact": "Contact",
       "orders": "Orders",
+      "bonuses": "Bonuses",
       "roles": "Roles",
       "status": "Status",
       "created": "Created"
