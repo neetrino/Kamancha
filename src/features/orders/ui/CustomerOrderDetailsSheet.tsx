@@ -124,9 +124,7 @@ function CustomerOrderSheetBody({
   includeAdminDetails: boolean;
 }) {
   const showGroupParticipants =
-    includeAdminDetails &&
-    detail.isGroupOrder &&
-    detail.groupParticipants.length > 0;
+    detail.isGroupOrder && detail.groupParticipants.length > 0;
 
   return (
     <div className="space-y-4">
@@ -186,7 +184,11 @@ function CustomerOrderSheetBody({
             ) : null}
           </div>
         </div>
-        <CustomerOrderSheetPayment detail={detail} labels={labels} />
+        <CustomerOrderSheetPayment
+          detail={detail}
+          labels={labels}
+          hideMethod={detail.groupPaymentMode === "SPLIT_PER_PARTICIPANT"}
+        />
       </section>
 
 
@@ -202,11 +204,19 @@ function CustomerOrderSheetBody({
                 className={`${PROFILE_INNER_CARD} space-y-3 p-4`}
               >
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-gray-900">
-                    {participant.displayName}
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="min-w-0 font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase">
+                      {participant.displayName}
+                    </p>
+                    <p className="shrink-0 text-right text-xs font-bold text-gray-500">
+                      {labels.method}{" "}
+                      <span className="text-gray-900">
+                        {participant.paymentMethod ?? labels.paymentMethodNone}
+                      </span>
+                    </p>
+                  </div>
                   <dl className="grid grid-cols-3 gap-2 text-xs text-gray-600">
-                    <div>
+                    <div className="min-w-0 w-max text-left">
                       <dt>{labels.participantSubtotal}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
@@ -215,7 +225,7 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div>
+                    <div className="mx-auto min-w-0 w-max text-left">
                       <dt>{labels.participantDelivery}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
@@ -224,7 +234,7 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div>
+                    <div className="ml-auto min-w-0 w-max text-left">
                       <dt>{labels.participantTotal}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(

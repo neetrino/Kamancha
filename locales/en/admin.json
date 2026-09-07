@@ -227,7 +227,7 @@
       "deliverySlot": "Delivery slot:",
       "cashChange": "Cash change:",
       "paymentSection": "Payment",
-      "method": "Method:",
+      "method": "Payment method:",
       "amount": "Amount:",
       "customerPays": "Customer pays:",
       "prepareChange": "Prepare change:",
@@ -250,7 +250,8 @@
       "participantSubtotal": "Subtotal",
       "participantDelivery": "Delivery",
       "participantTotal": "Total",
-      "participantNoItems": "No items for this participant."
+      "participantNoItems": "No items for this participant.",
+      "paymentMethodNone": "—"
     },
     "detail": {
       "customer": "Customer",
@@ -649,6 +650,7 @@
       "user": "User",
       "contact": "Contact",
       "orders": "Orders",
+      "bonuses": "Bonuses",
       "roles": "Roles",
       "status": "Status",
       "created": "Created"
@@ -674,6 +676,9 @@
       "unknownStatus": "Unknown status.",
       "recentOrders": "Recent orders",
       "noOrders": "No orders.",
+      "ordersSearchPlaceholder": "Search by order # or status…",
+      "ordersSearchAria": "Search recent orders",
+      "ordersNoMatch": "No orders match this search.",
       "bonuses": {
         "title": "Bonuses",
         "available": "Available balance",
@@ -692,6 +697,9 @@
       "giftCards": {
         "title": "Gift cards",
         "empty": "No gift cards.",
+        "searchPlaceholder": "Search by code or status…",
+        "searchAria": "Search gift cards",
+        "noMatch": "No gift cards match this search.",
         "rolePurchaser": "Purchaser",
         "roleRecipient": "Recipient",
         "roleBoth": "Purchaser & recipient"

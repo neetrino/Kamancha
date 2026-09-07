@@ -13,6 +13,7 @@ import {
 } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
 import { formatShortDate } from "@/lib/i18n/format-date";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type CustomerOrdersCardItem = {
   id: string;
@@ -22,6 +23,7 @@ type CustomerOrdersCardItem = {
   baseCurrency: string;
   placedAt: string | Date;
   itemsCount: number;
+  bonusEarnedAmount?: number;
   isGroupOrder?: boolean;
 };
 
@@ -86,6 +88,11 @@ export function CustomerOrdersCards({
               order.totalAmount,
               order.baseCurrency,
             )}
+            bonusEarnedLabel={
+              (order.bonusEarnedAmount ?? 0) > 0
+                ? `+${formatMoneyAmount(order.bonusEarnedAmount ?? 0, "AMD", locale)}`
+                : null
+            }
             metaLine={formatItemCount(
               order.itemsCount,
               labels.itemCountOne,

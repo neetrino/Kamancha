@@ -10,7 +10,7 @@
     "coupons": "Կուպոններ",
     "users": "Օգտատերեր",
     "analytics": "Վերլուծություն",
-    "hero": "Հերոս",
+    "hero": "Բաննեռ",
     "blog": "Բլոգ",
     "messages": "Հաղորդագրություններ",
     "settings": "Կարգավորումներ",
@@ -156,7 +156,7 @@
       "aria": "Պատվերների տեսակ",
       "all": "Բոլորը",
       "personal": "Անհատական",
-      "group": "Խմբակային"
+      "group": "Խմբային"
     },
     "filters": {
       "orderStatusAria": "Պատվերի կարգավիճակ",
@@ -192,7 +192,7 @@
       "total": "Ընդամենը",
       "placed": "Տեղադրված",
       "archivedBadge": "Արխիվացված",
-      "groupOrderBadge": "Խմբակային"
+      "groupOrderBadge": "Խմբային"
     },
     "inlineStatus": {
       "changeOrderAria": "Փոխել պատվերի կարգավիճակը",
@@ -250,7 +250,8 @@
       "participantSubtotal": "Ենթագումար",
       "participantDelivery": "Առաքում",
       "participantTotal": "Ընդամենը",
-      "participantNoItems": "Այս մասնակցի համար ապրանքներ չկան։"
+      "participantNoItems": "Այս մասնակցի համար ապրանքներ չկան։",
+      "paymentMethodNone": "—"
     },
     "detail": {
       "customer": "Հաճախորդ",
@@ -649,6 +650,7 @@
       "user": "Օգտատեր",
       "contact": "Կոնտակտ",
       "orders": "Պատվերներ",
+      "bonuses": "Բոնուսներ",
       "roles": "Դերեր",
       "status": "Կարգավիճակ",
       "created": "Ստեղծվել է"
@@ -674,6 +676,9 @@
       "unknownStatus": "Անհայտ կարգավիճակ։",
       "recentOrders": "Վերջին պատվերներ",
       "noOrders": "Պատվերներ չկան։",
+      "ordersSearchPlaceholder": "Որոնել ըստ պատվերի № կամ կարգավիճակի…",
+      "ordersSearchAria": "Որոնել վերջին պատվերները",
+      "ordersNoMatch": "Այս որոնմանը համապատասխան պատվերներ չկան։",
       "bonuses": {
         "title": "Բոնուսներ",
         "available": "Հասանելի մնացորդ",
@@ -692,6 +697,9 @@
       "giftCards": {
         "title": "Gift Card-եր",
         "empty": "Gift Card դեռ չկա։",
+        "searchPlaceholder": "Որոնել ըստ կոդի կամ կարգավիճակի…",
+        "searchAria": "Որոնել Gift Card-եր",
+        "noMatch": "Այս որոնմանը համապատասխան Gift Card չկա։",
         "rolePurchaser": "Գնորդ",
         "roleRecipient": "Ստացող",
         "roleBoth": "Գնորդ և ստացող"
@@ -767,25 +775,25 @@
     }
   },
   "hero": {
-    "title": "Հերոս սլայդներ",
+    "title": "Բաննեռներ",
     "slideCount": "{count} սլայդ",
     "slideCountPlural": "{count} սլայդ",
-    "createHeroSlide": "Ստեղծել հերոս սլայդ",
+    "createHeroSlide": "Ստեղծել բաննեռ",
     "slidesHeading": "Սլայդներ ({count})",
     "noImage": "Պատկեր չկա",
     "sortOrder": "կարգ {order}",
     "published": "ՀՐԱՊԱՐԱԿՎԱԾ",
     "draft": "ՍԵՎԱԳԻՐ",
-    "empty": "Դեռևս հերոս սլայդներ չկան։",
+    "empty": "Դեռևս բաննեռներ չկան։",
     "editAria": "Խմբագրել {title}",
     "deleteAria": "Ջնջել {title}",
     "publishAria": "Հրապարակել սլայդը",
     "unpublishAria": "Չհրապարակել սլայդը",
     "drawer": {
-      "createTitle": "Ստեղծել հերոս սլայդ",
-      "editTitle": "Խմբագրել հերոս սլայդը",
-      "createAria": "Ստեղծել հերոս սլայդ",
-      "editAria": "Խմբագրել հերոս սլայդը",
+      "createTitle": "Ստեղծել բաննեռ",
+      "editTitle": "Խմբագրել բաննեռը",
+      "createAria": "Ստեղծել բաննեռ",
+      "editAria": "Խմբագրել բաննեռը",
       "title": "Վերնագիր",
       "subtitle": "Ենթավերնագիր",
       "uploadImage": "Վերբեռնել պատկեր",

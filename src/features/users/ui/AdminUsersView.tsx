@@ -36,6 +36,7 @@ import {
 } from "@/features/users/application/update-user";
 import type { AdminUserListItem } from "@/features/users/application/queries";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type AdminUsersViewProps = {
   locale: string;
@@ -227,6 +228,7 @@ export function AdminUsersView({
                   <th className={ADMIN_TABLE_TH}>{copy.users.table.user}</th>
                   <th className={ADMIN_TABLE_TH}>{copy.users.table.contact}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.orders}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.bonuses}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.roles}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.status}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.users.table.created}</th>
@@ -258,9 +260,6 @@ export function AdminUsersView({
                           <p className="relative z-10 font-medium text-gray-900 group-hover:underline">
                             {displayName(user)}
                           </p>
-                          <p className="truncate text-xs text-gray-400">
-                            {user.id}
-                          </p>
                         </Link>
                       </td>
                       <td className={ADMIN_TABLE_TD}>
@@ -272,6 +271,11 @@ export function AdminUsersView({
                       <td className={ADMIN_TABLE_TD_CENTER}>
                         <span className="font-medium text-gray-900">
                           {user.orderCount}
+                        </span>
+                      </td>
+                      <td className={ADMIN_TABLE_TD_CENTER}>
+                        <span className="font-medium text-brand-forest">
+                          {formatMoneyAmount(user.bonusBalance, "AMD", locale)}
                         </span>
                       </td>
                       <td className={ADMIN_TABLE_TD_CENTER}>

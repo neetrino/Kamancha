@@ -94,10 +94,21 @@ const MONTH_NAMES: Record<string, readonly string[]> = {
   ],
 };
 
+/** Monday-first short weekday labels (same order as the calendar grid). */
+const WEEKDAY_NAMES: Record<string, readonly string[]> = {
+  en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  hy: ["Երկ", "Երք", "Չրք", "Հնգ", "Ուր", "Շբթ", "Կիր"],
+  ru: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+};
+
 function monthLabel(year: number, monthIndex: number, locale: string): string {
   const months = MONTH_NAMES[locale] ?? MONTH_NAMES.en ?? [];
   const month = months[monthIndex] ?? months[0] ?? "";
   return `${month} ${year}`;
+}
+
+function weekdayLabels(locale: string): readonly string[] {
+  return WEEKDAY_NAMES[locale] ?? WEEKDAY_NAMES.en ?? [];
 }
 
 const MONTH_NAV_BUTTON =
@@ -180,7 +191,7 @@ export function DeliverySlotPicker({
 
   return (
     <div className="relative z-[2] space-y-4 overflow-hidden rounded-2xl bg-white p-4">
-      <h3 className="relative z-[2] font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+      <h3 className="relative z-[2] text-center font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase sm:text-left">
         {labels.title}
       </h3>
 
@@ -216,7 +227,7 @@ export function DeliverySlotPicker({
             </div>
 
             <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-600">
-              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label) => (
+              {weekdayLabels(locale).map((label) => (
                 <div key={label} className="py-1 font-medium">
                   {label}
                 </div>

@@ -24,6 +24,7 @@ type RecentOrder = {
   orderNumber: string;
   status: string;
   totalAmount: number;
+  bonusEarnedAmount: number;
   itemsCount: number;
   placedAt: string;
   isGroupOrder: boolean;
@@ -79,6 +80,11 @@ function RecentOrdersBody({
             orderNumber={order.orderNumber}
             status={localizeOrderStatus(order.status, statusLabels)}
             totalLabel={formatMoneyAmount(order.totalAmount, "AMD", locale)}
+            bonusEarnedLabel={
+              order.bonusEarnedAmount > 0
+                ? `+${formatMoneyAmount(order.bonusEarnedAmount, "AMD", locale)}`
+                : null
+            }
             metaLine={formatItemCount(
               order.itemsCount,
               dictionary.itemCountOne,

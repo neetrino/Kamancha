@@ -5,6 +5,7 @@ import { count, desc, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { orders } from "@/db/schema";
 import {
+  customerOrderBonusEarnedSql,
   customerOrderDisplayAmountSql,
   customerOrderItemsCountSql,
   customerOrdersVisibilitySql,
@@ -24,6 +25,7 @@ export type ProfileRecentOrder = {
   orderNumber: string;
   status: (typeof orders.$inferSelect)["status"];
   totalAmount: number;
+  bonusEarnedAmount: number;
   placedAt: Date;
   itemsCount: number;
   isGroupOrder: boolean;
@@ -78,6 +80,7 @@ export async function listRecentProfileOrders(
       orderNumber: orders.orderNumber,
       status: orders.status,
       totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
+      bonusEarnedAmount: customerOrderBonusEarnedSql(userId).mapWith(Number),
       placedAt: orders.placedAt,
       itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
       groupOrderId: orders.groupOrderId,

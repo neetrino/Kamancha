@@ -26,6 +26,7 @@ import {
   users,
 } from "@/db/schema";
 import {
+  customerOrderBonusEarnedSql,
   customerOrderDisplayAmountSql,
   customerOrderItemsCountSql,
   customerOrdersVisibilitySql,
@@ -64,6 +65,7 @@ export type AdminOrderListItem = {
 
 export type CustomerOrderListItem = AdminOrderListItem & {
   itemsCount: number;
+  bonusEarnedAmount: number;
 };
 
 export type OrderItemModifierSnapshot = {
@@ -218,6 +220,7 @@ export async function listCustomerOrders(
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
         itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
+        bonusEarnedAmount: customerOrderBonusEarnedSql(userId).mapWith(Number),
         groupOrderId: orders.groupOrderId,
       })
       .from(orders)

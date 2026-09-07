@@ -20,6 +20,7 @@ export type AdminUserListItem = {
   role: string;
   status: string;
   orderCount: number;
+  bonusBalance: number;
   lastLoginAt: Date | null;
   createdAt: Date;
 };
@@ -51,6 +52,7 @@ export type AdminUserDetail = {
     paymentStatus: string;
     totalAmount: number;
     baseCurrency: string;
+    bonusEarnedAmount: number;
     placedAt: Date;
   }>;
   bonusSummary: CustomerBonusSummary;
@@ -96,6 +98,7 @@ export async function listAdminUsers(
         lastName: users.lastName,
         role: users.role,
         status: users.status,
+        bonusBalance: users.bonusBalance,
         lastLoginAt: users.lastLoginAt,
         createdAt: users.createdAt,
       })
@@ -178,6 +181,7 @@ export async function getAdminUserById(
         paymentStatus: orders.paymentStatus,
         totalAmount: orders.totalAmount,
         baseCurrency: orders.baseCurrency,
+        bonusEarnedAmount: orders.bonusEarnedAmount,
         placedAt: orders.placedAt,
       })
       .from(orders)

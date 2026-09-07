@@ -209,19 +209,25 @@ export function BulkChangeOrderStatusForm({
                       />
                     </td>
                     <td className={ADMIN_TABLE_TD}>
-                      <span className="font-medium text-gray-900">
-                        {order.orderNumber}
-                      </span>
-                      {order.isGroupOrder ? (
-                        <span className="ml-2 rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium uppercase text-indigo-700">
-                          {copy.orders.table.groupOrderBadge}
+                      <div className="flex flex-col items-start gap-1">
+                        <span className="font-medium text-gray-900">
+                          {order.orderNumber}
                         </span>
-                      ) : null}
-                      {order.isArchived ? (
-                        <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
-                          {copy.orders.table.archivedBadge}
-                        </span>
-                      ) : null}
+                        {order.isGroupOrder || order.isArchived ? (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {order.isGroupOrder ? (
+                              <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium uppercase text-indigo-700">
+                                {copy.orders.table.groupOrderBadge}
+                              </span>
+                            ) : null}
+                            {order.isArchived ? (
+                              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
+                                {copy.orders.table.archivedBadge}
+                              </span>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </div>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <p className="font-medium text-gray-900">

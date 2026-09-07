@@ -499,11 +499,17 @@ export function GroupOrderPageClient({
                 }}
               />
             </div>
-            <p className="text-xs leading-relaxed text-white">
-              {view.paymentMode === "SPLIT_PER_PARTICIPANT"
+            {(
+              view.paymentMode === "SPLIT_PER_PARTICIPANT"
                 ? labels.deliverySplitHint
-                : labels.deliveryOrganizerPaysHint}
-            </p>
+                : labels.deliveryOrganizerPaysHint
+            ).trim() ? (
+              <p className="text-xs leading-relaxed text-white">
+                {view.paymentMode === "SPLIT_PER_PARTICIPANT"
+                  ? labels.deliverySplitHint
+                  : labels.deliveryOrganizerPaysHint}
+              </p>
+            ) : null}
             {deliveryQuotePending ? (
               <p className="text-sm text-white/70">{labels.calculatingDelivery}</p>
             ) : null}

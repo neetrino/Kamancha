@@ -4,9 +4,7 @@ import {
   CalendarDays,
   ChevronLeft,
   CircleCheckBig,
-  LogIn,
   Mail,
-  MailCheck,
   Phone,
   Shield,
 } from "lucide-react";
@@ -96,7 +94,7 @@ export default async function AdminUserDetailPage({
       </div>
 
       <Card className="mb-4 p-5 sm:p-6">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+        <div className="grid gap-4 md:grid-cols-3 md:gap-x-8">
           <AdminDetailField
             icon={<Shield className={FIELD_ICON_CLASS} />}
             label={t.users.detail.roleLabel}
@@ -108,6 +106,18 @@ export default async function AdminUserDetailPage({
             </span>
           </AdminDetailField>
           <AdminDetailField
+            icon={<Phone className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.phoneLabel}
+          >
+            {user.phone ?? t.common.none}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.createdLabel}
+          >
+            {user.createdAt.toISOString().slice(0, 10)}
+          </AdminDetailField>
+          <AdminDetailField
             icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
             label={t.common.status}
           >
@@ -117,40 +127,14 @@ export default async function AdminUserDetailPage({
               {userStatusLabel(user.status, t.users.statusLabels)}
             </span>
           </AdminDetailField>
-          <AdminDetailField
-            icon={<Mail className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.emailLabel}
-          >
-            {user.email}
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<Phone className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.phoneLabel}
-          >
-            {user.phone ?? t.common.none}
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<MailCheck className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.emailVerifiedLabel}
-          >
-            {user.emailVerifiedAt
-              ? user.emailVerifiedAt.toISOString().slice(0, 10)
-              : t.users.detail.emailVerifiedNo}
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<LogIn className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.lastLoginLabel}
-          >
-            {user.lastLoginAt
-              ? `${user.lastLoginAt.toISOString().slice(0, 16).replace("T", " ")} ${t.common.utc}`
-              : t.users.detail.lastLoginNever}
-          </AdminDetailField>
-          <AdminDetailField
-            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.createdLabel}
-          >
-            {user.createdAt.toISOString().slice(0, 10)}
-          </AdminDetailField>
+          <div className="md:col-span-2">
+            <AdminDetailField
+              icon={<Mail className={FIELD_ICON_CLASS} />}
+              label={t.users.detail.emailLabel}
+            >
+              {user.email}
+            </AdminDetailField>
+          </div>
         </div>
       </Card>
 
