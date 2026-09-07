@@ -204,8 +204,11 @@ function CustomerOrderSheetBody({
                     <p className="min-w-0 font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase">
                       {participant.displayName}
                     </p>
-                    <p className="shrink-0 text-xs font-bold text-gray-500">
-                      {participant.paymentMethod ?? labels.paymentMethodNone}
+                    <p className="shrink-0 text-right text-xs font-bold text-gray-500">
+                      {labels.method}{" "}
+                      <span className="text-gray-900">
+                        {participant.paymentMethod ?? labels.paymentMethodNone}
+                      </span>
                     </p>
                   </div>
                   <dl className="grid grid-cols-3 gap-2 text-xs text-gray-600">
