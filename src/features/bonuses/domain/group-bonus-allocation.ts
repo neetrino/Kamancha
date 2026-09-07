@@ -14,6 +14,35 @@ export type AllocatedBonusBase = {
 };
 
 /**
+ * Builds earn shares for a group order. Guest merchandise (no userId) is
+ * attributed to the organizer so those points are not dropped or split
+ * incorrectly among other registered participants.
+ */
+export function buildGroupOrderBonusShares(input: {
+  participants: ReadonlyArray<{
+    userId: string | null;
+    subtotalAmount: number;
+  }>;
+  organizerUserId: string | null;
+}): ParticipantBonusShare[] {
+  const shares: ParticipantBonusShare[] = [];
+  for (const participant of input.participants) {
+    if (participant.subtotalAmount <= 0) {
+      continue;
+    }
+    const userId = participant.userId ?? input.organizerUserId;
+    if (!userId) {
+      continue;
+    }
+    shares.push({
+      userId,
+      merchandiseAmount: participant.subtotalAmount,
+    });
+  }
+  return shares;
+}
+
+/**
  * Allocates `eligibleMerchandiseAmount` across registered participants.
  * Shares with `merchandiseAmount <= 0` are skipped.
  * Same `userId` rows are merged before allocation.

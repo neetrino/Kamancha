@@ -250,6 +250,7 @@
       "participantSubtotal": "Subtotal",
       "participantDelivery": "Delivery",
       "participantTotal": "Total",
+      "participantBonus": "Bonus",
       "participantNoItems": "No items for this participant.",
       "paymentMethodNone": "—"
     },

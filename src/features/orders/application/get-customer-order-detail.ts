@@ -1,8 +1,8 @@
 "use server";
 
 import {
+  findCustomerBonusEarnedForOrder,
   findCustomerGroupOrderShare,
-  loadCustomerGroupOrderShareItems,
 } from "@/features/orders/application/customer-group-order-share";
 import { loadAdminGroupOrderParticipantsView } from "@/features/orders/application/group-order-participants-view";
 import {
@@ -18,8 +18,9 @@ import { err, ok, type Result } from "@/lib/result";
 /**
  * Customer-owned fetch of a single order for the profile order details drawer.
  * Returns NOT_FOUND when the order is missing or the user cannot access it.
- * Group orders include all participants' bags (same layout as admin).
- * Totals stay scoped to the viewer's share when they are a participant.
+ *
+ * Group orders use the same participant breakdown as admin (who ordered / paid
+ * how much). Bonus earned is scoped to the signed-in viewer.
  */
 export async function getCustomerOrderDetailAction(
   locale: string,
@@ -56,39 +57,24 @@ export async function getCustomerOrderDetailAction(
   const identity = await getStoreIdentity();
   let view = toAdminOrderDetailView(loaded, identity.name);
 
-  if (loaded.order.groupOrderId) {
-    const { paymentMode, participants: groupParticipants } =
-      await loadAdminGroupOrderParticipantsView({
-        groupOrderId: loaded.order.groupOrderId,
-        locale: locale as Locale,
-        currency: loaded.order.baseCurrency,
-      });
-    view = {
-      ...view,
-      groupPaymentMode: paymentMode,
-      groupParticipants,
-    };
-  }
-
-  if (!share) {
+  if (!loaded.order.groupOrderId) {
     return ok(view);
   }
 
-  const items = await loadCustomerGroupOrderShareItems({
-    participantId: share.participantId,
-    locale: locale as Locale,
-    currency: loaded.order.baseCurrency,
-  });
+  const [{ paymentMode, participants: groupParticipants }, bonusEarnedAmount] =
+    await Promise.all([
+      loadAdminGroupOrderParticipantsView({
+        groupOrderId: loaded.order.groupOrderId,
+        locale: locale as Locale,
+        currency: loaded.order.baseCurrency,
+      }),
+      findCustomerBonusEarnedForOrder(user.id, loaded.order.id),
+    ]);
 
   return ok({
     ...view,
-    subtotalAmount: share.subtotalAmount,
-    deliveryAmount: share.deliveryShareAmount,
-    discountAmount: 0,
-    bonusEarnedAmount: 0,
-    couponCode: null,
-    totalAmount: share.finalAmount,
-    paymentAmount: share.finalAmount,
-    items,
+    groupPaymentMode: paymentMode,
+    groupParticipants,
+    bonusEarnedAmount,
   });
 }

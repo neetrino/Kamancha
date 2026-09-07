@@ -23,17 +23,23 @@ export type CustomerGroupOrderShare = {
 };
 
 /**
- * SQL: customer-visible amount — participant final share for group orders,
+ * SQL: customer-visible amount — participant share for group orders,
  * otherwise the full order total.
  *
- * Nested select column refs must be fully table-qualified — drizzle drops
- * table names inside select expressions, and joins make short names ambiguous.
+ * Uses final_amount when the participant paid (split). When final is 0
+ * (organizer-pays-all guests/participants), falls back to bag value so the
+ * list is not empty. Nested select column refs must be fully table-qualified.
  */
 export function customerOrderDisplayAmountSql(userId: string) {
   return sql`
     coalesce(
       (
-        select ${sql.raw(`"group_order_participants"."final_amount"`)}
+        select case
+          when ${sql.raw(`"group_order_participants"."final_amount"`)} > 0
+            then ${sql.raw(`"group_order_participants"."final_amount"`)}
+          else ${sql.raw(`"group_order_participants"."subtotal_amount"`)}
+            + ${sql.raw(`"group_order_participants"."delivery_share_amount"`)}
+        end
         from ${groupOrderParticipants}
         where ${sql.raw(
           `"group_order_participants"."group_order_id" = "orders"."group_order_id"`,
@@ -160,6 +166,29 @@ export async function findCustomerGroupOrderShare(
     .limit(1);
 
   return row ?? null;
+}
+
+/** Net bonuses this customer earned on a single order (EARN + REVERSAL_EARN). */
+export async function findCustomerBonusEarnedForOrder(
+  userId: string,
+  orderId: string,
+): Promise<number> {
+  const [row] = await getDb()
+    .select({
+      value: sql<number>`coalesce(sum(${bonusTransactions.delta}), 0)`.mapWith(
+        Number,
+      ),
+    })
+    .from(bonusTransactions)
+    .where(
+      and(
+        eq(bonusTransactions.orderId, orderId),
+        eq(bonusTransactions.userId, userId),
+        inArray(bonusTransactions.type, ["EARN", "REVERSAL_EARN"]),
+      ),
+    );
+
+  return row?.value ?? 0;
 }
 
 export type CustomerGroupOrderShareItem = {

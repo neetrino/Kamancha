@@ -250,6 +250,7 @@
       "participantSubtotal": "Промежуточный итог",
       "participantDelivery": "Доставка",
       "participantTotal": "Итого",
+      "participantBonus": "Бонус",
       "participantNoItems": "У этого участника нет товаров.",
       "paymentMethodNone": "—"
     },

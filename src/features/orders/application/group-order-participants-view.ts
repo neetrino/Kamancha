@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, gt, inArray } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -9,6 +9,7 @@ import {
   groupOrders,
   payments,
 } from "@/db/schema";
+import { bonusTransactions } from "@/db/schema/bonuses";
 import { loadCustomerGroupOrderShareItems } from "@/features/orders/application/customer-group-order-share";
 import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import type { Locale } from "@/lib/i18n/config";
@@ -23,6 +24,8 @@ export type AdminGroupOrderParticipantView = {
   subtotalAmount: number;
   deliveryShareAmount: number;
   finalAmount: number;
+  /** Net loyalty points credited to this participant for the linked order. */
+  bonusEarnedAmount: number;
   /** Localized payment method label, or null when not applicable / unknown. */
   paymentMethod: string | null;
   items: GroupParticipantItemView[];
@@ -67,6 +70,7 @@ export async function loadAdminGroupOrderParticipantsView(input: {
   const participants = await db
     .select({
       id: groupOrderParticipants.id,
+      userId: groupOrderParticipants.userId,
       displayName: groupOrderParticipants.displayName,
       role: groupOrderParticipants.role,
       paymentStatus: groupOrderParticipants.paymentStatus,
@@ -96,9 +100,17 @@ export async function loadAdminGroupOrderParticipantsView(input: {
     .map((row) => row.paymentId)
     .filter((id): id is string => Boolean(id));
   const participantIds = participants.map((row) => row.id);
+  const linkedUserIds = participants
+    .map((row) => row.userId)
+    .filter((id): id is string => Boolean(id));
 
-  const [paymentRows, participantPaymentRows, eventRows, orderPaymentRows] =
-    await Promise.all([
+  const [
+    paymentRows,
+    participantPaymentRows,
+    eventRows,
+    orderPaymentRows,
+    bonusRows,
+  ] = await Promise.all([
     paymentIds.length === 0
       ? Promise.resolve(
           [] as Array<{ id: string; method: string; groupOrderParticipantId: string | null }>,
@@ -132,7 +144,7 @@ export async function loadAdminGroupOrderParticipantsView(input: {
         ),
       )
       .orderBy(desc(groupOrderEvents.createdAt)),
-    groupOrder?.orderId
+    groupOrder.orderId
       ? db
           .select({
             method: payments.method,
@@ -144,7 +156,29 @@ export async function loadAdminGroupOrderParticipantsView(input: {
       : Promise.resolve(
           [] as Array<{ method: string; groupOrderParticipantId: string | null }>,
         ),
+    groupOrder.orderId && linkedUserIds.length > 0
+      ? db
+          .select({
+            userId: bonusTransactions.userId,
+            amount: sql<number>`coalesce(sum(${bonusTransactions.delta}), 0)`.mapWith(
+              Number,
+            ),
+          })
+          .from(bonusTransactions)
+          .where(
+            and(
+              eq(bonusTransactions.orderId, groupOrder.orderId),
+              inArray(bonusTransactions.userId, linkedUserIds),
+              inArray(bonusTransactions.type, ["EARN", "REVERSAL_EARN"]),
+            ),
+          )
+          .groupBy(bonusTransactions.userId)
+      : Promise.resolve([] as Array<{ userId: string; amount: number }>),
   ]);
+
+  const bonusByUserId = new Map(
+    bonusRows.map((row) => [row.userId, row.amount] as const),
+  );
 
   const methodByPaymentId = new Map(
     paymentRows.map((row) => [row.id, row.method] as const),
@@ -222,6 +256,9 @@ export async function loadAdminGroupOrderParticipantsView(input: {
           subtotalAmount: participant.subtotalAmount,
           deliveryShareAmount: participant.deliveryShareAmount,
           finalAmount: participant.finalAmount,
+          bonusEarnedAmount: participant.userId
+            ? (bonusByUserId.get(participant.userId) ?? 0)
+            : 0,
           paymentMethod,
           items: await loadCustomerGroupOrderShareItems({
             participantId: participant.id,

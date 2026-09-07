@@ -7,6 +7,11 @@ import { giftCards, orders, users } from "@/db/schema";
 import { getCustomerBonusSummary } from "@/features/bonuses/application/queries";
 import type { CustomerBonusSummary } from "@/features/bonuses/application/queries";
 import type { GiftCardListItem } from "@/features/gift-cards/application/queries";
+import {
+  customerOrderBonusEarnedSql,
+  customerOrderDisplayAmountSql,
+  customerOrdersVisibilitySql,
+} from "@/features/orders/application/customer-group-order-share";
 import type { AdminUsersFilter } from "@/features/users/schemas/admin-users";
 
 const PAGE_SIZE = 20;
@@ -179,13 +184,13 @@ export async function getAdminUserById(
         orderNumber: orders.orderNumber,
         status: orders.status,
         paymentStatus: orders.paymentStatus,
-        totalAmount: orders.totalAmount,
+        totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
         baseCurrency: orders.baseCurrency,
-        bonusEarnedAmount: orders.bonusEarnedAmount,
+        bonusEarnedAmount: customerOrderBonusEarnedSql(userId).mapWith(Number),
         placedAt: orders.placedAt,
       })
       .from(orders)
-      .where(eq(orders.userId, userId))
+      .where(customerOrdersVisibilitySql(userId))
       .orderBy(desc(orders.placedAt))
       .limit(10),
     getCustomerBonusSummary(userId, { limit: 20 }),

@@ -215,7 +215,7 @@ function CustomerOrderSheetBody({
                       </span>
                     </p>
                   </div>
-                  <dl className="grid grid-cols-3 gap-2 text-xs text-gray-600">
+                  <dl className="grid grid-cols-2 gap-2 text-xs text-gray-600 sm:grid-cols-4">
                     <div className="min-w-0 w-max text-left">
                       <dt>{labels.participantSubtotal}</dt>
                       <dd className="font-semibold text-gray-900">
@@ -225,7 +225,7 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div className="mx-auto min-w-0 w-max text-left">
+                    <div className="min-w-0 w-max text-left">
                       <dt>{labels.participantDelivery}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
@@ -234,13 +234,19 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div className="ml-auto min-w-0 w-max text-left">
+                    <div className="min-w-0 w-max text-left">
                       <dt>{labels.participantTotal}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
                           participant.finalAmount,
                           detail.baseCurrency,
                         )}
+                      </dd>
+                    </div>
+                    <div className="min-w-0 w-max text-left">
+                      <dt>{labels.participantBonus}</dt>
+                      <dd className="font-semibold text-brand-forest">
+                        +{participant.bonusEarnedAmount}
                       </dd>
                     </div>
                   </dl>
