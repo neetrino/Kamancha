@@ -1,10 +1,11 @@
 "use client";
 
 import { ClipboardList } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   ADMIN_BADGE,
   orderStatusBadgeClass,
@@ -39,6 +40,7 @@ export function AdminUserRecentOrders({
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [query, setQuery] = useState("");
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
@@ -62,10 +64,29 @@ export function AdminUserRecentOrders({
     setError(null);
   }
 
+  const filteredOrders = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return orders;
+    return orders.filter((order) => {
+      const haystack = [
+        order.orderNumber,
+        order.status,
+        order.paymentStatus,
+        order.baseCurrency,
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(needle);
+    });
+  }, [orders, query]);
+
   return (
     <>
       <RecentOrdersCard
         orders={orders}
+        filteredOrders={filteredOrders}
+        query={query}
+        onQueryChange={setQuery}
         copy={copy}
         onOpenOrder={openOrder}
       />
@@ -84,26 +105,47 @@ export function AdminUserRecentOrders({
 
 function RecentOrdersCard({
   orders,
+  filteredOrders,
+  query,
+  onQueryChange,
   copy,
   onOpenOrder,
 }: {
   orders: RecentOrder[];
+  filteredOrders: RecentOrder[];
+  query: string;
+  onQueryChange: (value: string) => void;
   copy: Dictionary["admin"];
   onOpenOrder: (orderNumber: string) => void;
 }) {
+  const detail = copy.users.detail;
+
   return (
     <Card className="p-5 sm:p-6">
-      <div className="mb-4 flex items-center gap-4">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
-          <ClipboardList className="h-5 w-5" aria-hidden />
-        </span>
-        <h2 className={ADMIN_SECTION_TITLE}>{copy.users.detail.recentOrders}</h2>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex min-w-0 items-center gap-4">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
+            <ClipboardList className="h-5 w-5" aria-hidden />
+          </span>
+          <h2 className={ADMIN_SECTION_TITLE}>{detail.recentOrders}</h2>
+        </div>
+        {orders.length > 0 ? (
+          <AdminSearchInput
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder={detail.ordersSearchPlaceholder}
+            aria-label={detail.ordersSearchAria}
+            className="w-full sm:max-w-xs"
+          />
+        ) : null}
       </div>
       {orders.length === 0 ? (
-        <p className="text-sm text-gray-600">{copy.users.detail.noOrders}</p>
+        <p className="text-sm text-gray-600">{detail.noOrders}</p>
+      ) : filteredOrders.length === 0 ? (
+        <p className="text-sm text-gray-600">{detail.ordersNoMatch}</p>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {orders.map((order) => (
+          {filteredOrders.map((order) => (
             <button
               key={order.id}
               type="button"

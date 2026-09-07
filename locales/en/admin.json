@@ -675,6 +675,9 @@
       "unknownStatus": "Unknown status.",
       "recentOrders": "Recent orders",
       "noOrders": "No orders.",
+      "ordersSearchPlaceholder": "Search by order # or status…",
+      "ordersSearchAria": "Search recent orders",
+      "ordersNoMatch": "No orders match this search.",
       "bonuses": {
         "title": "Bonuses",
         "available": "Available balance",
@@ -693,6 +696,9 @@
       "giftCards": {
         "title": "Gift cards",
         "empty": "No gift cards.",
+        "searchPlaceholder": "Search by code or status…",
+        "searchAria": "Search gift cards",
+        "noMatch": "No gift cards match this search.",
         "rolePurchaser": "Purchaser",
         "roleRecipient": "Recipient",
         "roleBoth": "Purchaser & recipient"

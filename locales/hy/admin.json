@@ -675,6 +675,9 @@
       "unknownStatus": "Անհայտ կարգավիճակ։",
       "recentOrders": "Վերջին պատվերներ",
       "noOrders": "Պատվերներ չկան։",
+      "ordersSearchPlaceholder": "Որոնել ըստ պատվերի № կամ կարգավիճակի…",
+      "ordersSearchAria": "Որոնել վերջին պատվերները",
+      "ordersNoMatch": "Այս որոնմանը համապատասխան պատվերներ չկան։",
       "bonuses": {
         "title": "Բոնուսներ",
         "available": "Հասանելի մնացորդ",
@@ -693,6 +696,9 @@
       "giftCards": {
         "title": "Gift Card-եր",
         "empty": "Gift Card դեռ չկա։",
+        "searchPlaceholder": "Որոնել ըստ կոդի կամ կարգավիճակի…",
+        "searchAria": "Որոնել Gift Card-եր",
+        "noMatch": "Այս որոնմանը համապատասխան Gift Card չկա։",
         "rolePurchaser": "Գնորդ",
         "roleRecipient": "Ստացող",
         "roleBoth": "Գնորդ և ստացող"

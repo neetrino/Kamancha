@@ -675,6 +675,9 @@
       "unknownStatus": "Неизвестный статус.",
       "recentOrders": "Последние заказы",
       "noOrders": "Заказов нет.",
+      "ordersSearchPlaceholder": "Поиск по № заказа или статусу…",
+      "ordersSearchAria": "Поиск последних заказов",
+      "ordersNoMatch": "Нет заказов по этому поиску.",
       "bonuses": {
         "title": "Бонусы",
         "available": "Доступный баланс",
@@ -693,6 +696,9 @@
       "giftCards": {
         "title": "Подарочные карты",
         "empty": "Подарочных карт пока нет.",
+        "searchPlaceholder": "Поиск по коду или статусу…",
+        "searchAria": "Поиск подарочных карт",
+        "noMatch": "Нет карт по этому поиску.",
         "rolePurchaser": "Покупатель",
         "roleRecipient": "Получатель",
         "roleBoth": "Покупатель и получатель"

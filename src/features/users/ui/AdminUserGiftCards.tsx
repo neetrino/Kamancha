@@ -2,10 +2,11 @@
 
 import { Gift } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   adminActivateGiftCardAction,
@@ -78,6 +79,27 @@ export function AdminUserGiftCards({
   const [error, setError] = useState<string | null>(null);
   const [isDetailPending, startDetailTransition] = useTransition();
   const [isActionPending, startActionTransition] = useTransition();
+  const [query, setQuery] = useState("");
+
+  const filteredCards = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    if (!needle) return cards;
+    return cards.filter((card) => {
+      const role = resolveGiftCardRole(card, userId, userEmail);
+      const roleLabel =
+        role === "both"
+          ? copy.roleBoth
+          : role === "purchaser"
+            ? copy.rolePurchaser
+            : copy.roleRecipient;
+      const statusLabel =
+        adminCopy.giftCards.statuses[card.status] ?? card.status;
+      const haystack = [card.code, card.status, statusLabel, roleLabel]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(needle);
+    });
+  }, [adminCopy.giftCards.statuses, cards, copy, query, userEmail, userId]);
 
   function openDetail(id: string): void {
     setDetailOpen(true);
@@ -118,11 +140,22 @@ export function AdminUserGiftCards({
   return (
     <>
       <Card className="mb-6 p-5 sm:p-6">
-        <div className="mb-4 flex items-center gap-4">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
-            <Gift className="h-5 w-5" aria-hidden />
-          </span>
-          <h2 className={ADMIN_SECTION_TITLE}>{copy.title}</h2>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex min-w-0 items-center gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
+              <Gift className="h-5 w-5" aria-hidden />
+            </span>
+            <h2 className={ADMIN_SECTION_TITLE}>{copy.title}</h2>
+          </div>
+          {cards.length > 0 ? (
+            <AdminSearchInput
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={copy.searchPlaceholder}
+              aria-label={copy.searchAria}
+              className="w-full sm:max-w-xs"
+            />
+          ) : null}
         </div>
 
         {error && !detailOpen ? (
@@ -131,9 +164,11 @@ export function AdminUserGiftCards({
 
         {cards.length === 0 ? (
           <p className="text-sm text-gray-600">{copy.empty}</p>
+        ) : filteredCards.length === 0 ? (
+          <p className="text-sm text-gray-600">{copy.noMatch}</p>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {cards.map((card) => {
+            {filteredCards.map((card) => {
               const role = resolveGiftCardRole(card, userId, userEmail);
               const roleLabel =
                 role === "both"
