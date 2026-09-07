@@ -209,7 +209,7 @@ function CustomerOrderSheetBody({
                     </p>
                   </div>
                   <dl className="grid grid-cols-3 gap-2 text-xs text-gray-600">
-                    <div>
+                    <div className="min-w-0 text-left">
                       <dt>{labels.participantSubtotal}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
@@ -218,23 +218,27 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div>
-                      <dt>{labels.participantDelivery}</dt>
-                      <dd className="font-semibold text-gray-900">
-                        {formatOrderDrawerMoney(
-                          participant.deliveryShareAmount,
-                          detail.baseCurrency,
-                        )}
-                      </dd>
+                    <div className="flex min-w-0 justify-center">
+                      <div className="text-left">
+                        <dt>{labels.participantDelivery}</dt>
+                        <dd className="font-semibold text-gray-900">
+                          {formatOrderDrawerMoney(
+                            participant.deliveryShareAmount,
+                            detail.baseCurrency,
+                          )}
+                        </dd>
+                      </div>
                     </div>
-                    <div>
-                      <dt>{labels.participantTotal}</dt>
-                      <dd className="font-semibold text-gray-900">
-                        {formatOrderDrawerMoney(
-                          participant.finalAmount,
-                          detail.baseCurrency,
-                        )}
-                      </dd>
+                    <div className="flex min-w-0 justify-end">
+                      <div className="text-left">
+                        <dt>{labels.participantTotal}</dt>
+                        <dd className="font-semibold text-gray-900">
+                          {formatOrderDrawerMoney(
+                            participant.finalAmount,
+                            detail.baseCurrency,
+                          )}
+                        </dd>
+                      </div>
                     </div>
                   </dl>
                 </div>
