@@ -156,7 +156,7 @@
       "aria": "Պատվերների տեսակ",
       "all": "Բոլորը",
       "personal": "Անհատական",
-      "group": "Խմբակային"
+      "group": "Խմբային"
     },
     "filters": {
       "orderStatusAria": "Պատվերի կարգավիճակ",
@@ -192,7 +192,7 @@
       "total": "Ընդամենը",
       "placed": "Տեղադրված",
       "archivedBadge": "Արխիվացված",
-      "groupOrderBadge": "Խմբակային"
+      "groupOrderBadge": "Խմբային"
     },
     "inlineStatus": {
       "changeOrderAria": "Փոխել պատվերի կարգավիճակը",
