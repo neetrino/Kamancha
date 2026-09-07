@@ -63,6 +63,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           orderNumber: order.orderNumber,
           status: order.status,
           totalAmount: order.totalAmount,
+          bonusEarnedAmount: order.bonusEarnedAmount,
           itemsCount: order.itemsCount,
           placedAt: order.placedAt.toISOString(),
           isGroupOrder: order.isGroupOrder,

@@ -19,6 +19,7 @@ type CustomerOrdersViewOrder = {
   baseCurrency: string;
   placedAt: string | Date;
   itemsCount: number;
+  bonusEarnedAmount: number;
   isGroupOrder: boolean;
 };
 

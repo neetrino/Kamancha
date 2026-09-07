@@ -11,6 +11,7 @@ import {
   orderItems,
   products,
 } from "@/db/schema";
+import { bonusTransactions } from "@/db/schema/bonuses";
 import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -42,6 +43,28 @@ export function customerOrderDisplayAmountSql(userId: string) {
         limit 1
       ),
       ${sql.raw(`"orders"."total_amount"`)}
+    )
+  `;
+}
+
+/**
+ * SQL: net bonuses this customer earned on the order (EARN + REVERSAL_EARN).
+ * Works for solo and group (ledger is per userId).
+ */
+export function customerOrderBonusEarnedSql(userId: string) {
+  return sql`
+    coalesce(
+      (
+        select sum(${sql.raw(`"bonus_transactions"."delta"`)})
+        from ${bonusTransactions}
+        where ${sql.raw(`"bonus_transactions"."order_id" = "orders"."id"`)}
+          and ${sql.raw(`"bonus_transactions"."user_id"`)} = ${userId}
+          and ${sql.raw(`"bonus_transactions"."type"`)}::text in (
+            'EARN',
+            'REVERSAL_EARN'
+          )
+      ),
+      0
     )
   `;
 }
