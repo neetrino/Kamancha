@@ -10,12 +10,8 @@ type PageProps = {
   params: Promise<{ locale: string }>;
 };
 
-const POLICY_KEYS: LegalPolicyKey[] = [
-  "privacy",
-  "terms",
-  "delivery",
-  "refund",
-];
+/** Same policies and order as the desktop footer support column. */
+const POLICY_KEYS: LegalPolicyKey[] = ["delivery", "terms", "privacy"];
 
 export async function generateMetadata({
   params,

@@ -16,7 +16,7 @@ export type LegalDocumentCopy = {
   sections: LegalSection[];
 };
 
-/** Compact layout for side sheets; the page reads on the dark storefront background. */
+/** Compact layout for side sheets; the page reads on the forest storefront background. */
 type LegalDocumentVariant = "page" | "sheet";
 
 type LegalDocumentStyles = {
@@ -28,7 +28,7 @@ type LegalDocumentStyles = {
   heading: string;
 };
 
-/** Page: glass surface on the dark background. Sheet: dark text on the white panel. */
+/** Page: glass surface on the forest background. Sheet: dark text on the white panel. */
 const DOCUMENT_STYLES: Record<LegalDocumentVariant, LegalDocumentStyles> = {
   page: {
     container:

@@ -3,7 +3,7 @@
   "hubTitle": "Policies",
   "hubIntro": "Read our store policies. Tap a policy to view the full text.",
   "privacy": {
-    "title": "Privacy Policy",
+    "title": "Privacy policy",
     "lastUpdated": "23 July 2026",
     "intro": "By visiting the website kamanchayerevan.am (hereinafter referred to as the “Website”) and making purchases, you automatically consent to the collection, processing, and use of your personal data.",
     "introParagraphs": [
@@ -96,7 +96,7 @@
     ]
   },
   "terms": {
-    "title": "Terms and Conditions",
+    "title": "Terms & conditions",
     "lastUpdated": "23 July 2026",
     "intro": "Please read the terms governing the use of kamanchayerevan.am.",
     "sections": [
@@ -264,7 +264,7 @@
     ]
   },
   "delivery": {
-    "title": "Delivery Terms",
+    "title": "Delivery terms",
     "lastUpdated": "23 July 2026",
     "intro": "At KAMANCHA.am, we aim to deliver your order as quickly as possible while keeping the food fresh, safe, and properly packaged. Below are the main terms for food delivery orders.",
     "sections": [
