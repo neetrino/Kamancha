@@ -215,7 +215,7 @@ function CustomerOrderSheetBody({
                       </span>
                     </p>
                   </div>
-                  <dl className="grid grid-cols-2 gap-2 text-xs text-gray-600 sm:grid-cols-4">
+                  <dl className="flex flex-wrap justify-between gap-x-4 gap-y-2 text-xs text-gray-600">
                     <div className="min-w-0 w-max text-left">
                       <dt>{labels.participantSubtotal}</dt>
                       <dd className="font-semibold text-gray-900">
