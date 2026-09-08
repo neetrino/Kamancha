@@ -64,19 +64,34 @@ export type AdminOrderDetailView = {
   groupParticipants: AdminGroupOrderParticipantView[];
 };
 
+/** Geocoder segments come as "Yerevan 0025"; postal codes are not displayed. */
+function withoutPostalCode(segment: string): string {
+  return segment.trim().replace(/(?:^|\s)\d{4,6}$/, "").trim();
+}
+
+/**
+ * Displayed as "street, city". `line1` holds the geocoder's formatted address
+ * for map-picked checkouts, so only its street segment is used; postal code,
+ * region and country are not displayed.
+ */
 function formatAddressLine(
   address: AdminOrderDetail["order"]["shippingAddress"],
 ): string {
-  const parts = [
-    address.line1,
-    address.line2,
-    address.city,
-    address.region,
-    address.postalCode,
-    address.countryCode,
-  ].filter((part): part is string => Boolean(part && part.trim()));
+  const lineSegments = (address.line1 ?? "")
+    .split(",")
+    .map((segment) => withoutPostalCode(segment))
+    .filter((segment) => segment.length > 0);
 
-  return parts.join(", ");
+  const street = [lineSegments[0], address.line2?.trim()]
+    .filter((part): part is string => Boolean(part))
+    .join(", ");
+  const city = withoutPostalCode(address.city ?? "") || lineSegments[1] || "";
+
+  if (!city || street.toLowerCase().includes(city.toLowerCase())) {
+    return street;
+  }
+
+  return street ? `${street}, ${city}` : city;
 }
 
 /** Maps a loaded order into a serializable admin drawer view. */
