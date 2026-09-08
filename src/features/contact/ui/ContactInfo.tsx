@@ -87,10 +87,10 @@ function buildContactPills(copy: Dictionary["contact"]): ContactPillItem[] {
       content: copy.storePhone,
     },
     {
-      id: "email",
-      icon: <Mail className="size-[22px]" strokeWidth={1.75} />,
-      href: `mailto:${copy.storeEmail}`,
-      content: <span className="break-all min-[744px]:break-normal">{copy.storeEmail}</span>,
+      id: "phone-2",
+      icon: <Phone className="size-[22px]" strokeWidth={1.75} />,
+      href: `tel:${copy.storePhone2.replace(/\s/g, "")}`,
+      content: copy.storePhone2,
     },
     {
       id: "address-1",
@@ -103,6 +103,12 @@ function buildContactPills(copy: Dictionary["contact"]): ContactPillItem[] {
       icon: <MapPin className="size-[22px]" strokeWidth={1.75} />,
       href: KAMANCHA_BRANCHES.saryan.mapUrl,
       content: copy.storeAddress2,
+    },
+    {
+      id: "email",
+      icon: <Mail className="size-[22px]" strokeWidth={1.75} />,
+      href: `mailto:${copy.storeEmail}`,
+      content: <span className="break-all min-[744px]:break-normal">{copy.storeEmail}</span>,
     },
   ];
 }

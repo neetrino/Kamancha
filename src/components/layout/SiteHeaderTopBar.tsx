@@ -33,7 +33,10 @@ export function SiteHeaderTopBar({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <div className="flex items-center gap-2 text-gray-700">
               <Phone className="h-4 w-4" aria-hidden="true" />
-              <span className="font-medium">{dictionary.contact.storePhone}</span>
+              <span className="font-medium">
+                {dictionary.contact.storePhone} ·{" "}
+                {dictionary.contact.storePhone2}
+              </span>
             </div>
             <div className="flex items-center gap-3 text-gray-600">
               <a

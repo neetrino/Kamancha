@@ -247,6 +247,12 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 {footer.phone}
               </a>
               <a
+                href={`tel:${footer.phone2.replace(/\s/g, "")}`}
+                className={CONTACT_LINK_CLASS}
+              >
+                {footer.phone2}
+              </a>
+              <a
                 href={`mailto:${footer.email}`}
                 className={`${CONTACT_LINK_CLASS} uppercase`}
               >
