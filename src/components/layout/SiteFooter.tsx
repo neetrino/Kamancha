@@ -143,7 +143,6 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
     { href: `/${locale}/legal/delivery`, label: footer.deliveryTerms },
     { href: `/${locale}/legal/terms`, label: footer.terms },
     { href: `/${locale}/legal/privacy`, label: footer.privacyPolicy },
-    { href: `/${locale}/contact`, label: footer.faq },
   ];
 
   return (
