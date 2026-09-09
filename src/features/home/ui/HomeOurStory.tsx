@@ -9,6 +9,7 @@ import {
   HomeStaggerItem,
 } from '@/features/home/ui/home-motion';
 import { HomeStoryCard, type HomeStoryCardImage } from '@/features/home/ui/HomeStoryCard';
+import { KAMANCHA_BRANCHES } from '@/lib/brand/store-locations';
 import { staticAssetUrl } from '@/lib/media/static-asset-url';
 
 const RUG_SRC = staticAssetUrl('/assets/brand/home/our-story/rug.webp');
@@ -196,10 +197,11 @@ export function HomeOurStory({
                 <HomeStoryCard
                   nodeId="455:193"
                   title={tumanyan.title}
+                  titleHref={KAMANCHA_BRANCHES.tumanyan.mapUrl}
                   body={tumanyan.body}
                   image={TUMANYAN_IMAGE}
                   className={`bg-white ${venueCardClass}`}
-                  contentClassName="px-[23px] pt-[33px] lg:px-[max(23px,1.83cqw)] lg:pt-[max(33px,2.63cqw)]"
+                  contentClassName="px-[23px] pt-[20px] lg:px-[max(23px,1.83cqw)] lg:pt-[max(20px,1.59cqw)]"
                   titleClassName={`${cardTitleClass} text-[#222]`}
                   bodyClassName={`${venueCardBodyClass} text-[rgba(38,81,39,0.69)]`}
                 />
@@ -209,10 +211,11 @@ export function HomeOurStory({
                 <HomeStoryCard
                   nodeId="455:197"
                   title={saryan.title}
+                  titleHref={KAMANCHA_BRANCHES.saryan.mapUrl}
                   body={saryan.body}
                   image={SARYAN_IMAGE}
                   className={`bg-[#a2d39c] ${venueCardClass}`}
-                  contentClassName="px-[26px] pt-[28px] lg:px-[max(26px,2.07cqw)] lg:pt-[max(28px,2.23cqw)]"
+                  contentClassName="px-[26px] pt-[18px] lg:px-[max(26px,2.07cqw)] lg:pt-[max(18px,1.43cqw)]"
                   titleClassName={`${cardTitleClass} text-[#222]`}
                   bodyClassName={`${venueCardBodyClass} text-black/59`}
                 />

@@ -38,6 +38,8 @@ type HomeStoryCardProps = {
   titleClassName: string;
   bodyClassName: string;
   nodeId: string;
+  /** When set, the title opens this URL (same maps links as the footer). */
+  titleHref?: string;
   /** Extra content below the body, e.g. the delivery phone number. */
   children?: ReactNode;
 };
@@ -61,6 +63,7 @@ export function HomeStoryCard({
   titleClassName,
   bodyClassName,
   nodeId,
+  titleHref,
   children,
 }: HomeStoryCardProps) {
   const decorative = image.alt === undefined;
@@ -68,7 +71,20 @@ export function HomeStoryCard({
   return (
     <article data-node-id={nodeId} className={`relative overflow-clip rounded-[30px] ${className}`}>
       <div className={`relative z-[1] ${contentClassName}`}>
-        <h3 className={titleClassName}>{title}</h3>
+        <h3 className={titleClassName}>
+          {titleHref ? (
+            <a
+              href={titleHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-70"
+            >
+              {title}
+            </a>
+          ) : (
+            title
+          )}
+        </h3>
         <p className={bodyClassName}>{body}</p>
         {children}
       </div>
