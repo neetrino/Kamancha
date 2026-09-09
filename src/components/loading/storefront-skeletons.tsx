@@ -1,13 +1,17 @@
 /** Shared pulse skeletons for storefront route `loading.tsx` boundaries. */
 
-const pulse = "animate-pulse";
+const pulse = 'animate-pulse';
 
 type SkeletonProps = {
   className?: string;
 };
 
-function Block({ className = "" }: SkeletonProps) {
+function Block({ className = '' }: SkeletonProps) {
   return <div className={`rounded-md bg-gray-200 ${className}`} />;
+}
+
+function ForestBlock({ className = '' }: SkeletonProps) {
+  return <div className={`rounded-[30px] bg-white/12 ${className}`} />;
 }
 
 export function CatalogGridSkeleton() {
@@ -26,11 +30,7 @@ export function CatalogGridSkeleton() {
 
 export function ProductDetailSkeleton() {
   return (
-    <div
-      className={`${pulse} grid gap-8 lg:grid-cols-2`}
-      aria-busy="true"
-      aria-live="polite"
-    >
+    <div className={`${pulse} grid gap-8 lg:grid-cols-2`} aria-busy="true" aria-live="polite">
       <Block className="aspect-square w-full rounded-lg" />
       <div className="space-y-4">
         <Block className="h-8 w-3/4" />
@@ -44,12 +44,11 @@ export function ProductDetailSkeleton() {
 
 export function BlogListSkeleton() {
   return (
-    <div className={`${pulse} space-y-6`} aria-busy="true" aria-live="polite">
-      <Block className="h-9 w-40" />
-      <div className="flex flex-col gap-4">
-        <Block className="h-36 w-full rounded-lg" />
-        <Block className="h-36 w-full rounded-lg" />
-        <Block className="h-36 w-full rounded-lg" />
+    <div className={`${pulse} space-y-8`} aria-busy="true" aria-live="polite">
+      <ForestBlock className="h-14 w-40 rounded-md" />
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <ForestBlock className="h-80 w-full" />
+        <ForestBlock className="h-80 w-full" />
       </div>
     </div>
   );
@@ -57,15 +56,10 @@ export function BlogListSkeleton() {
 
 export function BlogPostSkeleton() {
   return (
-    <div className={`${pulse} space-y-6`} aria-busy="true" aria-live="polite">
-      <Block className="h-4 w-32" />
-      <Block className="h-10 w-3/4" />
-      <Block className="aspect-[21/9] w-full rounded-lg" />
-      <div className="space-y-3">
-        <Block className="h-4 w-full" />
-        <Block className="h-4 w-full" />
-        <Block className="h-4 w-5/6" />
-      </div>
+    <div className={`${pulse} space-y-8`} aria-busy="true" aria-live="polite">
+      <ForestBlock className="h-4 w-32 rounded-md" />
+      <ForestBlock className="h-12 w-3/4 rounded-md" />
+      <ForestBlock className="aspect-[21/9] w-full" />
     </div>
   );
 }

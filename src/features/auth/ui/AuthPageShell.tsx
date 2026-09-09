@@ -14,6 +14,8 @@ type AuthPageShellProps = {
   footer?: ReactNode;
   lowerLeftHand?: boolean;
   raiseLeftHand?: boolean;
+  /** Pull the block closer to the header (login / register). */
+  tightNavGap?: boolean;
 };
 
 const springLogo: Transition = {
@@ -40,6 +42,7 @@ export function AuthPageShell({
   footer,
   lowerLeftHand = false,
   raiseLeftHand = false,
+  tightNavGap = false,
 }: AuthPageShellProps) {
   const playMotion = usePlayHomeMotion();
   const instant: Transition = { duration: 0 };
@@ -51,7 +54,13 @@ export function AuthPageShell({
     : instant;
 
   return (
-    <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible pt-1 sm:pt-8 max-xl:-mt-4">
+    <div
+      className={`relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible ${
+        tightNavGap
+          ? "-mt-1 pt-1 sm:-mt-2 sm:pt-3 max-xl:-mt-3"
+          : "pt-1 sm:pt-8 max-xl:-mt-4"
+      }`}
+    >
       <ContactHands lowerLeft={lowerLeftHand} raiseLeft={raiseLeftHand} />
       <div className="relative z-[1] mx-auto max-w-[1440px] px-4 pb-8 sm:px-6 xl:px-8">
         <section className="relative z-[1] mx-auto flex max-w-[633px] flex-col items-center pt-0 sm:pt-2">
