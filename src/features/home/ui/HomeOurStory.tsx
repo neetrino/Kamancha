@@ -17,6 +17,7 @@ const SARYAN_SRC = staticAssetUrl('/assets/brand/home/our-story/saryan-mountains
 const DELIVERY_SRC = staticAssetUrl('/assets/brand/home/our-story/delivery-truck.webp');
 const FOUNDER_SRC = staticAssetUrl('/assets/brand/home/our-story/founder.webp');
 const PHONE_ICON_SRC = staticAssetUrl('/assets/brand/home/our-story/phone.svg');
+const RESTOROMANIA_ARROW_SRC = staticAssetUrl('/assets/brand/home/our-story/restormania-arrow.svg');
 
 /** Figma section 455:190 — 1257px content width; type and cards scale with it. */
 const cardTitleClass =
@@ -73,6 +74,12 @@ type DeliveryCard = StoryCard & {
   phone: string;
 };
 
+type FounderCard = StoryCard & {
+  cta: string;
+  /** Empty until the Restormania URL is ready. */
+  ctaHref: string;
+};
+
 type HomeOurStoryProps = {
   title: string;
   intro: string;
@@ -80,8 +87,44 @@ type HomeOurStoryProps = {
   tumanyan: StoryCard;
   saryan: StoryCard;
   delivery: DeliveryCard;
-  founder: StoryCard;
+  founder: FounderCard;
 };
+
+const restormaniaLinkClass =
+  'mt-[20px] inline-flex size-[68px] items-center justify-center rounded-full bg-white lg:mt-[max(20px,1.59cqw)] lg:size-[max(68px,5.41cqw)]';
+
+/** Restormania external control — Figma 87:77 (white circle, arrow flipped up-right). */
+function RestormaniaLink({ href, label }: { href: string; label: string }) {
+  const icon = (
+    <span
+      className="relative size-[35px] -scale-y-100 overflow-clip lg:size-[max(35px,2.78cqw)]"
+      aria-hidden
+    >
+      <Image src={RESTOROMANIA_ARROW_SRC} alt="" width={35} height={35} className="size-full" />
+    </span>
+  );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        data-node-id="87:77"
+        className={restormaniaLinkClass}
+      >
+        {icon}
+      </a>
+    );
+  }
+
+  return (
+    <span role="img" aria-label={label} data-node-id="87:77" className={restormaniaLinkClass}>
+      {icon}
+    </span>
+  );
+}
 
 /**
  * Our story — venue, delivery, and founder cards over the rug backdrop.
@@ -221,7 +264,9 @@ export function HomeOurStory({
               contentClassName="pt-[44px] pr-[25px] pl-[36px] lg:pt-[max(44px,3.5cqw)] lg:pr-[max(25px,1.99cqw)] lg:pl-[max(36px,2.86cqw)]"
               titleClassName={`${cardTitleClass} text-[#222]`}
               bodyClassName={`${cardBodyRelaxedClass} mt-[30px] text-[rgba(34,34,34,0.81)] lg:mt-[max(30px,2.39cqw)]`}
-            />
+            >
+              <RestormaniaLink href={founder.ctaHref} label={founder.cta} />
+            </HomeStoryCard>
           </HomeReveal>
         </div>
       </div>

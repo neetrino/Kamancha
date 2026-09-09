@@ -42,7 +42,9 @@
     },
     "founder": {
       "title": "Areg Gevorgyan",
-      "body": "is an Armenian restaurateur, entrepreneur and founding director of the Kamancha restaurants and the Restormania and Pideh projects, focused on developing the restaurant business, Armenian gastronomy and hospitality."
+      "body": "is an Armenian restaurateur, entrepreneur and founding director of the Kamancha restaurants and the Restormania and Pideh projects, focused on developing the restaurant business, Armenian gastronomy and hospitality.",
+      "cta": "Restormania",
+      "ctaHref": ""
     }
   },
   "whyUsTitle": "Why choose us",
