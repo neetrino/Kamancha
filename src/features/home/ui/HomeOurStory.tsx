@@ -1,59 +1,148 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
 import {
   HomeFloat,
   HomeReveal,
   HomeStagger,
   HomeStaggerItem,
-} from "@/features/home/ui/home-motion";
-import { staticAssetUrl } from "@/lib/media/static-asset-url";
+} from '@/features/home/ui/home-motion';
+import { HomeStoryCard, type HomeStoryCardImage } from '@/features/home/ui/HomeStoryCard';
+import { KAMANCHA_BRANCHES } from '@/lib/brand/store-locations';
+import { staticAssetUrl } from '@/lib/media/static-asset-url';
 
-const PLATE_SRC = staticAssetUrl("/assets/brand/home/family-dinner-plate.webp");
-const GRAPES_SRC = staticAssetUrl("/assets/brand/home/our-story/grapes-jug.webp");
-const DOLMA_SRC = staticAssetUrl("/assets/brand/home/our-story/dolma.webp");
-const KAMANCHA_SRC = staticAssetUrl("/assets/brand/home/our-story/kamancha.webp");
-const RUG_SRC = staticAssetUrl("/assets/brand/home/our-story/rug.webp");
+const RUG_SRC = staticAssetUrl('/assets/brand/home/our-story/rug.webp');
+const TUMANYAN_SRC = staticAssetUrl('/assets/brand/home/our-story/tumanyan-sign.webp');
+const SARYAN_SRC = staticAssetUrl('/assets/brand/home/our-story/saryan-mountains.webp');
+const DELIVERY_SRC = staticAssetUrl('/assets/brand/home/our-story/delivery-truck.webp');
+const FOUNDER_SRC = staticAssetUrl('/assets/brand/home/our-story/founder.webp');
+const PHONE_ICON_SRC = staticAssetUrl('/assets/brand/home/our-story/phone.svg');
+const RESTOROMANIA_ARROW_SRC = staticAssetUrl('/assets/brand/home/our-story/restormania-arrow.svg');
 
-/** Figma mosaic 1338px — grow type and cards on wider screens. */
-const mosaicTitleClass =
-  "font-big-fat-boii text-[21px] leading-6 font-normal uppercase lg:text-[max(21px,1.57cqw)] lg:leading-[max(24px,1.79cqw)]";
-const mosaicBodyClass =
-  "text-[14px] leading-6 lg:text-[max(14px,1.05cqw)] lg:leading-[max(24px,1.79cqw)]";
-const mosaicCardHeightClass = "h-[182px] lg:h-[max(182px,13.6cqw)]";
+/** Figma section 455:190 — 1257px content width; type and cards scale with it. */
+const cardTitleClass =
+  'font-big-fat-boii text-[21px] leading-[24px] font-normal uppercase lg:text-[max(21px,1.67cqw)] lg:leading-[max(24px,1.91cqw)]';
+const cardBodyClass =
+  'text-[14px] leading-[20px] lg:text-[max(14px,1.11cqw)] lg:leading-[max(20px,1.59cqw)]';
+const cardBodyRelaxedClass =
+  'text-[14px] leading-[24px] lg:text-[max(14px,1.11cqw)] lg:leading-[max(24px,1.91cqw)]';
+const venueCardBodyClass = `${cardBodyClass} mt-[11px] lg:mt-[max(11px,0.88cqw)]`;
+const venueCardClass = 'h-[292px] lg:h-[max(292px,23.23cqw)]';
+
+const TUMANYAN_IMAGE: HomeStoryCardImage = {
+  src: TUMANYAN_SRC,
+  width: 824,
+  height: 549,
+  sizes: '(min-width: 1440px) 412px, 32vw',
+  frame: { left: 0, top: 55.82, width: 105.64, height: 76.71 },
+  inner: { left: 0, top: -22.47, width: 100, height: 122.62 },
+};
+
+const SARYAN_IMAGE: HomeStoryCardImage = {
+  src: SARYAN_SRC,
+  width: 478,
+  height: 640,
+  sizes: '(min-width: 1440px) 408px, 32vw',
+  frame: { left: 0, top: 52.74, width: 100, height: 47.26 },
+  inner: { left: 0, top: -0.46, width: 100, height: 395.85 },
+};
+
+const DELIVERY_IMAGE: HomeStoryCardImage = {
+  src: DELIVERY_SRC,
+  width: 826,
+  height: 765,
+  sizes: '(min-width: 1440px) 413px, 32vw',
+  frame: { left: 56.1, top: 0, width: 43.9, height: 100 },
+  inner: { left: 0, top: -20.94, width: 114.72, height: 143.59 },
+};
+
+const FOUNDER_IMAGE = {
+  src: FOUNDER_SRC,
+  width: 2240,
+  height: 1494,
+  sizes: '(min-width: 1440px) 1120px, 80vw',
+  frame: { left: -10.77, top: 36.95, width: 146.67, height: 73.5 },
+  inner: { left: -47.95, top: -32.82, width: 195.89, height: 132.88 },
+} satisfies Omit<HomeStoryCardImage, 'alt'>;
 
 type StoryCard = {
   title: string;
   body: string;
 };
 
+type DeliveryCard = StoryCard & {
+  phone: string;
+};
+
+type FounderCard = StoryCard & {
+  cta: string;
+  /** Empty until the Restormania URL is ready. */
+  ctaHref: string;
+};
+
 type HomeOurStoryProps = {
   title: string;
   intro: string;
   introSecond: string;
-  cardWhite: StoryCard;
-  cardGreen: StoryCard;
-  cardBlack: StoryCard;
-  cardTall: StoryCard;
+  tumanyan: StoryCard;
+  saryan: StoryCard;
+  delivery: DeliveryCard;
+  founder: FounderCard;
 };
 
+const restormaniaLinkClass =
+  'mt-[20px] inline-flex size-[68px] items-center justify-center rounded-full bg-white lg:mt-[max(20px,1.59cqw)] lg:size-[max(68px,5.41cqw)]';
+
+/** Restormania external control — Figma 87:77 (white circle, arrow flipped up-right). */
+function RestormaniaLink({ href, label }: { href: string; label: string }) {
+  const icon = (
+    <span
+      className="relative size-[35px] -scale-y-100 overflow-clip lg:size-[max(35px,2.78cqw)]"
+      aria-hidden
+    >
+      <Image src={RESTOROMANIA_ARROW_SRC} alt="" width={35} height={35} className="size-full" />
+    </span>
+  );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        data-node-id="87:77"
+        className={restormaniaLinkClass}
+      >
+        {icon}
+      </a>
+    );
+  }
+
+  return (
+    <span role="img" aria-label={label} data-node-id="87:77" className={restormaniaLinkClass}>
+      {icon}
+    </span>
+  );
+}
+
 /**
- * Our story mosaic — Figma 98:20, background rug 22:186.
- * Scales title, copy, and cards with the section width on large screens.
+ * Our story — venue, delivery, and founder cards over the rug backdrop.
+ * Figma 455:190; the rug behind the section is 22:186.
  */
 export function HomeOurStory({
   title,
   intro,
   introSecond,
-  cardWhite,
-  cardGreen,
-  cardBlack,
-  cardTall,
+  tumanyan,
+  saryan,
+  delivery,
+  founder,
 }: HomeOurStoryProps) {
   return (
     <section
-      data-node-id="98:20"
+      data-node-id="455:190"
       className="relative z-[1] overflow-visible pt-14 pb-36 sm:pt-16 sm:pb-44 md:pt-20 md:pb-56"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible">
@@ -79,232 +168,108 @@ export function HomeOurStory({
           </HomeFloat>
         </HomeReveal>
 
-        <div className="relative z-[1] grid w-full gap-10 px-[max(5rem,8vw)] [container-type:inline-size] lg:grid-cols-[821fr_390fr] lg:items-start lg:gap-[max(41px,3.06cqw)]">
-          <div className="min-w-0 overflow-visible">
+        <div className="relative z-[1] grid w-full gap-10 px-[max(5rem,8vw)] [container-type:inline-size] lg:grid-cols-[820fr_390fr] lg:items-start lg:gap-[max(47px,3.74cqw)]">
+          <div className="min-w-0">
             <HomeReveal>
               <h2
-                data-node-id="22:330"
-                className="font-big-fat-boii text-[clamp(36px,5vw,58px)] leading-[1.05] font-normal text-[#e5e2e1] uppercase lg:text-[max(58px,4.34cqw)]"
+                data-node-id="455:191"
+                className="font-big-fat-boii text-[clamp(36px,5vw,58px)] leading-[1.05] font-normal text-[#e5e2e1] uppercase lg:text-[max(58px,4.61cqw)]"
               >
                 {title}
               </h2>
             </HomeReveal>
 
             <HomeReveal delay={0.08}>
-              <p
-                data-node-id="22:331"
-                className="mt-8 max-w-[650px] text-[16px] leading-[26px] text-[#c2c9bd] sm:mt-10 lg:mt-[max(40px,2.99cqw)] lg:max-w-[48.58cqw] lg:text-[max(16px,1.2cqw)] lg:leading-[max(26px,1.94cqw)]"
+              <div
+                data-node-id="455:192"
+                className="mt-4 max-w-[650px] text-[16px] leading-[26px] text-[#c2c9bd] lg:mt-[max(16px,1.27cqw)] lg:max-w-[51.71cqw] lg:text-[max(16px,1.27cqw)] lg:leading-[max(26px,2.07cqw)]"
               >
-                {intro}
-              </p>
-            </HomeReveal>
-
-            <HomeReveal delay={0.14}>
-              <p
-                data-node-id="22:332"
-                className="mt-6 max-w-[614px] text-[16px] leading-[26px] text-[#c2c9bd] lg:mt-[max(24px,1.79cqw)] lg:max-w-[45.89cqw] lg:text-[max(16px,1.2cqw)] lg:leading-[max(26px,1.94cqw)]"
-              >
-                {introSecond}
-              </p>
+                <p>{intro}</p>
+                <p>{introSecond}</p>
+              </div>
             </HomeReveal>
 
             <HomeStagger
-              className="relative z-[1] mt-10 grid grid-cols-1 gap-5 overflow-visible sm:mt-12 sm:grid-cols-2 sm:gap-[41px] lg:mt-[max(48px,3.59cqw)] lg:gap-[max(41px,3.06cqw)]"
+              className="mt-10 grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-[390fr_408fr] sm:gap-[22px] lg:mt-[max(74px,5.89cqw)] lg:gap-[max(22px,1.75cqw)]"
               stagger={0.1}
             >
-              {/* White card — 22:333 */}
               <HomeStaggerItem>
-                <article
-                  data-node-id="22:333"
-                  className={`relative z-[1] overflow-visible rounded-[30px] bg-white ${mosaicCardHeightClass}`}
-                >
-                  <div className="relative z-10 max-w-[232px] pt-[19px] pr-4 pl-8 lg:max-w-[17.34cqw] lg:pt-[max(19px,1.42cqw)] lg:pl-[max(32px,2.39cqw)]">
-                    <h3
-                      data-node-id="41:239"
-                      className={`${mosaicTitleClass} text-brand-forest`}
-                    >
-                      {cardWhite.title}
-                    </h3>
-                    <p
-                      data-node-id="41:241"
-                      className={`${mosaicBodyClass} mt-4 text-[rgba(38,81,39,0.69)] lg:mt-[max(16px,1.2cqw)]`}
-                    >
-                      {cardWhite.body}
-                    </p>
-                  </div>
-                  <div
-                    className="pointer-events-none absolute top-[-28px] right-0 h-[210px] w-[226px] overflow-hidden rounded-br-[30px] rounded-bl-[43px] lg:top-[min(-28px,-2.09cqw)] lg:h-[max(210px,15.7cqw)] lg:w-[max(226px,16.89cqw)]"
-                    aria-hidden
-                  >
-                    <Image
-                      src={PLATE_SRC}
-                      alt=""
-                      width={1402}
-                      height={1747}
-                      sizes="(min-width: 1440px) 17vw, 226px"
-                      className="absolute top-[-0.04%] left-0 h-[179.96%] w-[134.07%] max-w-none"
-                    />
-                  </div>
-                </article>
+                <HomeStoryCard
+                  nodeId="455:193"
+                  title={tumanyan.title}
+                  titleHref={KAMANCHA_BRANCHES.tumanyan.mapUrl}
+                  body={tumanyan.body}
+                  image={TUMANYAN_IMAGE}
+                  className={`bg-white ${venueCardClass}`}
+                  contentClassName="px-[23px] pt-[20px] lg:px-[max(23px,1.83cqw)] lg:pt-[max(20px,1.59cqw)]"
+                  titleClassName={`${cardTitleClass} text-[#222]`}
+                  bodyClassName={`${venueCardBodyClass} text-[rgba(38,81,39,0.69)]`}
+                />
               </HomeStaggerItem>
 
-              {/* Green card — 22:334 */}
               <HomeStaggerItem>
-                <article
-                  data-node-id="22:334"
-                  className={`relative z-[2] overflow-visible ${mosaicCardHeightClass}`}
-                >
-                  <div
-                    className="absolute inset-0 rounded-[30px] bg-[#a2d39c]"
-                    aria-hidden
-                  />
-                  <div className="relative z-10 max-w-[55%] pt-6 pr-2 pl-[29px] lg:pt-[max(24px,1.79cqw)] lg:pl-[max(29px,2.17cqw)]">
-                    <h3
-                      data-node-id="41:243"
-                      className={`${mosaicTitleClass} text-[#222]`}
-                    >
-                      {cardGreen.title}
-                    </h3>
-                    <p
-                      data-node-id="41:244"
-                      className={`${mosaicBodyClass} mt-4 line-clamp-4 text-black/59 lg:mt-[max(16px,1.2cqw)]`}
-                    >
-                      {cardGreen.body}
-                    </p>
-                  </div>
-                  {/* Jug + grapes — Figma 41:236 @ 169,-87 / 239×269 on 390×182 card */}
-                  <div
-                    data-node-id="41:236"
-                    className="pointer-events-none absolute top-[-47.8%] left-[43.3%] z-[1] h-[147.8%] w-[61.3%] overflow-hidden"
-                    aria-hidden
-                  >
-                    <Image
-                      src={GRAPES_SRC}
-                      alt=""
-                      width={1200}
-                      height={1800}
-                      quality={100}
-                      unoptimized
-                      sizes="(max-width: 768px) 40vw, (min-width: 1440px) 18vw, 239px"
-                      className="pointer-events-none absolute top-0 left-0 h-[132.46%] w-full max-w-none"
-                    />
-                  </div>
-                </article>
-              </HomeStaggerItem>
-
-              {/* Black wide card — 22:335 */}
-              <HomeStaggerItem className="sm:col-span-2">
-                <article
-                  data-node-id="22:335"
-                  className={`relative z-[1] overflow-visible ${mosaicCardHeightClass}`}
-                >
-                  <div
-                    className="absolute inset-0 rounded-[30px] bg-black"
-                    aria-hidden
-                  />
-                  <div className="relative z-10 max-w-[463px] pt-[26px] pr-4 pl-[31px] lg:max-w-[34.6cqw] lg:pt-[max(26px,1.94cqw)] lg:pl-[max(31px,2.32cqw)]">
-                    <h3
-                      data-node-id="41:238"
-                      className={`${mosaicTitleClass} text-[#e5e2e1]`}
-                    >
-                      {cardBlack.title}
-                    </h3>
-                    <p
-                      data-node-id="41:228"
-                      className={`${mosaicBodyClass} mt-6 text-white/72 lg:mt-[max(24px,1.79cqw)]`}
-                    >
-                      {cardBlack.body}
-                    </p>
-                  </div>
-                  {/* Dolma: full plate on the right, clipped at card bottom like other cards */}
-                  <div
-                    className="pointer-events-none absolute top-[-23px] right-[-90px] bottom-0 z-[1] hidden w-[401px] overflow-hidden sm:block lg:top-[min(-23px,-1.72cqw)] lg:right-[min(-90px,-6.73cqw)] lg:w-[max(401px,29.97cqw)]"
-                    aria-hidden
-                  >
-                    <div
-                      data-node-id="41:229"
-                      className="absolute top-0 right-[90px] h-[205px] w-[311px] lg:right-[max(90px,6.73cqw)] lg:h-[max(205px,15.32cqw)] lg:w-[max(311px,23.24cqw)]"
-                    >
-                      <Image
-                        src={DOLMA_SRC}
-                        alt=""
-                        width={1280}
-                        height={698}
-                        quality={100}
-                        unoptimized
-                        sizes="(min-width: 1440px) 30vw, 360px"
-                        className="pointer-events-none absolute top-[-10.4%] left-[-22.72%] h-[125.12%] w-[150.27%] max-w-none"
-                      />
-                    </div>
-                  </div>
-                </article>
+                <HomeStoryCard
+                  nodeId="455:197"
+                  title={saryan.title}
+                  titleHref={KAMANCHA_BRANCHES.saryan.mapUrl}
+                  body={saryan.body}
+                  image={SARYAN_IMAGE}
+                  className={`bg-[#a2d39c] ${venueCardClass}`}
+                  contentClassName="px-[26px] pt-[18px] lg:px-[max(26px,2.07cqw)] lg:pt-[max(18px,1.43cqw)]"
+                  titleClassName={`${cardTitleClass} text-[#222]`}
+                  bodyClassName={`${venueCardBodyClass} text-black/59`}
+                />
               </HomeStaggerItem>
             </HomeStagger>
+
+            <HomeReveal delay={0.16} className="mt-5 sm:mt-[32px] lg:mt-[max(32px,2.55cqw)]">
+              <HomeStoryCard
+                nodeId="455:201"
+                title={delivery.title}
+                body={delivery.body}
+                image={DELIVERY_IMAGE}
+                className="h-[266px] bg-black lg:h-[max(266px,21.16cqw)]"
+                contentClassName="max-w-[62%] pt-[25px] pr-4 pl-[41px] lg:max-w-[51.1%] lg:pt-[max(25px,1.99cqw)] lg:pl-[max(41px,3.26cqw)]"
+                titleClassName={`${cardTitleClass} text-[#e5e2e1]`}
+                bodyClassName={`${cardBodyRelaxedClass} mt-[18px] text-white/72 lg:mt-[max(18px,1.43cqw)]`}
+              >
+                <a
+                  data-node-id="455:204"
+                  href={`tel:${delivery.phone.replace(/\s/g, '')}`}
+                  className="mt-[10px] inline-flex items-center gap-[8px] text-[14px] leading-[24px] text-white lg:mt-[max(10px,0.8cqw)] lg:text-[max(14px,1.11cqw)]"
+                >
+                  <Image
+                    src={PHONE_ICON_SRC}
+                    alt=""
+                    width={20}
+                    height={20}
+                    className="size-[20px] lg:size-[max(20px,1.59cqw)]"
+                  />
+                  {delivery.phone}
+                </a>
+              </HomeStoryCard>
+            </HomeReveal>
           </div>
 
-          {/* Tall cream card — Figma 22:336; kamancha overflows the card */}
           <HomeReveal
             delay={0.2}
             y={40}
             x={20}
             amount={0.15}
-            className="lg:w-full"
+            className="lg:mt-[max(170px,13.52cqw)] lg:w-full"
           >
-            <article
-              data-node-id="22:336"
-              className="relative z-[3] overflow-visible max-lg:min-h-[480px] lg:h-[max(787px,58.82cqw)]"
+            <HomeStoryCard
+              nodeId="455:209"
+              title={founder.title}
+              body={founder.body}
+              image={{ ...FOUNDER_IMAGE, alt: founder.title }}
+              className="h-[766px] bg-[#efe7da] lg:h-[max(766px,60.94cqw)]"
+              contentClassName="pt-[44px] pr-[25px] pl-[36px] lg:pt-[max(44px,3.5cqw)] lg:pr-[max(25px,1.99cqw)] lg:pl-[max(36px,2.86cqw)]"
+              titleClassName={`${cardTitleClass} text-[#222]`}
+              bodyClassName={`${cardBodyRelaxedClass} mt-[30px] text-[rgba(34,34,34,0.81)] lg:mt-[max(30px,2.39cqw)]`}
             >
-              {/* Cream surface (rounded plate under the photo) */}
-              <div
-                className="absolute inset-0 -z-0 rounded-[30px] bg-[#efe7da]"
-                aria-hidden
-              />
-
-              {/* Kamancha overflows card bounds — 41:234 @ -203,84 / 1006×703 */}
-              <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 top-[22%] z-[1] lg:top-[max(84px,6.28cqw)] lg:right-auto lg:bottom-auto lg:left-[min(-203px,-15.17cqw)] lg:flex lg:h-[max(703px,52.54cqw)] lg:w-[max(1006px,75.19cqw)] lg:items-center lg:justify-center"
-                aria-hidden
-              >
-                <div className="hidden -scale-y-100 rotate-180 lg:block">
-                  <div className="relative h-[703px] w-[1006px] overflow-hidden lg:h-[max(703px,52.54cqw)] lg:w-[max(1006px,75.19cqw)]">
-                    <Image
-                      src={KAMANCHA_SRC}
-                      alt=""
-                      width={1920}
-                      height={1920}
-                      quality={100}
-                      unoptimized
-                      sizes="(max-width: 1024px) 100vw, 80vw"
-                      className="pointer-events-none absolute top-[-17.9%] left-[-63.95%] h-[329.53%] w-[229.94%] max-w-none"
-                    />
-                  </div>
-                </div>
-                <div className="relative h-full w-full overflow-visible lg:hidden">
-                  <Image
-                    src={KAMANCHA_SRC}
-                    alt=""
-                    fill
-                    quality={100}
-                    unoptimized
-                    sizes="100vw"
-                    className="object-contain object-[70%_bottom]"
-                  />
-                </div>
-              </div>
-
-              <h3
-                data-node-id="41:245"
-                className={`${mosaicTitleClass} relative z-[2] px-8 pt-10 text-[#222] lg:absolute lg:top-[6.23%] lg:left-[13.85%] lg:px-0 lg:pt-0`}
-              >
-                {cardTall.title}
-              </h3>
-              <p
-                data-node-id="41:247"
-                className={`${mosaicBodyClass} relative z-[2] mt-6 max-w-[211px] px-8 pb-48 text-[rgba(34,34,34,0.81)] lg:absolute lg:top-[12.71%] lg:left-[13.85%] lg:mt-0 lg:max-w-[54.1%] lg:px-0 lg:pb-0`}
-              >
-                {cardTall.body}
-              </p>
-            </article>
+              <RestormaniaLink href={founder.ctaHref} label={founder.cta} />
+            </HomeStoryCard>
           </HomeReveal>
         </div>
       </div>
