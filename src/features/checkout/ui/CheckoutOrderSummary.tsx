@@ -12,8 +12,9 @@ import { useCheckoutSummaryStickyTop } from "@/features/checkout/ui/use-checkout
 const SUMMARY_ALERT_PILL_CLASS =
   "mb-4 w-full rounded-full bg-white px-4 py-3 text-center text-sm font-medium leading-snug text-red-600";
 
+/** Static fill — nested `backdrop-filter` on iOS turns these cards milky white. */
 const CHECKOUT_CODE_GLASS_CLASS =
-  "relative z-[2] mb-6 liquid-glass isolate overflow-hidden rounded-xl p-4";
+  "relative z-[2] mb-6 isolate overflow-hidden rounded-xl border border-white/20 bg-white/[0.1] p-4";
 
 type GiftCardPreviewView = {
   initialAmount: number;
