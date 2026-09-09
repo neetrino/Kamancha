@@ -25,11 +25,25 @@
   },
   "ourStory": {
     "title": "OUR STORY",
-    "intro": "Kamancha is more than just a restaurant. It is a harmonious blend of Armenian culture, music, and gastronomy. We take age-old traditions and present them to the modern world, keeping the warmth that belongs only to an Armenian hearth.",
-    "introSecond": "Every dish is prepared with love, using local fresh produce and spices brought from different corners of Armenia.",
-    "cardTitle": "Heading",
-    "cardBodyShort": "Every dish is prepared with love, using local fresh ingredients",
-    "cardBodyLong": "Every dish is prepared with love, using local fresh produce and spices brought from different corners of Armenia."
+    "intro": "Kamancha, in the heart of Yerevan, was founded in 2019 with the idea of bringing Armenian cuisine and traditional music together under one roof.",
+    "introSecond": "In our kitchen, traditional recipes from across Armenia meet innovative approaches, preserving the authenticity of Armenian flavours while revealing them anew. Live national music completes the experience, turning every visit into an encounter with Armenian culture.",
+    "tumanyan": {
+      "title": "Tumanyan 23",
+      "body": "is where we created a space in which Armenian flavours, music and warm hospitality intertwine, making every visit a complete Armenian experience."
+    },
+    "saryan": {
+      "title": "Saryan 8",
+      "body": "is where Kamancha Tapaka Rooms presents a new take on Armenian cuisine, paired with wine culture and Kamancha hospitality."
+    },
+    "delivery": {
+      "title": "Kamancha Factory",
+      "body": "is Kamancha's dedicated delivery arm, created to meet our guests' high demand and make favourite dishes more accessible. Delivery covers all of Yerevan, every day from 10:00 to 00:00.",
+      "phone": "095 711 771"
+    },
+    "founder": {
+      "title": "Areg Gevorgyan",
+      "body": "is an Armenian restaurateur, entrepreneur and founding director of the Kamancha restaurants and the Restormania and Pideh projects, focused on developing the restaurant business, Armenian gastronomy and hospitality."
+    }
   },
   "whyUsTitle": "Why choose us",
   "aboutEyebrow": "About us",
