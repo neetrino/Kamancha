@@ -13,7 +13,6 @@ import {
   settleCartItemCountAdjust,
 } from "@/features/storefront-chrome/storefront-counts-store";
 import type { Locale } from "@/lib/i18n/config";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 import { formatMoneyAmount } from "@/lib/money/format";
 
 const THUMB_SIZE_PX = 96;
@@ -56,7 +55,10 @@ function CheckoutOrderItemCard({
   removeItemLabel,
   onRemove,
 }: CheckoutOrderItemCardProps) {
-  const imageSrc = product.imageUrl ?? STOREFRONT_PRODUCT_PHOTO;
+  const imageSrc =
+    typeof product.imageUrl === "string" && product.imageUrl.length > 0
+      ? product.imageUrl
+      : null;
 
   return (
     <article
@@ -76,13 +78,15 @@ function CheckoutOrderItemCard({
             borderRadius: THUMB_RADIUS_PX,
           }}
         >
-          <Image
-            src={imageSrc}
-            alt={product.title}
-            fill
-            className="object-cover"
-            sizes={`${THUMB_SIZE_PX}px`}
-          />
+          {imageSrc ? (
+            <Image
+              src={imageSrc}
+              alt={product.title}
+              fill
+              className="object-cover"
+              sizes={`${THUMB_SIZE_PX}px`}
+            />
+          ) : null}
         </div>
 
         <div className="flex w-max min-w-0 max-w-full flex-1 flex-col justify-between gap-2">

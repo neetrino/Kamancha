@@ -16,7 +16,6 @@ import {
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
-import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 type CustomerOrderDetailsSheetProps = {
   open: boolean;
@@ -379,15 +378,15 @@ function OrderItemThumb({
   imageUrl: string | null;
 }) {
   const src =
-    imageUrl && imageUrl.length > 0 ? imageUrl : STOREFRONT_PRODUCT_PHOTO;
+    typeof imageUrl === "string" && imageUrl.length > 0 ? imageUrl : null;
+
+  if (!src) {
+    return <div className="h-24 w-24 shrink-0 rounded-2xl bg-gray-100" />;
+  }
 
   return (
     // Order/R2 hosts vary — native img avoids brittle next/image allowlists.
     // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={title}
-      className="h-24 w-24 shrink-0 rounded-2xl object-cover"
-    />
+    <img src={src} alt={title} className="h-24 w-24 shrink-0 rounded-2xl object-cover" />
   );
 }

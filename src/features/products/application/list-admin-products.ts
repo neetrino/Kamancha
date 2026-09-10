@@ -53,6 +53,7 @@ export type AdminProductListItem = {
   slug: string;
   description: string;
   imageUrl: string | null;
+  translations: (typeof products.$inferSelect)["translations"];
   categoryIds: string[];
   categoryLabels: string[];
   modifierIds: string[];
@@ -269,6 +270,7 @@ export async function listAdminProducts(
         slug: translation?.slug ?? "",
         description: translation?.description ?? "",
         imageUrl: primaryImages.get(product.id) ?? null,
+        translations: product.translations,
         categoryIds: categoryMeta?.ids ?? [],
         categoryLabels: categoryMeta?.labels ?? [],
         modifierIds: modifierMap.get(product.id) ?? [],

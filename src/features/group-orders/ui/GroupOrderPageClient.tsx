@@ -1019,13 +1019,15 @@ function GroupOrderProductCard({
             borderRadius: PRODUCT_THUMB_RADIUS_PX,
           }}
         >
-          <Image
-            src={imageSrc}
-            alt={item.title}
-            fill
-            className="object-cover"
-            sizes={`${PRODUCT_THUMB_PX}px`}
-          />
+          {imageSrc ? (
+            <Image
+              src={imageSrc}
+              alt={item.title}
+              fill
+              className="object-cover"
+              sizes={`${PRODUCT_THUMB_PX}px`}
+            />
+          ) : null}
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-2">

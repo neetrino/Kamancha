@@ -21,11 +21,19 @@ import { createId } from "@/lib/id";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
+const localizedProductTextSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  description: z.string().trim().max(5000).optional(),
+});
+
 const productUpsertSchema = z.object({
   sku: z.string().trim().min(1).max(120),
-  title: z.string().trim().min(1).max(200),
+  localizedText: z.object({
+    hy: localizedProductTextSchema,
+    en: localizedProductTextSchema,
+    ru: localizedProductTextSchema,
+  }),
   slug: z.string().trim().min(1).max(200),
-  description: z.string().trim().max(5000).optional(),
   priceAmount: z.number().int().nonnegative(),
   stockOnHand: z.number().int().nonnegative(),
   categoryIds: z.array(z.string().uuid()),
@@ -47,12 +55,23 @@ const productUpsertSchema = z.object({
 export type ProductUpsertInput = z.infer<typeof productUpsertSchema>;
 
 function buildTranslations(data: ProductUpsertInput): TranslationsJson {
-  const entry = {
-    title: data.title,
-    slug: data.slug,
-    description: data.description || undefined,
+  return {
+    hy: {
+      title: data.localizedText.hy.title,
+      slug: data.slug,
+      description: data.localizedText.hy.description || undefined,
+    },
+    en: {
+      title: data.localizedText.en.title,
+      slug: data.slug,
+      description: data.localizedText.en.description || undefined,
+    },
+    ru: {
+      title: data.localizedText.ru.title,
+      slug: data.slug,
+      description: data.localizedText.ru.description || undefined,
+    },
   };
-  return { hy: entry, en: entry, ru: entry };
 }
 
 function revalidateProducts(
