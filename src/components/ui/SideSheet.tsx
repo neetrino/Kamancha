@@ -60,6 +60,10 @@ export function SideSheet({
   const [displayChildren, setDisplayChildren] = useState(children);
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
   const exitDoneRef = useRef(false);
+  const childrenRef = useRef(children);
+  const ariaLabelRef = useRef(ariaLabel);
+  childrenRef.current = children;
+  ariaLabelRef.current = ariaLabel;
 
   const finishExit = useCallback((): void => {
     if (exitDoneRef.current) return;
@@ -70,6 +74,8 @@ export function SideSheet({
 
   useEffect(() => {
     if (!open) return;
+    // Snapshot for the close animation only. While open, render live `children`
+    // so controlled inputs keep caret position (async displayChildren resets it).
     scheduleStateUpdate(setDisplayChildren, children);
     scheduleStateUpdate(setDisplayAriaLabel, ariaLabel);
   }, [open, children, ariaLabel]);
@@ -84,6 +90,9 @@ export function SideSheet({
 
     if (!rendered) return;
 
+    // Freeze the latest open tree for the exit animation.
+    setDisplayChildren(childrenRef.current);
+    setDisplayAriaLabel(ariaLabelRef.current);
     scheduleStateUpdate(setExiting, true);
     const timer = window.setTimeout(() => {
       finishExit();
@@ -145,12 +154,15 @@ export function SideSheet({
       ? "animate-side-sheet-panel-in-right"
       : "animate-side-sheet-panel-in-left";
 
+  const panelChildren = open && !exiting ? children : displayChildren;
+  const panelAriaLabel = open && !exiting ? ariaLabel : displayAriaLabel;
+
   return createPortal(
     <div
       className={`fixed inset-0 ${zIndexClassName}`}
       role="dialog"
       aria-modal="true"
-      aria-label={displayAriaLabel}
+      aria-label={panelAriaLabel}
     >
       <button
         type="button"
@@ -193,7 +205,7 @@ export function SideSheet({
           {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
           onClick={(event) => event.stopPropagation()}
         >
-          {displayChildren}
+          {panelChildren}
         </div>
       </div>
     </div>,
