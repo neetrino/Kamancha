@@ -1,35 +1,30 @@
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { Suspense } from 'react';
+import { notFound } from 'next/navigation';
 
-import { listStorefrontCategories } from "@/features/categories/application/list-storefront-categories";
-import { HomeCategories } from "@/features/home/ui/HomeCategories";
-import { HomeFamilyDinnerPromo } from "@/features/home/ui/HomeFamilyDinnerPromo";
-import { HomeFeaturedProducts } from "@/features/home/ui/HomeFeaturedProducts";
-import { HomeMobileCategories } from "@/features/home/ui/HomeMobileCategories";
-import { HomeMobileProductSection } from "@/features/home/ui/HomeMobileProductSection";
-import { HomeOurStory } from "@/features/home/ui/HomeOurStory";
+import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
+import { HomeCategories } from '@/features/home/ui/HomeCategories';
+import { HomeFamilyDinnerPromo } from '@/features/home/ui/HomeFamilyDinnerPromo';
+import { HomeFeaturedProducts } from '@/features/home/ui/HomeFeaturedProducts';
+import { HomeMobileCategories } from '@/features/home/ui/HomeMobileCategories';
+import { HomeMobileProductSection } from '@/features/home/ui/HomeMobileProductSection';
+import { HomeOurStory } from '@/features/home/ui/HomeOurStory';
 import {
   getDiscountedProducts,
   getFeaturedProducts,
   type CatalogProduct,
-} from "@/features/products/queries";
-import { getProductAverageRatings } from "@/features/reviews/application/queries";
-import { getWishlistProductIds } from "@/features/wishlist/queries";
-import { getCurrentUser } from "@/lib/auth/session";
-import { isLocale, type Locale } from "@/lib/i18n/config";
-import { getDictionary, type Dictionary } from "@/lib/i18n/get-dictionary";
-import {
-  createDisplayPriceFormatter,
-  getSelectedCurrency,
-} from "@/lib/money/display-price";
+} from '@/features/products/queries';
+import { getProductAverageRatings } from '@/features/reviews/application/queries';
+import { getWishlistProductIds } from '@/features/wishlist/queries';
+import { getCurrentUser } from '@/lib/auth/session';
+import { isLocale, type Locale } from '@/lib/i18n/config';
+import { getDictionary, type Dictionary } from '@/lib/i18n/get-dictionary';
+import { createDisplayPriceFormatter, getSelectedCurrency } from '@/lib/money/display-price';
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
 };
 
-type DisplayPriceFormatter = Awaited<
-  ReturnType<typeof createDisplayPriceFormatter>
->;
+type DisplayPriceFormatter = Awaited<ReturnType<typeof createDisplayPriceFormatter>>;
 
 function toProductCards(
   products: CatalogProduct[],
@@ -40,10 +35,7 @@ function toProductCards(
 ) {
   return products.map((product) => {
     const price = formatPrice(product.priceAmount);
-    const compareAt =
-      product.compareAtAmount != null
-        ? formatPrice(product.compareAtAmount)
-        : null;
+    const compareAt = product.compareAtAmount != null ? formatPrice(product.compareAtAmount) : null;
 
     return {
       id: product.id,
@@ -61,21 +53,14 @@ function toProductCards(
   });
 }
 
-async function HomeBelowFold({
-  locale,
-  dictionary,
-}: {
-  locale: Locale;
-  dictionary: Dictionary;
-}) {
-  const [categories, featuredProducts, discountedProducts, currency, user] =
-    await Promise.all([
-      listStorefrontCategories(locale),
-      getFeaturedProducts(locale),
-      getDiscountedProducts(locale),
-      getSelectedCurrency(),
-      getCurrentUser(),
-    ]);
+async function HomeBelowFold({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
+  const [categories, featuredProducts, discountedProducts, currency, user] = await Promise.all([
+    listStorefrontCategories(locale),
+    getFeaturedProducts(locale),
+    getDiscountedProducts(locale),
+    getSelectedCurrency(),
+    getCurrentUser(),
+  ]);
 
   const productIds = [
     ...new Set([
@@ -90,13 +75,7 @@ async function HomeBelowFold({
     getProductAverageRatings(productIds),
   ]);
 
-  const featuredCards = toProductCards(
-    featuredProducts,
-    locale,
-    formatPrice,
-    wishlistIds,
-    ratings,
-  );
+  const featuredCards = toProductCards(featuredProducts, locale, formatPrice, wishlistIds, ratings);
   const discountedCards = toProductCards(
     discountedProducts,
     locale,
@@ -157,62 +136,50 @@ async function HomeBelowFold({
       </div>
 
       <div className="hidden xl:block">
-      <HomeCategories
-        title={dictionary.home.categoriesTitle}
-        productCountLabel={dictionary.home.categoryProductCount}
-        emptyLabel={dictionary.home.emptyCategories}
-        previousLabel={dictionary.home.previousCategory}
-        nextLabel={dictionary.home.nextCategory}
-        categories={categoryItems}
-      />
+        <HomeCategories
+          title={dictionary.home.categoriesTitle}
+          productCountLabel={dictionary.home.categoryProductCount}
+          emptyLabel={dictionary.home.emptyCategories}
+          previousLabel={dictionary.home.previousCategory}
+          nextLabel={dictionary.home.nextCategory}
+          categories={categoryItems}
+        />
 
-      <HomeFeaturedProducts
-        locale={locale}
-        title={dictionary.home.featuredTitle}
-        viewAllLabel={dictionary.home.viewAll}
-        viewAllHref={`/${locale}/products`}
-        emptyLabel={dictionary.home.emptyFeatured}
-        previousLabel={dictionary.home.previousFeatured}
-        nextLabel={dictionary.home.nextFeatured}
-        wishlistLabel={dictionary.nav.wishlist}
-        addToCartLabel={dictionary.product.addToCart}
-        discountOffLabel={dictionary.home.discountOff}
-        isSignedIn={Boolean(user)}
-        products={featuredCards}
-      />
+        <HomeFeaturedProducts
+          locale={locale}
+          title={dictionary.home.featuredTitle}
+          viewAllLabel={dictionary.home.viewAll}
+          viewAllHref={`/${locale}/products`}
+          emptyLabel={dictionary.home.emptyFeatured}
+          previousLabel={dictionary.home.previousFeatured}
+          nextLabel={dictionary.home.nextFeatured}
+          wishlistLabel={dictionary.nav.wishlist}
+          addToCartLabel={dictionary.product.addToCart}
+          discountOffLabel={dictionary.home.discountOff}
+          isSignedIn={Boolean(user)}
+          products={featuredCards}
+        />
 
-      <HomeFamilyDinnerPromo
-        headlineBefore={dictionary.home.familyDinner.headlineBefore}
-        headlineAccent={dictionary.home.familyDinner.headlineAccent}
-        headlineAfter={dictionary.home.familyDinner.headlineAfter}
-        subtitle={dictionary.home.familyDinner.subtitle}
-        subtitleMuted={dictionary.home.familyDinner.subtitleMuted}
-        priceLabel={dictionary.home.familyDinner.price}
-        ctaLabel={dictionary.home.viewAll}
-        ctaHref={`/${locale}/products`}
-      />
+        <HomeFamilyDinnerPromo
+          headlineBefore={dictionary.home.familyDinner.headlineBefore}
+          headlineAccent={dictionary.home.familyDinner.headlineAccent}
+          headlineAfter={dictionary.home.familyDinner.headlineAfter}
+          subtitle={dictionary.home.familyDinner.subtitle}
+          subtitleMuted={dictionary.home.familyDinner.subtitleMuted}
+          priceLabel={dictionary.home.familyDinner.price}
+          ctaLabel={dictionary.home.viewAll}
+          ctaHref={`/${locale}/products`}
+        />
 
-      <HomeOurStory
-        title={dictionary.home.ourStory.title}
-        intro={dictionary.home.ourStory.intro}
-        introSecond={dictionary.home.ourStory.introSecond}
-        cardWhite={{
-          title: dictionary.home.ourStory.cardTitle,
-          body: dictionary.home.ourStory.cardBodyShort,
-        }}
-        cardGreen={{
-          title: dictionary.home.ourStory.cardTitle,
-          body: dictionary.home.ourStory.cardBodyShort,
-        }}
-        cardBlack={{
-          title: dictionary.home.ourStory.cardTitle,
-          body: dictionary.home.ourStory.cardBodyLong,
-        }}
-        cardTall={{
-          title: dictionary.home.ourStory.cardTitle,
-          body: dictionary.home.ourStory.cardBodyLong,
-        }}
-      />
+        <HomeOurStory
+          title={dictionary.home.ourStory.title}
+          intro={dictionary.home.ourStory.intro}
+          introSecond={dictionary.home.ourStory.introSecond}
+          tumanyan={dictionary.home.ourStory.tumanyan}
+          saryan={dictionary.home.ourStory.saryan}
+          delivery={dictionary.home.ourStory.delivery}
+          founder={dictionary.home.ourStory.founder}
+        />
       </div>
     </>
   );

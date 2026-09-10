@@ -10,8 +10,11 @@ type ContactFooterProps = {
   copy: Dictionary["contact"];
 };
 
+/** Map is a bit narrower than the pills row. */
+const MAP_WIDTH_INSET_PX = 64;
+
 /**
- * Contact pills + map. Map width matches the pills row (first → last pill).
+ * Contact pills + map. Map width follows the pills row, slightly inset.
  */
 export function ContactFooter({ copy }: ContactFooterProps) {
   const pillsRef = useRef<HTMLDivElement>(null);
@@ -28,7 +31,7 @@ export function ContactFooter({ copy }: ContactFooterProps) {
     function syncWidth(): void {
       const width = measuredNode.getBoundingClientRect().width;
       if (width > 0) {
-        setMapWidthPx(Math.round(width));
+        setMapWidthPx(Math.round(Math.max(0, width - MAP_WIDTH_INSET_PX)));
       }
     }
 

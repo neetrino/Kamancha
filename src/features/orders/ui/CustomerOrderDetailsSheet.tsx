@@ -17,6 +17,9 @@ import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
+const PARTICIPANT_STAT_CELL = "w-max shrink-0 text-left whitespace-nowrap";
+const PARTICIPANT_STAT_CELL_DIVIDED = `${PARTICIPANT_STAT_CELL} sm:border-l sm:border-gray-200 sm:pl-4`;
+
 type CustomerOrderDetailsSheetProps = {
   open: boolean;
   onClose: () => void;
@@ -214,8 +217,8 @@ function CustomerOrderSheetBody({
                       </span>
                     </p>
                   </div>
-                  <dl className="grid grid-cols-2 gap-2 text-xs text-gray-600 sm:grid-cols-4">
-                    <div className="min-w-0 w-max text-left">
+                  <dl className="flex justify-between gap-x-2 text-xs text-gray-600 sm:gap-x-4">
+                    <div className={PARTICIPANT_STAT_CELL}>
                       <dt>{labels.participantSubtotal}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
@@ -224,7 +227,7 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div className="min-w-0 w-max text-left">
+                    <div className={PARTICIPANT_STAT_CELL_DIVIDED}>
                       <dt>{labels.participantDelivery}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
@@ -233,7 +236,7 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div className="min-w-0 w-max text-left">
+                    <div className={PARTICIPANT_STAT_CELL_DIVIDED}>
                       <dt>{labels.participantTotal}</dt>
                       <dd className="font-semibold text-gray-900">
                         {formatOrderDrawerMoney(
@@ -242,7 +245,7 @@ function CustomerOrderSheetBody({
                         )}
                       </dd>
                     </div>
-                    <div className="min-w-0 w-max text-left">
+                    <div className={PARTICIPANT_STAT_CELL_DIVIDED}>
                       <dt>{labels.participantBonus}</dt>
                       <dd className="font-semibold text-brand-forest">
                         +{participant.bonusEarnedAmount}

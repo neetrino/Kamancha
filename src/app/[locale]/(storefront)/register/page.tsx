@@ -19,7 +19,7 @@ export default async function RegisterPage({ params }: RegisterPageProps) {
   const dictionary = getDictionary(rawLocale);
 
   return (
-    <AuthPageShell title={dictionary.auth.registerTitle}>
+    <AuthPageShell title={dictionary.auth.registerTitle} tightNavGap>
       <RegisterForm locale={rawLocale} dictionary={dictionary.auth} />
     </AuthPageShell>
   );

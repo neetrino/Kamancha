@@ -135,16 +135,14 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const navigationLinks: FooterLink[] = [
     { href: `/${locale}/products`, label: footer.menu },
     { href: `/${locale}/about`, label: footer.about },
-    { href: `/${locale}/products`, label: footer.specialOffers },
-    { href: `/${locale}/blog`, label: footer.gallery },
+    { href: `/${locale}/blog`, label: footer.blog },
     { href: `/${locale}/contact`, label: footer.contact },
   ];
 
   const supportLinks: FooterLink[] = [
-    { href: `/${locale}/legal/terms`, label: footer.shippingReturns },
+    { href: `/${locale}/legal/delivery`, label: footer.deliveryTerms },
     { href: `/${locale}/legal/terms`, label: footer.terms },
     { href: `/${locale}/legal/privacy`, label: footer.privacyPolicy },
-    { href: `/${locale}/contact`, label: footer.faq },
   ];
 
   return (
@@ -245,6 +243,12 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 className={CONTACT_LINK_CLASS}
               >
                 {footer.phone}
+              </a>
+              <a
+                href={`tel:${footer.phone2.replace(/\s/g, "")}`}
+                className={CONTACT_LINK_CLASS}
+              >
+                {footer.phone2}
               </a>
               <a
                 href={`mailto:${footer.email}`}

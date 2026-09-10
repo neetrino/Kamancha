@@ -134,7 +134,7 @@ export function ContactMap({
     <section aria-label={title} className="relative z-[1] w-full">
       <div className="relative w-full overflow-hidden rounded-[24px] border border-brand-forest/10 bg-[#e8f0e0] sm:rounded-[30px] xl:rounded-[40px]">
         {failed ? (
-          <div className="flex min-h-[280px] flex-col items-center justify-center gap-4 px-6 py-16 text-center sm:min-h-[360px]">
+          <div className="flex min-h-[300px] flex-col items-center justify-center gap-4 px-6 py-16 text-center sm:min-h-[380px]">
             <p className="max-w-md text-[15px] leading-6 text-brand-forest/70">
               {unavailableLabel}
             </p>
@@ -160,7 +160,7 @@ export function ContactMap({
         ) : (
           <div
             ref={mapElementRef}
-            className="h-[280px] w-full sm:h-[360px] xl:h-[420px]"
+            className="h-[300px] w-full sm:h-[380px] xl:h-[440px]"
           />
         )}
       </div>
