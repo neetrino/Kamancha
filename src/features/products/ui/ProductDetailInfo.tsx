@@ -81,38 +81,6 @@ export function ProductDetailInfo({
 
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-[22px]">
-      <nav
-        aria-label={labels.breadcrumbLabel}
-        className="flex flex-wrap items-center gap-3"
-      >
-        <AppLink
-          href={`/${locale}`}
-          prefetchPolicy="intent"
-          className="text-sm leading-[21px] text-white/50 transition-colors hover:text-white/80"
-        >
-          {dictionary.nav.home}
-        </AppLink>
-        <span aria-hidden className="text-base text-white/30">
-          /
-        </span>
-        <AppLink
-          href={`/${locale}/products`}
-          prefetchPolicy="intent"
-          className="text-sm leading-[21px] text-white/50 transition-colors hover:text-white/80"
-        >
-          {labels.backToProducts}
-        </AppLink>
-        <span aria-hidden className="text-base text-white/30">
-          /
-        </span>
-        <span
-          aria-current="page"
-          className="text-sm leading-[21px] font-semibold text-white"
-        >
-          {product.translation.title}
-        </span>
-      </nav>
-
       <div className="flex min-w-0 flex-wrap items-center gap-3">
         <h1 className="font-big-fat-boii text-[clamp(32px,5vw,58px)] leading-[1.05] font-normal tracking-[0.5px] text-white uppercase">
           {product.translation.title}
