@@ -13,21 +13,44 @@ import {
   invalidateProductsCache,
 } from "@/lib/cache/invalidate-public";
 import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
-const createCategorySchema = z.object({
+const localizedCategoryTextSchema = z.object({
   title: z.string().trim().min(1).max(120),
+});
+
+const createCategorySchema = z
+  .object({
+    title: z.string().trim().max(120).default(""),
+    localizedText: z
+      .object({
+        hy: localizedCategoryTextSchema,
+        en: localizedCategoryTextSchema,
+        ru: localizedCategoryTextSchema,
+      })
+      .optional(),
   slug: z.string().trim().min(1).max(120),
   parentId: z.string().uuid().nullable(),
   status: z.enum(["ACTIVE", "ARCHIVED"]),
-});
+  })
+  .refine((value) => value.localizedText || value.title, {
+    message: "Category title is required.",
+    path: ["title"],
+  });
 
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 
-function buildTranslations(title: string, slug: string): TranslationsJson {
-  const translation = { title, slug };
-  return { hy: translation, en: translation, ru: translation };
+function buildTranslations(data: CreateCategoryInput): TranslationsJson {
+  const fallbackTitle = data.title.trim();
+  const localized = data.localizedText;
+  const byLocale = Object.fromEntries(
+    locales.map((locale) => {
+      const title = localized?.[locale]?.title?.trim() || fallbackTitle;
+      return [locale, { title, slug: data.slug }];
+    }),
+  ) as TranslationsJson;
+  return byLocale;
 }
 
 function revalidateCategories(locale: string): void {
@@ -68,7 +91,7 @@ async function insertCategory(
   await getDb().insert(categories).values({
     id,
     parentId: data.parentId,
-    translations: buildTranslations(data.title, data.slug),
+    translations: buildTranslations(data),
     sortOrder: (maxSort?.value ?? 0) + 1,
     status: data.status,
   });
@@ -104,15 +127,37 @@ export async function createCategoryFromDrawerAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const rawParent = formData.get("parentId");
+  const rawPayload = formData.get("data");
+  let raw: Record<string, unknown>;
+  if (typeof rawPayload === "string") {
+    try {
+      const parsedPayload = JSON.parse(rawPayload);
+      raw =
+        parsedPayload && typeof parsedPayload === "object"
+          ? (parsedPayload as Record<string, unknown>)
+          : {};
+    } catch {
+      raw = {};
+    }
+  } else {
+    raw = {};
+  }
+  const rawParent =
+    typeof raw.parentId === "string"
+      ? raw.parentId
+      : (formData.get("parentId") as string | null);
   const parsed = createCategorySchema.safeParse({
-    title: formData.get("title"),
-    slug: formData.get("slug"),
+    title: typeof raw.title === "string" ? raw.title : formData.get("title"),
+    localizedText:
+      raw.localizedText && typeof raw.localizedText === "object"
+        ? raw.localizedText
+        : undefined,
+    slug: typeof raw.slug === "string" ? raw.slug : formData.get("slug"),
     parentId:
       typeof rawParent === "string" && rawParent.trim()
         ? rawParent.trim()
         : null,
-    status: formData.get("status"),
+    status: typeof raw.status === "string" ? raw.status : formData.get("status"),
   });
 
   if (!parsed.success) {
@@ -145,15 +190,37 @@ export async function updateCategoryFromDrawerAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const rawParent = formData.get("parentId");
+  const rawPayload = formData.get("data");
+  let raw: Record<string, unknown>;
+  if (typeof rawPayload === "string") {
+    try {
+      const parsedPayload = JSON.parse(rawPayload);
+      raw =
+        parsedPayload && typeof parsedPayload === "object"
+          ? (parsedPayload as Record<string, unknown>)
+          : {};
+    } catch {
+      raw = {};
+    }
+  } else {
+    raw = {};
+  }
+  const rawParent =
+    typeof raw.parentId === "string"
+      ? raw.parentId
+      : (formData.get("parentId") as string | null);
   const parsed = createCategorySchema.safeParse({
-    title: formData.get("title"),
-    slug: formData.get("slug"),
+    title: typeof raw.title === "string" ? raw.title : formData.get("title"),
+    localizedText:
+      raw.localizedText && typeof raw.localizedText === "object"
+        ? raw.localizedText
+        : undefined,
+    slug: typeof raw.slug === "string" ? raw.slug : formData.get("slug"),
     parentId:
       typeof rawParent === "string" && rawParent.trim()
         ? rawParent.trim()
         : null,
-    status: formData.get("status"),
+    status: typeof raw.status === "string" ? raw.status : formData.get("status"),
   });
 
   if (!parsed.success) {
@@ -196,7 +263,7 @@ export async function updateCategoryFromDrawerAction(
     .update(categories)
     .set({
       parentId: parsed.data.parentId,
-      translations: buildTranslations(parsed.data.title, parsed.data.slug),
+      translations: buildTranslations(parsed.data),
       status: parsed.data.status,
       updatedAt: new Date(),
     })

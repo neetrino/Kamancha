@@ -17,6 +17,7 @@ import {
 } from "@/features/categories/actions";
 import { slugifyCategoryTitle } from "@/features/categories/domain/slugify";
 import type { AdminCategoryListItem } from "@/features/categories/application/list-admin-categories";
+import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
@@ -46,7 +47,12 @@ export function AddCategoryDrawer({
   const router = useRouter();
   const isEdit = category != null;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [title, setTitle] = useState("");
+  const [activeLocale, setActiveLocale] = useState<Locale>("hy");
+  const [localizedTitles, setLocalizedTitles] = useState<Record<Locale, string>>({
+    hy: "",
+    en: "",
+    ru: "",
+  });
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
   const [parentId, setParentId] = useState("");
@@ -57,6 +63,14 @@ export function AddCategoryDrawer({
   const [pendingRemoveImage, setPendingRemoveImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const activeTitle = localizedTitles[activeLocale];
+
+  function setActiveTitle(title: string): void {
+    setLocalizedTitles((current) => ({
+      ...current,
+      [activeLocale]: title,
+    }));
+  }
 
   function clearImage(): void {
     setImageFile(null);
@@ -76,7 +90,12 @@ export function AddCategoryDrawer({
     if (!open) return;
 
     if (category) {
-      scheduleStateUpdate(setTitle, category.title);
+      scheduleStateUpdate(setActiveLocale, "hy");
+      scheduleStateUpdate(setLocalizedTitles, {
+        hy: category.translations.hy?.title ?? "",
+        en: category.translations.en?.title ?? "",
+        ru: category.translations.ru?.title ?? "",
+      });
       scheduleStateUpdate(setSlug, category.slug);
       scheduleStateUpdate(setSlugTouched, true);
       scheduleStateUpdate(setParentId, category.parentId ?? "");
@@ -89,7 +108,12 @@ export function AddCategoryDrawer({
       scheduleStateUpdate(setRemoveExistingImage, false);
       scheduleStateUpdate(setError, null);
     } else {
-      scheduleStateUpdate(setTitle, "");
+      scheduleStateUpdate(setActiveLocale, "hy");
+      scheduleStateUpdate(setLocalizedTitles, {
+        hy: "",
+        en: "",
+        ru: "",
+      });
       scheduleStateUpdate(setSlug, "");
       scheduleStateUpdate(setSlugTouched, false);
       scheduleStateUpdate(setParentId, "");
@@ -102,7 +126,9 @@ export function AddCategoryDrawer({
     scheduleStateUpdate(setPendingRemoveImage, false);
   }, [open, category]);
 
-  const displaySlug = slugTouched ? slug : slugifyCategoryTitle(title) || "---";
+  const displaySlug = slugTouched
+    ? slug
+    : slugifyCategoryTitle(localizedTitles.hy) || "---";
   const parentOptions = categories.filter((item) => item.id !== category?.id);
 
   return (
@@ -122,16 +148,33 @@ export function AddCategoryDrawer({
           className="flex min-h-0 flex-1 flex-col"
           onSubmit={(event) => {
             event.preventDefault();
+            const missingTitleLocale = locales.find(
+              (loc) => !localizedTitles[loc].trim(),
+            );
+            if (missingTitleLocale) {
+              setError(
+                `${localeLabels[missingTitleLocale]} — ${copy.drawer.categoryTitle} ${copy.common.requiredMark}`,
+              );
+              return;
+            }
             const nextSlug =
               slugTouched && slug.trim()
                 ? slug.trim()
-                : slugifyCategoryTitle(title);
+                : slugifyCategoryTitle(localizedTitles.hy);
+
+            const payload = {
+              localizedText: {
+                hy: { title: localizedTitles.hy.trim() },
+                en: { title: localizedTitles.en.trim() },
+                ru: { title: localizedTitles.ru.trim() },
+              },
+              slug: nextSlug,
+              parentId,
+              status,
+            };
 
             const formData = new FormData();
-            formData.set("title", title.trim());
-            formData.set("slug", nextSlug);
-            formData.set("parentId", parentId);
-            formData.set("status", status);
+            formData.set("data", JSON.stringify(payload));
             if (imageFile) {
               formData.set("image", imageFile);
             }
@@ -161,6 +204,31 @@ export function AddCategoryDrawer({
           }}
         >
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+            <div>
+              <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                {copy.drawer.translations}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {locales.map((loc) => {
+                  const selected = loc === activeLocale;
+                  return (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => setActiveLocale(loc)}
+                      className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
+                        selected
+                          ? "bg-brand-forest text-white"
+                          : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      {localeLabels[loc]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <label className="block">
               <span className={ADMIN_LABEL}>
                 {copy.drawer.categoryTitle}{" "}
@@ -168,8 +236,8 @@ export function AddCategoryDrawer({
               </span>
               <input
                 required
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
+                value={activeTitle}
+                onChange={(event) => setActiveTitle(event.target.value)}
                 placeholder={copy.drawer.categoryTitlePlaceholder}
                 className={ADMIN_INPUT}
                 disabled={isPending}
@@ -285,7 +353,7 @@ export function AddCategoryDrawer({
           </div>
 
           <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
-            <Button type="submit" disabled={isPending || !title.trim()}>
+            <Button type="submit" disabled={isPending || !localizedTitles.hy.trim()}>
               {isPending
                 ? isEdit
                   ? copy.common.saving

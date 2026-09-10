@@ -11,6 +11,7 @@ export type AdminCategoryListItem = {
   id: string;
   title: string;
   slug: string;
+  translations: (typeof categories.$inferSelect)["translations"];
   status: string;
   parentId: string | null;
   parentTitle: string | null;
@@ -81,6 +82,7 @@ export async function listAdminCategories(
       id: row.id,
       title: translation?.title ?? "Untitled",
       slug: translation?.slug ?? "",
+      translations: row.translations,
       status: row.status,
       parentId: row.parentId,
       parentTitle,

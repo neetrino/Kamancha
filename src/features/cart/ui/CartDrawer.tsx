@@ -266,6 +266,7 @@ export function CartDrawer({
                   typeof item.href === "string" && item.href.length > 0
                     ? item.href
                     : null;
+                const imageSrc = storefrontProductImageSrc(item.imageUrl);
 
                 return (
                   <li
@@ -280,23 +281,27 @@ export function CartDrawer({
                           onClick={closeDrawer}
                           className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl"
                         >
-                          <Image
-                            src={storefrontProductImageSrc(item.imageUrl)}
-                            alt={item.title}
-                            fill
-                            sizes="112px"
-                            className="object-cover"
-                          />
+                          {imageSrc ? (
+                            <Image
+                              src={imageSrc}
+                              alt={item.title}
+                              fill
+                              sizes="112px"
+                              className="object-cover"
+                            />
+                          ) : null}
                         </AppLink>
                       ) : (
                         <div className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl">
-                          <Image
-                            src={storefrontProductImageSrc(item.imageUrl)}
-                            alt={item.title}
-                            fill
-                            sizes="112px"
-                            className="object-cover"
-                          />
+                          {imageSrc ? (
+                            <Image
+                              src={imageSrc}
+                              alt={item.title}
+                              fill
+                              sizes="112px"
+                              className="object-cover"
+                            />
+                          ) : null}
                         </div>
                       )}
 

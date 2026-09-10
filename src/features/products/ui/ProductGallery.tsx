@@ -9,7 +9,6 @@ import type { ProductGalleryImage } from "@/features/products/types";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import { clearActiveFocus } from "@/lib/dom/clear-active-focus";
 import type { Locale } from "@/lib/i18n/config";
-import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 import {
   BODY_SCROLL_LOCK_ALLOW,
   useBodyScrollLock,
@@ -58,20 +57,7 @@ export function ProductGallery({
   isSignedIn,
   wishlistLabel,
 }: ProductGalleryProps) {
-  const galleryImages = useMemo<ProductGalleryImage[]>(
-    () =>
-      images.length > 0
-        ? images
-        : [
-            {
-              id: "placeholder",
-              url: storefrontProductImageSrc(null),
-              alt: title,
-              isPrimary: true,
-            },
-          ],
-    [images, title],
-  );
+  const galleryImages = useMemo<ProductGalleryImage[]>(() => images, [images]);
   const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
   const [zoomed, setZoomed] = useState(false);
   const portalReady = useIsClient();
@@ -232,46 +218,54 @@ export function ProductGallery({
   return (
     <div className="flex w-full flex-col gap-4 xl:w-[min(100%,640px)] xl:shrink-0">
       <div className="group relative aspect-[520/420] w-full overflow-hidden rounded-[30px] border-[3px] border-white bg-white">
-        {/* Mobile: swipe / scroll through images */}
-        <div
-          ref={mobileScrollerRef}
-          onScroll={syncSelectedFromMobileScroll}
-          className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain xl:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {galleryImages.map((image, index) => (
+        {galleryImages.length > 0 ? (
+          <>
+            {/* Mobile: swipe / scroll through images */}
             <div
-              key={image.id}
-              className="relative h-full w-full shrink-0 snap-center"
+              ref={mobileScrollerRef}
+              onScroll={syncSelectedFromMobileScroll}
+              className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain xl:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
-              <Image
-                src={image.url}
-                alt={image.alt || title}
-                fill
-                sizes="100vw"
-                className="object-cover"
-                priority={index === 0}
-              />
+              {galleryImages.map((image, index) => (
+                <div
+                  key={image.id}
+                  className="relative h-full w-full shrink-0 snap-center"
+                >
+                  <Image
+                    src={image.url}
+                    alt={image.alt || title}
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Desktop: selected image */}
-        <div className="relative hidden h-full w-full xl:block">
-          {selected ? (
-            <Image
-              src={selected.url}
-              alt={selected.alt || title}
-              fill
-              sizes="640px"
-              className="object-cover"
-              priority
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-sm text-brand-forest/40">
-              No image
+            {/* Desktop: selected image */}
+            <div className="relative hidden h-full w-full xl:block">
+              {selected ? (
+                <Image
+                  src={selected.url}
+                  alt={selected.alt || title}
+                  fill
+                  sizes="640px"
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-sm text-brand-forest/40">
+                  No image
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-sm text-brand-forest/40">
+            No image
+          </div>
+        )}
 
         {discountPercent != null ? (
           <span className="pointer-events-none absolute top-3 left-3 z-10 inline-flex h-[33px] min-w-24 items-center justify-center rounded-[30px] bg-[#84d086] px-3 text-sm font-bold text-[#132814]">

@@ -26,6 +26,7 @@ import {
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
 import { ProductDrawerModifiers } from "@/features/products/ui/ProductDrawerModifiers";
+import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
@@ -42,8 +43,14 @@ type ProductDrawerProduct = Pick<
   | "categoryIds"
   | "modifierIds"
   | "discount"
+  | "translations"
   | "images"
 >;
+
+type ProductLocaleDraft = {
+  title: string;
+  description: string;
+};
 
 type DrawerCopy = {
   drawer: Dictionary["admin"]["products"]["drawer"];
@@ -88,9 +95,15 @@ export function ProductDrawer({
 }: ProductDrawerProps) {
   const router = useRouter();
   const isEdit = product != null;
-  const [title, setTitle] = useState("");
+  const [activeLocale, setActiveLocale] = useState<Locale>("hy");
+  const [localizedText, setLocalizedText] = useState<
+    Record<Locale, ProductLocaleDraft>
+  >({
+    hy: { title: "", description: "" },
+    en: { title: "", description: "" },
+    ru: { title: "", description: "" },
+  });
   const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
   const [images, setImages] = useState<ProductDraftImage[]>([]);
   const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
   const [categories, setCategories] =
@@ -106,6 +119,14 @@ export function ProductDrawer({
   const [stockOnHand, setStockOnHand] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const activeDraft = localizedText[activeLocale];
+
+  function setActiveDraft(patch: Partial<ProductLocaleDraft>): void {
+    setLocalizedText((current) => ({
+      ...current,
+      [activeLocale]: { ...current[activeLocale], ...patch },
+    }));
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -113,9 +134,22 @@ export function ProductDrawer({
     scheduleStateUpdate(setCategories, initialCategories);
     scheduleStateUpdate(setModifierLibrary, initialModifierLibrary);
     if (product) {
-      scheduleStateUpdate(setTitle, product.title);
+      scheduleStateUpdate(setActiveLocale, "hy");
+      scheduleStateUpdate(setLocalizedText, {
+        hy: {
+          title: product.translations.hy?.title ?? "",
+          description: product.translations.hy?.description ?? "",
+        },
+        en: {
+          title: product.translations.en?.title ?? "",
+          description: product.translations.en?.description ?? "",
+        },
+        ru: {
+          title: product.translations.ru?.title ?? "",
+          description: product.translations.ru?.description ?? "",
+        },
+      });
       scheduleStateUpdate(setSlug, product.slug);
-      scheduleStateUpdate(setDescription, product.description);
       scheduleStateUpdate(setImages, imagesFromProduct(product));
       scheduleStateUpdate(setRemovedImageIds, []);
       scheduleStateUpdate(setCategoryIds, product.categoryIds);
@@ -140,9 +174,13 @@ export function ProductDrawer({
       scheduleStateUpdate(setStockOnHand, String(product.stockOnHand));
       scheduleStateUpdate(setError, null);
     } else {
-      scheduleStateUpdate(setTitle, "");
+      scheduleStateUpdate(setActiveLocale, "hy");
+      scheduleStateUpdate(setLocalizedText, {
+        hy: { title: "", description: "" },
+        en: { title: "", description: "" },
+        ru: { title: "", description: "" },
+      });
       scheduleStateUpdate(setSlug, "");
-      scheduleStateUpdate(setDescription, "");
       scheduleStateUpdate(setImages, []);
       scheduleStateUpdate(setRemovedImageIds, []);
       scheduleStateUpdate(setCategoryIds, []);
@@ -193,12 +231,33 @@ export function ProductDrawer({
             const primaryNewIndex = primaryImage?.file
               ? newImages.findIndex((image) => image.key === primaryImage.key)
               : null;
+            const missingTitleLocale = locales.find(
+              (loc) => !localizedText[loc].title.trim(),
+            );
+            if (missingTitleLocale) {
+              setError(
+                `${localeLabels[missingTitleLocale]} — ${copy.drawer.title} ${copy.common.requiredMark}`,
+              );
+              return;
+            }
 
             const payload = {
               sku: sku.trim(),
-              title: title.trim(),
+              localizedText: {
+                hy: {
+                  title: localizedText.hy.title.trim(),
+                  description: localizedText.hy.description.trim() || undefined,
+                },
+                en: {
+                  title: localizedText.en.title.trim(),
+                  description: localizedText.en.description.trim() || undefined,
+                },
+                ru: {
+                  title: localizedText.ru.title.trim(),
+                  description: localizedText.ru.description.trim() || undefined,
+                },
+              },
               slug: slug.trim(),
-              description: description.trim() || undefined,
               priceAmount: Number(priceAmount),
               stockOnHand: Number(stockOnHand),
               categoryIds,
@@ -254,6 +313,31 @@ export function ProductDrawer({
           }}
         >
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+            <div>
+              <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                {copy.drawer.translations}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {locales.map((loc) => {
+                  const selected = loc === activeLocale;
+                  return (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => setActiveLocale(loc)}
+                      className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
+                        selected
+                          ? "bg-brand-forest text-white"
+                          : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      {localeLabels[loc]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className={ADMIN_LABEL}>
@@ -262,8 +346,10 @@ export function ProductDrawer({
                 </span>
                 <input
                   required
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
+                  value={activeDraft.title}
+                  onChange={(event) =>
+                    setActiveDraft({ title: event.target.value })
+                  }
                   placeholder={copy.drawer.titlePlaceholder}
                   className={ADMIN_INPUT}
                   disabled={isPending}
@@ -288,8 +374,10 @@ export function ProductDrawer({
             <label className="block">
               <span className={ADMIN_LABEL}>{copy.drawer.description}</span>
               <textarea
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
+                value={activeDraft.description}
+                onChange={(event) =>
+                  setActiveDraft({ description: event.target.value })
+                }
                 placeholder={copy.drawer.descriptionPlaceholder}
                 className={ADMIN_TEXTAREA}
                 disabled={isPending}

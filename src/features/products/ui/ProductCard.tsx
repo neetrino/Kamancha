@@ -86,6 +86,7 @@ export function ProductCard({
   const compact = layout === "compact";
   const catalog = layout === "catalog";
   const starPx = fluid ? 12 : catalog ? 24 : 18;
+  const imageSrc = storefrontProductImageSrc(imageUrl);
 
   return (
     <article
@@ -100,15 +101,17 @@ export function ProductCard({
           prefetchPolicy={priority ? "intent" : "auto"}
           className="absolute inset-0 block"
         >
-          <Image
-            src={storefrontProductImageSrc(imageUrl)}
-            alt={title}
-            fill
-            sizes={ui.imageSizes}
-            className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-            priority={priority}
-            loading={priority ? undefined : "lazy"}
-          />
+          {imageSrc ? (
+            <Image
+              src={imageSrc}
+              alt={title}
+              fill
+              sizes={ui.imageSizes}
+              className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+              priority={priority}
+              loading={priority ? undefined : "lazy"}
+            />
+          ) : null}
         </AppLink>
 
         {discountPercent != null ? (

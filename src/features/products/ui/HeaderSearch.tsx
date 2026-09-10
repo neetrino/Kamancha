@@ -224,43 +224,49 @@ export function HeaderSearch({
               <ul
                 className={`divide-y divide-gray-100 ${pending ? "opacity-70" : ""}`}
               >
-                {displayProducts.map((product) => (
-                  <li key={product.id}>
-                    <AppLink
-                      href={product.href}
-                      prefetchPolicy="intent"
-                      onClick={closePanel}
-                      className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
-                    >
-                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                        <Image
-                          src={storefrontProductImageSrc(product.imageUrl)}
-                          alt=""
-                          fill
-                          sizes="56px"
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900">
-                          {product.title}
-                        </p>
-                        <p className="mt-0.5 text-sm text-gray-600">
-                          {product.compareAtFormatted ? (
-                            <>
-                              <span className="mr-2 text-gray-400 line-through">
-                                {product.compareAtFormatted}
-                              </span>
-                              <span>{product.priceFormatted}</span>
-                            </>
-                          ) : (
-                            product.priceFormatted
-                          )}
-                        </p>
-                      </div>
-                    </AppLink>
-                  </li>
-                ))}
+                {displayProducts.map((product) => {
+                  const imageSrc = storefrontProductImageSrc(product.imageUrl);
+
+                  return (
+                    <li key={product.id}>
+                      <AppLink
+                        href={product.href}
+                        prefetchPolicy="intent"
+                        onClick={closePanel}
+                        className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
+                      >
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                          {imageSrc ? (
+                            <Image
+                              src={imageSrc}
+                              alt=""
+                              fill
+                              sizes="56px"
+                              className="object-cover"
+                            />
+                          ) : null}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-gray-900">
+                            {product.title}
+                          </p>
+                          <p className="mt-0.5 text-sm text-gray-600">
+                            {product.compareAtFormatted ? (
+                              <>
+                                <span className="mr-2 text-gray-400 line-through">
+                                  {product.compareAtFormatted}
+                                </span>
+                                <span>{product.priceFormatted}</span>
+                              </>
+                            ) : (
+                              product.priceFormatted
+                            )}
+                          </p>
+                        </div>
+                      </AppLink>
+                    </li>
+                  );
+                })}
               </ul>
             ) : null}
           </div>
