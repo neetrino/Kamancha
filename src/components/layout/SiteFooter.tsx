@@ -77,6 +77,7 @@ function FooterColumn({
 const COPYRIGHT_LINE_ONE_PREFIX = "Copyright";
 const COPYRIGHT_CREATED_BY = "Created by";
 const COPYRIGHT_COMPANY = "Neetrino IT Company";
+const COPYRIGHT_COMPANY_SHORT = "Neetrino";
 const COPYRIGHT_COMPANY_HREF = "https://neetrino.com";
 
 /** Big Fat Boii maps © and | but those glyphs have empty outlines. */
@@ -102,14 +103,22 @@ function FooterCopyright() {
     >
       <p
         data-node-id="22:390"
-        className="max-w-full text-center font-big-fat-boii text-[12px] leading-5 font-normal text-white/40 xl:text-[14px] xl:whitespace-nowrap"
+        className="max-w-full text-center font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/40"
       >
-        <span className="block xl:inline">
-          {COPYRIGHT_LINE_ONE_PREFIX} <CopyrightSymbol /> {year}{" "}
-          <CopyrightPipe /> All Rights Reserved <CopyrightPipe />
+        <span className="xl:hidden">
+          <CopyrightSymbol /> {year} <CopyrightPipe /> {COPYRIGHT_CREATED_BY}{" "}
+          <a
+            href={COPYRIGHT_COMPANY_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white transition-colors hover:text-white/80"
+          >
+            {COPYRIGHT_COMPANY_SHORT}
+          </a>
         </span>
-        <span className="hidden xl:inline"> </span>
-        <span className="block xl:inline">
+        <span className="hidden xl:inline">
+          {COPYRIGHT_LINE_ONE_PREFIX} <CopyrightSymbol /> {year}{" "}
+          <CopyrightPipe /> All Rights Reserved <CopyrightPipe />{" "}
           {COPYRIGHT_CREATED_BY}{" "}
           <a
             href={COPYRIGHT_COMPANY_HREF}
