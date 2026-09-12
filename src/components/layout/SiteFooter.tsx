@@ -270,18 +270,23 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
               >
                 {footer.address2}
               </a>
-              <a
-                href={`tel:${footer.phone.replace(/\s/g, "")}`}
-                className={CONTACT_LINK_CLASS}
-              >
-                {footer.phone}
-              </a>
-              <a
-                href={`tel:${footer.phone2.replace(/\s/g, "")}`}
-                className={CONTACT_LINK_CLASS}
-              >
-                {footer.phone2}
-              </a>
+              <p className="font-big-fat-boii text-[14px] leading-5 font-normal whitespace-nowrap text-white/50">
+                <a
+                  href={`tel:${footer.phone.replace(/\s/g, "")}`}
+                  className="transition-colors hover:text-white"
+                >
+                  {footer.phone}
+                </a>
+                <span aria-hidden className="mx-2 font-sans text-white/50">
+                  |
+                </span>
+                <a
+                  href={`tel:${footer.phone2.replace(/\s/g, "")}`}
+                  className="transition-colors hover:text-white"
+                >
+                  {footer.phone2}
+                </a>
+              </p>
               <a
                 href={`mailto:${footer.email}`}
                 className={`${CONTACT_LINK_CLASS} uppercase`}
