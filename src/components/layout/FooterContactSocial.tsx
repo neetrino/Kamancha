@@ -38,7 +38,7 @@ function SocialCircle({
 }
 
 /**
- * Mobile social row under copyright — contact page only.
+ * Mobile social row under copyright — contact + about pages only.
  */
 export function FooterContactSocial({
   instagramHref,
@@ -49,8 +49,8 @@ export function FooterContactSocial({
   tiktokLabel,
 }: FooterContactSocialProps) {
   const pathname = usePathname() ?? "";
-  const isContactPage = /\/contact\/?$/.test(pathname);
-  if (!isContactPage) {
+  const showSocial = /\/(contact|about)\/?$/.test(pathname);
+  if (!showSocial) {
     return null;
   }
 
