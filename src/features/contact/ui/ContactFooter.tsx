@@ -10,15 +10,15 @@ type ContactFooterProps = {
   copy: Dictionary["contact"];
 };
 
-/** Desktop: map slightly narrower than the pills row (previous behavior). */
+/** Desktop only: map a bit narrower than the pills row. */
 const MAP_WIDTH_INSET_DESKTOP_PX = 64;
 
-const DESKTOP_PILLS_MQ = "(min-width: 744px)";
+const DESKTOP_MQ = "(min-width: 744px)";
 
 /**
  * Contact pills + map.
- * Mobile: map matches pill width inside the form column.
- * Desktop: previous wider map (pills span − inset).
+ * Mobile: map matches the form/pills column.
+ * Desktop: original sizing (pills container width − inset).
  */
 export function ContactFooter({ copy }: ContactFooterProps) {
   const pillsRef = useRef<HTMLDivElement>(null);
@@ -31,34 +31,13 @@ export function ContactFooter({ copy }: ContactFooterProps) {
     }
 
     const measuredNode: HTMLDivElement = pillsNode;
-    const desktopMq = window.matchMedia(DESKTOP_PILLS_MQ);
+    const desktopMq = window.matchMedia(DESKTOP_MQ);
 
     function syncWidth(): void {
-      const boxes: DOMRect[] = [];
-      for (const pill of measuredNode.querySelectorAll("[data-contact-pill]")) {
-        const box = pill.getBoundingClientRect();
-        if (box.width > 0 && box.height > 0) {
-          boxes.push(box);
-        }
-      }
-
-      let width = 0;
-      if (boxes.length === 0) {
-        width = measuredNode.getBoundingClientRect().width;
-      } else {
-        let minLeft = Number.POSITIVE_INFINITY;
-        let maxRight = Number.NEGATIVE_INFINITY;
-        for (const box of boxes) {
-          minLeft = Math.min(minLeft, box.left);
-          maxRight = Math.max(maxRight, box.right);
-        }
-        width = maxRight - minLeft;
-      }
-
+      const width = measuredNode.getBoundingClientRect().width;
       if (width <= 0) {
         return;
       }
-
       const inset = desktopMq.matches ? MAP_WIDTH_INSET_DESKTOP_PX : 0;
       setMapWidthPx(Math.round(Math.max(0, width - inset)));
     }
