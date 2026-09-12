@@ -10,11 +10,15 @@ type ContactFooterProps = {
   copy: Dictionary["contact"];
 };
 
-/** Map is a bit narrower than the pills row. */
-const MAP_WIDTH_INSET_PX = 64;
+/** Desktop only: map a bit narrower than the pills row. */
+const MAP_WIDTH_INSET_DESKTOP_PX = 64;
+
+const DESKTOP_MQ = "(min-width: 744px)";
 
 /**
- * Contact pills + map. Map width follows the pills row, slightly inset.
+ * Contact pills + map.
+ * Mobile: map matches the form/pills column.
+ * Desktop: original sizing (pills container width − inset).
  */
 export function ContactFooter({ copy }: ContactFooterProps) {
   const pillsRef = useRef<HTMLDivElement>(null);
@@ -27,22 +31,29 @@ export function ContactFooter({ copy }: ContactFooterProps) {
     }
 
     const measuredNode: HTMLDivElement = pillsNode;
+    const desktopMq = window.matchMedia(DESKTOP_MQ);
 
     function syncWidth(): void {
       const width = measuredNode.getBoundingClientRect().width;
-      if (width > 0) {
-        setMapWidthPx(Math.round(Math.max(0, width - MAP_WIDTH_INSET_PX)));
+      if (width <= 0) {
+        return;
       }
+      const inset = desktopMq.matches ? MAP_WIDTH_INSET_DESKTOP_PX : 0;
+      setMapWidthPx(Math.round(Math.max(0, width - inset)));
     }
 
     syncWidth();
     const observer = new ResizeObserver(syncWidth);
     observer.observe(measuredNode);
-    return () => observer.disconnect();
+    desktopMq.addEventListener("change", syncWidth);
+    return () => {
+      observer.disconnect();
+      desktopMq.removeEventListener("change", syncWidth);
+    };
   }, []);
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div className="mx-auto flex w-full max-w-[633px] flex-col items-center min-[744px]:max-w-none">
       <div ref={pillsRef} className="w-full min-[744px]:w-fit">
         <ContactInfo copy={copy} />
       </div>

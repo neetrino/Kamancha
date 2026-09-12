@@ -118,21 +118,23 @@ async function HomeBelowFold({ locale, dictionary }: { locale: Locale; dictionar
           overlayPlate
           tabletSheet="white"
         />
-        <HomeMobileProductSection
-          locale={locale}
-          title={dictionary.home.discountedTitle}
-          titleNodeId="196:358"
-          viewAllLabel={dictionary.home.viewAll}
-          viewAllHref={`/${locale}/products?onSale=true`}
-          viewAllNodeId="196:360"
-          emptyLabel={dictionary.home.emptyDiscounted}
-          wishlistLabel={dictionary.nav.wishlist}
-          addToCartLabel={dictionary.product.addToCart}
-          discountOffLabel={dictionary.home.discountOff}
-          isSignedIn={Boolean(user)}
-          products={discountedCards}
-          tabletSheet="forest"
-        />
+        {discountedCards.length > 0 ? (
+          <HomeMobileProductSection
+            locale={locale}
+            title={dictionary.home.discountedTitle}
+            titleNodeId="196:358"
+            viewAllLabel={dictionary.home.viewAll}
+            viewAllHref={`/${locale}/products?onSale=true`}
+            viewAllNodeId="196:360"
+            emptyLabel={dictionary.home.emptyDiscounted}
+            wishlistLabel={dictionary.nav.wishlist}
+            addToCartLabel={dictionary.product.addToCart}
+            discountOffLabel={dictionary.home.discountOff}
+            isSignedIn={Boolean(user)}
+            products={discountedCards}
+            tabletSheet="forest"
+          />
+        ) : null}
       </div>
 
       <div className="hidden xl:block">

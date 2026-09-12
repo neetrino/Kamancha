@@ -11,6 +11,7 @@ import {
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
+import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
 import { saveDeliverySettingsAction } from "@/features/delivery/application/save-delivery-settings";
 import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
 import type { StoreDeliverySettings } from "@/features/delivery/domain/delivery-settings";
@@ -88,6 +89,19 @@ export function AdminDeliveryView({
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const languageCode: Locale = isLocale(locale) ? locale : "hy";
+  const { collapsed } = useAdminSidebarCollapse();
+  const stickyBarOffsetClass = collapsed ? "lg:left-16" : "lg:left-64";
+  const [savedSnapshot, setSavedSnapshot] = useState(() => ({
+    originAddress: settings.originAddress,
+    originLat: settings.originLat,
+    originLng: settings.originLng,
+    pricePerKmAmount:
+      settings.pricePerKmAmount > 0 ? String(settings.pricePerKmAmount) : "",
+    isActive: settings.isActive,
+    schedule: settings.schedule,
+    cashChangeDenominations: settings.cashChangeDenominations,
+    imageUrls: initialImageUrls,
+  }));
 
   const sortedDenominations = useMemo(
     () =>
@@ -97,26 +111,64 @@ export function AdminDeliveryView({
     [cashChangeDenominations],
   );
 
+  const isDirty = useMemo(() => {
+    if (originAddress !== savedSnapshot.originAddress) return true;
+    if (originLat !== savedSnapshot.originLat) return true;
+    if (originLng !== savedSnapshot.originLng) return true;
+    if (pricePerKmAmount !== savedSnapshot.pricePerKmAmount) return true;
+    if (isActive !== savedSnapshot.isActive) return true;
+    if (JSON.stringify(schedule) !== JSON.stringify(savedSnapshot.schedule)) {
+      return true;
+    }
+    if (
+      JSON.stringify(sortedDenominations) !==
+      JSON.stringify(
+        [...savedSnapshot.cashChangeDenominations].sort(
+          (a, b) => a.sortOrder - b.sortOrder || a.amount - b.amount,
+        ),
+      )
+    ) {
+      return true;
+    }
+    if (JSON.stringify(imageUrls) !== JSON.stringify(savedSnapshot.imageUrls)) {
+      return true;
+    }
+    return false;
+  }, [
+    imageUrls,
+    isActive,
+    originAddress,
+    originLat,
+    originLng,
+    pricePerKmAmount,
+    savedSnapshot,
+    schedule,
+    sortedDenominations,
+  ]);
+
   function onSave(): void {
+    if (!isDirty) return;
     startTransition(async () => {
       setError(null);
       setMessage(null);
       const weekly = normalizeScheduleForSave(schedule);
-      setSchedule({ ...schedule, weekly });
+      const nextSchedule = { ...schedule, weekly };
+      setSchedule(nextSchedule);
+      const nextDenominations = sortedDenominations.map((item, index) => ({
+        ...item,
+        sortOrder: index,
+      }));
       const result = await saveDeliverySettingsAction(locale, {
         originAddress,
         pricePerKmAmount: Number(pricePerKmAmount),
         isActive,
         schedule: {
-          slotMinutes: schedule.slotMinutes,
-          maxDaysAhead: schedule.maxDaysAhead,
+          slotMinutes: nextSchedule.slotMinutes,
+          maxDaysAhead: nextSchedule.maxDaysAhead,
           weekly,
-          closedDates: schedule.closedDates,
+          closedDates: nextSchedule.closedDates,
         },
-        cashChangeDenominations: sortedDenominations.map((item, index) => ({
-          ...item,
-          sortOrder: index,
-        })),
+        cashChangeDenominations: nextDenominations,
       });
       if (!result.ok) {
         setError(result.error.message);
@@ -125,12 +177,36 @@ export function AdminDeliveryView({
       setOriginAddress(result.value.originAddress);
       setOriginLat(result.value.originLat);
       setOriginLng(result.value.originLng);
+      setCashChangeDenominations(nextDenominations);
+      setSavedSnapshot({
+        originAddress: result.value.originAddress,
+        originLat: result.value.originLat,
+        originLng: result.value.originLng,
+        pricePerKmAmount,
+        isActive,
+        schedule: nextSchedule,
+        cashChangeDenominations: nextDenominations,
+        imageUrls,
+      });
       setMessage(copy.delivery.saved);
     });
   }
 
+  function onCancel(): void {
+    setOriginAddress(savedSnapshot.originAddress);
+    setOriginLat(savedSnapshot.originLat);
+    setOriginLng(savedSnapshot.originLng);
+    setPricePerKmAmount(savedSnapshot.pricePerKmAmount);
+    setIsActive(savedSnapshot.isActive);
+    setSchedule(savedSnapshot.schedule);
+    setCashChangeDenominations(savedSnapshot.cashChangeDenominations);
+    setImageUrls(savedSnapshot.imageUrls);
+    setError(null);
+    setMessage(null);
+  }
+
   return (
-    <section>
+    <section className="pb-24">
       <div className="mb-6">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.delivery.title}</h1>
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{copy.delivery.subtitle}</p>
@@ -245,13 +321,31 @@ export function AdminDeliveryView({
             disabled={isPending}
             copy={copy.delivery.cashChange}
             confirm={copy.confirm}
-            saveAction={
-              <Button type="submit" disabled={isPending}>
-                {isPending ? copy.common.saving : copy.common.save}
-              </Button>
-            }
           />
         </Card>
+
+        <div
+          className={`fixed inset-x-0 bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] sm:px-6 lg:px-8 ${stickyBarOffsetClass}`}
+        >
+          <div className="flex items-center justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isPending || !isDirty}
+              className="min-w-[160px] px-10"
+            >
+              {copy.common.cancel}
+            </Button>
+            <Button
+              type="submit"
+              className="min-w-[180px] px-10"
+              disabled={isPending || !isDirty}
+            >
+              {isPending ? copy.common.saving : copy.common.save}
+            </Button>
+          </div>
+        </div>
       </form>
     </section>
   );

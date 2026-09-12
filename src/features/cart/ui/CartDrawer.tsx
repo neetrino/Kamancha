@@ -281,27 +281,23 @@ export function CartDrawer({
                           onClick={closeDrawer}
                           className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl"
                         >
-                          {imageSrc ? (
-                            <Image
-                              src={imageSrc}
-                              alt={item.title}
-                              fill
-                              sizes="112px"
-                              className="object-cover"
-                            />
-                          ) : null}
+                          <Image
+                            src={imageSrc}
+                            alt={item.title}
+                            fill
+                            sizes="112px"
+                            className="object-cover"
+                          />
                         </AppLink>
                       ) : (
                         <div className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl">
-                          {imageSrc ? (
-                            <Image
-                              src={imageSrc}
-                              alt={item.title}
-                              fill
-                              sizes="112px"
-                              className="object-cover"
-                            />
-                          ) : null}
+                          <Image
+                            src={imageSrc}
+                            alt={item.title}
+                            fill
+                            sizes="112px"
+                            className="object-cover"
+                          />
                         </div>
                       )}
 

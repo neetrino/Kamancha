@@ -153,7 +153,7 @@ function RelatedMobileRail({
 }) {
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 xl:hidden">
-      <div className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <Stagger
           className={`inline-flex gap-[13px] px-2.5 py-3 ${STOREFRONT_TABLET_INSET_X}`}
           stagger={0.08}

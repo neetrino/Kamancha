@@ -236,15 +236,13 @@ export function HeaderSearch({
                         className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50"
                       >
                         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                          {imageSrc ? (
-                            <Image
-                              src={imageSrc}
-                              alt=""
-                              fill
-                              sizes="56px"
-                              className="object-cover"
-                            />
-                          ) : null}
+                          <Image
+                            src={imageSrc}
+                            alt=""
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-gray-900">
