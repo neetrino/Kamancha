@@ -101,17 +101,15 @@ export function ProductCard({
           prefetchPolicy={priority ? "intent" : "auto"}
           className="absolute inset-0 block"
         >
-          {imageSrc ? (
-            <Image
-              src={imageSrc}
-              alt={title}
-              fill
-              sizes={ui.imageSizes}
-              className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-              priority={priority}
-              loading={priority ? undefined : "lazy"}
-            />
-          ) : null}
+          <Image
+            src={imageSrc}
+            alt={title}
+            fill
+            sizes={ui.imageSizes}
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
+            priority={priority}
+            loading={priority ? undefined : "lazy"}
+          />
         </AppLink>
 
         {discountPercent != null ? (

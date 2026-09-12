@@ -15,6 +15,7 @@ import {
 } from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
+import { STOREFRONT_PRODUCT_PHOTO } from "@/lib/media/storefront-product-photo";
 
 const ZOOM_SRC = staticAssetUrl("/assets/brand/product/zoom-in.svg");
 
@@ -57,7 +58,17 @@ export function ProductGallery({
   isSignedIn,
   wishlistLabel,
 }: ProductGalleryProps) {
-  const galleryImages = useMemo<ProductGalleryImage[]>(() => images, [images]);
+  const galleryImages = useMemo<ProductGalleryImage[]>(() => {
+    if (images.length > 0) return images;
+    return [
+      {
+        id: "placeholder",
+        url: STOREFRONT_PRODUCT_PHOTO,
+        alt: title,
+        isPrimary: true,
+      },
+    ];
+  }, [images, title]);
   const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
   const [zoomed, setZoomed] = useState(false);
   const portalReady = useIsClient();

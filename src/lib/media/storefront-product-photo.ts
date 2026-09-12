@@ -1,18 +1,19 @@
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 /**
- * Fallback photo when a product has no READY primary media in the database.
+ * Fallback photo when a product has no READY primary media.
+ * Same green Kamancha mark used for link / Open Graph previews.
  */
 export const STOREFRONT_PRODUCT_PHOTO = staticAssetUrl(
-  "/assets/brand/products/placeholder-tolma.webp",
+  "/assets/brand/og-share.png",
 );
 
-/** Returns product media URL only when one is actually stored. */
+/** Product photo URL, or the brand placeholder when none is stored. */
 export function storefrontProductImageSrc(
   imageUrl: string | null | undefined,
-): string | null {
+): string {
   if (typeof imageUrl === "string" && imageUrl.length > 0) {
     return imageUrl;
   }
-  return null;
+  return STOREFRONT_PRODUCT_PHOTO;
 }

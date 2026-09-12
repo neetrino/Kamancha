@@ -36,7 +36,7 @@ function SocialCircle({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex size-9 shrink-0 items-center justify-center rounded-full border border-white/18 text-white transition-colors hover:border-white/40 hover:bg-white/5"
+      className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/18 text-white transition-colors hover:border-white/40 hover:bg-white/5"
     >
       {children}
     </a>
@@ -175,8 +175,8 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 <Image
                   src={staticAssetUrl("/assets/brand/footer/instagram.svg")}
                   alt=""
-                  width={16}
-                  height={16}
+                  width={18}
+                  height={18}
                   unoptimized
                 />
               </SocialCircle>
@@ -187,15 +187,19 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
                 <Image
                   src={staticAssetUrl("/assets/brand/footer/facebook.svg")}
                   alt=""
-                  width={16}
-                  height={16}
+                  width={18}
+                  height={18}
                   unoptimized
                 />
               </SocialCircle>
               <SocialCircle href={contact.social.tiktok} label={footer.tiktok}>
-                <span className="font-big-fat-boii text-[12px] leading-4 font-normal text-white">
-                  Tk
-                </span>
+                <Image
+                  src={staticAssetUrl("/assets/brand/footer/tiktok.webp")}
+                  alt=""
+                  width={18}
+                  height={18}
+                  unoptimized
+                />
               </SocialCircle>
             </div>
           </div>
