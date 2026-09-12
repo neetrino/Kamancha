@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition, type ReactNode } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Image as ImageIcon, ImagePlus, Loader2, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
@@ -23,7 +23,6 @@ type AdminCashChangeEditorProps = {
   disabled?: boolean;
   copy: CashChangeCopy;
   confirm: ConfirmCopy;
-  saveAction?: ReactNode;
 };
 
 export function AdminCashChangeEditor({
@@ -35,7 +34,6 @@ export function AdminCashChangeEditor({
   disabled = false,
   copy,
   confirm,
-  saveAction,
 }: AdminCashChangeEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadTargetId, setUploadTargetId] = useState<string | null>(null);
@@ -248,7 +246,6 @@ export function AdminCashChangeEditor({
           <Plus className="h-4 w-4" aria-hidden />
           {copy.add}
         </Button>
-        {saveAction}
       </div>
 
       <ConfirmDialog
