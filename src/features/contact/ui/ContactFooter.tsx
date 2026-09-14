@@ -2,12 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { FooterContactSocial } from "@/components/layout/FooterContactSocial";
 import { ContactInfo } from "@/features/contact/ui/ContactInfo";
 import { ContactMap } from "@/features/contact/ui/ContactMap";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type ContactFooterProps = {
   copy: Dictionary["contact"];
+  socialLabels: {
+    instagram: string;
+    facebook: string;
+    tiktok: string;
+  };
 };
 
 /** Desktop only: map a bit narrower than the pills row. */
@@ -17,10 +23,10 @@ const DESKTOP_MQ = "(min-width: 744px)";
 
 /**
  * Contact pills + map.
- * Mobile: map matches the form/pills column.
+ * Mobile: map matches the form/pills column; social sits under the map.
  * Desktop: original sizing (pills container width − inset).
  */
-export function ContactFooter({ copy }: ContactFooterProps) {
+export function ContactFooter({ copy, socialLabels }: ContactFooterProps) {
   const pillsRef = useRef<HTMLDivElement>(null);
   const [mapWidthPx, setMapWidthPx] = useState<number | null>(null);
 
@@ -70,6 +76,16 @@ export function ContactFooter({ copy }: ContactFooterProps) {
           tumanyanLabel={copy.storeAddress}
           saryanLabel={copy.storeAddress2}
           unavailableLabel={copy.mapUnavailable}
+        />
+      </div>
+      <div className="mt-10 xl:hidden">
+        <FooterContactSocial
+          instagramHref={copy.social.instagram}
+          facebookHref={copy.social.facebook}
+          tiktokHref={copy.social.tiktok}
+          instagramLabel={socialLabels.instagram}
+          facebookLabel={socialLabels.facebook}
+          tiktokLabel={socialLabels.tiktok}
         />
       </div>
     </div>

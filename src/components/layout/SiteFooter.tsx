@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { BrandLogo } from "@/components/layout/BrandLogo";
-import { FooterContactSocial } from "@/components/layout/FooterContactSocial";
 import { KAMANCHA_BRANCHES } from "@/lib/brand/store-locations";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -92,32 +91,14 @@ function CopyrightPipe() {
   );
 }
 
-function FooterCopyright({
-  social,
-  labels,
-}: {
-  social: Dictionary["contact"]["social"];
-  labels: {
-    instagram: string;
-    facebook: string;
-    tiktok: string;
-  };
-}) {
+function FooterCopyright() {
   const year = new Date().getFullYear();
 
   return (
     <div
       data-node-id="22:388"
-      className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center gap-4 pt-4 pb-2 xl:pt-8 xl:pb-4"
+      className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center pt-4 pb-2 xl:pt-8 xl:pb-4"
     >
-      <FooterContactSocial
-        instagramHref={social.instagram}
-        facebookHref={social.facebook}
-        tiktokHref={social.tiktok}
-        instagramLabel={labels.instagram}
-        facebookLabel={labels.facebook}
-        tiktokLabel={labels.tiktok}
-      />
       <p
         data-node-id="22:390"
         className="max-w-full text-center font-big-fat-boii text-[12px] leading-4 font-normal whitespace-nowrap text-white/40 xl:text-[13px] xl:leading-5"
@@ -299,14 +280,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
           </div>
         </div>
 
-        <FooterCopyright
-          social={contact.social}
-          labels={{
-            instagram: footer.instagram,
-            facebook: footer.facebook,
-            tiktok: footer.tiktok,
-          }}
-        />
+        <FooterCopyright />
       </div>
     </footer>
   );

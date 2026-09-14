@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
@@ -30,7 +29,7 @@ function SocialCircle({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/18 text-white transition-colors hover:border-white/40 hover:bg-white/5"
+      className="flex size-12 shrink-0 items-center justify-center rounded-full border border-white/18 text-white transition-colors hover:border-white/40 hover:bg-white/5"
     >
       {children}
     </a>
@@ -38,7 +37,7 @@ function SocialCircle({
 }
 
 /**
- * Mobile social row under copyright — contact + about pages only.
+ * Mobile social row — place under page content (contact / about), above copyright.
  */
 export function FooterContactSocial({
   instagramHref,
@@ -48,20 +47,14 @@ export function FooterContactSocial({
   facebookLabel,
   tiktokLabel,
 }: FooterContactSocialProps) {
-  const pathname = usePathname() ?? "";
-  const showSocial = /\/(contact|about)\/?$/.test(pathname);
-  if (!showSocial) {
-    return null;
-  }
-
   return (
-    <div className="flex items-center gap-3 xl:hidden">
+    <div className="flex items-center justify-center gap-5 xl:hidden">
       <SocialCircle href={instagramHref} label={instagramLabel}>
         <Image
           src={staticAssetUrl("/assets/brand/footer/instagram.svg")}
           alt=""
-          width={18}
-          height={18}
+          width={22}
+          height={22}
           unoptimized
         />
       </SocialCircle>
@@ -69,8 +62,8 @@ export function FooterContactSocial({
         <Image
           src={staticAssetUrl("/assets/brand/footer/facebook.svg")}
           alt=""
-          width={18}
-          height={18}
+          width={22}
+          height={22}
           unoptimized
         />
       </SocialCircle>
@@ -78,8 +71,8 @@ export function FooterContactSocial({
         <Image
           src={staticAssetUrl("/assets/brand/footer/tiktok.webp")}
           alt=""
-          width={18}
-          height={18}
+          width={22}
+          height={22}
           unoptimized
         />
       </SocialCircle>
