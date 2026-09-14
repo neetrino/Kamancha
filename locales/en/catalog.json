@@ -3,6 +3,8 @@
   "previousPage": "Previous",
   "nextPage": "Next",
   "pageStatus": "Page {page} of {total}",
+  "loadMore": "See more",
+  "loadingMore": "Loading…",
   "title": "Products",
   "heading": "MENU",
   "breadcrumbLabel": "Breadcrumb",

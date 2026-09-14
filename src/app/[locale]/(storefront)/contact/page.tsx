@@ -26,7 +26,14 @@ export default async function ContactPage({ params }: ContactPageProps) {
       raiseLeftHand
       footer={
         <div className="mt-15 min-[744px]:mt-28 min-[744px]:sm:mt-32 xl:mt-36">
-          <ContactFooter copy={copy} />
+          <ContactFooter
+            copy={copy}
+            socialLabels={{
+              instagram: dictionary.footer.instagram,
+              facebook: dictionary.footer.facebook,
+              tiktok: dictionary.footer.tiktok,
+            }}
+          />
         </div>
       }
     >
