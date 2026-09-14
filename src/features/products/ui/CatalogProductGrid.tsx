@@ -29,12 +29,12 @@ type CatalogProductGridProps = {
   discountOffLabel: string;
   loadMoreLabel: string;
   loadingMoreLabel: string;
-  gridKey: string;
 };
 
 /**
  * Catalog grid with “see more” — keeps pageSize batches, appends below.
  * On mobile (2 columns), the visible list stays even while more remains.
+ * Remount via parent `key` when filters change.
  */
 export function CatalogProductGrid({
   locale,
@@ -50,7 +50,6 @@ export function CatalogProductGrid({
   discountOffLabel,
   loadMoreLabel,
   loadingMoreLabel,
-  gridKey,
 }: CatalogProductGridProps) {
   const [products, setProducts] = useState<CatalogGridProduct[]>([
     ...initialProducts,
@@ -61,12 +60,6 @@ export function CatalogProductGrid({
   );
   const [isPending, startTransition] = useTransition();
   const [isMobileTwoCol, setIsMobileTwoCol] = useState(false);
-
-  useEffect(() => {
-    setProducts([...initialProducts]);
-    setPage(initialPage);
-    setHasMore(initialPage * pageSize < total && initialProducts.length > 0);
-  }, [gridKey, initialProducts, initialPage, pageSize, total]);
 
   useEffect(() => {
     const media = window.matchMedia(MOBILE_TWO_COL_MQ);
@@ -106,7 +99,6 @@ export function CatalogProductGrid({
   return (
     <>
       <Stagger
-        key={gridKey}
         className="grid grid-cols-2 justify-items-stretch gap-3 sm:gap-5 min-[744px]:grid-cols-3"
         stagger={0.06}
         immediate

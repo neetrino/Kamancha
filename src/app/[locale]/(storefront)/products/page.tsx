@@ -144,6 +144,7 @@ export default async function ProductsPage({
           </Reveal>
         ) : (
           <CatalogProductGrid
+            key={catalogGridMotionKey(filters)}
             locale={rawLocale}
             currency={currency}
             filters={filters}
@@ -157,7 +158,6 @@ export default async function ProductsPage({
             discountOffLabel={dictionary.home.discountOff}
             loadMoreLabel={catalogCopy.loadMore}
             loadingMoreLabel={catalogCopy.loadingMore}
-            gridKey={catalogGridMotionKey(filters)}
           />
         )}
       </CatalogControls>
