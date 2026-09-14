@@ -11,7 +11,7 @@ describe("parseCatalogSearchParams", () => {
     expect(parseCatalogSearchParams({})).toEqual({
       sort: "newest",
       page: 1,
-      pageSize: 15,
+      pageSize: 16,
     });
   });
 
@@ -26,7 +26,7 @@ describe("parseCatalogSearchParams", () => {
         onSale: "true",
         sort: "price_asc",
         page: "2",
-        pageSize: "15",
+        pageSize: "16",
       }),
     ).toMatchObject({
       q: "oak",
@@ -37,7 +37,7 @@ describe("parseCatalogSearchParams", () => {
       onSale: true,
       sort: "price_asc",
       page: 2,
-      pageSize: 15,
+      pageSize: 16,
     });
   });
 
@@ -52,7 +52,7 @@ describe("parseCatalogSearchParams", () => {
     ).toMatchObject({
       sort: "newest",
       page: 1,
-      pageSize: 15,
+      pageSize: 16,
       category: "tables",
       inStock: true,
     });
@@ -65,7 +65,7 @@ describe("buildCatalogQueryString", () => {
       buildCatalogQueryString({
         sort: "newest",
         page: 1,
-        pageSize: 15,
+        pageSize: 16,
       }),
     ).toBe("");
   });
@@ -95,7 +95,7 @@ describe("hasActiveCatalogFilters", () => {
       hasActiveCatalogFilters({
         sort: "price_desc",
         page: 2,
-        pageSize: 45,
+        pageSize: 48,
       }),
     ).toBe(false);
   });
@@ -105,7 +105,7 @@ describe("hasActiveCatalogFilters", () => {
       hasActiveCatalogFilters({
         sort: "newest",
         page: 1,
-        pageSize: 15,
+        pageSize: 16,
         onSale: true,
       }),
     ).toBe(true);

@@ -3,6 +3,8 @@
   "previousPage": "Назад",
   "nextPage": "Далее",
   "pageStatus": "Страница {page} из {total}",
+  "loadMore": "Смотреть ещё",
+  "loadingMore": "Загрузка…",
   "title": "Товары",
   "heading": "МЕНЮ",
   "breadcrumbLabel": "Навигационная цепочка",

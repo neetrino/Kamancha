@@ -3,6 +3,8 @@
   "previousPage": "Նախորդ",
   "nextPage": "Հաջորդ",
   "pageStatus": "Էջ {page} / {total}",
+  "loadMore": "Տեսնել ավելին",
+  "loadingMore": "Բեռնվում է…",
   "title": "Ապրանքներ",
   "heading": "ՄԵՆՅՈՒ",
   "breadcrumbLabel": "Նավիգացիայի ուղի",
