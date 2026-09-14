@@ -358,12 +358,12 @@ export function MobileNavDrawer({
                   top: panelTopPx + MENU_GAP_PX,
                   left: MENU_INSET_PX,
                   right: MENU_INSET_PX,
-                  maxHeight: `calc(100dvh - ${panelTopPx + MENU_GAP_PX + MENU_INSET_PX}px)`,
+                  maxHeight: `calc(100svh - ${panelTopPx + MENU_GAP_PX + MENU_INSET_PX}px)`,
                 }}
               >
                 <nav
                   aria-label={dictionary.nav.navigation}
-                  className="flex max-h-inherit flex-col overflow-y-auto pb-[max(0.5rem,env(safe-area-inset-bottom))]"
+                  className="flex max-h-inherit flex-col overflow-y-auto pb-3"
                 >
                   <div className="flex flex-col py-3">
                     {drawerNavItems.map((item) => {
