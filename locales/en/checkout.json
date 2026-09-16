@@ -3,6 +3,8 @@
   "productsInOrder": "Products in your order",
   "itemsOne": "1 item",
   "itemsMany": "{count} items",
+  "previousItem": "Previous item",
+  "nextItem": "Next item",
   "removeItem": "Remove item",
   "contactInformation": "Contact Information",
   "shippingMethod": "Shipping Method",

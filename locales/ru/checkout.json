@@ -3,6 +3,8 @@
   "productsInOrder": "Товары в заказе",
   "itemsOne": "1 товар",
   "itemsMany": "{count} товаров",
+  "previousItem": "Предыдущий товар",
+  "nextItem": "Следующий товар",
   "removeItem": "Удалить товар",
   "contactInformation": "Контактные данные",
   "shippingMethod": "Способ доставки",

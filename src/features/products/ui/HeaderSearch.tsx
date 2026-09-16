@@ -154,7 +154,11 @@ export function HeaderSearch({
 
   return (
     <div ref={rootRef} className="relative">
-      <form onSubmit={handleSubmit} role="search">
+      <form
+        onSubmit={handleSubmit}
+        role="search"
+        suppressHydrationWarning
+      >
         <label htmlFor={inputId} className={SITE_HEADER_SEARCH_PILL}>
           <Search className="h-4 w-4 shrink-0 opacity-90" aria-hidden="true" />
           <span className="sr-only">{labels.open}</span>
@@ -172,6 +176,7 @@ export function HeaderSearch({
             placeholder={labels.placeholder}
             autoComplete="off"
             size={7}
+            suppressHydrationWarning
             className="w-[4.75rem] bg-transparent text-sm font-bold leading-6 text-white outline-none placeholder:text-white/70 [&::-webkit-search-cancel-button]:hidden"
           />
           {query.length > 0 ? (

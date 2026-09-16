@@ -5,21 +5,31 @@ type HomeCategorySwitchersProps = {
   canNext: boolean;
   onPrev: () => void;
   onNext: () => void;
+  compact?: boolean;
 };
 
 const SWITCHER_BUTTON =
   "group relative flex size-[58px] shrink-0 items-center justify-center rounded-full touch-manipulation disabled:pointer-events-none disabled:opacity-40";
+const SWITCHER_BUTTON_COMPACT =
+  "group relative flex size-11 shrink-0 items-center justify-center rounded-full touch-manipulation disabled:pointer-events-none disabled:opacity-40";
 
 /** Default = light green + forest arrow; pressed = softer green. */
-function SwitcherArrowIcon({ className }: { className: string }) {
+function SwitcherArrowIcon({
+  className,
+  compact = false,
+}: {
+  className: string;
+  compact?: boolean;
+}) {
+  const sizeClass = compact ? "size-8" : "size-[41px]";
   return (
     <svg
-      width="41"
-      height="41"
+      width={compact ? 32 : 41}
+      height={compact ? 32 : 41}
       viewBox="0 0 41 41"
       fill="none"
       aria-hidden
-      className={`size-[41px] ${className}`}
+      className={`${sizeClass} ${className}`}
     >
       <circle
         cx="20.5"
@@ -46,7 +56,9 @@ export function HomeCategorySwitchers({
   canNext,
   onPrev,
   onNext,
+  compact = false,
 }: HomeCategorySwitchersProps) {
+  const buttonClass = compact ? SWITCHER_BUTTON_COMPACT : SWITCHER_BUTTON;
   return (
     <div
       className="flex items-center justify-center"
@@ -57,20 +69,23 @@ export function HomeCategorySwitchers({
         onClick={onPrev}
         disabled={!canPrev}
         aria-label={previousLabel}
-        className={`${SWITCHER_BUTTON} mr-[-10px]`}
+        className={`${buttonClass} ${compact ? "mr-[-8px]" : "mr-[-10px]"}`}
         data-node-id="196:215"
       >
-        <SwitcherArrowIcon className="-scale-y-100 rotate-135" />
+        <SwitcherArrowIcon
+          compact={compact}
+          className="-scale-y-100 rotate-135"
+        />
       </button>
       <button
         type="button"
         onClick={onNext}
         disabled={!canNext}
         aria-label={nextLabel}
-        className={SWITCHER_BUTTON}
+        className={buttonClass}
         data-node-id="196:218"
       >
-        <SwitcherArrowIcon className="rotate-45" />
+        <SwitcherArrowIcon compact={compact} className="rotate-45" />
       </button>
     </div>
   );

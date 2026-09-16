@@ -12,7 +12,8 @@ import {
 
 import { AppLink } from "@/components/ui/AppLink";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
-import { SideSheet } from "@/components/ui/SideSheet";
+import { SideSheet, SIDE_SHEET_ANIMATION_MS } from "@/components/ui/SideSheet";
+import { MobileCheckoutSheet } from "@/features/checkout/ui/MobileCheckoutSheet";
 import type {
   CartDrawerItemView,
   CartDrawerView,
@@ -35,6 +36,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
+import { useIsXlDesktop } from "@/lib/react/use-is-xl-desktop";
 
 const CART_PLUS_SRC = staticAssetUrl("/assets/brand/home/cart-plus.svg");
 
@@ -93,10 +95,12 @@ export function CartDrawer({
   tone = "default",
 }: CartDrawerProps) {
   const [open, setOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [view, setView] = useState<CartDrawerView | null>(null);
   const [loadingView, setLoadingView] = useState(false);
   const [, startTransition] = useTransition();
   const labels = dictionary.cartDrawer;
+  const isDesktop = useIsXlDesktop();
   const liveItemCount = useCartItemCount(itemCount);
   const badgeCount = liveItemCount;
   const hasItems = Boolean(view ? view.items.length > 0 : liveItemCount > 0);
@@ -104,6 +108,7 @@ export function CartDrawer({
   const checkoutHref = view?.checkoutHref ?? `/${locale}/checkout`;
   const checkoutLabel =
     view?.source === "group" ? labels.checkoutGroupOrder : labels.checkout;
+  const useCheckoutPage = isDesktop !== false || view?.source === "group";
 
   function applyView(next: CartDrawerView): void {
     setView(next);
@@ -145,6 +150,13 @@ export function CartDrawer({
 
   function closeDrawer(): void {
     setOpen(false);
+  }
+
+  function openMobileCheckout(): void {
+    closeDrawer();
+    window.setTimeout(() => {
+      setCheckoutOpen(true);
+    }, SIDE_SHEET_ANIMATION_MS);
   }
 
   function changeQuantity(itemId: string, quantity: number): void {
@@ -279,7 +291,7 @@ export function CartDrawer({
                           href={productHref}
                           prefetchPolicy="intent"
                           onClick={closeDrawer}
-                          className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl"
+                          className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl"
                         >
                           <Image
                             src={imageSrc}
@@ -290,7 +302,7 @@ export function CartDrawer({
                           />
                         </AppLink>
                       ) : (
-                        <div className="relative w-28 min-h-28 shrink-0 self-stretch overflow-hidden rounded-2xl">
+                        <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl">
                           <Image
                             src={imageSrc}
                             alt={item.title}
@@ -395,15 +407,22 @@ export function CartDrawer({
 
           {hasItems ? (
             <KamanchaPillButton
-              href={checkoutHref}
+              href={useCheckoutPage ? checkoutHref : undefined}
               label={checkoutLabel}
               variant="dark"
               className="kamancha-pill-button--cart-cta mt-5 max-w-none sm:max-w-none"
-              onClick={closeDrawer}
+              onClick={useCheckoutPage ? closeDrawer : openMobileCheckout}
             />
           ) : null}
         </div>
       </SideSheet>
+
+      <MobileCheckoutSheet
+        open={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        locale={locale}
+        dictionary={dictionary}
+      />
 
       {renderTrigger ? (
         renderTrigger({

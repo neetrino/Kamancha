@@ -7,110 +7,114 @@ import {
   useRef,
   useState,
   type AnimationEvent,
+  type CSSProperties,
   type ReactNode,
   type TransitionEvent,
 } from "react";
 import { createPortal } from "react-dom";
 
-import { useBottomSheetDrag } from "@/components/ui/use-bottom-sheet-drag";
+import {
+  BOTTOM_SHEET_SCROLL_ATTR,
+  useBottomSheetDrag,
+} from "@/components/ui/use-bottom-sheet-drag";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
+import { useIsClient } from "@/lib/react/use-is-client";
 import {
   BODY_SCROLL_LOCK_ALLOW,
   useBodyScrollLock,
 } from "@/lib/react/use-body-scroll-lock";
-import { useIsClient } from "@/lib/react/use-is-client";
 
 /** Must match `.animate-bottom-sheet-panel-*` duration in globals.css. */
-export const PROFILE_MOBILE_TAB_SHEET_MS = 300;
+export const BOTTOM_SHEET_ANIMATION_MS = 300;
 const SHEET_EASING = "cubic-bezier(0.32, 0.72, 0, 1)";
-const SHEET_HEIGHT_VH = 72;
 
 type MotionPhase = "enter" | "idle" | "exit" | "exit-drag";
 
-type ProfileMobileTabSheetProps = {
+type BottomSheetProps = {
   open: boolean;
   onClose: () => void;
-  /** Called after the close motion finishes (and the portal unmounts). */
-  onExited?: () => void;
   ariaLabel: string;
   children: ReactNode;
+  zIndexClassName?: string;
+  panelClassName?: string;
+  panelStyle?: CSSProperties;
+  closeLabel?: string;
 };
 
 /**
- * Storefront mobile profile tab sheet: ~72dvh bottom panel with drag handle.
- * Open/close share 300ms motion; swipe-down dismisses without a mid-close jump.
+ * Viewport-wide panel that slides up from the bottom (mobile checkout, etc.).
+ * Dismiss with the top handle, swipe down, backdrop, or Escape.
  */
-export function ProfileMobileTabSheet({
+export function BottomSheet({
   open,
   onClose,
-  onExited,
   ariaLabel,
   children,
-}: ProfileMobileTabSheetProps) {
+  zIndexClassName = "z-[210]",
+  panelClassName = "",
+  panelStyle,
+  closeLabel = "Close",
+}: BottomSheetProps) {
   const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [phase, setPhase] = useState<MotionPhase>("enter");
   const [isDragging, setIsDragging] = useState(false);
-  const [dragBackdropOpacity, setDragBackdropOpacity] = useState<number | null>(
-    null,
-  );
   const [displayChildren, setDisplayChildren] = useState(children);
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
-  const exitNotifiedRef = useRef(false);
-  const onExitedRef = useRef(onExited);
+  const exitDoneRef = useRef(false);
+  const childrenRef = useRef(children);
+  const ariaLabelRef = useRef(ariaLabel);
   const onCloseRef = useRef(onClose);
+  const renderedRef = useRef(false);
+  const phaseRef = useRef<MotionPhase>("enter");
 
   useLayoutEffect(() => {
-    onExitedRef.current = onExited;
+    childrenRef.current = children;
+    ariaLabelRef.current = ariaLabel;
     onCloseRef.current = onClose;
+    renderedRef.current = rendered;
+    phaseRef.current = phase;
   });
 
-  const finishExit = useCallback(() => {
-    if (exitNotifiedRef.current) return;
-    exitNotifiedRef.current = true;
+  useLayoutEffect(() => {
+    if (!rendered) {
+      scrollAreaRef.current = null;
+      return;
+    }
+    scrollAreaRef.current =
+      panelRef.current?.querySelector<HTMLDivElement>(
+        `[${BOTTOM_SHEET_SCROLL_ATTR}]`,
+      ) ?? null;
+  });
+
+  const finishExit = useCallback((): void => {
+    if (exitDoneRef.current) return;
+    exitDoneRef.current = true;
     setRendered(false);
     setPhase("enter");
     setIsDragging(false);
-    setDragBackdropOpacity(null);
     const panel = panelRef.current;
     if (panel) {
       panel.style.transition = "";
       panel.style.transform = "";
     }
-    onExitedRef.current?.();
   }, []);
 
   const handleDismissFromDrag = useCallback((releaseOffsetY: number) => {
     setIsDragging(false);
     setPhase("exit-drag");
-    setDragBackdropOpacity(0);
-
     const panel = panelRef.current;
     if (panel) {
       panel.style.transition = "none";
       panel.style.transform = `translateY(${releaseOffsetY}px)`;
       void panel.getBoundingClientRect();
-      panel.style.transition = `transform ${PROFILE_MOBILE_TAB_SHEET_MS}ms ${SHEET_EASING}`;
+      panel.style.transition = `transform ${BOTTOM_SHEET_ANIMATION_MS}ms ${SHEET_EASING}`;
       panel.style.transform = "translateY(100%)";
     }
-
     onCloseRef.current();
-  }, []);
-
-  const handleSnapBack = useCallback(() => {
-    setIsDragging(false);
-    setDragBackdropOpacity(null);
-    // Stay in `idle` — do not re-run the enter keyframe.
-  }, []);
-
-  const handleOffsetChange = useCallback((offsetY: number) => {
-    setIsDragging(offsetY > 0);
-    setDragBackdropOpacity(
-      offsetY > 0 ? Math.max(0, 1 - offsetY / 280) : null,
-    );
   }, []);
 
   const dragEnabled = rendered && open && phase === "idle";
@@ -123,16 +127,12 @@ export function ProfileMobileTabSheet({
     panelRef,
     scrollAreaRef,
     onDismiss: handleDismissFromDrag,
-    onSnapBack: handleSnapBack,
-    onOffsetChange: handleOffsetChange,
-  });
-
-  const renderedRef = useRef(false);
-  const phaseRef = useRef<MotionPhase>("enter");
-
-  useLayoutEffect(() => {
-    renderedRef.current = rendered;
-    phaseRef.current = phase;
+    onSnapBack: () => {
+      setIsDragging(false);
+    },
+    onOffsetChange: (offsetY) => {
+      setIsDragging(offsetY > 0);
+    },
   });
 
   useEffect(() => {
@@ -142,21 +142,9 @@ export function ProfileMobileTabSheet({
   }, [open, children, ariaLabel]);
 
   useEffect(() => {
-    if (!open || !rendered) return;
-    const node = scrollAreaRef.current;
-    if (!node) return;
-    node.scrollTop = 0;
-    const frame = window.requestAnimationFrame(() => {
-      node.scrollTop = 0;
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [open, rendered, children]);
-
-  useEffect(() => {
     if (open) {
-      exitNotifiedRef.current = false;
+      exitDoneRef.current = false;
       scheduleStateUpdate(setIsDragging, false);
-      scheduleStateUpdate(setDragBackdropOpacity, null);
       scheduleStateUpdate(setPhase, "enter");
       scheduleStateUpdate(setRendered, true);
       const panel = panelRef.current;
@@ -169,29 +157,20 @@ export function ProfileMobileTabSheet({
 
     if (!renderedRef.current) return;
 
-    // Swipe path already set `exit-drag` and started the transform.
     if (phaseRef.current === "exit-drag") {
       const timer = window.setTimeout(() => {
         finishExit();
-      }, PROFILE_MOBILE_TAB_SHEET_MS);
+      }, BOTTOM_SHEET_ANIMATION_MS);
       return () => window.clearTimeout(timer);
     }
 
     scheduleStateUpdate(setPhase, "exit");
     const timer = window.setTimeout(() => {
       finishExit();
-    }, PROFILE_MOBILE_TAB_SHEET_MS);
+    }, BOTTOM_SHEET_ANIMATION_MS);
 
     return () => window.clearTimeout(timer);
   }, [open, finishExit]);
-
-  useEffect(() => {
-    if (!rendered || phase !== "enter") return;
-    const timer = window.setTimeout(() => {
-      setPhase((current) => (current === "enter" ? "idle" : current));
-    }, PROFILE_MOBILE_TAB_SHEET_MS + 40);
-    return () => window.clearTimeout(timer);
-  }, [rendered, phase]);
 
   useBodyScrollLock(rendered);
 
@@ -238,80 +217,64 @@ export function ProfileMobileTabSheet({
       : phase === "exit"
         ? "animate-sheet-backdrop-out"
         : "";
-
-  const panelClass =
+  const panelMotionClass =
     phase === "enter"
       ? "animate-bottom-sheet-panel-in"
       : phase === "exit"
         ? "animate-bottom-sheet-panel-out"
         : "";
+  const panelChildren = open && phase !== "exit" && phase !== "exit-drag"
+    ? children
+    : displayChildren;
+  const panelAriaLabel = open && phase !== "exit" && phase !== "exit-drag"
+    ? ariaLabel
+    : displayAriaLabel;
 
   return createPortal(
     <div
-      className="profile-mobile-tab-sheet fixed inset-0 z-[90] flex items-end overscroll-none xl:hidden"
+      className={`fixed inset-0 flex items-end overscroll-none xl:hidden ${zIndexClassName}`}
       role="dialog"
       aria-modal="true"
-      aria-label={displayAriaLabel}
+      aria-label={panelAriaLabel}
     >
       <button
         type="button"
-        tabIndex={-1}
-        aria-hidden
-        className={`absolute inset-0 rounded-none bg-black/35 backdrop-blur-[1px] ${backdropClass}`}
-        style={
-          dragBackdropOpacity === null
-            ? phase === "exit-drag"
-              ? {
-                  opacity: 0,
-                  transition: `opacity ${PROFILE_MOBILE_TAB_SHEET_MS}ms ${SHEET_EASING}`,
-                }
-              : undefined
-            : {
-                opacity: dragBackdropOpacity,
-                transition: isDragging
-                  ? "none"
-                  : `opacity ${PROFILE_MOBILE_TAB_SHEET_MS}ms ${SHEET_EASING}`,
-              }
-        }
+        className={`absolute inset-0 bg-black/40 backdrop-blur-sm ${backdropClass}`}
+        aria-label={closeLabel}
         onClick={() => onCloseRef.current()}
       />
       <div
         ref={panelRef}
-        className={`relative z-[1] flex w-full flex-col overflow-hidden bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.18)] ${panelClass}`}
-        style={{
-          height: `${SHEET_HEIGHT_VH}dvh`,
-          maxHeight: "100%",
-          borderTopLeftRadius: "var(--radius)",
-          borderTopRightRadius: "var(--radius)",
-        }}
-        {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
-        onClick={(event) => event.stopPropagation()}
+        className={`relative z-[1] flex h-[min(93dvh,100dvh)] w-full flex-col overflow-hidden rounded-t-[28px] shadow-[0_-12px_40px_rgba(0,0,0,0.18)] ${panelMotionClass} ${panelClassName}`}
+        style={panelStyle}
         onAnimationEnd={handlePanelAnimationEnd}
         onTransitionEnd={handlePanelTransitionEnd}
         {...panelPointerHandlers}
       >
         <div
-          className="relative z-[2] flex h-12 shrink-0 cursor-grab touch-none select-none items-center justify-center active:cursor-grabbing"
+          className="relative z-20 flex h-11 shrink-0 cursor-grab touch-none select-none items-center justify-center active:cursor-grabbing"
           {...headerPointerHandlers}
         >
           <div
-            className="rounded-full bg-gray-300"
-            style={{ height: 6, width: 56 }}
+            className="h-1.5 w-16 rounded-full bg-white"
             aria-hidden
           />
+          <span className="sr-only">{closeLabel}</span>
         </div>
         <div
-          ref={scrollAreaRef}
-          className={`profile-mobile-tab-sheet-scroll relative z-[2] min-h-0 flex-1 overscroll-contain px-3 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
-            isDragging || phase === "exit-drag"
-              ? "touch-none overflow-hidden"
-              : "overflow-y-auto"
+          className={`relative z-10 flex min-h-0 w-full flex-1 flex-col overflow-hidden ${
+            isDragging || phase === "exit-drag" ? "touch-none" : ""
           }`}
-          {...scrollAreaPointerHandlers}
+          {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
+          onClick={(event) => event.stopPropagation()}
+          onPointerDown={(event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            if (target.closest("button, a, input, textarea, select")) return;
+            scrollAreaPointerHandlers.onPointerDown(event);
+          }}
         >
-          <div className="pb-[calc(1.75rem+env(safe-area-inset-bottom,0px))]">
-            {displayChildren}
-          </div>
+          {panelChildren}
         </div>
       </div>
     </div>,
