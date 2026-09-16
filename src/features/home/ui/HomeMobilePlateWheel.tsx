@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, type Variants } from "motion/react";
-import { useEffect, useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { plateWheelTransition } from "@/features/home/ui/home-plate-motion";
@@ -13,6 +12,7 @@ import type {
 } from "@/features/home/ui/home-plate-tokens";
 import { usePlayHomeMotion } from "@/features/home/ui/use-play-home-motion";
 import { HOME_MOBILE_CATEGORY_DISH_SRC } from "@/lib/brand/assets";
+import { useIsClient } from "@/lib/react/use-is-client";
 
 export type { WheelDirection } from "@/features/home/ui/home-plate-tokens";
 
@@ -198,14 +198,10 @@ export function HomeMobilePlateWheel({
   direction,
   tablet,
 }: HomeMobilePlateWheelProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useIsClient();
   const playMotion = usePlayHomeMotion();
   const transition = plateWheelTransition(playMotion && mounted);
   const variants = tablet ? tabletSlotVariants : phoneSlotVariants;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const currentToken = tokens.find((plate) => plate.slot === "current");
   const currentSlide =

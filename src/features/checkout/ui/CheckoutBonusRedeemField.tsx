@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/Button";
 
@@ -57,14 +57,25 @@ export function CheckoutBonusRedeemField({
   const [draft, setDraft] = useState(
     bonus.redeemAmount > 0 ? String(bonus.redeemAmount) : "",
   );
+  const [syncedUseBonuses, setSyncedUseBonuses] = useState(bonus.useBonuses);
+  const [syncedRedeemAmount, setSyncedRedeemAmount] = useState(
+    bonus.redeemAmount,
+  );
 
-  useEffect(() => {
-    if (!bonus.useBonuses) {
-      setDraft("");
-      return;
-    }
-    setDraft(bonus.redeemAmount > 0 ? String(bonus.redeemAmount) : "");
-  }, [bonus.useBonuses, bonus.redeemAmount]);
+  if (
+    bonus.useBonuses !== syncedUseBonuses ||
+    bonus.redeemAmount !== syncedRedeemAmount
+  ) {
+    setSyncedUseBonuses(bonus.useBonuses);
+    setSyncedRedeemAmount(bonus.redeemAmount);
+    setDraft(
+      !bonus.useBonuses
+        ? ""
+        : bonus.redeemAmount > 0
+          ? String(bonus.redeemAmount)
+          : "",
+    );
+  }
 
   return (
     <div className="relative z-[2] space-y-2">

@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type AnimationEvent,
@@ -62,8 +63,11 @@ export function SideSheet({
   const exitDoneRef = useRef(false);
   const childrenRef = useRef(children);
   const ariaLabelRef = useRef(ariaLabel);
-  childrenRef.current = children;
-  ariaLabelRef.current = ariaLabel;
+
+  useLayoutEffect(() => {
+    childrenRef.current = children;
+    ariaLabelRef.current = ariaLabel;
+  });
 
   const finishExit = useCallback((): void => {
     if (exitDoneRef.current) return;

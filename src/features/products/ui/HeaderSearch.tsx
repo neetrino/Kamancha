@@ -86,9 +86,6 @@ export function HeaderSearch({
     const trimmed = query.trim();
     if (trimmed.length < MIN_QUERY_LENGTH) {
       requestIdRef.current += 1;
-      setProducts([]);
-      setTotal(0);
-      setSearchedQuery("");
       return;
     }
 
