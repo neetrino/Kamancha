@@ -61,11 +61,11 @@ export function calendarMonthLabel(
   return `${month} ${year}`;
 }
 
-/** Monday-first narrow weekday labels for compact calendars. */
+/** Monday-first short weekday labels for compact calendars. */
 export const CALENDAR_WEEKDAY_NARROW = {
-  en: ["M", "T", "W", "T", "F", "S", "S"],
-  hy: ["Ե", "Ե", "Չ", "Հ", "Ո", "Շ", "Կ"],
-  ru: ["П", "В", "С", "Ч", "П", "С", "В"],
+  en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  hy: ["Երկ", "Երք", "Չրք", "Հնգ", "Ուր", "Շբթ", "Կիր"],
+  ru: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
 } as const satisfies Record<"en" | "hy" | "ru", readonly string[]>;
 
 export function calendarWeekdayNarrow(locale: string): readonly string[] {
