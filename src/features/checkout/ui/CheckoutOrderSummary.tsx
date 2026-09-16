@@ -70,6 +70,7 @@ type CheckoutOrderSummaryProps = {
   isSubmitting: boolean;
   placeOrderLabel: string;
   processingLabel: string;
+  hidePlaceOrder?: boolean;
 };
 
 export function CheckoutOrderSummary({
@@ -118,12 +119,19 @@ export function CheckoutOrderSummary({
   isSubmitting,
   placeOrderLabel,
   processingLabel,
+  hidePlaceOrder = false,
 }: CheckoutOrderSummaryProps) {
   const stickyTop = useCheckoutSummaryStickyTop();
 
   return (
-    <div className="lg:sticky xl:self-start" style={{ top: stickyTop }}>
-      <LiquidGlassPanel className="px-5 py-6 sm:px-6 sm:py-7">
+    <div className={hidePlaceOrder ? undefined : "lg:sticky xl:self-start"} style={hidePlaceOrder ? undefined : { top: stickyTop }}>
+      <LiquidGlassPanel
+        className={
+          hidePlaceOrder
+            ? "px-5 pt-5 pb-6 sm:px-6"
+            : "px-5 py-6 sm:px-6 sm:py-7"
+        }
+      >
         <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
           {title}
         </h2>
@@ -187,7 +195,13 @@ export function CheckoutOrderSummary({
           </div>
         ) : null}
 
-        <div className="relative z-[2] mb-6 space-y-4">
+        <div
+          className={
+            hidePlaceOrder
+              ? "relative z-[2] space-y-4"
+              : "relative z-[2] mb-6 space-y-4"
+          }
+        >
           <div className="flex justify-between text-white">
             <span>{subtotalLabel}</span>
             <span>{subtotalFormatted}</span>
@@ -236,14 +250,17 @@ export function CheckoutOrderSummary({
               <span>+{bonusEarnAmount}</span>
             </div>
           ) : null}
-          <div className="border-t border-white/40 pt-4">
-            <div className="flex justify-between text-lg font-bold text-white">
-              <span>{totalLabel}</span>
-              <span>{totalFormatted}</span>
+          {hidePlaceOrder ? null : (
+            <div className="border-t border-white/40 pt-4">
+              <div className="flex justify-between text-lg font-bold text-white">
+                <span>{totalLabel}</span>
+                <span>{totalFormatted}</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
+        {hidePlaceOrder ? null : (
         <div className="relative z-[2]">
           {error ? (
             <p className={SUMMARY_ALERT_PILL_CLASS} role="alert">
@@ -259,6 +276,7 @@ export function CheckoutOrderSummary({
             className="max-w-none sm:max-w-none"
           />
         </div>
+        )}
       </LiquidGlassPanel>
     </div>
   );

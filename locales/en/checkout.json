@@ -3,6 +3,8 @@
   "productsInOrder": "Products in your order",
   "itemsOne": "1 item",
   "itemsMany": "{count} items",
+  "previousItem": "Previous item",
+  "nextItem": "Next item",
   "removeItem": "Remove item",
   "contactInformation": "Contact Information",
   "shippingMethod": "Shipping Method",
@@ -37,9 +39,9 @@
     "resolving": "Resolving address…"
   },
   "schedule": {
-    "title": "Delivery date & time",
+    "title": "Delivery day",
     "pickDate": "Pick a date",
-    "pickTime": "Pick a time",
+    "pickTime": "Delivery time slot",
     "noSlots": "No delivery slots are available right now.",
     "prevMonth": "Previous",
     "nextMonth": "Next",

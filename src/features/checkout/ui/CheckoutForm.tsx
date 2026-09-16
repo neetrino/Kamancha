@@ -4,13 +4,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { BOTTOM_SHEET_SCROLL_ATTR } from "@/components/ui/use-bottom-sheet-drag";
+
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
+import type { CheckoutLabels } from "@/features/checkout/ui/checkout-form-labels";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
 import { createOrderAction } from "@/features/checkout/create-order";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
+import {
+  CHECKOUT_SHEET_PANEL_HEIGHT_CLASS,
+  CHECKOUT_SHEET_STICKY_SPACER_CLASS,
+  CHECKOUT_SHEET_TEXTURE,
+} from "@/features/checkout/ui/checkout-sheet-surface";
 import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
 import {
   calculateBonusEarnAmount,
@@ -39,86 +48,8 @@ import { formatMoneyAmount } from "@/lib/money/format";
 const CHECKOUT_PAGE_TITLE =
   "mb-8 font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px] md:leading-[1.1]";
 
-type CheckoutLabels = {
-  title: string;
-  productsInOrder: string;
-  itemsOne: string;
-  itemsMany: string;
-  removeItem: string;
-  contactInformation: string;
-  shippingAddress: string;
-  paymentMethod: string;
-  orderSummary: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  floor: string;
-  intercomCode: string;
-  phonePlaceholder: string;
-  addressPlaceholder: string;
-  floorPlaceholder: string;
-  intercomCodePlaceholder: string;
-  openMap: string;
-  mapTitle: string;
-  mapHint: string;
-  mapConfirm: string;
-  mapCancel: string;
-  mapResolving: string;
-  enterDeliveryAddress: string;
-  calculatingDelivery: string;
-  scheduleTitle: string;
-  schedulePickTime: string;
-  scheduleNoSlots: string;
-  schedulePrevMonth: string;
-  scheduleNextMonth: string;
-  selectDeliverySlot: string;
-  cashChangeTitle: string;
-  cashChangeHint: string;
-  cashChangeNone: string;
-  cashChangeDue: string;
-  cashOnDelivery: string;
-  cashOnDeliveryDescription: string;
-  cashShort: string;
-  idram: string;
-  idramDescription: string;
-  card: string;
-  cardDescription: string;
-  couponTitle: string;
-  couponPlaceholder: string;
-  couponApply: string;
-  couponApplying: string;
-  giftCardTitle: string;
-  giftCardPlaceholder: string;
-  giftCardApply: string;
-  giftCardApplying: string;
-  giftCardInitial: string;
-  giftCardUsed: string;
-  giftCardRemaining: string;
-  giftCardPayable: string;
-  giftCardApplied: string;
-  bonusTitle: string;
-  bonusAvailable: string;
-  bonusUse: string;
-  bonusAmount: string;
-  bonusUseMax: string;
-  bonusApplied: string;
-  bonusEarn: string;
-  discount: string;
-  subtotal: string;
-  shipping: string;
-  change: string;
-  total: string;
-  placeOrder: string;
-  processing: string;
-  continueShopping: string;
-  cartEmpty: string;
-  groupPrepaidTitle: string;
-  groupPrepaidHint: string;
-  groupPrepaidOthersPaid: string;
-  groupPrepaidYouPay: string;
-};
+const CHECKOUT_SHEET_TITLE =
+  "mb-5 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase";
 
 type CheckoutFormProps = {
   locale: Locale;
@@ -140,6 +71,9 @@ type CheckoutFormProps = {
   splitOthersPrepaid?: boolean;
   othersPrepaidAmount?: number;
   lockedDeliveryAmount?: number | null;
+  variant?: "page" | "sheet";
+  /** Called after a successful place-order (close mobile sheet). */
+  onOrderPlaced?: () => void;
 };
 
 export function CheckoutForm({
@@ -162,6 +96,8 @@ export function CheckoutForm({
   splitOthersPrepaid = false,
   othersPrepaidAmount = 0,
   lockedDeliveryAmount = null,
+  variant = "page",
+  onOrderPlaced,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => createClientId(), []);
@@ -369,6 +305,20 @@ export function CheckoutForm({
   }
 
   if (!hasItems) {
+    if (variant === "sheet") {
+      return (
+        <div className="px-5 py-8 text-center">
+          <h1 className={CHECKOUT_SHEET_TITLE}>{labels.title}</h1>
+          <p className="mb-4 text-sm text-white/80">{labels.cartEmpty}</p>
+          <Link
+            href={productsHref}
+            className="inline-flex h-11 items-center justify-center rounded-xl bg-white px-4 text-sm font-medium text-brand-forest"
+          >
+            {labels.continueShopping}
+          </Link>
+        </div>
+      );
+    }
     return (
       <div className="checkout-page mx-auto max-w-7xl px-0 py-12">
         <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
@@ -436,27 +386,55 @@ export function CheckoutForm({
         return;
       }
 
+      onOrderPlaced?.();
       router.push(`/${locale}/checkout/success/${result.orderNumber}`);
       router.refresh();
     });
   }
 
+  const isSheet = variant === "sheet";
+
   return (
-    <div className="checkout-page mx-auto max-w-7xl px-0 py-12">
-      <h1 className={CHECKOUT_PAGE_TITLE}>{labels.title}</h1>
+    <form
+      onSubmit={onSubmit}
+      suppressHydrationWarning
+      className={
+        isSheet
+          ? "relative flex h-full min-h-0 flex-col"
+          : "checkout-page mx-auto max-w-7xl px-0 py-12"
+      }
+    >
+      <div
+        className={
+          isSheet
+            ? "min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4 pt-3"
+            : undefined
+        }
+        {...(isSheet ? { [BOTTOM_SHEET_SCROLL_ATTR]: "" } : {})}
+      >
+      <h1 className={isSheet ? CHECKOUT_SHEET_TITLE : CHECKOUT_PAGE_TITLE}>
+        {labels.title}
+      </h1>
 
       <CheckoutProductsInOrder
         products={orderProducts}
         title={labels.productsInOrder}
         itemsOneLabel={labels.itemsOne}
         itemsManyLabel={labels.itemsMany}
+        previousItemLabel={labels.previousItem}
+        nextItemLabel={labels.nextItem}
         removeItemLabel={labels.removeItem}
         locale={locale}
         onCartChanged={clearAppliedCoupon}
       />
 
-      <form onSubmit={onSubmit}>
-        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]">
+        <div
+          className={
+            isSheet
+              ? "grid grid-cols-1 gap-8"
+              : "grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]"
+          }
+        >
           <CheckoutDetailsSections
             labels={labels}
             locale={locale}
@@ -603,9 +581,47 @@ export function CheckoutForm({
             isSubmitting={pending}
             placeOrderLabel={labels.placeOrder}
             processingLabel={labels.processing}
+            hidePlaceOrder={isSheet}
           />
         </div>
-      </form>
-    </div>
+        {isSheet ? (
+          <div className={CHECKOUT_SHEET_STICKY_SPACER_CLASS} aria-hidden />
+        ) : null}
+      </div>
+      {isSheet ? (
+        <div className="checkout-sheet-sticky pointer-events-none absolute inset-x-0 bottom-0 z-20 overflow-hidden rounded-t-[28px] px-4 pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+          <div
+            aria-hidden
+            className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 bg-brand-forest ${CHECKOUT_SHEET_PANEL_HEIGHT_CLASS}`}
+            style={CHECKOUT_SHEET_TEXTURE}
+          />
+          <div className="relative z-[2]">
+            {error ? (
+              <p
+                className="mb-3 rounded-full bg-white px-4 py-2 text-center text-sm font-medium text-red-600"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
+            <div className="flex items-center gap-3">
+              <div className="min-w-0">
+                <p className="text-xs text-white/70">{labels.total}</p>
+                <p className="text-lg font-bold tabular-nums text-white">
+                  {formatMoney(totalAmount)}
+                </p>
+              </div>
+              <KamanchaPillButton
+                type="submit"
+                variant="light"
+                label={pending ? labels.processing : labels.placeOrder}
+                disabled={pending}
+                className="kamancha-pill-button--cart-cta kamancha-pill-button--sheet-cta pointer-events-auto max-w-none flex-1 sm:max-w-none"
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </form>
   );
 }

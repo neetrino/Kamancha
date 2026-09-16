@@ -61,6 +61,23 @@ export function calendarMonthLabel(
   return `${month} ${year}`;
 }
 
+/** Monday-first short weekday labels for compact calendars. */
+export const CALENDAR_WEEKDAY_NARROW = {
+  en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  hy: ["Երկ", "Երք", "Չրք", "Հնգ", "Ուր", "Շբթ", "Կիր"],
+  ru: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+} as const satisfies Record<"en" | "hy" | "ru", readonly string[]>;
+
+export function calendarWeekdayNarrow(locale: string): readonly string[] {
+  if (locale === "hy") {
+    return CALENDAR_WEEKDAY_NARROW.hy;
+  }
+  if (locale === "ru") {
+    return CALENDAR_WEEKDAY_NARROW.ru;
+  }
+  return CALENDAR_WEEKDAY_NARROW.en;
+}
+
 export function startOfMonthYmd(year: number, monthIndex: number): string {
   return `${year}-${String(monthIndex + 1).padStart(2, "0")}-01`;
 }

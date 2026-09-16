@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, gt, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@/db/schema";
 import { bonusTransactions } from "@/db/schema/bonuses";
 import { loadCustomerGroupOrderShareItems } from "@/features/orders/application/customer-group-order-share";
+import { isListedOnGroupOrderReceipt } from "@/features/orders/domain/group-order-receipt-participant";
 import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -45,7 +46,10 @@ function methodFromProviderOrCode(value: string | null | undefined): string | nu
   return paymentMethodLabel(value);
 }
 
-/** Active paid participants with their captured group-bag lines for admin view. */
+/**
+ * Active participants with bag lines, plus the organizer even with an empty
+ * bag (otherwise the order owner disappears from their own group receipt).
+ */
 export async function loadAdminGroupOrderParticipantsView(input: {
   groupOrderId: string;
   locale: Locale;
@@ -67,12 +71,13 @@ export async function loadAdminGroupOrderParticipantsView(input: {
     return { paymentMode: "ORGANIZER_PAYS_ALL", participants: [] };
   }
 
-  const participants = await db
+  const activeParticipants = await db
     .select({
       id: groupOrderParticipants.id,
       userId: groupOrderParticipants.userId,
       displayName: groupOrderParticipants.displayName,
       role: groupOrderParticipants.role,
+      status: groupOrderParticipants.status,
       paymentStatus: groupOrderParticipants.paymentStatus,
       paymentId: groupOrderParticipants.paymentId,
       subtotalAmount: groupOrderParticipants.subtotalAmount,
@@ -84,10 +89,11 @@ export async function loadAdminGroupOrderParticipantsView(input: {
       and(
         eq(groupOrderParticipants.groupOrderId, input.groupOrderId),
         eq(groupOrderParticipants.status, "ACTIVE"),
-        gt(groupOrderParticipants.subtotalAmount, 0),
       ),
     )
     .orderBy(groupOrderParticipants.createdAt);
+
+  const participants = activeParticipants.filter(isListedOnGroupOrderReceipt);
 
   if (participants.length === 0) {
     return {

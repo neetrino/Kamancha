@@ -12,12 +12,14 @@ import {
 const DISMISS_THRESHOLD_PX = 120;
 const SCROLL_DRAG_ARM_PX = 10;
 
+export const BOTTOM_SHEET_SCROLL_ATTR = "data-bottom-sheet-scroll";
+
 type DragSession = {
   pointerId: number;
   startClientY: number;
 };
 
-type UseProfileMobileSheetDragArgs = {
+type UseBottomSheetDragArgs = {
   enabled: boolean;
   panelRef: RefObject<HTMLDivElement | null>;
   scrollAreaRef: RefObject<HTMLDivElement | null>;
@@ -27,7 +29,7 @@ type UseProfileMobileSheetDragArgs = {
   onOffsetChange: (offsetY: number) => void;
 };
 
-type UseProfileMobileSheetDragResult = {
+type UseBottomSheetDragResult = {
   headerPointerHandlers: {
     onPointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void;
   };
@@ -39,24 +41,22 @@ type UseProfileMobileSheetDragResult = {
     onPointerUp: (event: ReactPointerEvent<HTMLDivElement>) => void;
     onPointerCancel: (event: ReactPointerEvent<HTMLDivElement>) => void;
   };
-  clearSessions: () => void;
 };
 
 /**
- * MaMarie-style dismiss drag. Applies transform imperatively during the gesture
- * so React state updates cannot fight the finger.
+ * Swipe-down dismiss. Transform is applied on the panel node so React
+ * state cannot fight the finger.
  */
-export function useProfileMobileSheetDrag({
+export function useBottomSheetDrag({
   enabled,
   panelRef,
   scrollAreaRef,
   onDismiss,
   onSnapBack,
   onOffsetChange,
-}: UseProfileMobileSheetDragArgs): UseProfileMobileSheetDragResult {
+}: UseBottomSheetDragArgs): UseBottomSheetDragResult {
   const activeDragRef = useRef<DragSession | null>(null);
   const pendingScrollDragRef = useRef<DragSession | null>(null);
-  const latestOffsetRef = useRef(0);
   const onDismissRef = useRef(onDismiss);
   const onSnapBackRef = useRef(onSnapBack);
   const onOffsetChangeRef = useRef(onOffsetChange);
@@ -67,7 +67,7 @@ export function useProfileMobileSheetDrag({
     onOffsetChangeRef.current = onOffsetChange;
   });
 
-  const clearSessions = useCallback(() => {
+  const clearSessions = useCallback((): void => {
     activeDragRef.current = null;
     pendingScrollDragRef.current = null;
   }, []);
@@ -76,7 +76,6 @@ export function useProfileMobileSheetDrag({
     (offsetY: number, withTransition: boolean) => {
       const panel = panelRef.current;
       if (!panel) return;
-      latestOffsetRef.current = offsetY;
       panel.style.transition = withTransition
         ? "transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)"
         : "none";
@@ -184,6 +183,5 @@ export function useProfileMobileSheetDrag({
       onPointerUp: endDrag,
       onPointerCancel: endDrag,
     },
-    clearSessions,
   };
 }

@@ -55,7 +55,7 @@ export async function getCustomerOrderDetailAction(
   }
 
   const identity = await getStoreIdentity();
-  let view = toAdminOrderDetailView(loaded, identity.name);
+  const view = toAdminOrderDetailView(loaded, identity.name);
 
   if (!loaded.order.groupOrderId) {
     return ok(view);

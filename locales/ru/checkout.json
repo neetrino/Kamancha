@@ -3,6 +3,8 @@
   "productsInOrder": "Товары в заказе",
   "itemsOne": "1 товар",
   "itemsMany": "{count} товаров",
+  "previousItem": "Предыдущий товар",
+  "nextItem": "Следующий товар",
   "removeItem": "Удалить товар",
   "contactInformation": "Контактные данные",
   "shippingMethod": "Способ доставки",
@@ -37,9 +39,9 @@
     "resolving": "Определяем адрес…"
   },
   "schedule": {
-    "title": "Дата и время доставки",
+    "title": "День доставки",
     "pickDate": "Выберите день",
-    "pickTime": "Выберите время",
+    "pickTime": "Интервал доставки",
     "noSlots": "Сейчас нет доступных слотов доставки.",
     "prevMonth": "Назад",
     "nextMonth": "Далее",

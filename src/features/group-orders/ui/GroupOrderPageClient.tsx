@@ -644,9 +644,9 @@ export function GroupOrderPageClient({
               {participant.items.length === 0 ? (
                 <p className="mt-3 text-sm text-white/70">{labels.emptyItems}</p>
               ) : (
-                <ul className="relative z-[2] mt-3 flex gap-3 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <ul className="relative z-[2] mt-3 flex min-w-0 gap-3 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {participant.items.map((item) => (
-                    <li key={item.id} className="min-w-0 shrink-0">
+                    <li key={item.id} className="shrink-0">
                       <GroupOrderProductCard
                         item={item}
                         removeItemLabel={labels.removeItem}
@@ -1008,9 +1008,9 @@ function GroupOrderProductCard({
   return (
     <article
       className="isolate shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
-      style={{ width: `min(100%, ${PRODUCT_CARD_WIDTH_PX}px)` }}
+      style={{ width: PRODUCT_CARD_WIDTH_PX }}
     >
-      <div className="relative z-[2] flex items-start gap-3">
+      <div className="relative z-[2] flex items-stretch gap-3">
         <div
           className="relative shrink-0 overflow-hidden"
           style={{
@@ -1028,7 +1028,7 @@ function GroupOrderProductCard({
           />
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
           <div className="flex items-start gap-2">
             <div className="min-w-0 flex-1">
               <p className="line-clamp-2 text-sm leading-snug font-medium text-gray-900">
@@ -1042,9 +1042,6 @@ function GroupOrderProductCard({
                   {item.modifierSummary}
                 </p>
               ) : null}
-              <p className="mt-1 text-sm font-semibold text-gray-900">
-                {item.lineTotalFormatted}
-              </p>
             </div>
             {canRemove ? (
               <button
@@ -1058,9 +1055,14 @@ function GroupOrderProductCard({
             ) : null}
           </div>
 
-          <span className="inline-flex h-6 w-fit min-w-[24px] items-center justify-center rounded-full border border-gray-200 bg-sky-50/70 px-2 text-[11px] font-semibold text-gray-900">
-            ×{item.quantity}
-          </span>
+          <div className="flex items-center justify-between gap-2">
+            <p className="shrink-0 text-sm font-semibold text-gray-900">
+              {item.lineTotalFormatted}
+            </p>
+            <span className="inline-flex h-6 w-fit min-w-[24px] shrink-0 items-center justify-center rounded-full border border-gray-200 bg-sky-50/70 px-2 text-[11px] font-semibold text-gray-900">
+              ×{item.quantity}
+            </span>
+          </div>
         </div>
       </div>
     </article>

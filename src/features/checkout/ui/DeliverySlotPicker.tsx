@@ -1,17 +1,26 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { DeliverySlotCalendar } from "@/features/checkout/ui/DeliverySlotCalendar";
+import { CheckoutRadio } from "@/features/checkout/ui/CheckoutRadio";
 import {
   formatYerevanDate,
   listAvailableDeliveryDays,
+  type DeliveryDayAvailability,
   type DeliveryScheduleSettings,
+  type DeliveryTimeSlot,
   type SelectedDeliverySlot,
 } from "@/features/delivery/domain/delivery-schedule";
+import {
+  buildMonthGridCells,
+  parseYmd,
+  startOfMonthYmd,
+} from "@/lib/calendar/calendar-grid";
 
 type DeliverySlotPickerLabels = {
   title: string;
+  pickDate: string;
   pickTime: string;
   noSlots: string;
   prevMonth: string;
@@ -27,92 +36,87 @@ type DeliverySlotPickerProps = {
   locale: string;
 };
 
-function startOfMonthYmd(year: number, monthIndex: number): string {
-  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-01`;
+const PICKER_HEADING_CLASS = "mb-3 text-base font-semibold text-white";
+
+function slotCardClass(isSelected: boolean): string {
+  const base =
+    "flex min-w-0 w-full cursor-pointer items-center rounded-full py-3 pr-3 pl-2 text-sm text-gray-900 transition-colors";
+  if (isSelected) {
+    return `${base} bg-white ring-2 ring-inset ring-brand-forest`;
+  }
+  return `${base} bg-white/80 hover:bg-white`;
 }
 
-function daysInMonth(year: number, monthIndex: number): number {
-  return new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+function isSlotSelected(
+  selected: SelectedDeliverySlot | null,
+  slot: DeliveryTimeSlot,
+): boolean {
+  return (
+    selected?.startTime === slot.startTime &&
+    selected?.endTime === slot.endTime
+  );
 }
 
-function parseYmd(ymd: string): { year: number; monthIndex: number; day: number } {
-  const [yearText, monthText, dayText] = ymd.split("-");
-  return {
-    year: Number(yearText),
-    monthIndex: Number(monthText) - 1,
-    day: Number(dayText),
-  };
-}
-
-/**
- * Fixed month names — avoid `Intl.DateTimeFormat` here: Node ICU and browsers
- * disagree for `hy` (SSR: "2026 թ․ հուլիս", client: "July 2026"), which
- * causes a hydration mismatch.
- */
-const MONTH_NAMES: Record<string, readonly string[]> = {
-  en: [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ],
-  hy: [
-    "Հունվար",
-    "Փետրվար",
-    "Մարտ",
-    "Ապրիլ",
-    "Մայիս",
-    "Հունիս",
-    "Հուլիս",
-    "Օգոստոս",
-    "Սեպտեմբեր",
-    "Հոկտեմբեր",
-    "Նոյեմբեր",
-    "Դեկտեմբեր",
-  ],
-  ru: [
-    "Январь",
-    "Февраль",
-    "Март",
-    "Апрель",
-    "Май",
-    "Июнь",
-    "Июль",
-    "Август",
-    "Сентябрь",
-    "Октябрь",
-    "Ноябрь",
-    "Декабрь",
-  ],
+type TimeSlotListProps = {
+  day: DeliveryDayAvailability;
+  selected: SelectedDeliverySlot | null;
+  disabled: boolean;
+  onChange: (value: SelectedDeliverySlot) => void;
 };
 
-/** Monday-first short weekday labels (same order as the calendar grid). */
-const WEEKDAY_NAMES: Record<string, readonly string[]> = {
-  en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  hy: ["Երկ", "Երք", "Չրք", "Հնգ", "Ուր", "Շբթ", "Կիր"],
-  ru: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-};
-
-function monthLabel(year: number, monthIndex: number, locale: string): string {
-  const months = MONTH_NAMES[locale] ?? MONTH_NAMES.en ?? [];
-  const month = months[monthIndex] ?? months[0] ?? "";
-  return `${month} ${year}`;
+function DeliveryTimeSlotList({
+  day,
+  selected,
+  disabled,
+  onChange,
+}: TimeSlotListProps) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {day.slots.map((slot) => {
+        const isSelected = isSlotSelected(selected, slot);
+        return (
+          <label key={slot.label} className={slotCardClass(isSelected)}>
+            <CheckoutRadio
+              name="deliveryTimeSlot"
+              value={`${slot.startTime}-${slot.endTime}`}
+              checked={isSelected}
+              disabled={disabled}
+              onChange={() =>
+                onChange({
+                  date: day.date,
+                  startTime: slot.startTime,
+                  endTime: slot.endTime,
+                })
+              }
+              className="relative z-[2] !mr-0"
+            />
+            <span className="relative z-[2] min-w-0 flex-1 text-center font-medium">
+              {slot.label}
+            </span>
+          </label>
+        );
+      })}
+    </div>
+  );
 }
 
-function weekdayLabels(locale: string): readonly string[] {
-  return WEEKDAY_NAMES[locale] ?? WEEKDAY_NAMES.en ?? [];
+function selectFirstSlot(
+  day: DeliveryDayAvailability | undefined,
+  disabled: boolean,
+  onChange: (value: SelectedDeliverySlot | null) => void,
+): void {
+  if (!day || disabled) return;
+  const first = day.slots[0];
+  if (!first) {
+    onChange(null);
+    return;
+  }
+  onChange({
+    date: day.date,
+    startTime: first.startTime,
+    endTime: first.endTime,
+  });
 }
-
-const MONTH_NAV_BUTTON =
-  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-xl sm:px-3 sm:py-1.5 sm:text-sm";
 
 /**
  * Calendar + time-slot picker for checkout delivery scheduling.
@@ -130,7 +134,7 @@ export function DeliverySlotPicker({
     [schedule],
   );
   const availableByDate = useMemo(() => {
-    const map = new Map<string, (typeof availableDays)[number]>();
+    const map = new Map<string, DeliveryDayAvailability>();
     for (const day of availableDays) {
       map.set(day.date, day);
     }
@@ -141,25 +145,16 @@ export function DeliverySlotPicker({
   const todayParts = parseYmd(todayYmd);
   const [viewYear, setViewYear] = useState(todayParts.year);
   const [viewMonth, setViewMonth] = useState(todayParts.monthIndex);
-
   const selectedDay = selected
     ? availableByDate.get(selected.date) ?? null
     : null;
-
-  function selectDate(date: string): void {
-    const day = availableByDate.get(date);
-    if (!day || disabled) return;
-    const first = day.slots[0];
-    if (!first) {
-      onChange(null);
-      return;
-    }
-    onChange({
-      date,
-      startTime: first.startTime,
-      endTime: first.endTime,
-    });
-  }
+  const lastDate = availableDays[availableDays.length - 1]?.date ?? todayYmd;
+  const minMonth = startOfMonthYmd(todayParts.year, todayParts.monthIndex);
+  const maxMonth = startOfMonthYmd(
+    parseYmd(lastDate).year,
+    parseYmd(lastDate).monthIndex,
+  );
+  const viewMonthYmd = startOfMonthYmd(viewYear, viewMonth);
 
   function shiftMonth(delta: number): void {
     const next = new Date(Date.UTC(viewYear, viewMonth + delta, 1));
@@ -167,135 +162,48 @@ export function DeliverySlotPicker({
     setViewMonth(next.getUTCMonth());
   }
 
-  const totalDays = daysInMonth(viewYear, viewMonth);
-  const firstWeekday = new Date(Date.UTC(viewYear, viewMonth, 1)).getUTCDay();
-  const leadingBlanks = firstWeekday === 0 ? 6 : firstWeekday - 1;
-  const cells: Array<string | null> = [
-    ...Array.from({ length: leadingBlanks }, () => null),
-    ...Array.from({ length: totalDays }, (_, index) => {
-      const day = index + 1;
-      return `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    }),
-  ];
-
-  const maxDate =
-    availableDays.length > 0
-      ? availableDays[availableDays.length - 1]?.date
-      : todayYmd;
-  const minMonth = startOfMonthYmd(todayParts.year, todayParts.monthIndex);
-  const maxParts = parseYmd(maxDate ?? todayYmd);
-  const maxMonth = startOfMonthYmd(maxParts.year, maxParts.monthIndex);
-  const viewMonthYmd = startOfMonthYmd(viewYear, viewMonth);
-  const canPrev = viewMonthYmd > minMonth;
-  const canNext = viewMonthYmd < maxMonth;
+  if (availableDays.length === 0) {
+    return (
+      <p className="relative z-[2] text-sm text-red-700">{labels.noSlots}</p>
+    );
+  }
 
   return (
-    <div className="relative z-[2] space-y-4 overflow-hidden rounded-2xl bg-white p-4">
-      <h3 className="relative z-[2] text-center font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase sm:text-left">
-        {labels.title}
-      </h3>
-
-      {availableDays.length === 0 ? (
-        <p className="relative z-[2] text-sm text-red-700">{labels.noSlots}</p>
-      ) : (
-        <>
-          <div className="relative z-[2]">
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                disabled={disabled || !canPrev}
-                onClick={() => shiftMonth(-1)}
-                aria-label={labels.prevMonth}
-                className={MONTH_NAV_BUTTON}
-              >
-                <ChevronLeft className="h-4 w-4 sm:hidden" aria-hidden />
-                <span className="hidden sm:inline">{labels.prevMonth}</span>
-              </button>
-              <p className="text-base font-medium text-gray-900">
-                {monthLabel(viewYear, viewMonth, locale)}
-              </p>
-              <button
-                type="button"
-                disabled={disabled || !canNext}
-                onClick={() => shiftMonth(1)}
-                aria-label={labels.nextMonth}
-                className={MONTH_NAV_BUTTON}
-              >
-                <ChevronRight className="h-4 w-4 sm:hidden" aria-hidden />
-                <span className="hidden sm:inline">{labels.nextMonth}</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-600">
-              {weekdayLabels(locale).map((label) => (
-                <div key={label} className="py-1 font-medium">
-                  {label}
-                </div>
-              ))}
-              {cells.map((date, index) => {
-                if (!date) {
-                  return <div key={`blank-${index}`} />;
-                }
-                const bookable = availableByDate.has(date);
-                const isSelected = selected?.date === date;
-                return (
-                  <button
-                    key={date}
-                    type="button"
-                    disabled={disabled || !bookable}
-                    onClick={() => selectDate(date)}
-                    className={`h-10 rounded-xl text-sm font-medium transition-colors ${
-                      isSelected
-                        ? "bg-brand-forest text-white"
-                        : bookable
-                          ? "bg-white text-gray-900 ring-1 ring-gray-200 hover:bg-gray-50"
-                          : "cursor-not-allowed text-gray-300"
-                    }`}
-                  >
-                    {Number(date.slice(-2))}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {selectedDay ? (
-            <div className="relative z-[2]">
-              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-600">
-                {labels.pickTime}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {selectedDay.slots.map((slot) => {
-                  const isSelected =
-                    selected?.startTime === slot.startTime &&
-                    selected?.endTime === slot.endTime;
-                  return (
-                    <button
-                      key={slot.label}
-                      type="button"
-                      disabled={disabled}
-                      onClick={() =>
-                        onChange({
-                          date: selectedDay.date,
-                          startTime: slot.startTime,
-                          endTime: slot.endTime,
-                        })
-                      }
-                      className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
-                        isSelected
-                          ? "border-brand-forest bg-brand-forest text-white"
-                          : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
-                      }`}
-                    >
-                      {slot.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-        </>
-      )}
+    <div className="relative z-[2] grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start lg:gap-10">
+      <div>
+        <h3 className={PICKER_HEADING_CLASS}>{labels.title}</h3>
+        <DeliverySlotCalendar
+          locale={locale}
+          prevMonthLabel={labels.prevMonth}
+          nextMonthLabel={labels.nextMonth}
+          viewYear={viewYear}
+          viewMonth={viewMonth}
+          cells={buildMonthGridCells(viewYear, viewMonth)}
+          todayYmd={todayYmd}
+          selectedDate={selected?.date ?? null}
+          disabled={disabled}
+          canPrev={viewMonthYmd > minMonth}
+          canNext={viewMonthYmd < maxMonth}
+          isBookable={(date) => availableByDate.has(date)}
+          onShiftMonth={shiftMonth}
+          onSelectDate={(date) =>
+            selectFirstSlot(availableByDate.get(date), disabled, onChange)
+          }
+        />
+      </div>
+      <div>
+        <h3 className={PICKER_HEADING_CLASS}>{labels.pickTime}</h3>
+        {selectedDay ? (
+          <DeliveryTimeSlotList
+            day={selectedDay}
+            selected={selected}
+            disabled={disabled}
+            onChange={onChange}
+          />
+        ) : (
+          <p className="text-sm text-white/80">{labels.pickDate}</p>
+        )}
+      </div>
     </div>
   );
 }
