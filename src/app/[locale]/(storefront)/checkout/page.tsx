@@ -132,6 +132,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
         calculatingDelivery: copy.shipping.calculatingDelivery,
         scheduleTitle: copy.schedule.title,
+        schedulePickDate: copy.schedule.pickDate,
         schedulePickTime: copy.schedule.pickTime,
         scheduleNoSlots: copy.schedule.noSlots,
         schedulePrevMonth: copy.schedule.prevMonth,

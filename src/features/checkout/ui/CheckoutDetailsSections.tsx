@@ -47,6 +47,7 @@ type CheckoutDetailsLabels = {
   mapResolving: string;
   calculatingDelivery: string;
   scheduleTitle: string;
+  schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;
@@ -237,6 +238,7 @@ export function CheckoutDetailsSections({
             locale={locale}
             labels={{
               title: labels.scheduleTitle,
+              pickDate: labels.schedulePickDate,
               pickTime: labels.schedulePickTime,
               noSlots: labels.scheduleNoSlots,
               prevMonth: labels.schedulePrevMonth,

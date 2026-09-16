@@ -37,9 +37,9 @@
     "resolving": "Resolving address…"
   },
   "schedule": {
-    "title": "Delivery date & time",
+    "title": "Delivery day",
     "pickDate": "Pick a date",
-    "pickTime": "Pick a time",
+    "pickTime": "Delivery time slot",
     "noSlots": "No delivery slots are available right now.",
     "prevMonth": "Previous",
     "nextMonth": "Next",

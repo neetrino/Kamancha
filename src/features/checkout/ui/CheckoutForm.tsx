@@ -69,6 +69,7 @@ type CheckoutLabels = {
   enterDeliveryAddress: string;
   calculatingDelivery: string;
   scheduleTitle: string;
+  schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
   schedulePrevMonth: string;

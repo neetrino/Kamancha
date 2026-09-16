@@ -20,7 +20,6 @@ const THUMB_SIZE_PX = 96;
 const THUMB_RADIUS_PX = 16;
 const CARD_MIN_WIDTH_PX = 200;
 const CARD_MAX_WIDTH_PX = 320;
-const TITLE_MAX_WIDTH_PX = 180;
 
 type CheckoutProductsInOrderProps = {
   products: CheckoutOrderProduct[];
@@ -60,14 +59,22 @@ function CheckoutOrderItemCard({
 
   return (
     <article
-      className="isolate w-max shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
+      className="relative isolate w-max shrink-0 overflow-hidden rounded-[20px] bg-white p-3"
       style={{
         minWidth: CARD_MIN_WIDTH_PX,
         maxWidth: CARD_MAX_WIDTH_PX,
-        ["--checkout-order-item-title-max-width" as string]: `${TITLE_MAX_WIDTH_PX}px`,
       }}
     >
-      <div className="relative z-[2] flex items-stretch gap-3">
+      <button
+        type="button"
+        onClick={() => onRemove(product.id)}
+        className="absolute top-2 right-2 z-[3] flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+        aria-label={removeItemLabel}
+      >
+        <X className="h-4 w-4" aria-hidden="true" />
+      </button>
+
+      <div className="relative z-[2] flex items-stretch gap-3 pr-7">
         <div
           className="relative block shrink-0 self-stretch overflow-hidden"
           style={{
@@ -85,32 +92,22 @@ function CheckoutOrderItemCard({
           />
         </div>
 
-        <div className="flex w-max min-w-0 max-w-full flex-1 flex-col justify-between gap-2">
-          <div className="flex items-start justify-between gap-2">
-            <div className="w-max min-w-0 max-w-full">
-              <p className="line-clamp-2 w-max max-w-[var(--checkout-order-item-title-max-width)] text-sm font-medium text-gray-900">
-                {product.title}
+        <div className="flex min-w-0 flex-1 flex-col justify-between gap-2">
+          <div className="min-w-0">
+            <p className="line-clamp-2 text-sm font-medium text-gray-900">
+              {product.title}
+            </p>
+            {product.modifierSummary ? (
+              <p
+                className="mt-0.5 line-clamp-2 text-xs text-gray-500"
+                title={product.modifierSummary}
+              >
+                {product.modifierSummary}
               </p>
-              {product.modifierSummary ? (
-                <p
-                  className="mt-0.5 line-clamp-2 text-xs text-gray-500"
-                  title={product.modifierSummary}
-                >
-                  {product.modifierSummary}
-                </p>
-              ) : null}
-              <p className="mt-1 text-sm font-semibold text-gray-900">
-                {formatMoneyAmount(product.lineTotalAmount, "AMD", locale)}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => onRemove(product.id)}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-              aria-label={removeItemLabel}
-            >
-              <X className="h-4 w-4" aria-hidden="true" />
-            </button>
+            ) : null}
+            <p className="mt-1 text-sm font-semibold text-gray-900">
+              {formatMoneyAmount(product.lineTotalAmount, "AMD", locale)}
+            </p>
           </div>
 
           <div className="flex min-w-0 items-center gap-2">
