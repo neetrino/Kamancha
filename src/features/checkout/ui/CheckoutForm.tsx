@@ -352,19 +352,6 @@ export function CheckoutForm({
     });
   }
 
-  function errorMessageForField(field: CheckoutInvalidField): string {
-    switch (field) {
-      case "line1":
-        return labels.enterDeliveryAddress;
-      case "deliverySlot":
-        return labels.selectDeliverySlot;
-      case "paymentMethod":
-        return labels.selectPaymentMethod;
-      default:
-        return labels.fillRequiredFields;
-    }
-  }
-
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -390,9 +377,6 @@ export function CheckoutForm({
 
     const firstInvalid = firstCheckoutInvalidField(nextInvalid);
     if (firstInvalid) {
-      if (variant !== "sheet") {
-        setError(errorMessageForField(firstInvalid));
-      }
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           scrollToCheckoutField(firstInvalid);

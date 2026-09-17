@@ -10,7 +10,9 @@ import {
 } from "react";
 
 const DISMISS_THRESHOLD_PX = 120;
-const SCROLL_DRAG_ARM_PX = 10;
+const SCROLL_DRAG_ARM_PX = 8;
+/** Treat near-top as top (subpixel / iOS rubber-band residue). */
+const SCROLL_TOP_EPSILON_PX = 1;
 
 export const BOTTOM_SHEET_SCROLL_ATTR = "data-bottom-sheet-scroll";
 
@@ -43,9 +45,14 @@ type UseBottomSheetDragResult = {
   };
 };
 
+function isScrollAtTop(scrollArea: HTMLElement | null): boolean {
+  return (scrollArea?.scrollTop ?? 0) <= SCROLL_TOP_EPSILON_PX;
+}
+
 /**
- * Swipe-down dismiss. Transform is applied on the panel node so React
- * state cannot fight the finger.
+ * Swipe-down dismiss (social-sheet style): grabber always, and anywhere on
+ * content when scrolled to the top. Transform is applied on the panel node
+ * so React state cannot fight the finger.
  */
 export function useBottomSheetDrag({
   enabled,
@@ -106,7 +113,7 @@ export function useBottomSheetDrag({
   const onScrollAreaPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       if (!enabled) return;
-      if ((scrollAreaRef.current?.scrollTop ?? 0) > 0) return;
+      if (!isScrollAtTop(scrollAreaRef.current)) return;
       pendingScrollDragRef.current = {
         pointerId: event.pointerId,
         startClientY: event.clientY,
@@ -132,11 +139,15 @@ export function useBottomSheetDrag({
 
       const deltaY = event.clientY - pending.startClientY;
       if (deltaY < -SCROLL_DRAG_ARM_PX) {
+        // Finger moved up — let the content scroll normally.
         pendingScrollDragRef.current = null;
         return;
       }
       if (deltaY <= SCROLL_DRAG_ARM_PX) return;
-      if ((scrollAreaRef.current?.scrollTop ?? 0) > 0) return;
+      if (!isScrollAtTop(scrollAreaRef.current)) {
+        pendingScrollDragRef.current = null;
+        return;
+      }
 
       beginDrag(event.pointerId, pending.startClientY);
       applyOffset(deltaY, false);
@@ -174,6 +185,35 @@ export function useBottomSheetDrag({
       clearSessions();
     }
   }, [clearSessions, enabled]);
+
+  // Non-passive touchmove so we can block native scroll once pull-to-dismiss arms.
+  useEffect(() => {
+    if (!enabled) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    function onTouchMove(event: TouchEvent): void {
+      if (activeDragRef.current) {
+        event.preventDefault();
+        return;
+      }
+
+      const pending = pendingScrollDragRef.current;
+      if (!pending || event.touches.length === 0) return;
+
+      const touch = event.touches[0];
+      if (!touch) return;
+      const deltaY = touch.clientY - pending.startClientY;
+      if (deltaY > SCROLL_DRAG_ARM_PX && isScrollAtTop(scrollAreaRef.current)) {
+        event.preventDefault();
+      }
+    }
+
+    panel.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => {
+      panel.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [enabled, panelRef, scrollAreaRef]);
 
   return {
     headerPointerHandlers: { onPointerDown: onHeaderPointerDown },
