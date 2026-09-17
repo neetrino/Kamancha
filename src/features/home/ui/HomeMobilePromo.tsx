@@ -21,7 +21,7 @@ export function HomeMobilePromo({
 }: HomeMobilePromoProps) {
   return (
     <HomeReveal>
-      <section className="relative z-[1] px-6 pt-2" data-node-id="196:213">
+      <section className="relative z-[1] px-4 pt-2" data-node-id="196:213">
         <div className="relative overflow-hidden rounded-[21px] bg-white">
           <div className="relative z-[1] max-w-[62%] py-[27px] pl-[19px] pr-2">
             <h1 className="font-big-fat-boii text-[22px] leading-[23px] font-normal text-brand-forest">

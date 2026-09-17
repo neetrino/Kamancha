@@ -132,7 +132,7 @@ export function HomeMobileCategories({
 
   if (count === 0 || !current) {
     return (
-      <p className="px-6 pt-8 text-center text-white/70">{emptyLabel}</p>
+      <p className="px-4 pt-8 text-center text-white/70">{emptyLabel}</p>
     );
   }
 
