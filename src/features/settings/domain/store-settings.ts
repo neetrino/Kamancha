@@ -28,6 +28,7 @@ export const STORE_SETTING_KEYS = [
   "store.delivery",
   "store.bonuses",
   "store.giftCards",
+  "store.blog",
 ] as const;
 
 export type StoreSettingKey = (typeof STORE_SETTING_KEYS)[number];
@@ -52,6 +53,15 @@ export type StoreSocial = {
 export type StoreMaintenance = {
   enabled: boolean;
   message?: string;
+};
+
+/** When enabled, storefront `/blog` is reachable and linked in the footer. */
+export type StoreBlog = {
+  enabled: boolean;
+};
+
+export const DEFAULT_STORE_BLOG: StoreBlog = {
+  enabled: true,
 };
 
 export type StoreStacking = {
@@ -134,6 +144,21 @@ export function parseMaintenance(value: unknown): StoreMaintenance {
     enabled: record.enabled === true,
     message:
       typeof record.message === "string" ? record.message.slice(0, 500) : undefined,
+  };
+}
+
+export function parseBlogSettings(value: unknown): StoreBlog {
+  if (!value || typeof value !== "object") {
+    return { ...DEFAULT_STORE_BLOG };
+  }
+
+  const record = value as Record<string, unknown>;
+  if (!("enabled" in record)) {
+    return { ...DEFAULT_STORE_BLOG };
+  }
+
+  return {
+    enabled: record.enabled === true,
   };
 }
 

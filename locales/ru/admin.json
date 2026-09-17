@@ -840,6 +840,9 @@
   },
   "blog": {
     "title": "Блог",
+    "storefrontToggleLabel": "Открыть на витрине",
+    "storefrontToggleEnableAria": "Показать страницу блога на витрине",
+    "storefrontToggleDisableAria": "Скрыть страницу блога на витрине",
     "addPost": "Добавить публикацию",
     "searchPlaceholder": "Поиск по названию или slug",
     "searchAria": "Поиск публикаций блога",

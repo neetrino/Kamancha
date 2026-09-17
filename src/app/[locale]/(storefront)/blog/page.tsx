@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { listPublishedBlogPosts } from '@/features/blog/application/queries';
 import { BlogListView } from '@/features/blog/ui/BlogListView';
+import { getStoreBlogSettings } from '@/features/settings/application/queries';
 import { isLocale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 
@@ -13,6 +14,11 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const { locale: rawLocale } = await params;
 
   if (!isLocale(rawLocale)) {
+    notFound();
+  }
+
+  const blogSettings = await getStoreBlogSettings();
+  if (!blogSettings.enabled) {
     notFound();
   }
 

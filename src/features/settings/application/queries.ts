@@ -7,6 +7,7 @@ import { getDb } from "@/db/client";
 import { storeSettings } from "@/db/schema";
 import {
   parseBonusSettings,
+  parseBlogSettings,
   parseFxRates,
   parseGlobalDiscount,
   parseGiftCardSettings,
@@ -16,6 +17,7 @@ import {
   parseStacking,
   type BonusSettings,
   type GiftCardSettings,
+  type StoreBlog,
   type StoreFxRates,
   type StoreGlobalDiscount,
   type StoreIdentity,
@@ -46,6 +48,10 @@ export const getStoreMaintenance = cache(
     return parseMaintenance(await getSettingValue("store.maintenance"));
   },
 );
+
+export const getStoreBlogSettings = cache(async (): Promise<StoreBlog> => {
+  return parseBlogSettings(await getSettingValue("store.blog"));
+});
 
 export async function getStoreStacking(): Promise<StoreStacking> {
   return parseStacking(await getSettingValue("store.stacking"));

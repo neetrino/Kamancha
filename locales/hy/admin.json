@@ -840,6 +840,9 @@
   },
   "blog": {
     "title": "Բլոգ",
+    "storefrontToggleLabel": "Բացել վիտրինայում",
+    "storefrontToggleEnableAria": "Ցույց տալ բլոգի էջը վիտրինայում",
+    "storefrontToggleDisableAria": "Թաքցնել բլոգի էջը վիտրինայից",
     "addPost": "Ավելացնել հրապարակում",
     "searchPlaceholder": "Որոնել վերնագրով կամ slug-ով",
     "searchAria": "Որոնել բլոգի հրապարակումներ",
