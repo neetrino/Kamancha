@@ -75,7 +75,8 @@
     "card": "Картой",
     "cardDescription": "Оплата картами Visa, Mastercard или ArCa",
     "arca": "ArCa",
-    "arcaDescription": "Оплата картой ArCa"
+    "arcaDescription": "Оплата картой ArCa",
+    "selectMethod": "Пожалуйста, выберите способ оплаты"
   },
   "groupPrepaid": {
     "title": "Оплаты группового заказа",
@@ -123,7 +124,8 @@
     "continueShopping": "Продолжить покупки"
   },
   "errors": {
-    "cartEmpty": "Корзина пуста"
+    "cartEmpty": "Корзина пуста",
+    "fillRequiredFields": "Пожалуйста, заполните выделенные поля"
   },
   "success": {
     "title": "Заказ подтверждён",

@@ -13,6 +13,13 @@ import { previewCouponAction } from "@/features/checkout/application/preview-cou
 import { createOrderAction } from "@/features/checkout/create-order";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
+import {
+  collectCheckoutInvalidFields,
+  firstCheckoutInvalidField,
+  scrollToCheckoutField,
+  type CheckoutInvalidField,
+  type CheckoutInvalidFields,
+} from "@/features/checkout/ui/checkout-invalid-fields";
 import { CheckoutOrderSummary } from "@/features/checkout/ui/CheckoutOrderSummary";
 import { CheckoutProductsInOrder } from "@/features/checkout/ui/CheckoutProductsInOrder";
 import {
@@ -112,7 +119,8 @@ export function CheckoutForm({
     locale,
   );
   const [paymentMethod, setPaymentMethod] =
-    useState<CheckoutPaymentMethod>("cash_on_delivery");
+    useState<CheckoutPaymentMethod | null>(null);
+  const [invalidFields, setInvalidFields] = useState<CheckoutInvalidFields>({});
   const [error, setError] = useState<string | null>(null);
   const [couponDraft, setCouponDraft] = useState("");
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(
@@ -335,23 +343,49 @@ export function CheckoutForm({
     );
   }
 
+  function clearInvalidField(field: CheckoutInvalidField): void {
+    setInvalidFields((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  }
+
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     setError(null);
 
-    if (
-      lockedDeliveryAmount == null &&
-      (deliveryQuote.pending ||
-        deliveryQuote.error ||
-        !deliveryQuote.distanceLabel)
-    ) {
-      setError(labels.enterDeliveryAddress);
+    const line1QuoteOk =
+      lockedDeliveryAmount != null ||
+      (!deliveryQuote.pending &&
+        !deliveryQuote.error &&
+        Boolean(deliveryQuote.distanceLabel));
+
+    const nextInvalid = collectCheckoutInvalidFields({
+      firstName: String(data.get("firstName") ?? ""),
+      lastName: String(data.get("lastName") ?? ""),
+      contactEmail: String(data.get("contactEmail") ?? ""),
+      contactPhone: String(data.get("contactPhone") ?? ""),
+      line1,
+      line1QuoteOk,
+      hasDeliverySlot: deliverySlot != null,
+      hasPaymentMethod: paymentMethod != null,
+    });
+    setInvalidFields(nextInvalid);
+
+    const firstInvalid = firstCheckoutInvalidField(nextInvalid);
+    if (firstInvalid) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          scrollToCheckoutField(firstInvalid);
+        });
+      });
       return;
     }
 
-    if (!deliverySlot) {
-      setError(labels.selectDeliverySlot);
+    if (!deliverySlot || !paymentMethod) {
       return;
     }
 
@@ -397,6 +431,7 @@ export function CheckoutForm({
   return (
     <form
       onSubmit={onSubmit}
+      noValidate
       suppressHydrationWarning
       className={
         isSheet
@@ -456,6 +491,8 @@ export function CheckoutForm({
               lockedDeliveryAmount != null ? null : deliveryQuote.error
             }
             addressLocked={lockedDeliveryAmount != null}
+            invalidFields={invalidFields}
+            onClearInvalidField={clearInvalidField}
             prepaidNotice={
               splitOthersPrepaid
                 ? {
@@ -469,6 +506,7 @@ export function CheckoutForm({
             }
             paymentMethod={paymentMethod}
             onPaymentMethodChange={(method) => {
+              clearInvalidField("paymentMethod");
               setPaymentMethod(method);
               if (method === "cash_on_delivery") {
                 setCashChangeAmount(CASH_CHANGE_NONE);
@@ -596,14 +634,6 @@ export function CheckoutForm({
             style={CHECKOUT_SHEET_TEXTURE}
           />
           <div className="relative z-[2]">
-            {error ? (
-              <p
-                className="mb-3 rounded-full bg-white px-4 py-2 text-center text-sm font-medium text-red-600"
-                role="alert"
-              >
-                {error}
-              </p>
-            ) : null}
             <div className="flex items-center gap-3">
               <div className="min-w-0">
                 <p className="text-xs text-white/70">{labels.total}</p>

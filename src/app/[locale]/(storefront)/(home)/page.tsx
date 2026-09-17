@@ -117,6 +117,7 @@ async function HomeBelowFold({ locale, dictionary }: { locale: Locale; dictionar
           products={featuredCards}
           overlayPlate
           tabletSheet="white"
+          roundTabletBottom={discountedCards.length === 0}
         />
         {discountedCards.length > 0 ? (
           <HomeMobileProductSection

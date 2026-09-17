@@ -24,7 +24,7 @@ import {
   useBodyScrollLock,
 } from "@/lib/react/use-body-scroll-lock";
 
-/** Must match `.animate-bottom-sheet-panel-*` duration in globals.css. */
+/** Must match `.animate-bottom-sheet-*` duration in globals.css. */
 export const BOTTOM_SHEET_ANIMATION_MS = 300;
 const SHEET_EASING = "cubic-bezier(0.32, 0.72, 0, 1)";
 
@@ -43,7 +43,8 @@ type BottomSheetProps = {
 
 /**
  * Viewport-wide panel that slides up from the bottom (mobile checkout, etc.).
- * Dismiss with the top handle, swipe down, backdrop, or Escape.
+ * Dismiss with the top handle, pull-down anywhere when scrolled to the top,
+ * backdrop, or Escape.
  */
 export function BottomSheet({
   open,
@@ -213,9 +214,9 @@ export function BottomSheet({
 
   const backdropClass =
     phase === "enter"
-      ? "animate-sheet-backdrop-in"
-      : phase === "exit"
-        ? "animate-sheet-backdrop-out"
+      ? "animate-bottom-sheet-backdrop-in"
+      : phase === "exit" || phase === "exit-drag"
+        ? "animate-bottom-sheet-backdrop-out"
         : "";
   const panelMotionClass =
     phase === "enter"
@@ -237,11 +238,18 @@ export function BottomSheet({
       aria-modal="true"
       aria-label={panelAriaLabel}
     >
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         className={`absolute inset-0 bg-black/40 backdrop-blur-sm ${backdropClass}`}
         aria-label={closeLabel}
         onClick={() => onCloseRef.current()}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onCloseRef.current();
+          }
+        }}
       />
       <div
         ref={panelRef}
@@ -267,12 +275,7 @@ export function BottomSheet({
           }`}
           {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
           onClick={(event) => event.stopPropagation()}
-          onPointerDown={(event) => {
-            const target = event.target;
-            if (!(target instanceof Element)) return;
-            if (target.closest("button, a, input, textarea, select")) return;
-            scrollAreaPointerHandlers.onPointerDown(event);
-          }}
+          onPointerDown={scrollAreaPointerHandlers.onPointerDown}
         >
           {panelChildren}
         </div>

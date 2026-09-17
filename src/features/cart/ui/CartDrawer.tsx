@@ -224,6 +224,7 @@ export function CartDrawer({
         onClose={closeDrawer}
         ariaLabel={labels.title}
         panelClassName="w-[87%] max-w-[420px]"
+        surfaceClassName="rounded-l-[20px]"
         zIndexClassName="z-[200]"
         backdropBlur
         closeButtonClassName="side-sheet-close-stroke bg-[#335329] text-white hover:bg-[#2c4823]"
@@ -283,103 +284,103 @@ export function CartDrawer({
                 return (
                   <li
                     key={item.id}
-                    className="overflow-hidden rounded-[20px] border border-gray-200 bg-white p-3"
+                    className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-white px-3 py-3.5"
                   >
-                    <div className="flex items-stretch gap-3">
+                    <button
+                      type="button"
+                      onClick={() => removeCartItem(item.id)}
+                      disabled={!canEdit}
+                      className="absolute top-2 right-2 z-[3] flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label={labels.removeItem}
+                    >
+                      <X className="h-4 w-4" aria-hidden />
+                    </button>
+
+                    <div className="relative z-[2] flex items-stretch gap-3 pr-7">
                       {productHref ? (
                         <AppLink
                           href={productHref}
                           prefetchPolicy="intent"
                           onClick={closeDrawer}
-                          className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl"
+                          className="relative size-16 shrink-0 overflow-hidden rounded-[12px]"
                         >
                           <Image
                             src={imageSrc}
                             alt={item.title}
                             fill
-                            sizes="112px"
+                            sizes="64px"
                             className="object-cover"
                           />
                         </AppLink>
                       ) : (
-                        <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl">
+                        <div className="relative size-16 shrink-0 overflow-hidden rounded-[12px]">
                           <Image
                             src={imageSrc}
                             alt={item.title}
                             fill
-                            sizes="112px"
+                            sizes="64px"
                             className="object-cover"
                           />
                         </div>
                       )}
 
-                      <div className="flex min-w-0 flex-1 flex-col">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            {productHref ? (
-                              <AppLink
-                                href={productHref}
-                                prefetchPolicy="intent"
-                                onClick={closeDrawer}
-                                className="line-clamp-2 text-sm font-medium text-gray-900 transition-colors hover:text-gray-600"
-                              >
-                                {item.title}
-                              </AppLink>
-                            ) : (
-                              <p className="line-clamp-2 text-sm font-medium text-gray-900">
-                                {item.title}
-                              </p>
-                            )}
-                            {item.modifierSummary ? (
-                              <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
-                                {item.modifierSummary}
-                              </p>
-                            ) : null}
-                            <p className="mt-1 text-sm font-semibold text-gray-900">
+                      <div className="flex min-h-16 min-w-0 flex-1 flex-col justify-between gap-1">
+                        <div className="min-w-0">
+                          {productHref ? (
+                            <AppLink
+                              href={productHref}
+                              prefetchPolicy="intent"
+                              onClick={closeDrawer}
+                              className="block truncate text-sm font-medium leading-5 text-gray-900 transition-colors hover:text-gray-600"
+                            >
+                              {item.title}
+                            </AppLink>
+                          ) : (
+                            <p className="truncate text-sm font-medium leading-5 text-gray-900">
+                              {item.title}
+                            </p>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          {item.modifierSummary ? (
+                            <p
+                              className="mb-0.5 truncate text-xs text-gray-500"
+                              title={item.modifierSummary}
+                            >
+                              {item.modifierSummary}
+                            </p>
+                          ) : null}
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="min-w-0 truncate text-sm font-semibold text-gray-900">
                               {item.lineTotalFormatted}
                             </p>
-                            <p className="mt-0.5 text-xs text-gray-500">
-                              {item.unitPriceFormatted} × {item.quantity}
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => removeCartItem(item.id)}
-                            disabled={!canEdit}
-                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
-                            aria-label={labels.removeItem}
-                          >
-                            <X className="h-4 w-4" aria-hidden />
-                          </button>
-                        </div>
-
-                        <div className="mt-auto flex justify-end pt-3">
-                          <div className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-1 py-0.5">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                changeQuantity(item.id, item.quantity - 1)
-                              }
-                              disabled={!canEdit}
-                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-                              aria-label={labels.decreaseQuantity}
-                            >
-                              <Minus className="h-3.5 w-3.5" aria-hidden />
-                            </button>
-                            <span className="min-w-5 text-center text-sm font-medium tabular-nums text-gray-900">
-                              {item.quantity}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                changeQuantity(item.id, item.quantity + 1)
-                              }
-                              disabled={!canEdit}
-                              className="flex h-7 w-7 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-                              aria-label={labels.increaseQuantity}
-                            >
-                              <Plus className="h-3.5 w-3.5" aria-hidden />
-                            </button>
+                            <div className="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-gray-200 bg-sky-50/70 px-0.5 py-0.5">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  changeQuantity(item.id, item.quantity - 1)
+                                }
+                                disabled={!canEdit}
+                                className="flex h-6 w-6 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                                aria-label={labels.decreaseQuantity}
+                              >
+                                <Minus className="h-3 w-3" aria-hidden />
+                              </button>
+                              <span className="min-w-5 text-center text-[11px] font-semibold tabular-nums text-gray-900">
+                                {item.quantity}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  changeQuantity(item.id, item.quantity + 1)
+                                }
+                                disabled={!canEdit}
+                                className="flex h-6 w-6 items-center justify-center rounded-full text-gray-900 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                                aria-label={labels.increaseQuantity}
+                              >
+                                <Plus className="h-3 w-3" aria-hidden />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>

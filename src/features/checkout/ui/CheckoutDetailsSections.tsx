@@ -3,6 +3,7 @@
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import type { CheckoutInvalidField } from "@/features/checkout/ui/checkout-invalid-fields";
 import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMethods";
 import type { CheckoutPaymentOption } from "@/features/checkout/ui/CheckoutPaymentMethodOption";
 import type { CashChangeSelection } from "@/features/checkout/ui/checkout-cash-change-assets";
@@ -18,11 +19,24 @@ const FIELD_CLASS =
 const FIELD_LABEL_CLASS =
   "flex flex-col gap-1.5 text-sm font-medium text-white/80";
 
+const FIELD_LABEL_INVALID_CLASS =
+  "flex flex-col gap-1.5 text-sm font-medium text-red-500";
+
 const SECTION_CLASS =
   "liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
 
 const SECTION_TITLE_CLASS =
   "relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase";
+
+function labelClassName(invalid: boolean): string {
+  return invalid ? FIELD_LABEL_INVALID_CLASS : FIELD_LABEL_CLASS;
+}
+
+function captionClassName(invalid: boolean): string {
+  return invalid
+    ? "text-sm font-medium text-red-500"
+    : "text-sm font-medium text-white/80";
+}
 
 type CheckoutDetailsLabels = {
   contactInformation: string;
@@ -74,7 +88,7 @@ type CheckoutDetailsSectionsProps = {
   onLine1Change: (value: string) => void;
   deliveryQuotePending: boolean;
   deliveryQuoteError: string | null;
-  paymentMethod: CheckoutPaymentMethod;
+  paymentMethod: CheckoutPaymentMethod | null;
   onPaymentMethodChange: (method: CheckoutPaymentMethod) => void;
   paymentOptions: CheckoutPaymentOption[];
   defaultFirstName: string;
@@ -83,6 +97,8 @@ type CheckoutDetailsSectionsProps = {
   defaultPhone: string;
   addressLocked?: boolean;
   prepaidNotice?: { title: string; lines: readonly string[] } | null;
+  invalidFields?: Partial<Record<CheckoutInvalidField, true>>;
+  onClearInvalidField?: (field: CheckoutInvalidField) => void;
 };
 
 export function CheckoutDetailsSections({
@@ -110,7 +126,13 @@ export function CheckoutDetailsSections({
   defaultPhone,
   addressLocked = false,
   prepaidNotice = null,
+  invalidFields = {},
+  onClearInvalidField,
 }: CheckoutDetailsSectionsProps) {
+  function clearField(field: CheckoutInvalidField): void {
+    onClearInvalidField?.(field);
+  }
+
   return (
     <div className="space-y-6">
       <section className={SECTION_CLASS}>
@@ -119,52 +141,68 @@ export function CheckoutDetailsSections({
         </h2>
         <div className="relative z-[2] space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className={FIELD_LABEL_CLASS}>
+            <label className={labelClassName(Boolean(invalidFields.firstName))}>
               {labels.firstName}
               <input
                 name="firstName"
+                data-checkout-field="firstName"
                 required
                 defaultValue={defaultFirstName}
                 disabled={pending}
+                aria-invalid={invalidFields.firstName || undefined}
                 className={FIELD_CLASS}
                 autoComplete="given-name"
+                onChange={() => clearField("firstName")}
               />
             </label>
-            <label className={FIELD_LABEL_CLASS}>
+            <label className={labelClassName(Boolean(invalidFields.lastName))}>
               {labels.lastName}
               <input
                 name="lastName"
+                data-checkout-field="lastName"
                 required
                 defaultValue={defaultLastName}
                 disabled={pending}
+                aria-invalid={invalidFields.lastName || undefined}
                 className={FIELD_CLASS}
                 autoComplete="family-name"
+                onChange={() => clearField("lastName")}
               />
             </label>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className={FIELD_LABEL_CLASS}>
+            <label
+              className={labelClassName(Boolean(invalidFields.contactEmail))}
+            >
               {labels.email}
               <input
                 name="contactEmail"
+                data-checkout-field="contactEmail"
                 type="email"
                 required
                 defaultValue={defaultEmail}
                 disabled={pending}
+                aria-invalid={invalidFields.contactEmail || undefined}
                 className={FIELD_CLASS}
                 autoComplete="email"
+                onChange={() => clearField("contactEmail")}
               />
             </label>
-            <label className={FIELD_LABEL_CLASS}>
+            <label
+              className={labelClassName(Boolean(invalidFields.contactPhone))}
+            >
               {labels.phone}
               <input
                 name="contactPhone"
+                data-checkout-field="contactPhone"
                 required
                 defaultValue={defaultPhone}
                 placeholder={labels.phonePlaceholder}
                 disabled={pending}
+                aria-invalid={invalidFields.contactPhone || undefined}
                 className={FIELD_CLASS}
                 autoComplete="tel"
+                onChange={() => clearField("contactPhone")}
               />
             </label>
           </div>
@@ -177,16 +215,19 @@ export function CheckoutDetailsSections({
         </h2>
         <div className="relative z-[2] space-y-4">
           <div className="space-y-1.5">
-            <span className="text-sm font-medium text-white/80">
+            <span className={captionClassName(Boolean(invalidFields.line1))}>
               {labels.address}
             </span>
             <div className="flex items-start gap-2">
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1" data-checkout-field="line1">
                 <AddressAutocomplete
                   name="line1"
                   required
                   value={line1}
-                  onValueChange={onLine1Change}
+                  onValueChange={(value) => {
+                    clearField("line1");
+                    onLine1Change(value);
+                  }}
                   placeholder={labels.addressPlaceholder}
                   disabled={pending || addressLocked}
                   className={FIELD_CLASS}
@@ -194,19 +235,22 @@ export function CheckoutDetailsSections({
                 />
               </div>
               {addressLocked ? null : (
-              <AddressMapPicker
-                addressValue={line1}
-                disabled={pending}
-                onAddressSelected={onLine1Change}
-                labels={{
-                  openMap: labels.openMap,
-                  title: labels.mapTitle,
-                  hint: labels.mapHint,
-                  confirm: labels.mapConfirm,
-                  cancel: labels.mapCancel,
-                  resolving: labels.mapResolving,
-                }}
-              />
+                <AddressMapPicker
+                  addressValue={line1}
+                  disabled={pending}
+                  onAddressSelected={(value) => {
+                    clearField("line1");
+                    onLine1Change(value);
+                  }}
+                  labels={{
+                    openMap: labels.openMap,
+                    title: labels.mapTitle,
+                    hint: labels.mapHint,
+                    confirm: labels.mapConfirm,
+                    cancel: labels.mapCancel,
+                    resolving: labels.mapResolving,
+                  }}
+                />
               )}
             </div>
           </div>
@@ -233,8 +277,12 @@ export function CheckoutDetailsSections({
           <DeliverySlotPicker
             schedule={deliverySchedule}
             selected={deliverySlot}
-            onChange={onDeliverySlotChange}
+            onChange={(value) => {
+              clearField("deliverySlot");
+              onDeliverySlotChange(value);
+            }}
             disabled={pending}
+            invalid={Boolean(invalidFields.deliverySlot)}
             locale={locale}
             labels={{
               title: labels.scheduleTitle,
@@ -273,8 +321,12 @@ export function CheckoutDetailsSections({
         title={labels.paymentMethod}
         options={paymentOptions}
         value={paymentMethod}
-        onChange={onPaymentMethodChange}
+        onChange={(method) => {
+          clearField("paymentMethod");
+          onPaymentMethodChange(method);
+        }}
         disabled={pending}
+        invalid={Boolean(invalidFields.paymentMethod)}
         cashChangeOptions={cashChangeOptions}
         cashChangeValue={cashChangeAmount}
         onCashChangeChange={onCashChangeAmountChange}

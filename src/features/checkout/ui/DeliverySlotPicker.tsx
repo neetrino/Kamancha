@@ -32,6 +32,7 @@ type DeliverySlotPickerProps = {
   selected: SelectedDeliverySlot | null;
   onChange: (value: SelectedDeliverySlot | null) => void;
   disabled?: boolean;
+  invalid?: boolean;
   labels: DeliverySlotPickerLabels;
   locale: string;
 };
@@ -126,6 +127,7 @@ export function DeliverySlotPicker({
   selected,
   onChange,
   disabled = false,
+  invalid = false,
   labels,
   locale,
 }: DeliverySlotPickerProps) {
@@ -169,9 +171,20 @@ export function DeliverySlotPicker({
   }
 
   return (
-    <div className="relative z-[2] grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start lg:gap-10">
+    <div
+      data-checkout-field="deliverySlot"
+      className="relative z-[2] grid grid-cols-1 gap-6 rounded-2xl lg:grid-cols-2 lg:items-start lg:gap-10"
+    >
       <div>
-        <h3 className={PICKER_HEADING_CLASS}>{labels.title}</h3>
+        <h3
+          className={
+            invalid
+              ? "mb-3 text-base font-semibold text-red-500"
+              : PICKER_HEADING_CLASS
+          }
+        >
+          {labels.title}
+        </h3>
         <DeliverySlotCalendar
           locale={locale}
           prevMonthLabel={labels.prevMonth}
@@ -192,7 +205,15 @@ export function DeliverySlotPicker({
         />
       </div>
       <div>
-        <h3 className={PICKER_HEADING_CLASS}>{labels.pickTime}</h3>
+        <h3
+          className={
+            invalid
+              ? "mb-3 text-base font-semibold text-red-500"
+              : PICKER_HEADING_CLASS
+          }
+        >
+          {labels.pickTime}
+        </h3>
         {selectedDay ? (
           <DeliveryTimeSlotList
             day={selectedDay}

@@ -282,6 +282,34 @@ body {
   }
 }
 
+/* Bottom sheet: fade + unblur together (opacity-only pops the frost).
+ * Strength matches Tailwind `backdrop-blur-sm` (--blur-sm: 8px). */
+@keyframes bottom-sheet-backdrop-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes bottom-sheet-backdrop-out {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+}
+
 @keyframes bottom-sheet-panel-in {
   from {
     transform: translateY(100%);
@@ -344,12 +372,25 @@ body {
   animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both sheet-backdrop-out;
 }
 
+.animate-bottom-sheet-backdrop-in {
+  animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both bottom-sheet-backdrop-in;
+}
+
+.animate-bottom-sheet-backdrop-out {
+  animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both bottom-sheet-backdrop-out;
+}
+
 .animate-bottom-sheet-panel-in {
   animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both bottom-sheet-panel-in;
 }
 
 .animate-bottom-sheet-panel-out {
   animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both bottom-sheet-panel-out;
+}
+
+/* Keep pull-to-dismiss from fighting iOS rubber-band at the top. */
+[data-bottom-sheet-scroll] {
+  overscroll-behavior-y: contain;
 }
 
 .animate-side-sheet-panel-in-right {
@@ -372,6 +413,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-sheet-backdrop-in,
   .animate-sheet-backdrop-out,
+  .animate-bottom-sheet-backdrop-in,
+  .animate-bottom-sheet-backdrop-out,
   .animate-bottom-sheet-panel-in,
   .animate-bottom-sheet-panel-out,
   .animate-side-sheet-panel-in-right,
@@ -459,6 +502,22 @@ body {
   padding-bottom: 0.375rem;
   font-size: 16px;
   line-height: 1.25;
+}
+
+/* Mobile sheet Patvirel: no ornament slide / fill flash on tap (sticky hover). */
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:hover,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:focus-visible,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:active {
+  background-color: #ffffff;
+}
+
+.kamancha-pill-button--sheet-cta:hover .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta:focus-visible .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta:active .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta:hover .kamancha-pill-ornament--right,
+.kamancha-pill-button--sheet-cta:focus-visible .kamancha-pill-ornament--right,
+.kamancha-pill-button--sheet-cta:active .kamancha-pill-ornament--right {
+  transform: translateY(-50%);
 }
 
 /**

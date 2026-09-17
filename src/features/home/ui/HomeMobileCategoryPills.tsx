@@ -6,7 +6,7 @@ import { AppLink } from "@/components/ui/AppLink";
 import { HOME_HORIZONTAL_SCROLL } from "@/features/home/ui/home-motion";
 import type { HomeMobileCategorySlide } from "@/features/home/ui/HomeMobilePlateWheel";
 
-const PILL_INSET_PX = 24;
+const PILL_INSET_PX = 16;
 
 type HomeMobileCategoryPillsProps = {
   categories: readonly HomeMobileCategorySlide[];
@@ -63,7 +63,7 @@ export function HomeMobileCategoryPills({
       data-node-id="196:205"
       className={`${HOME_HORIZONTAL_SCROLL} overflow-y-clip`}
     >
-      <div className="flex w-max items-center gap-2 px-6">
+      <div className="flex w-max items-center gap-2 px-4">
         {categories.map((category, categoryIndex) => {
           const active = categoryIndex === index;
 

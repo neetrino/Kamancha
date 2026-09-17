@@ -21,8 +21,8 @@ export function HomeMobilePromo({
 }: HomeMobilePromoProps) {
   return (
     <HomeReveal>
-      <section className="relative z-[1] px-6 pt-2" data-node-id="196:213">
-        <div className="relative overflow-hidden rounded-[21px] bg-white">
+      <section className="relative z-[1] px-4 pt-2" data-node-id="196:213">
+        <div className="relative rounded-[21px] bg-white [clip-path:inset(-32px_0_0_0_round_21px)]">
           <div className="relative z-[1] max-w-[62%] py-[27px] pl-[19px] pr-2">
             <h1 className="font-big-fat-boii text-[22px] leading-[23px] font-normal text-brand-forest">
               {headlineBefore ? (
@@ -39,7 +39,7 @@ export function HomeMobilePromo({
             </h1>
           </div>
           <div
-            className="pointer-events-none absolute top-[-14px] right-0 h-[132px] w-[56%] overflow-hidden rounded-br-[21px] rounded-bl-[15px]"
+            className="pointer-events-none absolute top-[-28px] right-0 z-[2] h-[160px] w-[62%] overflow-hidden rounded-br-[21px] rounded-bl-[15px]"
             aria-hidden
             data-node-id="196:224"
           >
@@ -49,8 +49,8 @@ export function HomeMobilePromo({
               width={406}
               height={254}
               priority
-              sizes="56vw"
-              className="h-[192%] w-full max-w-none object-cover object-top"
+              sizes="62vw"
+              className="h-[205%] w-[108%] max-w-none translate-x-[6%] object-cover object-top"
             />
           </div>
         </div>

@@ -47,6 +47,8 @@ type HomeMobileProductSectionProps = {
   overlayPlate?: boolean;
   /** iPad Mini / Air (744px–1023px): white sheet (featured) or forest sheet (discounted). */
   tabletSheet?: TabletSheet;
+  /** When the discounted block is absent, round the iPad white sheet bottom. */
+  roundTabletBottom?: boolean;
 };
 
 const FULL_BLEED_ROUNDED_SHEET =
@@ -62,6 +64,7 @@ const TEXTURE_STYLE = {
 function sectionClassName(
   overlayPlate: boolean,
   tabletSheet?: TabletSheet,
+  roundTabletBottom = false,
 ): string {
   if (overlayPlate) {
     return [
@@ -69,6 +72,9 @@ function sectionClassName(
       "z-[2] bg-brand-forest",
       tabletSheet === "white"
         ? "min-[744px]:bg-white min-[744px]:pb-16"
+        : "",
+      tabletSheet === "white" && roundTabletBottom
+        ? "min-[744px]:rounded-b-[40px]"
         : "",
     ].join(" ");
   }
@@ -118,6 +124,7 @@ export function HomeMobileProductSection({
   products,
   overlayPlate = false,
   tabletSheet,
+  roundTabletBottom = false,
 }: HomeMobileProductSectionProps) {
   const emptyTextClass =
     tabletSheet === "white"
@@ -128,7 +135,7 @@ export function HomeMobileProductSection({
   return (
     <section
       data-node-id={overlayPlate ? "181:480" : undefined}
-      className={sectionClassName(overlayPlate, tabletSheet)}
+      className={sectionClassName(overlayPlate, tabletSheet, roundTabletBottom)}
     >
       {textureClassName ? (
         <div

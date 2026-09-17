@@ -75,7 +75,8 @@
     "card": "By card",
     "cardDescription": "Pay with Visa, Mastercard or ArCa card",
     "arca": "ArCa",
-    "arcaDescription": "Pay with ArCa card"
+    "arcaDescription": "Pay with ArCa card",
+    "selectMethod": "Please select a payment method"
   },
   "groupPrepaid": {
     "title": "Group order payments",
@@ -123,7 +124,8 @@
     "continueShopping": "Continue Shopping"
   },
   "errors": {
-    "cartEmpty": "Cart is empty"
+    "cartEmpty": "Cart is empty",
+    "fillRequiredFields": "Please fill in the highlighted fields"
   },
   "success": {
     "title": "Order confirmed",

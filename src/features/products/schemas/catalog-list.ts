@@ -9,13 +9,13 @@ export const CATALOG_SORT_VALUES = [
 
 export type CatalogSort = (typeof CATALOG_SORT_VALUES)[number];
 
-export const CATALOG_PAGE_SIZES = [16, 30, 48] as const;
+export const CATALOG_PAGE_SIZES = [18, 30, 48] as const;
 
 export type CatalogPageSize = (typeof CATALOG_PAGE_SIZES)[number];
 
 export const DEFAULT_CATALOG_SORT: CatalogSort = "newest";
-/** Even default so mobile 2-col rows stay complete before “see more”. */
-export const DEFAULT_CATALOG_PAGE_SIZE: CatalogPageSize = 16;
+/** Multiple of 2 and 3 so mobile/desktop catalog rows stay complete before “see more”. */
+export const DEFAULT_CATALOG_PAGE_SIZE: CatalogPageSize = 18;
 
 /** Inclusive ceiling for catalog price filter inputs (display major units). */
 export const CATALOG_PRICE_FILTER_MAX = 100_000_000;

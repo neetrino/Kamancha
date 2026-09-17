@@ -19,9 +19,10 @@ type CashChangeLabels = {
 type CheckoutPaymentMethodsProps = {
   title: string;
   options: CheckoutPaymentOption[];
-  value: CheckoutPaymentMethod;
+  value: CheckoutPaymentMethod | null;
   onChange: (method: CheckoutPaymentMethod) => void;
   disabled: boolean;
+  invalid?: boolean;
   cashChangeOptions: CashChangeDenominationView[];
   cashChangeValue: CashChangeSelection;
   onCashChangeChange: (value: CashChangeSelection) => void;
@@ -36,6 +37,7 @@ export function CheckoutPaymentMethods({
   value,
   onChange,
   disabled,
+  invalid = false,
   cashChangeOptions,
   cashChangeValue,
   onCashChangeChange,
@@ -44,8 +46,15 @@ export function CheckoutPaymentMethods({
   cashChangeDueFormatted,
 }: CheckoutPaymentMethodsProps) {
   return (
-    <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7">
-      <h2 className="relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase">
+    <section
+      data-checkout-field="paymentMethod"
+      className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7"
+    >
+      <h2
+        className={`relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide uppercase ${
+          invalid ? "text-red-500" : "text-white"
+        }`}
+      >
         {title}
       </h2>
       <div className="relative z-[2] space-y-3">

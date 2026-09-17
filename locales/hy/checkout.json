@@ -75,7 +75,8 @@
     "card": "Քարտով",
     "cardDescription": "Վճարեք Visa, Mastercard կամ ArCa քարտով",
     "arca": "ArCa",
-    "arcaDescription": "Վճարեք ArCa քարտով"
+    "arcaDescription": "Վճարեք ArCa քարտով",
+    "selectMethod": "Խնդրում ենք ընտրել վճարման եղանակը"
   },
   "groupPrepaid": {
     "title": "Խմբային վճարումներ",
@@ -123,7 +124,8 @@
     "continueShopping": "Շարունակել գնումները"
   },
   "errors": {
-    "cartEmpty": "Զամբյուղը դատարկ է"
+    "cartEmpty": "Զամբյուղը դատարկ է",
+    "fillRequiredFields": "Խնդրում ենք լրացնել նշված դաշտերը"
   },
   "success": {
     "title": "Պատվերը հաստատված է",
