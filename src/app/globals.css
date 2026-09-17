@@ -461,6 +461,22 @@ body {
   line-height: 1.25;
 }
 
+/* Mobile sheet Patvirel: no ornament slide / fill flash on tap (sticky hover). */
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:hover,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:focus-visible,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:active {
+  background-color: #ffffff;
+}
+
+.kamancha-pill-button--sheet-cta:hover .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta:focus-visible .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta:active .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta:hover .kamancha-pill-ornament--right,
+.kamancha-pill-button--sheet-cta:focus-visible .kamancha-pill-ornament--right,
+.kamancha-pill-button--sheet-cta:active .kamancha-pill-ornament--right {
+  transform: translateY(-50%);
+}
+
 /**
  * Scrolled header edge stroke (Figma 173:143) — soft pale rim, stronger
  * only near the bottom curve (not a hard white line).

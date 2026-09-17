@@ -38,6 +38,8 @@ export type CheckoutLabels = {
   schedulePrevMonth: string;
   scheduleNextMonth: string;
   selectDeliverySlot: string;
+  selectPaymentMethod: string;
+  fillRequiredFields: string;
   cashChangeTitle: string;
   cashChangeHint: string;
   cashChangeNone: string;
@@ -126,6 +128,8 @@ export function checkoutFormLabels(
     schedulePrevMonth: copy.schedule.prevMonth,
     scheduleNextMonth: copy.schedule.nextMonth,
     selectDeliverySlot: copy.schedule.selectSlot,
+    selectPaymentMethod: copy.payment.selectMethod,
+    fillRequiredFields: copy.errors.fillRequiredFields,
     cashChangeTitle: copy.cashChange.title,
     cashChangeHint: copy.cashChange.hint,
     cashChangeNone: copy.cashChange.none,
