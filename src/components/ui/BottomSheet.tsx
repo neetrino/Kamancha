@@ -24,7 +24,7 @@ import {
   useBodyScrollLock,
 } from "@/lib/react/use-body-scroll-lock";
 
-/** Must match `.animate-bottom-sheet-panel-*` duration in globals.css. */
+/** Must match `.animate-bottom-sheet-*` duration in globals.css. */
 export const BOTTOM_SHEET_ANIMATION_MS = 300;
 const SHEET_EASING = "cubic-bezier(0.32, 0.72, 0, 1)";
 
@@ -213,10 +213,10 @@ export function BottomSheet({
 
   const backdropClass =
     phase === "enter"
-      ? "animate-sheet-backdrop-in"
-      : phase === "exit"
-        ? "animate-sheet-backdrop-out"
-        : "";
+      ? "animate-bottom-sheet-backdrop-in"
+      : phase === "exit" || phase === "exit-drag"
+        ? "animate-bottom-sheet-backdrop-out"
+        : "bottom-sheet-backdrop-idle";
   const panelMotionClass =
     phase === "enter"
       ? "animate-bottom-sheet-panel-in"
@@ -239,7 +239,7 @@ export function BottomSheet({
     >
       <button
         type="button"
-        className={`absolute inset-0 bg-black/40 backdrop-blur-sm ${backdropClass}`}
+        className={`absolute inset-0 bg-black/40 ${backdropClass}`}
         aria-label={closeLabel}
         onClick={() => onCloseRef.current()}
       />

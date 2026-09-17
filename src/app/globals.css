@@ -282,6 +282,34 @@ body {
   }
 }
 
+/* Bottom sheet: fade + unblur together (opacity-only pops the frost).
+ * Strength matches Tailwind `backdrop-blur-sm` (--blur-sm: 8px). */
+@keyframes bottom-sheet-backdrop-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes bottom-sheet-backdrop-out {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+}
+
 @keyframes bottom-sheet-panel-in {
   from {
     transform: translateY(100%);
@@ -344,6 +372,21 @@ body {
   animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both sheet-backdrop-out;
 }
 
+.animate-bottom-sheet-backdrop-in {
+  animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both bottom-sheet-backdrop-in;
+}
+
+.animate-bottom-sheet-backdrop-out {
+  animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both bottom-sheet-backdrop-out;
+}
+
+/* Hold open-state blur after enter animation class is removed. */
+.bottom-sheet-backdrop-idle {
+  opacity: 1;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
 .animate-bottom-sheet-panel-in {
   animation: 0.3s cubic-bezier(0.32, 0.72, 0, 1) both bottom-sheet-panel-in;
 }
@@ -372,6 +415,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-sheet-backdrop-in,
   .animate-sheet-backdrop-out,
+  .animate-bottom-sheet-backdrop-in,
+  .animate-bottom-sheet-backdrop-out,
   .animate-bottom-sheet-panel-in,
   .animate-bottom-sheet-panel-out,
   .animate-side-sheet-panel-in-right,
