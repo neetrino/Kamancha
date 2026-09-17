@@ -13,6 +13,7 @@ import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { deleteBlogPostAction } from "@/features/blog/application/manage-blog";
+import { toggleBlogStorefrontAction } from "@/features/blog/application/toggle-blog-storefront";
 import type { AdminBlogListItem } from "@/features/blog/application/queries";
 import { BlogPostDrawer } from "@/features/blog/ui/BlogPostDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -20,6 +21,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 type AdminBlogViewProps = {
   locale: string;
   posts: AdminBlogListItem[];
+  storefrontEnabled: boolean;
   copy: Dictionary["admin"];
 };
 
@@ -31,7 +33,12 @@ function statusBadgeClass(status: string): string {
   return "bg-gray-100 text-gray-800";
 }
 
-export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
+export function AdminBlogView({
+  locale,
+  posts,
+  storefrontEnabled,
+  copy,
+}: AdminBlogViewProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -40,6 +47,7 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
   );
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [storefrontPending, startStorefrontTransition] = useTransition();
   const [pendingDelete, setPendingDelete] = useState<{
     id: string;
     title: string;
@@ -89,10 +97,50 @@ export function AdminBlogView({ locale, posts, copy }: AdminBlogViewProps) {
     });
   }
 
+  function toggleStorefront(): void {
+    startStorefrontTransition(async () => {
+      setError(null);
+      const result = await toggleBlogStorefrontAction(locale, {
+        enabled: !storefrontEnabled,
+      });
+      if (!result.ok) {
+        setError(result.error.message);
+        return;
+      }
+      router.refresh();
+    });
+  }
+
   return (
     <section>
-      <div className="mb-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.blog.title}</h1>
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-gray-700">
+            {copy.blog.storefrontToggleLabel}
+          </span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={storefrontEnabled}
+            disabled={storefrontPending}
+            onClick={toggleStorefront}
+            className={`relative h-5 w-9 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
+              storefrontEnabled ? "bg-green-500" : "bg-gray-300"
+            }`}
+            aria-label={
+              storefrontEnabled
+                ? copy.blog.storefrontToggleDisableAria
+                : copy.blog.storefrontToggleEnableAria
+            }
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                storefrontEnabled ? "translate-x-4" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       <div className="mb-4 flex items-center gap-3">

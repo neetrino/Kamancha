@@ -840,6 +840,9 @@
   },
   "blog": {
     "title": "Blog",
+    "storefrontToggleLabel": "Open on storefront",
+    "storefrontToggleEnableAria": "Show blog page on the storefront",
+    "storefrontToggleDisableAria": "Hide blog page from the storefront",
     "addPost": "Add Post",
     "searchPlaceholder": "Search by title or slug",
     "searchAria": "Search blog posts",

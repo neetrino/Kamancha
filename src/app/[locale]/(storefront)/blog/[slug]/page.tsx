@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { getEnv } from '@/config/env';
 import { getPublishedBlogPostBySlug } from '@/features/blog/application/queries';
 import { BlogPostView } from '@/features/blog/ui/BlogPostView';
+import { getStoreBlogSettings } from '@/features/settings/application/queries';
 import { isLocale, type Locale } from '@/lib/i18n/config';
 import { getDictionary } from '@/lib/i18n/get-dictionary';
 import { sanitizeBlogHtml } from '@/lib/sanitize/html';
@@ -48,6 +49,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     return {};
   }
 
+  const blogSettings = await getStoreBlogSettings();
+  if (!blogSettings.enabled) {
+    return {};
+  }
+
   const post = await getPublishedBlogPostBySlug(rawLocale, slug);
   if (!post) {
     return {};
@@ -76,6 +82,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { locale: rawLocale, slug } = await params;
 
   if (!isLocale(rawLocale)) {
+    notFound();
+  }
+
+  const blogSettings = await getStoreBlogSettings();
+  if (!blogSettings.enabled) {
     notFound();
   }
 

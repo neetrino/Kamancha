@@ -15,7 +15,7 @@ import {
 import { requireAdmin } from "@/lib/auth/policies";
 import { invalidateAmdFxQuotes } from "@/lib/fx/invalidate-quotes";
 import { createId } from "@/lib/id";
-import { isLocale, type Locale } from "@/lib/i18n/config";
+import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import {
   normalizeRateDecimalString,
   parseRateToFixed,
@@ -55,6 +55,12 @@ const upsertSchema = z.discriminatedUnion("key", [
     value: z.object({
       enabled: z.boolean(),
       message: z.string().trim().max(500).optional(),
+    }),
+  }),
+  z.object({
+    key: z.literal("store.blog"),
+    value: z.object({
+      enabled: z.boolean(),
     }),
   }),
   z.object({
@@ -166,6 +172,13 @@ export async function upsertStoreSettingAction(
 
     revalidatePath(`/${locale}/admin/settings`);
     revalidatePath(`/${locale}/admin`);
+    if (parsed.data.key === "store.blog") {
+      revalidatePath(`/${locale}/admin/blog`);
+      for (const loc of locales) {
+        revalidatePath(`/${loc}/blog`);
+        revalidatePath(`/${loc}`, "layout");
+      }
+    }
     return ok({ key: parsed.data.key });
   } catch {
     return err("SETTINGS_UPSERT_FAILED", "Unable to save settings.");
