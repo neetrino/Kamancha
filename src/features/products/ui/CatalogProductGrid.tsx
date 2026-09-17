@@ -12,8 +12,10 @@ import { ProductCard } from "@/features/products/ui/ProductCard";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 
-/** Matches catalog `grid-cols-2` below this width. */
+/** Matches catalog `grid-cols-2` below this width; desktop uses 3 columns. */
 const MOBILE_TWO_COL_MQ = "(max-width: 743px)";
+const CATALOG_MOBILE_COLUMNS = 2;
+const CATALOG_DESKTOP_COLUMNS = 3;
 
 type CatalogProductGridProps = {
   locale: Locale;
@@ -33,7 +35,8 @@ type CatalogProductGridProps = {
 
 /**
  * Catalog grid with “see more” — keeps pageSize batches, appends below.
- * On mobile (2 columns), the visible list stays even while more remains.
+ * While more remains, the visible list is trimmed to full rows (2-col mobile /
+ * 3-col desktop) so the grid never ends on a partial row before load-more.
  * Remount via parent `key` when filters change.
  */
 export function CatalogProductGrid({
@@ -71,9 +74,13 @@ export function CatalogProductGrid({
     return () => media.removeEventListener("change", sync);
   }, []);
 
+  const columnCount = isMobileTwoCol
+    ? CATALOG_MOBILE_COLUMNS
+    : CATALOG_DESKTOP_COLUMNS;
+  const rowRemainder = products.length % columnCount;
   const visibleProducts =
-    isMobileTwoCol && hasMore && products.length % 2 === 1
-      ? products.slice(0, -1)
+    hasMore && rowRemainder > 0
+      ? products.slice(0, products.length - rowRemainder)
       : products;
 
   function onLoadMore(): void {

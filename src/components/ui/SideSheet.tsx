@@ -29,6 +29,8 @@ type SideSheetProps = {
   children: ReactNode;
   /** Width classes applied to the docked panel (default: `w-full max-w-md`). */
   panelClassName?: string;
+  /** Classes for the white surface (e.g. custom corner radius). */
+  surfaceClassName?: string;
   side?: "left" | "right";
   zIndexClassName?: string;
   /** External circle (default) or MaMarie-style edge tab. */
@@ -49,6 +51,7 @@ export function SideSheet({
   ariaLabel,
   children,
   panelClassName = "w-full max-w-md",
+  surfaceClassName,
   side = "right",
   zIndexClassName = "z-50",
   closeVariant = "circle",
@@ -135,6 +138,7 @@ export function SideSheet({
   const panelRadius = isRight
     ? "rounded-l-[var(--radius)]"
     : "rounded-r-[var(--radius)]";
+  const surfaceRadius = surfaceClassName ?? panelRadius;
   const closePosition = isRight ? "right-full" : "left-full";
   const CloseChevron = isRight ? ChevronLeft : ChevronRight;
   const closeRadius = isRight
@@ -205,7 +209,7 @@ export function SideSheet({
           </button>
         )}
         <div
-          className={`relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${panelRadius}`}
+          className={`relative z-10 flex h-full min-h-0 w-full flex-col overflow-hidden bg-white shadow-2xl ${surfaceRadius}`}
           {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
           onClick={(event) => event.stopPropagation()}
         >
