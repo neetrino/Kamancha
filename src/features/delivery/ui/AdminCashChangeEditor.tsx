@@ -5,6 +5,12 @@ import { Image as ImageIcon, ImagePlus, Loader2, Plus, Trash2 } from "lucide-rea
 
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import {
+  AdminSortableGrip,
+  AdminSortableRoot,
+  moveItemById,
+  useAdminSortableItem,
+} from "@/features/admin/ui/admin-sortable";
 import { uploadCashChangeImageAction } from "@/features/delivery/application/upload-cash-change-image";
 import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -25,6 +31,150 @@ type AdminCashChangeEditorProps = {
   confirm: ConfirmCopy;
 };
 
+type CashChangeRowProps = {
+  item: CashChangeDenomination;
+  locale: string;
+  previewUrl: string | null;
+  imageActionLabel: string;
+  disabled: boolean;
+  isUploading: boolean;
+  isUploadTarget: boolean;
+  copy: CashChangeCopy;
+  onUpdate: (id: string, patch: Partial<CashChangeDenomination>) => void;
+  onPickImage: (id: string) => void;
+  onRequestDelete: (id: string, name: string) => void;
+};
+
+function CashChangeSortableRow({
+  item,
+  locale,
+  previewUrl,
+  imageActionLabel,
+  disabled,
+  isUploading,
+  isUploadTarget,
+  copy,
+  onUpdate,
+  onPickImage,
+  onRequestDelete,
+}: CashChangeRowProps) {
+  const { setNodeRef, style, isDragging, attributes, listeners } =
+    useAdminSortableItem(item.id, disabled);
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-2 rounded-xl border border-gray-200 px-2.5 py-3 ${
+        isDragging ? "z-10 bg-white opacity-70 shadow-md" : ""
+      }`}
+    >
+      <AdminSortableGrip
+        label={copy.reorderItemAria.replace(
+          "{amount}",
+          item.amount > 0
+            ? formatMoneyAmount(item.amount, "AMD", locale)
+            : copy.amount,
+        )}
+        disabled={disabled}
+        attributes={attributes}
+        listeners={listeners}
+      />
+      <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-50">
+        {previewUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- remote/local object URL
+          <img
+            src={previewUrl}
+            alt=""
+            className="h-full w-full object-contain"
+          />
+        ) : (
+          <span className="px-1 text-center text-[10px] leading-tight text-gray-400">
+            {copy.noImage}
+          </span>
+        )}
+      </div>
+
+      <label className="min-w-0 flex-1">
+        <span className="sr-only">{copy.amount}</span>
+        <input
+          type="number"
+          min={1}
+          step={1}
+          value={item.amount > 0 ? String(item.amount) : ""}
+          onChange={(event) =>
+            onUpdate(item.id, {
+              amount: Number(event.target.value) || 0,
+            })
+          }
+          placeholder={copy.amountPlaceholder}
+          className="h-11 w-full rounded-xl border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none transition-colors hover:border-gray-300 focus:border-gray-300"
+          disabled={disabled || isUploading}
+          title={
+            item.amount > 0
+              ? formatMoneyAmount(item.amount, "AMD", locale)
+              : undefined
+          }
+        />
+      </label>
+
+      <div className="flex shrink-0 items-center gap-0.5">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={item.isActive}
+          disabled={disabled || isUploading}
+          onClick={() => onUpdate(item.id, { isActive: !item.isActive })}
+          className={`relative h-5 w-9 rounded-full transition-colors disabled:opacity-50 ${
+            item.isActive ? "bg-green-500" : "bg-gray-300"
+          }`}
+          aria-label={copy.active}
+          title={copy.active}
+        >
+          <span
+            className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+              item.isActive ? "translate-x-4" : "translate-x-0"
+            }`}
+          />
+        </button>
+        <button
+          type="button"
+          disabled={disabled || isUploading}
+          onClick={() => onPickImage(item.id)}
+          className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
+          aria-label={imageActionLabel}
+          title={imageActionLabel}
+        >
+          {isUploading && isUploadTarget ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+          ) : previewUrl ? (
+            <ImageIcon className="h-4 w-4" aria-hidden />
+          ) : (
+            <ImagePlus className="h-4 w-4" aria-hidden />
+          )}
+        </button>
+        <button
+          type="button"
+          disabled={disabled || isUploading}
+          onClick={() =>
+            onRequestDelete(
+              item.id,
+              item.amount > 0
+                ? formatMoneyAmount(item.amount, "AMD", locale)
+                : copy.amount,
+            )
+          }
+          className="rounded p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-50"
+          aria-label={copy.remove}
+          title={copy.remove}
+        >
+          <Trash2 className="h-4 w-4" aria-hidden />
+        </button>
+      </div>
+    </li>
+  );
+}
+
 export function AdminCashChangeEditor({
   locale,
   value,
@@ -43,6 +193,7 @@ export function AdminCashChangeEditor({
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, startUpload] = useTransition();
+  const reorderDisabled = disabled || isUploading;
 
   function updateItem(
     id: string,
@@ -67,10 +218,23 @@ export function AdminCashChangeEditor({
   }
 
   function removeItem(id: string): void {
-    onChange(value.filter((item) => item.id !== id));
+    onChange(
+      value
+        .filter((item) => item.id !== id)
+        .map((item, index) => ({ ...item, sortOrder: index })),
+    );
     const nextUrls = { ...imageUrls };
     delete nextUrls[id];
     onImageUrlsChange(nextUrls);
+  }
+
+  function handleReorder(activeId: string, overId: string): void {
+    if (reorderDisabled) return;
+    const next = moveItemById(value, activeId, overId).map((item, index) => ({
+      ...item,
+      sortOrder: index,
+    }));
+    onChange(next);
   }
 
   function pickImage(id: string): void {
@@ -110,6 +274,9 @@ export function AdminCashChangeEditor({
       <div>
         <h2 className="text-base font-semibold text-gray-900">{copy.title}</h2>
         <p className="mt-1 text-sm text-gray-600">{copy.hint}</p>
+        {value.length > 1 ? (
+          <p className="mt-1 text-xs text-gray-500">{copy.reorderHint}</p>
+        ) : null}
       </div>
 
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
@@ -122,118 +289,43 @@ export function AdminCashChangeEditor({
         onChange={(event) => onFileSelected(event.target.files)}
       />
 
-      <ul className="grid grid-cols-1 gap-2 md:grid-cols-3">
-        {value.map((item) => {
-          const previewUrl = imageUrls[item.id] ?? null;
-          const imageActionLabel =
-            isUploading && uploadTargetId === item.id
-              ? copy.uploading
-              : previewUrl
-                ? copy.changeImage
-                : copy.uploadImage;
-          return (
-            <li
-              key={item.id}
-              className="flex items-center gap-2 rounded-xl border border-gray-200 px-2.5 py-3"
-            >
-              <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-50">
-                {previewUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- remote/local object URL
-                  <img
-                    src={previewUrl}
-                    alt=""
-                    className="h-full w-full object-contain"
-                  />
-                ) : (
-                  <span className="px-1 text-center text-[10px] leading-tight text-gray-400">
-                    {copy.noImage}
-                  </span>
-                )}
-              </div>
-
-              <label className="min-w-0 flex-1">
-                <span className="sr-only">{copy.amount}</span>
-                <input
-                  type="number"
-                  min={1}
-                  step={1}
-                  value={item.amount > 0 ? String(item.amount) : ""}
-                  onChange={(event) =>
-                    updateItem(item.id, {
-                      amount: Number(event.target.value) || 0,
-                    })
-                  }
-                  placeholder={copy.amountPlaceholder}
-                  className="h-11 w-full rounded-xl border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none transition-colors hover:border-gray-300 focus:border-gray-300"
-                  disabled={disabled || isUploading}
-                  title={
-                    item.amount > 0
-                      ? formatMoneyAmount(item.amount, "AMD", locale)
-                      : undefined
+      {value.length > 0 ? (
+        <AdminSortableRoot
+          items={value.map((item) => item.id)}
+          disabled={reorderDisabled}
+          onReorder={handleReorder}
+        >
+          <ul className="flex flex-col gap-2" aria-label={copy.reorderAria}>
+            {value.map((item) => {
+              const previewUrl = imageUrls[item.id] ?? null;
+              const imageActionLabel =
+                isUploading && uploadTargetId === item.id
+                  ? copy.uploading
+                  : previewUrl
+                    ? copy.changeImage
+                    : copy.uploadImage;
+              return (
+                <CashChangeSortableRow
+                  key={item.id}
+                  item={item}
+                  locale={locale}
+                  previewUrl={previewUrl}
+                  imageActionLabel={imageActionLabel}
+                  disabled={reorderDisabled}
+                  isUploading={isUploading}
+                  isUploadTarget={uploadTargetId === item.id}
+                  copy={copy}
+                  onUpdate={updateItem}
+                  onPickImage={pickImage}
+                  onRequestDelete={(id, name) =>
+                    setPendingDelete({ id, name })
                   }
                 />
-              </label>
-
-              <div className="flex shrink-0 items-center gap-0.5">
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={item.isActive}
-                  disabled={disabled || isUploading}
-                  onClick={() =>
-                    updateItem(item.id, { isActive: !item.isActive })
-                  }
-                  className={`relative h-5 w-9 rounded-full transition-colors disabled:opacity-50 ${
-                    item.isActive ? "bg-green-500" : "bg-gray-300"
-                  }`}
-                  aria-label={copy.active}
-                  title={copy.active}
-                >
-                  <span
-                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
-                      item.isActive ? "translate-x-4" : "translate-x-0"
-                    }`}
-                  />
-                </button>
-                <button
-                  type="button"
-                  disabled={disabled || isUploading}
-                  onClick={() => pickImage(item.id)}
-                  className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50"
-                  aria-label={imageActionLabel}
-                  title={imageActionLabel}
-                >
-                  {isUploading && uploadTargetId === item.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                  ) : previewUrl ? (
-                    <ImageIcon className="h-4 w-4" aria-hidden />
-                  ) : (
-                    <ImagePlus className="h-4 w-4" aria-hidden />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  disabled={disabled || isUploading}
-                  onClick={() =>
-                    setPendingDelete({
-                      id: item.id,
-                      name:
-                        item.amount > 0
-                          ? formatMoneyAmount(item.amount, "AMD", locale)
-                          : copy.amount,
-                    })
-                  }
-                  className="rounded p-1.5 text-red-600 hover:bg-red-50 disabled:opacity-50"
-                  aria-label={copy.remove}
-                  title={copy.remove}
-                >
-                  <Trash2 className="h-4 w-4" aria-hidden />
-                </button>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+              );
+            })}
+          </ul>
+        </AdminSortableRoot>
+      ) : null}
 
       <div className="flex justify-end gap-2">
         <Button

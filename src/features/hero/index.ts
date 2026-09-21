@@ -2,6 +2,7 @@ export {
   createHeroSlideAction,
   deleteHeroSlideAction,
   reorderHeroSlideAction,
+  reorderHeroSlidesAction,
   toggleHeroSlideAction,
   updateHeroSlideAction,
 } from "@/features/hero/application/manage-hero";

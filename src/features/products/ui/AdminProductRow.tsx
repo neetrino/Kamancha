@@ -89,13 +89,13 @@ export function AdminProductRow({
           </div>
         </div>
       </td>
-      <td className={ADMIN_TABLE_TD}>
+      <td className={ADMIN_TABLE_TD_CENTER}>
         <span className="text-gray-900">
           {copy.table.stockPcs.replace("{count}", String(product.stockOnHand))}
         </span>
       </td>
-      <td className={ADMIN_TABLE_TD}>
-        <div className="flex flex-col">
+      <td className={ADMIN_TABLE_TD_CENTER}>
+        <div className="inline-flex flex-col items-center">
           <span className="font-medium text-gray-900">
             {formatMoneyAmount(product.priceAmount, "AMD", locale)}
           </span>
@@ -107,8 +107,8 @@ export function AdminProductRow({
           ) : null}
         </div>
       </td>
-      <td className={ADMIN_TABLE_TD}>
-        <span className="line-clamp-2 max-w-[160px] text-gray-700">
+      <td className={ADMIN_TABLE_TD_CENTER}>
+        <span className="mx-auto line-clamp-2 max-w-[160px] text-gray-700">
           {product.categoryLabels.length > 0
             ? product.categoryLabels.join(", ")
             : copy.common.none}

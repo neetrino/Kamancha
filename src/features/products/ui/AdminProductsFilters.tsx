@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
+import { useAdminFilterNavigate } from "@/features/admin/ui/admin-filter-navigation";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
@@ -34,6 +35,7 @@ export function AdminProductsFilters({
   stockRowAction,
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const navigateFilters = useAdminFilterNavigate();
   const [categoryValue, setCategoryValue] = useState(categoryId ?? "");
   const [stockValue, setStockValue] = useState(stock);
 
@@ -51,14 +53,21 @@ export function AdminProductsFilters({
 
   function applyCategory(next: string): void {
     flushSync(() => setCategoryValue(next));
-    formRef.current?.requestSubmit();
+    navigateFilters(formRef.current, {
+      categoryId: next.trim() === "" ? null : next,
+    });
   }
 
   function applyStock(next: string): void {
     flushSync(() =>
       setStockValue(next as AdminProductsFiltersProps["stock"]),
     );
-    formRef.current?.requestSubmit();
+    navigateFilters(formRef.current, { stock: next });
+  }
+
+  function onSubmit(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    navigateFilters(formRef.current);
   }
 
   return (
@@ -69,6 +78,7 @@ export function AdminProductsFilters({
       <form
         ref={formRef}
         method="get"
+        onSubmit={onSubmit}
         className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
         <input type="hidden" name="sort" value={sort} />

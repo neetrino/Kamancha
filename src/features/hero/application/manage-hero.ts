@@ -16,10 +16,12 @@ import {
 import {
   deleteHeroSlideSchema,
   reorderHeroSlideSchema,
+  reorderHeroSlidesSchema,
   toggleHeroSlideSchema,
   upsertHeroSlideSchema,
   type DeleteHeroSlideInput,
   type ReorderHeroSlideInput,
+  type ReorderHeroSlidesInput,
   type ToggleHeroSlideInput,
   type UpsertHeroSlideInput,
 } from "@/features/hero/schemas/admin-hero";
@@ -372,6 +374,76 @@ export async function reorderHeroSlideAction(
       return err("NO_NEIGHBOR", "Slide is already at the edge.");
     }
     return err("HERO_REORDER_FAILED", "Unable to reorder hero slide.");
+  }
+}
+
+/** Persists full hero slide order from admin drag-and-drop (1-based sortOrder). */
+export async function reorderHeroSlidesAction(
+  locale: string,
+  raw: ReorderHeroSlidesInput,
+): Promise<Result<{ updated: number }>> {
+  if (!isLocale(locale)) {
+    return err("INVALID_LOCALE", "Invalid locale.");
+  }
+
+  const parsed = reorderHeroSlidesSchema.safeParse(raw);
+  if (!parsed.success) {
+    return err("VALIDATION_ERROR", "Invalid hero slide order.");
+  }
+
+  const actor = await requireAdmin(locale as Locale);
+  const uniqueIds = [...new Set(parsed.data.orderedIds)];
+  if (uniqueIds.length !== parsed.data.orderedIds.length) {
+    return err("VALIDATION_ERROR", "Duplicate slide ids in order.");
+  }
+
+  try {
+    await withTransaction(async (tx) => {
+      const existing = await tx.select({ id: heroSlides.id }).from(heroSlides);
+      if (existing.length !== uniqueIds.length) {
+        throw new Error("STALE");
+      }
+
+      const existingSet = new Set(existing.map((row) => row.id));
+      for (const id of uniqueIds) {
+        if (!existingSet.has(id)) {
+          throw new Error("NOT_FOUND");
+        }
+      }
+
+      const now = new Date();
+      for (const [index, id] of uniqueIds.entries()) {
+        await tx
+          .update(heroSlides)
+          .set({ sortOrder: index + 1, updatedAt: now })
+          .where(eq(heroSlides.id, id));
+      }
+
+      await tx.insert(auditLogs).values({
+        id: createId(),
+        actorUserId: actor.id,
+        action: "hero.reorder_list",
+        targetType: "hero_slide",
+        targetId: uniqueIds[0] ?? null,
+        afterDiff: { orderedIds: uniqueIds },
+        correlationId: createId(),
+      });
+    });
+
+    revalidateHero(locale);
+    return ok({ updated: uniqueIds.length });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "UNKNOWN";
+    if (code === "NOT_FOUND") {
+      return err("NOT_FOUND", "Hero slide not found.");
+    }
+    if (code === "STALE") {
+      return err(
+        "VALIDATION_ERROR",
+        "Slide list is out of date. Refresh and try again.",
+      );
+    }
+    return err("HERO_REORDER_FAILED", "Unable to reorder hero slides.");
   }
 }
 
