@@ -160,9 +160,7 @@ export function ProductCard({
             compact ? "gap-1.5" : catalog ? "gap-2.5 xl:gap-0" : ""
           }`}
         >
-          <h3
-            className={`line-clamp-1 font-medium text-[#222] xl:line-clamp-2 ${ui.title}`}
-          >
+          <h3 className={`line-clamp-2 font-medium text-[#222] ${ui.title}`}>
             <AppLink
               href={href}
               prefetchPolicy={priority ? "intent" : "auto"}
