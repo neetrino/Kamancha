@@ -15,6 +15,8 @@ type CardLayoutClasses = {
   metaCol: string;
   star: string;
   rating: string;
+  /** Height of the first title line — keeps star+rating centered on it. */
+  ratingRow: string;
   cart: string;
   /** Min-height to vertically center price with the cart button. */
   priceSlot: string;
@@ -37,6 +39,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     metaCol: "ml-2 w-[52px] gap-3",
     star: "size-[18px]",
     rating: "text-[16px]",
+    ratingRow: "h-[22px]",
     cart: "size-[50px]",
     priceSlot: "min-h-[50px]",
   },
@@ -58,6 +61,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     metaCol: "ml-1 w-12 gap-2 sm:w-11",
     star: "size-3",
     rating: "text-[11px]",
+    ratingRow: "h-5",
     cart: "size-12 sm:size-11",
     priceSlot: "min-h-12 sm:min-h-11",
   },
@@ -77,6 +81,7 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     metaCol: "ml-1 w-12 gap-2",
     star: "size-[18px]",
     rating: "text-[16px]",
+    ratingRow: "h-[22px]",
     cart: "size-12",
     priceSlot: "min-h-12",
   },
@@ -104,8 +109,9 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     price: "text-[16px] xl:text-[22px]",
     compare: "text-[12px] leading-4 xl:text-[16px] xl:leading-5",
     metaCol: "ml-1 w-12 gap-1.5 xl:ml-2 xl:w-[52px] xl:gap-3",
-    star: "size-3.5 xl:size-6",
-    rating: "text-[12px] xl:text-[16px]",
+    star: "size-3.5 xl:size-5",
+    rating: "text-[12px] leading-none xl:text-[16px]",
+    ratingRow: "h-5 xl:h-[22px]",
     cart: "size-12 xl:size-[50px]",
     priceSlot: "min-h-12 xl:min-h-[50px]",
   },

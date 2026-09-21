@@ -85,7 +85,7 @@ export function ProductCard({
   const fluid = layout === "fluid";
   const compact = layout === "compact";
   const catalog = layout === "catalog";
-  const starPx = fluid ? 12 : catalog ? 24 : 18;
+  const starPx = fluid ? 12 : catalog ? 20 : 18;
   const imageSrc = storefrontProductImageSrc(imageUrl);
 
   return (
@@ -201,7 +201,10 @@ export function ProductCard({
         <div
           className={`relative flex shrink-0 flex-col items-end ${ui.metaCol}`}
         >
-          <div data-node-id="22:242" className="flex items-center gap-0.5">
+          <div
+            data-node-id="22:242"
+            className={`flex shrink-0 items-center gap-0.5 ${ui.ratingRow}`}
+          >
             <Image
               src={STAR_SRC}
               alt=""
