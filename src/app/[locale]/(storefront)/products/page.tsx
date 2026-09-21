@@ -105,7 +105,7 @@ export default async function ProductsPage({
   });
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="catalog-page flex flex-col gap-3 xl:gap-6">
       <CatalogPageHeader heading={catalogCopy.heading} />
 
       <CatalogControls
