@@ -10,6 +10,7 @@ import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
 import { CatalogControls } from "@/features/products/ui/CatalogControls";
 import { CatalogPageHeader } from "@/features/products/ui/CatalogPageHeader";
 import { CatalogProductGrid } from "@/features/products/ui/CatalogProductGrid";
+import { MobileCatalogSearch } from "@/features/products/ui/MobileCatalogSearch";
 import { getProductAverageRatings } from "@/features/reviews/application/queries";
 import { getWishlistProductIds } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -106,7 +107,17 @@ export default async function ProductsPage({
 
   return (
     <section className="catalog-page flex flex-col gap-3 xl:gap-6">
-      <CatalogPageHeader heading={catalogCopy.heading} />
+      <MobileCatalogSearch
+        heading={catalogCopy.heading}
+        locale={rawLocale}
+        filters={filters}
+        label={catalogCopy.searchLabel}
+        placeholder={catalogCopy.searchPlaceholder}
+        clearLabel={catalogCopy.clearSearch}
+      />
+      <div className="hidden xl:block">
+        <CatalogPageHeader heading={catalogCopy.heading} />
+      </div>
 
       <CatalogControls
         locale={rawLocale}
