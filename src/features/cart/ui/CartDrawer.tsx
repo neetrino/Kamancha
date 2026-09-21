@@ -405,7 +405,7 @@ export function CartDrawer({
               href={useCheckoutPage ? checkoutHref : undefined}
               label={checkoutLabel}
               variant="dark"
-              className="kamancha-pill-button--cart-cta mt-5 max-w-none sm:max-w-none"
+              className="kamancha-pill-button--cart-cta kamancha-pill-button--sheet-cta mt-5 max-w-none sm:max-w-none"
               onClick={useCheckoutPage ? closeDrawer : openMobileCheckout}
             />
           ) : null}
