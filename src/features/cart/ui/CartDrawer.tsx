@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 
 import { BrandHeaderIcon } from "@/components/layout/BrandHeaderIcon";
+import { NavCartIcon } from "@/components/layout/storefront-nav-icons";
 import {
   SITE_HEADER_CART_BADGE,
   SITE_HEADER_CART_TRIGGER,
@@ -58,16 +59,6 @@ type CartDrawerProps = {
   /** Icon color on dark Kamancha header. */
   tone?: "default" | "onDark";
 };
-
-function formatItemCount(
-  count: number,
-  labels: Dictionary["cartDrawer"],
-): string {
-  if (count === 1) {
-    return labels.itemsOne;
-  }
-  return labels.itemsMany.replace("{count}", String(count));
-}
 
 function withUpdatedQuantity(
   items: CartDrawerItemView[],
@@ -229,15 +220,16 @@ export function CartDrawer({
         backdropBlur
         closeButtonClassName="side-sheet-close-stroke bg-[#335329] text-white hover:bg-[#2c4823]"
       >
-        <div className="border-b border-gray-100 px-6 py-5">
-          <h2 className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
-            {labels.title}
-          </h2>
-          {hasItems ? (
-            <p className="mt-1 text-sm text-gray-500">
-              {formatItemCount(badgeCount, labels)}
-            </p>
-          ) : null}
+        <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-6 py-5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <NavCartIcon className="size-5 shrink-0 text-black [&_path]:stroke-[2.85]" />
+            <h2 className="truncate font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase">
+              {labels.title}
+            </h2>
+          </div>
+          <span className="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-brand-forest px-2 text-xs font-semibold text-white tabular-nums">
+            {badgeCount > 99 ? "99+" : badgeCount}
+          </span>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
