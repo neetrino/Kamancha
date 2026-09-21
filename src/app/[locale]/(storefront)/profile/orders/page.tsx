@@ -109,6 +109,7 @@ export default async function OrdersPage({
             group: dictionary.profile.ordersKindGroup,
             aria: dictionary.profile.ordersKindAria,
           }}
+          fullWidth
         />
       </div>
 

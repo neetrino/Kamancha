@@ -32,6 +32,10 @@ type SegmentedControlProps<T extends string> = {
    * Default fits each segment to its label (admin forms).
    */
   fullWidth?: boolean;
+  /**
+   * Tighter horizontal padding on full-width segments (long middle labels).
+   */
+  dense?: boolean;
   onSelect?: (value: T) => void;
   renderOption?: (args: {
     option: SegmentedOption<T>;
@@ -79,6 +83,7 @@ export function SegmentedControl<T extends string>({
   size = "md",
   tone = "default",
   fullWidth = false,
+  dense = false,
   onSelect,
   renderOption,
 }: SegmentedControlProps<T>) {
@@ -125,19 +130,24 @@ export function SegmentedControl<T extends string>({
       ? { left: activeBounds.left, width: activeBounds.width }
       : null;
 
+  const radiusClass = fullWidth ? "rounded-full" : SIZE_RADIUS_CLASS[size];
+  const fullWidthOptionClass = dense
+    ? "min-w-0 flex-1 px-1 py-2 text-[11px] leading-tight"
+    : "min-w-0 flex-1 px-2.5 py-2.5 text-[12px] sm:px-3.5 sm:text-sm";
+
   return (
     <div
       ref={containerRef}
       role="group"
       aria-label={ariaLabel}
-      className={`relative flex items-center ${SIZE_RADIUS_CLASS[size]} ${TONE_TRACK_CLASS[tone]} p-1 ${
+      className={`relative flex items-center ${radiusClass} ${TONE_TRACK_CLASS[tone]} p-1 ${
         fullWidth ? "w-full" : "w-fit max-w-full"
       }`}
     >
       {indicatorStyle ? (
         <span
           aria-hidden
-          className={`${INDICATOR_CLASS} ${SIZE_RADIUS_CLASS[size]} ${
+          className={`${INDICATOR_CLASS} ${radiusClass} ${
             fullWidth ? "transition-transform" : "transition-[left,width]"
           }`}
           style={indicatorStyle}
@@ -146,9 +156,9 @@ export function SegmentedControl<T extends string>({
 
       {options.map((option, index) => {
         const selected = option.value === value;
-        const base = `relative z-[1] flex items-center justify-center ${SIZE_RADIUS_CLASS[size]} whitespace-nowrap ${
-          fullWidth ? "flex-1" : "flex-none"
-        } ${SIZE_OPTION_CLASS[size]} transition-colors duration-300`;
+        const base = `relative z-[1] flex items-center justify-center ${radiusClass} whitespace-nowrap ${
+          fullWidth ? fullWidthOptionClass : `flex-none ${SIZE_OPTION_CLASS[size]}`
+        } transition-colors duration-300`;
         const className = selected
           ? `${base} ${TONE_SELECTED_CLASS[tone]}`
           : `${base} ${TONE_IDLE_CLASS[tone]}`;
