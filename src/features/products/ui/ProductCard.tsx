@@ -160,7 +160,9 @@ export function ProductCard({
             compact ? "gap-1.5" : catalog ? "gap-2.5 xl:gap-0" : ""
           }`}
         >
-          <h3 className={`truncate font-medium text-[#222] ${ui.title}`}>
+          <h3
+            className={`line-clamp-1 font-medium text-[#222] xl:line-clamp-2 ${ui.title}`}
+          >
             <AppLink
               href={href}
               prefetchPolicy={priority ? "intent" : "auto"}
@@ -175,12 +177,14 @@ export function ProductCard({
             </p>
           ) : null}
           <div
-            className={`flex flex-col ${
+            className={`mt-auto flex flex-col justify-center ${
+              showAddToCart ? ui.priceSlot : ""
+            } ${
               compact
                 ? "gap-1"
                 : catalog
-                  ? "gap-2 xl:mt-0.5 xl:gap-px"
-                  : `gap-px ${fluid ? "mt-0.5" : "mt-1"}`
+                  ? "gap-2 xl:gap-px"
+                  : "gap-px"
             }`}
           >
             <p className={`leading-none font-bold text-[#222] ${ui.price}`}>
