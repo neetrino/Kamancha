@@ -111,7 +111,7 @@ export function CatalogProductGrid({
         immediate
       >
         {visibleProducts.map((product, index) => (
-          <StaggerItem key={product.id} className="min-w-0 w-full">
+          <StaggerItem key={product.id} className="flex h-full min-w-0 w-full">
             <ProductCard
               href={product.href}
               title={product.title}
@@ -131,7 +131,7 @@ export function CatalogProductGrid({
               addToCartLabel={addToCartLabel}
               requiresCustomization={product.requiresCustomization}
               layout="catalog"
-              className="w-full"
+              className="h-full w-full"
             />
           </StaggerItem>
         ))}

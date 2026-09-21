@@ -1,18 +1,13 @@
 import { notFound } from "next/navigation";
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import {
-  ADMIN_LABEL,
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
-  ADMIN_SELECT,
 } from "@/features/admin/ui/admin-form-classes";
 import { listAdminContactMessages } from "@/features/contact/application/queries";
+import { AdminMessagesFilters } from "@/features/contact/ui/AdminMessagesFilters";
 import { AdminMessagesView } from "@/features/contact/ui/AdminMessagesView";
-import { CONTACT_STATUSES } from "@/features/contact/domain/contact-rules";
 import { adminContactFilterSchema } from "@/features/contact/schemas/contact";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -84,36 +79,12 @@ export default async function AdminMessagesPage({
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{countLabel}</p>
       </div>
 
-      <Card className="mb-6 p-4">
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="min-w-[180px] flex-1">
-            <span className={ADMIN_LABEL}>{t.search}</span>
-            <AdminSearchInput
-              name="q"
-              defaultValue={filters.q ?? ""}
-              placeholder={t.searchPlaceholder}
-            />
-          </label>
-          <label className="min-w-[140px]">
-            <span className={ADMIN_LABEL}>{t.status}</span>
-            <select
-              name="status"
-              defaultValue={filters.status ?? ""}
-              className={ADMIN_SELECT}
-            >
-              <option value="">{t.all}</option>
-              {CONTACT_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Button type="submit" size="field">
-            {t.filter}
-          </Button>
-        </form>
-      </Card>
+      <AdminMessagesFilters
+        q={filters.q}
+        status={filters.status}
+        copy={t}
+        filterLabel={t.filter}
+      />
 
       <AdminMessagesView
         locale={locale}

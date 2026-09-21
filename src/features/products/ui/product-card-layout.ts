@@ -15,7 +15,11 @@ type CardLayoutClasses = {
   metaCol: string;
   star: string;
   rating: string;
+  /** Height of the first title line — keeps star+rating centered on it. */
+  ratingRow: string;
   cart: string;
+  /** Min-height to vertically center price with the cart button. */
+  priceSlot: string;
 };
 
 const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
@@ -28,17 +32,19 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
     wishlist: "top-0.5 right-1 size-10",
     wishlistSize: "lg",
     body: "px-[17px] pt-2 pb-5",
-    title: "text-[16px] leading-[30px]",
-    category: "-mt-2 text-[16px] leading-[30px]",
+    title: "min-h-[44px] text-[16px] leading-[22px]",
+    category: "-mt-1 text-[16px] leading-[22px]",
     price: "text-[22px]",
     compare: "text-[16px] leading-5",
     metaCol: "ml-2 w-[52px] gap-3",
     star: "size-[18px]",
     rating: "text-[16px]",
+    ratingRow: "h-[22px]",
     cart: "size-[50px]",
+    priceSlot: "min-h-[50px]",
   },
   fluid: {
-    article: "h-auto w-full rounded-[24px]",
+    article: "flex h-full w-full flex-col rounded-[24px]",
     image:
       "mx-1 mt-1 aspect-[5/4] w-[calc(100%-8px)] overflow-hidden rounded-[24px]",
     imageSizes:
@@ -47,15 +53,17 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
       "top-[4px] left-[1px] h-6 min-w-[4.25rem] bg-[#84d086] px-1.5 text-[10px] text-[#132814]",
     wishlist: "top-[-4px] right-[1px] size-10",
     wishlistSize: "lg",
-    body: "min-h-[5.5rem] gap-1 px-2.5 pt-2 pb-3.5",
-    title: "text-[13px] leading-5",
+    body: "min-h-[5.5rem] flex-1 gap-1 px-2.5 pt-2 pb-3.5",
+    title: "min-h-10 text-[13px] leading-5",
     category: "text-[11px] leading-3.5",
     price: "text-[15px]",
     compare: "text-[11px] leading-3.5",
     metaCol: "ml-1 w-12 gap-2 sm:w-11",
     star: "size-3",
     rating: "text-[11px]",
+    ratingRow: "h-5",
     cart: "size-12 sm:size-11",
+    priceSlot: "min-h-12 sm:min-h-11",
   },
   compact: {
     article: "h-[302px] w-full rounded-[27px]",
@@ -65,20 +73,22 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
       "top-[4px] left-[1px] h-6 min-w-[4.75rem] bg-[#140900] px-2 text-[11px] text-white",
     wishlist: "top-0 right-1.5 size-10",
     wishlistSize: "lg",
-    body: "gap-1 px-[13px] pt-2 pb-3",
-    title: "text-[16px] leading-[22px]",
+    body: "flex-1 gap-1 px-[13px] pt-2 pb-3",
+    title: "min-h-[44px] text-[16px] leading-[22px]",
     category: "text-[16px] leading-[22px]",
     price: "text-[18px]",
     compare: "text-[14px] leading-[17px]",
     metaCol: "ml-1 w-12 gap-2",
     star: "size-[18px]",
     rating: "text-[16px]",
+    ratingRow: "h-[22px]",
     cart: "size-12",
+    priceSlot: "min-h-12",
   },
   /** Figma catalog item 103:3029 — mobile card below xl; full 300×419 from xl. */
   catalog: {
     article:
-      "h-auto w-full rounded-[26px] xl:h-[419px] xl:max-w-[300px] xl:rounded-[37px]",
+      "flex h-full w-full flex-col rounded-[26px] xl:h-[419px] xl:max-w-[300px] xl:rounded-[37px]",
     /**
      * Explicit width + aspect (and xl fixed height) so iOS Safari does not
      * mis-size absolute/fill photos inside transformed grid cells.
@@ -91,15 +101,19 @@ const LAYOUT: Record<ProductCardLayout, CardLayoutClasses> = {
       "top-[4px] left-[1px] h-6 min-w-[4.75rem] bg-[#84d086] px-2 text-[11px] text-[#132814] xl:top-1.5 xl:left-2",
     wishlist: "top-[-4px] right-[1px] size-10 xl:top-0.5 xl:right-1.5",
     wishlistSize: "lg",
-    body: "gap-0.5 px-2.5 pt-1.5 pb-3 xl:gap-0 xl:px-[17px] xl:pt-2 xl:pb-5",
-    title: "text-[13px] leading-5 xl:text-[16px] xl:leading-[30px]",
-    category: "text-[12px] leading-4 xl:-mt-2 xl:text-[16px] xl:leading-[30px]",
+    body: "flex-1 gap-0.5 px-2.5 pt-[15px] pb-3 xl:gap-0 xl:px-[17px] xl:pt-2 xl:pb-5",
+    /** Reserve two title lines so cards in a row stay even height/alignment. */
+    title:
+      "min-h-10 text-[13px] leading-5 xl:min-h-[44px] xl:text-[16px] xl:leading-[22px]",
+    category: "text-[12px] leading-4 xl:-mt-1 xl:text-[16px] xl:leading-[22px]",
     price: "text-[16px] xl:text-[22px]",
     compare: "text-[12px] leading-4 xl:text-[16px] xl:leading-5",
     metaCol: "ml-1 w-12 gap-1.5 xl:ml-2 xl:w-[52px] xl:gap-3",
-    star: "size-3.5 xl:size-6",
-    rating: "text-[12px] xl:text-[16px]",
+    star: "size-3.5 xl:size-5",
+    rating: "text-[12px] leading-none xl:text-[16px]",
+    ratingRow: "h-5 xl:h-[22px]",
     cart: "size-12 xl:size-[50px]",
+    priceSlot: "min-h-12 xl:min-h-[50px]",
   },
 };
 

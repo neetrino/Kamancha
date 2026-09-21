@@ -281,8 +281,8 @@ export function ProfileMobileTabSheet({
         style={{
           height: `${SHEET_HEIGHT_VH}dvh`,
           maxHeight: "100%",
-          borderTopLeftRadius: "var(--radius)",
-          borderTopRightRadius: "var(--radius)",
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
         }}
         {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
         onClick={(event) => event.stopPropagation()}

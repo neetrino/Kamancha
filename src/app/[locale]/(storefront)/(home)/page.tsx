@@ -171,7 +171,7 @@ async function HomeBelowFold({ locale, dictionary }: { locale: Locale; dictionar
           subtitleMuted={dictionary.home.familyDinner.subtitleMuted}
           priceLabel={dictionary.home.familyDinner.price}
           ctaLabel={dictionary.home.viewAll}
-          ctaHref={`/${locale}/products`}
+          ctaHref={`/${locale}/products?category=${encodeURIComponent("ընտանեկան")}`}
         />
 
         <HomeOurStory

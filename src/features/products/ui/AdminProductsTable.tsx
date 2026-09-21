@@ -185,17 +185,17 @@ export function AdminProductsTable({
                       {copy.table.product}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     <Link href={sortLinks.stock} className="hover:text-gray-900">
                       {copy.table.stock}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>
+                  <th className={ADMIN_TABLE_TH_CENTER}>
                     <Link href={sortLinks.price} className="hover:text-gray-900">
                       {copy.table.price}
                     </Link>
                   </th>
-                  <th className={ADMIN_TABLE_TH}>{copy.table.category}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.category}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.featured}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.actions}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>

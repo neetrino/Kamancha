@@ -22,7 +22,8 @@ const localizedCategoryTextSchema = z.object({
 
 const createCategorySchema = z
   .object({
-    title: z.string().trim().max(120).default(""),
+    // nullish: FormData.get("title") is null when the drawer only sends JSON `data`.
+    title: z.string().trim().max(120).nullish().transform((value) => value ?? ""),
     localizedText: z
       .object({
         hy: localizedCategoryTextSchema,
@@ -30,9 +31,9 @@ const createCategorySchema = z
         ru: localizedCategoryTextSchema,
       })
       .optional(),
-  slug: z.string().trim().min(1).max(120),
-  parentId: z.string().uuid().nullable(),
-  status: z.enum(["ACTIVE", "ARCHIVED"]),
+    slug: z.string().trim().min(1).max(120),
+    parentId: z.string().uuid().nullable(),
+    status: z.enum(["ACTIVE", "ARCHIVED"]),
   })
   .refine((value) => value.localizedText || value.title, {
     message: "Category title is required.",
@@ -40,6 +41,56 @@ const createCategorySchema = z
   });
 
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
+
+function readDrawerPayload(formData: FormData): Record<string, unknown> {
+  const rawPayload = formData.get("data");
+  if (typeof rawPayload !== "string") {
+    return {};
+  }
+  try {
+    const parsedPayload = JSON.parse(rawPayload) as unknown;
+    if (parsedPayload && typeof parsedPayload === "object") {
+      return parsedPayload as Record<string, unknown>;
+    }
+  } catch {
+    return {};
+  }
+  return {};
+}
+
+function parseCategoryDrawerFormData(formData: FormData) {
+  const raw = readDrawerPayload(formData);
+  const rawParent =
+    typeof raw.parentId === "string"
+      ? raw.parentId
+      : (formData.get("parentId") as string | null);
+  const rawTitle =
+    typeof raw.title === "string"
+      ? raw.title
+      : formData.get("title");
+
+  return createCategorySchema.safeParse({
+    title: typeof rawTitle === "string" ? rawTitle : undefined,
+    localizedText:
+      raw.localizedText && typeof raw.localizedText === "object"
+        ? raw.localizedText
+        : undefined,
+    slug: typeof raw.slug === "string" ? raw.slug : formData.get("slug"),
+    parentId:
+      typeof rawParent === "string" && rawParent.trim()
+        ? rawParent.trim()
+        : null,
+    status: typeof raw.status === "string" ? raw.status : formData.get("status"),
+  });
+}
+
+function readImageUpload(formData: FormData): Blob | null {
+  const image = formData.get("image");
+  if (!(image instanceof Blob) || image.size <= 0) {
+    return null;
+  }
+  return image;
+}
 
 function buildTranslations(data: CreateCategoryInput): TranslationsJson {
   const fallbackTitle = data.title.trim();
@@ -127,39 +178,7 @@ export async function createCategoryFromDrawerAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const rawPayload = formData.get("data");
-  let raw: Record<string, unknown>;
-  if (typeof rawPayload === "string") {
-    try {
-      const parsedPayload = JSON.parse(rawPayload);
-      raw =
-        parsedPayload && typeof parsedPayload === "object"
-          ? (parsedPayload as Record<string, unknown>)
-          : {};
-    } catch {
-      raw = {};
-    }
-  } else {
-    raw = {};
-  }
-  const rawParent =
-    typeof raw.parentId === "string"
-      ? raw.parentId
-      : (formData.get("parentId") as string | null);
-  const parsed = createCategorySchema.safeParse({
-    title: typeof raw.title === "string" ? raw.title : formData.get("title"),
-    localizedText:
-      raw.localizedText && typeof raw.localizedText === "object"
-        ? raw.localizedText
-        : undefined,
-    slug: typeof raw.slug === "string" ? raw.slug : formData.get("slug"),
-    parentId:
-      typeof rawParent === "string" && rawParent.trim()
-        ? rawParent.trim()
-        : null,
-    status: typeof raw.status === "string" ? raw.status : formData.get("status"),
-  });
-
+  const parsed = parseCategoryDrawerFormData(formData);
   if (!parsed.success) {
     return err("VALIDATION_ERROR", "Invalid category payload.");
   }
@@ -168,11 +187,15 @@ export async function createCategoryFromDrawerAction(
   const created = await insertCategory(locale, parsed.data);
   if (!created.ok) return created;
 
-  const image = formData.get("image");
-  if (image instanceof File && image.size > 0) {
-    const mediaResult = await persistCategoryImage(created.value.id, image);
-    if (mediaResult.error) {
-      return err("VALIDATION_ERROR", mediaResult.error);
+  const image = readImageUpload(formData);
+  if (image) {
+    try {
+      const mediaResult = await persistCategoryImage(created.value.id, image);
+      if (mediaResult.error) {
+        return err("VALIDATION_ERROR", mediaResult.error);
+      }
+    } catch {
+      return err("VALIDATION_ERROR", "Unable to upload category image.");
     }
     revalidateCategories(locale);
   }
@@ -190,39 +213,7 @@ export async function updateCategoryFromDrawerAction(
     return err("INVALID_LOCALE", "Invalid locale.");
   }
 
-  const rawPayload = formData.get("data");
-  let raw: Record<string, unknown>;
-  if (typeof rawPayload === "string") {
-    try {
-      const parsedPayload = JSON.parse(rawPayload);
-      raw =
-        parsedPayload && typeof parsedPayload === "object"
-          ? (parsedPayload as Record<string, unknown>)
-          : {};
-    } catch {
-      raw = {};
-    }
-  } else {
-    raw = {};
-  }
-  const rawParent =
-    typeof raw.parentId === "string"
-      ? raw.parentId
-      : (formData.get("parentId") as string | null);
-  const parsed = createCategorySchema.safeParse({
-    title: typeof raw.title === "string" ? raw.title : formData.get("title"),
-    localizedText:
-      raw.localizedText && typeof raw.localizedText === "object"
-        ? raw.localizedText
-        : undefined,
-    slug: typeof raw.slug === "string" ? raw.slug : formData.get("slug"),
-    parentId:
-      typeof rawParent === "string" && rawParent.trim()
-        ? rawParent.trim()
-        : null,
-    status: typeof raw.status === "string" ? raw.status : formData.get("status"),
-  });
-
+  const parsed = parseCategoryDrawerFormData(formData);
   if (!parsed.success) {
     return err("VALIDATION_ERROR", "Invalid category payload.");
   }
@@ -269,13 +260,17 @@ export async function updateCategoryFromDrawerAction(
     })
     .where(eq(categories.id, existing.id));
 
-  const image = formData.get("image");
+  const image = readImageUpload(formData);
   const removeImage = formData.get("removeImage") === "1";
 
-  if (image instanceof File && image.size > 0) {
-    const mediaResult = await persistCategoryImage(existing.id, image);
-    if (mediaResult.error) {
-      return err("VALIDATION_ERROR", mediaResult.error);
+  if (image) {
+    try {
+      const mediaResult = await persistCategoryImage(existing.id, image);
+      if (mediaResult.error) {
+        return err("VALIDATION_ERROR", mediaResult.error);
+      }
+    } catch {
+      return err("VALIDATION_ERROR", "Unable to upload category image.");
     }
   } else if (removeImage) {
     await removeCategoryImage(existing.id);

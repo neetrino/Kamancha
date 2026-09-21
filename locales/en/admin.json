@@ -380,7 +380,9 @@
       "uploadImage": "+ Upload Image",
       "hint": "Upload one or more images, then mark the main image with the checkbox.",
       "main": "Main",
-      "removeAria": "Remove image"
+      "removeAria": "Remove image",
+      "reorderItemAria": "Drag to reorder image",
+      "reorderHint": "Drag the handle to change image order."
     },
     "discount": {
       "label": "Discount",
@@ -476,7 +478,10 @@
       "uploading": "Uploading…",
       "noImage": "No image",
       "add": "Add denomination",
-      "remove": "Remove"
+      "remove": "Remove",
+      "reorderAria": "Reorder cash change denominations",
+      "reorderItemAria": "Drag to reorder {amount}",
+      "reorderHint": "Drag the handle to change denomination order."
     },
     "schedule": {
       "title": "Delivery schedule",
@@ -792,6 +797,9 @@
     "deleteAria": "Delete {title}",
     "publishAria": "Publish slide",
     "unpublishAria": "Unpublish slide",
+    "reorderAria": "Reorder hero slides",
+    "reorderItemAria": "Drag to reorder {title}",
+    "reorderHint": "Drag the handle to change slide order.",
     "drawer": {
       "createTitle": "Create hero slide",
       "editTitle": "Edit hero slide",

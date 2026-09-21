@@ -778,6 +778,11 @@ body {
     padding-right: 1.25rem;
   }
 
+  /* Catalog MENU — tighter space above the heading on phone/tablet. */
+  .storefront-main:has(.catalog-page) {
+    padding-top: calc(1.25rem + 3px);
+  }
+
   /* Checkout white cards (e.g. ՄԱՆՐ) on the forest background. */
   .checkout-page .profile-inner-card {
     border-color: rgb(229 231 235);

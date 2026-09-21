@@ -112,7 +112,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
             ({ product, priceFormatted, compareAtFormatted }, index) => (
               <StaggerItem
                 key={product.id}
-                className="min-w-0 w-full sm:max-w-[300px]"
+                className="flex h-full min-w-0 w-full sm:max-w-[300px]"
               >
                 <ProductCard
                   href={`/${rawLocale}/products/${product.translation.slug}`}
@@ -132,7 +132,7 @@ export default async function WishlistPage({ params }: WishlistPageProps) {
                   addToCartLabel={dictionary.product.addToCart}
                   requiresCustomization={product.hasCustomizationOptions}
                   layout="catalog"
-                  className="w-full"
+                  className="h-full w-full"
                 />
               </StaggerItem>
             ),

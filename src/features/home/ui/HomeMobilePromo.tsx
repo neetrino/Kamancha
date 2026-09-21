@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { AppLink } from "@/components/ui/AppLink";
 import { HomeReveal } from "@/features/home/ui/home-motion";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
@@ -9,6 +10,7 @@ type HomeMobilePromoProps = {
   headlineBefore: string;
   headlineAccent: string;
   headlineAfter: string;
+  href: string;
 };
 
 /**
@@ -18,11 +20,16 @@ export function HomeMobilePromo({
   headlineBefore,
   headlineAccent,
   headlineAfter,
+  href,
 }: HomeMobilePromoProps) {
   return (
     <HomeReveal>
       <section className="relative z-[1] px-4 pt-2" data-node-id="196:213">
-        <div className="relative rounded-[21px] bg-white [clip-path:inset(-32px_0_0_0_round_21px)]">
+        <AppLink
+          href={href}
+          prefetchPolicy="intent"
+          className="relative block rounded-[21px] bg-white [clip-path:inset(-32px_0_0_0_round_21px)] transition-opacity hover:opacity-95 active:opacity-90"
+        >
           <div className="relative z-[1] max-w-[62%] py-[27px] pl-[19px] pr-2">
             <h1 className="font-big-fat-boii text-[22px] leading-[23px] font-normal text-brand-forest">
               {headlineBefore ? (
@@ -53,7 +60,7 @@ export function HomeMobilePromo({
               className="h-[205%] w-[108%] max-w-none translate-x-[6%] object-cover object-top"
             />
           </div>
-        </div>
+        </AppLink>
       </section>
     </HomeReveal>
   );

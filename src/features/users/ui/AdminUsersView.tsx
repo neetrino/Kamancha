@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import {
   ConfirmDialog,
 } from "@/components/ui/ConfirmDialog";
+import { useAdminFilterNavigate } from "@/features/admin/ui/admin-filter-navigation";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import {
@@ -79,6 +80,7 @@ export function AdminUsersView({
   copy,
 }: AdminUsersViewProps) {
   const router = useRouter();
+  const navigateFilters = useAdminFilterNavigate();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -137,7 +139,14 @@ export function AdminUsersView({
 
   return (
     <section>
-      <form method="get" className="mb-4 flex flex-wrap gap-3">
+      <form
+        method="get"
+        className="mb-4 flex flex-wrap gap-3"
+        onSubmit={(event: FormEvent<HTMLFormElement>) => {
+          event.preventDefault();
+          navigateFilters(event.currentTarget);
+        }}
+      >
         <AdminSearchInput
           name="q"
           defaultValue={q ?? ""}

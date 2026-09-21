@@ -6,6 +6,13 @@ import { X } from "lucide-react";
 
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
+import {
+  AdminSortableGrip,
+  AdminSortableRoot,
+  moveItemByKey,
+  rectSortingStrategy,
+  useAdminSortableItem,
+} from "@/features/admin/ui/admin-sortable";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { createClientId } from "@/lib/id";
 
@@ -25,6 +32,73 @@ type ProductDrawerImagesProps = {
   copy: Dictionary["admin"]["products"]["images"];
   confirm: Dictionary["admin"]["confirm"];
 };
+
+type ProductImageCardProps = {
+  image: ProductDraftImage;
+  disabled: boolean;
+  copy: Dictionary["admin"]["products"]["images"];
+  onSetPrimary: (key: string) => void;
+  onRequestRemove: (key: string) => void;
+};
+
+function ProductSortableImageCard({
+  image,
+  disabled,
+  copy,
+  onSetPrimary,
+  onRequestRemove,
+}: ProductImageCardProps) {
+  const { setNodeRef, style, isDragging, attributes, listeners } =
+    useAdminSortableItem(image.key, disabled);
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      className={`relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50 ${
+        isDragging ? "z-10 opacity-70 shadow-md" : ""
+      }`}
+    >
+      <div className="absolute top-2 left-2 z-[1] rounded-md bg-white/90 p-0.5 shadow-sm">
+        <AdminSortableGrip
+          label={copy.reorderItemAria}
+          disabled={disabled}
+          attributes={attributes}
+          listeners={listeners}
+        />
+      </div>
+      <Image
+        src={image.previewUrl}
+        alt=""
+        width={200}
+        height={200}
+        unoptimized
+        className="aspect-square w-full object-cover"
+      />
+      <div className="flex items-center justify-between gap-2 px-2 py-2">
+        <label className="flex items-center gap-1.5 text-xs text-gray-700">
+          <input
+            type="checkbox"
+            checked={image.isPrimary}
+            disabled={disabled}
+            onChange={() => onSetPrimary(image.key)}
+            className="h-3.5 w-3.5 rounded border-gray-300"
+          />
+          {copy.main}
+        </label>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => onRequestRemove(image.key)}
+          className="rounded p-1 text-gray-500 hover:bg-white hover:text-red-600"
+          aria-label={copy.removeAria}
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </li>
+  );
+}
 
 export function ProductDrawerImages({
   images,
@@ -79,6 +153,11 @@ export function ProductDrawerImages({
     onChange(merged);
   }
 
+  function handleReorder(activeId: string, overId: string): void {
+    if (disabled) return;
+    onChange(moveItemByKey(images, activeId, overId, (image) => image.key));
+  }
+
   return (
     <div>
       <span className={ADMIN_LABEL}>{copy.mainProductImage}</span>
@@ -105,46 +184,30 @@ export function ProductDrawerImages({
         />
       </div>
       <p className="mt-1 text-xs text-gray-500">{copy.hint}</p>
+      {images.length > 1 ? (
+        <p className="mt-1 text-xs text-gray-500">{copy.reorderHint}</p>
+      ) : null}
 
       {images.length > 0 ? (
-        <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {images.map((image) => (
-            <li
-              key={image.key}
-              className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50"
-            >
-              <Image
-                src={image.previewUrl}
-                alt=""
-                width={200}
-                height={200}
-                unoptimized
-                className="aspect-square w-full object-cover"
+        <AdminSortableRoot
+          items={images.map((image) => image.key)}
+          disabled={disabled}
+          strategy={rectSortingStrategy}
+          onReorder={handleReorder}
+        >
+          <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {images.map((image) => (
+              <ProductSortableImageCard
+                key={image.key}
+                image={image}
+                disabled={disabled}
+                copy={copy}
+                onSetPrimary={setPrimary}
+                onRequestRemove={setPendingKey}
               />
-              <div className="flex items-center justify-between gap-2 px-2 py-2">
-                <label className="flex items-center gap-1.5 text-xs text-gray-700">
-                  <input
-                    type="checkbox"
-                    checked={image.isPrimary}
-                    disabled={disabled}
-                    onChange={() => setPrimary(image.key)}
-                    className="h-3.5 w-3.5 rounded border-gray-300"
-                  />
-                  {copy.main}
-                </label>
-                <button
-                  type="button"
-                  disabled={disabled}
-                  onClick={() => setPendingKey(image.key)}
-                  className="rounded p-1 text-gray-500 hover:bg-white hover:text-red-600"
-                  aria-label={copy.removeAria}
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </ul>
+        </AdminSortableRoot>
       ) : null}
 
       <ConfirmDialog

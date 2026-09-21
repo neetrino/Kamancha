@@ -19,6 +19,8 @@ type CustomerOrderKindFilterProps = {
   labels: KindFilterLabels;
   /** `onDark` for glass filter bar; default gray for light surfaces. */
   tone?: "default" | "onDark";
+  /** Stretch equal segments across the full row. */
+  fullWidth?: boolean;
 };
 
 const KIND_OPTIONS: CustomerOrderKind[] = ["all", "personal", "group"];
@@ -51,6 +53,7 @@ export function CustomerOrderKindFilter({
   baseQuery,
   labels,
   tone = "default",
+  fullWidth = false,
 }: CustomerOrderKindFilterProps) {
   const router = useRouter();
 
@@ -70,6 +73,7 @@ export function CustomerOrderKindFilter({
       value={active}
       options={options}
       tone={tone}
+      fullWidth={fullWidth}
       onSelect={(kind) => {
         router.push(hrefForKind(locale, kind, baseQuery));
       }}

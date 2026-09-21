@@ -85,7 +85,7 @@ export function ProductCard({
   const fluid = layout === "fluid";
   const compact = layout === "compact";
   const catalog = layout === "catalog";
-  const starPx = fluid ? 12 : catalog ? 24 : 18;
+  const starPx = fluid ? 12 : catalog ? 20 : 18;
   const imageSrc = storefrontProductImageSrc(imageUrl);
 
   return (
@@ -160,7 +160,7 @@ export function ProductCard({
             compact ? "gap-1.5" : catalog ? "gap-2.5 xl:gap-0" : ""
           }`}
         >
-          <h3 className={`truncate font-medium text-[#222] ${ui.title}`}>
+          <h3 className={`line-clamp-2 font-medium text-[#222] ${ui.title}`}>
             <AppLink
               href={href}
               prefetchPolicy={priority ? "intent" : "auto"}
@@ -175,12 +175,14 @@ export function ProductCard({
             </p>
           ) : null}
           <div
-            className={`flex flex-col ${
+            className={`mt-auto flex flex-col justify-center ${
+              showAddToCart ? ui.priceSlot : ""
+            } ${
               compact
                 ? "gap-1"
                 : catalog
-                  ? "gap-2 xl:mt-0.5 xl:gap-px"
-                  : `gap-px ${fluid ? "mt-0.5" : "mt-1"}`
+                  ? "gap-2 xl:gap-px"
+                  : "gap-px"
             }`}
           >
             <p className={`leading-none font-bold text-[#222] ${ui.price}`}>
@@ -199,7 +201,10 @@ export function ProductCard({
         <div
           className={`relative flex shrink-0 flex-col items-end ${ui.metaCol}`}
         >
-          <div data-node-id="22:242" className="flex items-center gap-0.5">
+          <div
+            data-node-id="22:242"
+            className={`flex shrink-0 items-center gap-0.5 ${ui.ratingRow}`}
+          >
             <Image
               src={STAR_SRC}
               alt=""

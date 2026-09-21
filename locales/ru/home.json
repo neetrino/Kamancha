@@ -3,7 +3,7 @@
   "subtitle": "Многоязычный магазин уже работает.",
   "cta": "Смотреть товары",
   "categoriesTitle": "Категории",
-  "categoryProductCount": "({count} товаров)",
+  "categoryProductCount": "({count} блюд)",
   "emptyCategories": "Категорий пока нет.",
   "featuredTitle": "ЛУЧШЕЕ",
   "discountedTitle": "Со скидкой",
@@ -21,7 +21,7 @@
     "headlineAfter": "",
     "subtitle": "Семейный ужин",
     "subtitleMuted": "На 4 человека",
-    "price": "24 900"
+    "price": "28 500"
   },
   "ourStory": {
     "title": "НАША ИСТОРИЯ",

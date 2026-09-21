@@ -184,7 +184,7 @@ export function MyGiftCardsView({
                 aria-label={copy.sectionsSwitcher.aria}
                 value={activeSection.id}
                 fullWidth
-                size="sm"
+                dense
                 options={[
                   { value: "mine", label: copy.sectionsSwitcher.mine },
                   { value: "used", label: copy.sectionsSwitcher.usedByMe },

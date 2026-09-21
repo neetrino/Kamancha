@@ -8,17 +8,25 @@ import { mediaAssets } from "@/db/schema";
 import { createId } from "@/lib/id";
 import {
   extensionForImageMime,
+  MEDIA_IMAGE_MAX_BYTES,
+  resolveImageMimeType,
   validateImageFile,
 } from "@/lib/media/image-file";
 
 /** Saves a single primary image for a category via object storage. */
 export async function persistCategoryImage(
   categoryId: string,
-  file: File,
+  file: Blob,
 ): Promise<{ error: string | null }> {
-  const validationError = validateImageFile(file);
+  const fileName = file instanceof File ? file.name : undefined;
+  const validationError = validateImageFile(file, MEDIA_IMAGE_MAX_BYTES, fileName);
   if (validationError) {
     return { error: validationError };
+  }
+
+  const mimeType = resolveImageMimeType(file, fileName);
+  if (!mimeType) {
+    return { error: "Only JPEG, PNG, WebP, or GIF images are allowed." };
   }
 
   const db = getDb();
@@ -36,17 +44,17 @@ export async function persistCategoryImage(
   }
 
   const id = createId();
-  const objectKey = `uploads/categories/${categoryId}/${id}.${extensionForImageMime(file.type)}`;
+  const objectKey = `uploads/categories/${categoryId}/${id}.${extensionForImageMime(mimeType)}`;
   await storage.putObject({
     objectKey,
     body: Buffer.from(await file.arrayBuffer()),
-    contentType: file.type,
+    contentType: mimeType,
   });
 
   await db.insert(mediaAssets).values({
     id,
     objectKey,
-    mimeType: file.type,
+    mimeType,
     byteSize: file.size,
     uploadStatus: "READY",
     role: "PRIMARY",

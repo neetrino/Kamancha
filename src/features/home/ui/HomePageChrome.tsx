@@ -34,6 +34,7 @@ export function HomePageChrome({
           headlineBefore={dictionary.home.familyDinner.headlineBefore}
           headlineAccent={dictionary.home.familyDinner.headlineAccent}
           headlineAfter={dictionary.home.familyDinner.headlineAfter}
+          href={`/${locale}/products?category=${encodeURIComponent("ընտանեկան")}`}
         />
       </div>
       {children}

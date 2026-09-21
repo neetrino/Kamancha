@@ -99,6 +99,8 @@ function CategoryIcon({
 
 const CATEGORY_BTN =
   "flex w-full items-center justify-between gap-5 rounded-xl px-4 py-3 text-left transition-colors";
+/** Fixed icon slot so category titles share one vertical text edge. */
+const CATEGORY_ICON = "h-8 w-9 shrink-0";
 
 /**
  * Catalog sidebar — Figma Sidebar 103:1278 (categories, price, filters, clear).
@@ -215,10 +217,10 @@ export function CatalogFilterForm({
               pushFilters({ category: undefined });
             }}
           >
-            <span className="flex min-w-0 items-center gap-1">
+            <span className="flex min-w-0 items-center gap-3">
               <CategoryIcon
                 src={CATALOG_CATEGORY_ICON_ALL}
-                className="h-8 w-[30px]"
+                className={CATEGORY_ICON}
               />
               <span
                 className={`truncate text-[15px] leading-[22.5px] ${
@@ -263,10 +265,10 @@ export function CatalogFilterForm({
                     });
                   }}
                 >
-                  <span className="flex min-w-0 items-center gap-1.5">
+                  <span className="flex min-w-0 items-center gap-3">
                     <CategoryIcon
                       src={icon}
-                      className="h-8 w-9 shrink-0"
+                      className={CATEGORY_ICON}
                     />
                     <span
                       className={`truncate text-[15px] leading-[22.5px] ${

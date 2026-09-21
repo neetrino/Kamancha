@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 import { Check, Copy, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useAdminFilterNavigate } from "@/features/admin/ui/admin-filter-navigation";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   ADMIN_PAGE_SUBTITLE,
@@ -58,6 +59,7 @@ export function AdminGiftCardsView({
   copy,
 }: AdminGiftCardsViewProps) {
   const router = useRouter();
+  const navigateFilters = useAdminFilterNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerKey, setDrawerKey] = useState(0);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -108,7 +110,14 @@ export function AdminGiftCardsView({
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <form method="get" className="min-w-0 flex-1">
+        <form
+          method="get"
+          className="min-w-0 flex-1"
+          onSubmit={(event: FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            navigateFilters(event.currentTarget);
+          }}
+        >
           <AdminSearchInput
             name="q"
             defaultValue={q ?? ""}

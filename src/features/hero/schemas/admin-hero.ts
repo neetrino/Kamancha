@@ -29,6 +29,13 @@ export const reorderHeroSlideSchema = z.object({
 
 export type ReorderHeroSlideInput = z.infer<typeof reorderHeroSlideSchema>;
 
+/** Full list order from admin drag-and-drop (1-based sortOrder). */
+export const reorderHeroSlidesSchema = z.object({
+  orderedIds: z.array(z.string().uuid()).min(1),
+});
+
+export type ReorderHeroSlidesInput = z.infer<typeof reorderHeroSlidesSchema>;
+
 export const deleteHeroSlideSchema = z.object({
   slideId: z.string().uuid(),
 });

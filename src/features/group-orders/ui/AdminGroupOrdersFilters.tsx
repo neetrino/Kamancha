@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 
 import { Card } from "@/components/ui/Card";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
+import { useAdminFilterNavigate } from "@/features/admin/ui/admin-filter-navigation";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
   GROUP_ORDER_PAYMENT_MODES,
@@ -45,6 +46,7 @@ export function AdminGroupOrdersFilters({
   copy,
 }: AdminGroupOrdersFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const navigateFilters = useAdminFilterNavigate();
   const [statusValue, setStatusValue] = useState(status ?? "");
   const [modeValue, setModeValue] = useState(paymentMode ?? "");
 
@@ -63,12 +65,21 @@ export function AdminGroupOrdersFilters({
 
   function applyStatus(next: string): void {
     flushSync(() => setStatusValue(next));
-    formRef.current?.requestSubmit();
+    navigateFilters(formRef.current, {
+      status: next.trim() === "" ? null : next,
+    });
   }
 
   function applyMode(next: string): void {
     flushSync(() => setModeValue(next));
-    formRef.current?.requestSubmit();
+    navigateFilters(formRef.current, {
+      paymentMode: next.trim() === "" ? null : next,
+    });
+  }
+
+  function onSubmit(event: FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    navigateFilters(formRef.current);
   }
 
   return (
@@ -76,6 +87,7 @@ export function AdminGroupOrdersFilters({
       <form
         ref={formRef}
         method="get"
+        onSubmit={onSubmit}
         className="flex flex-col gap-3 p-4 sm:flex-row sm:flex-nowrap sm:items-center"
       >
         <SelectDropdown
