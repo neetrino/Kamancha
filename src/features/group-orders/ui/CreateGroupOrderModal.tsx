@@ -208,23 +208,24 @@ export function CreateGroupOrderModal({
             icon={<User className="mt-0.5 h-5 w-5 shrink-0 text-gray-800" aria-hidden />}
             onSelect={() => setPaymentMode("ORGANIZER_PAYS_ALL")}
           >
-            {paymentMode === "ORGANIZER_PAYS_ALL" ? (
-              <div className="mt-3">
-                <p className="mb-1.5 text-xs text-gray-500">
-                  {labels.spendLimitHint}
-                </p>
-                <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
-                  <span className="text-sm text-gray-500">֏</span>
-                  <input
-                    inputMode="numeric"
-                    value={spendLimit}
-                    onChange={(event) => setSpendLimit(event.target.value)}
-                    placeholder={labels.spendLimitLabel}
-                    className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-500"
-                  />
-                </div>
+            <div className="mt-3">
+              <p className="mb-1.5 text-xs text-gray-500">
+                {labels.spendLimitHint}
+              </p>
+              <div className="flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2">
+                <span className="text-sm text-gray-500">֏</span>
+                <input
+                  inputMode="numeric"
+                  value={spendLimit}
+                  onChange={(event) => setSpendLimit(event.target.value)}
+                  placeholder={labels.spendLimitLabel}
+                  tabIndex={
+                    paymentMode === "ORGANIZER_PAYS_ALL" ? undefined : -1
+                  }
+                  className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-500"
+                />
               </div>
-            ) : null}
+            </div>
           </PaymentOption>
 
           <PaymentOption
@@ -277,11 +278,13 @@ function PaymentOption({
   onSelect: () => void;
   children?: ReactNode;
 }) {
+  const expandEase = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
+
   return (
     <button
       type="button"
       onClick={onSelect}
-      className={`w-full rounded-[15px] bg-gray-50 p-4 text-left outline-none transition-colors ${
+      className={`w-full rounded-[15px] bg-gray-50 p-4 text-left outline-none transition-[background-color,box-shadow] ${expandEase} ${
         selected
           ? "ring-2 ring-inset ring-brand-forest"
           : "hover:bg-gray-100"
@@ -294,17 +297,30 @@ function PaymentOption({
           {hint ? (
             <p className="mt-0.5 text-xs text-gray-500">{hint}</p>
           ) : null}
-          {children}
+          {children ? (
+            <div
+              className={`grid transition-[grid-template-rows,opacity] ${expandEase} ${
+                selected
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "pointer-events-none grid-rows-[0fr] opacity-0"
+              }`}
+              aria-hidden={!selected}
+            >
+              <div className="min-h-0 overflow-hidden">{children}</div>
+            </div>
+          ) : null}
         </div>
         <span
-          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${expandEase} ${
             selected ? "border-brand-forest" : "border-gray-300"
           }`}
           aria-hidden
         >
-          {selected ? (
-            <span className="h-2.5 w-2.5 rounded-full bg-brand-forest" />
-          ) : null}
+          <span
+            className={`h-2.5 w-2.5 rounded-full bg-brand-forest transition-transform ${expandEase} ${
+              selected ? "scale-100" : "scale-0"
+            }`}
+          />
         </span>
       </div>
     </button>
