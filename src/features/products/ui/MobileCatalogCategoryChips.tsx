@@ -27,6 +27,8 @@ const CHIP_SELECTED =
 /** Idle — translucent on forest. */
 const CHIP_IDLE =
   "border-white/25 bg-white/10 text-white hover:bg-white/15";
+/** Shared slot so every SVG mask reads the same size in the chip. */
+const CHIP_ICON = "h-5 w-6";
 
 const CHIP_SCROLL_INSET_PX = 0;
 
@@ -117,7 +119,7 @@ export function MobileCatalogCategoryChips({
           >
             <CategoryIcon
               src={CATALOG_CATEGORY_ICON_ALL}
-              className="size-4"
+              className={CHIP_ICON}
             />
             <span className="whitespace-nowrap uppercase">
               {allCategoriesLabel}
@@ -146,7 +148,7 @@ export function MobileCatalogCategoryChips({
                 aria-current={active ? "page" : undefined}
                 data-selected-category-chip={active ? "true" : undefined}
               >
-                <CategoryIcon src={icon} className="size-4" />
+                <CategoryIcon src={icon} className={CHIP_ICON} />
                 <span className="whitespace-nowrap uppercase">
                   {category.title}
                 </span>
