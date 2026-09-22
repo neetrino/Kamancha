@@ -5,7 +5,7 @@ import { CHECKOUT_PAYMENT_METHODS } from "@/features/checkout/domain/payment-met
 export const checkoutSchema = z
   .object({
     firstName: z.string().trim().min(1).max(80),
-    lastName: z.string().trim().min(1).max(80),
+    lastName: z.string().trim().max(80),
     contactEmail: z.string().trim().email().max(254),
     contactPhone: z.string().trim().min(5).max(40),
     shippingMethod: z.literal("delivery"),

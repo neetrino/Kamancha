@@ -129,7 +129,6 @@ export function CheckoutDetailsSections({
 
   const contactInvalid = Boolean(
     invalidFields.firstName ||
-      invalidFields.lastName ||
       invalidFields.contactEmail ||
       invalidFields.contactPhone,
   );
@@ -164,13 +163,10 @@ export function CheckoutDetailsSections({
               <input
                 name="lastName"
                 data-checkout-field="lastName"
-                required
                 defaultValue={defaultLastName}
                 disabled={pending}
-                aria-invalid={invalidFields.lastName || undefined}
                 className={FIELD_CLASS}
                 autoComplete="family-name"
-                onChange={() => clearField("lastName")}
               />
             </label>
           </div>

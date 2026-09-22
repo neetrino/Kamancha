@@ -405,7 +405,6 @@ export function CheckoutForm({
 
     const nextInvalid = collectCheckoutInvalidFields({
       firstName: String(data.get("firstName") ?? ""),
-      lastName: String(data.get("lastName") ?? ""),
       contactEmail: String(data.get("contactEmail") ?? ""),
       contactPhone: String(data.get("contactPhone") ?? ""),
       line1,

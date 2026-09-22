@@ -280,39 +280,67 @@ function CustomerOrderSheetBody({
 function OrderItemsList({ items }: { items: DrawerOrderItem[] }) {
   return (
     <ul className="space-y-3">
-      {items.map((item) => (
-        <li
-          key={item.id}
-          className="overflow-hidden rounded-[20px] border border-gray-200 bg-white p-3"
-        >
-          <div className="flex items-stretch gap-3">
-            <OrderItemThumb title={item.title} imageUrl={item.imageUrl} />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <p className="line-clamp-2 text-sm font-medium text-gray-900">
-                {item.title}
-              </p>
-              {item.modifiers.length > 0 ? (
-                <p className="mt-0.5 line-clamp-2 text-xs text-gray-500">
-                  {item.modifiers
-                    .map((modifier) =>
-                      modifier.kind === "ADDITION"
-                        ? `+ ${modifier.name}`
-                        : `− ${modifier.name}`,
-                    )
-                    .join(", ")}
-                </p>
-              ) : null}
-              <p className="mt-1 text-sm font-semibold text-gray-900">
-                {formatOrderDrawerMoney(item.lineTotalAmount, item.currency)}
-              </p>
-              <p className="mt-0.5 text-xs text-gray-500">
-                {formatOrderDrawerMoney(item.unitPriceAmount, item.currency)} ×{" "}
-                {item.quantity}
-              </p>
+      {items.map((item) => {
+        const imageSrc = storefrontProductImageSrc(item.imageUrl);
+        const modifierSummary =
+          item.modifiers.length > 0
+            ? item.modifiers
+                .map((modifier) =>
+                  modifier.kind === "ADDITION"
+                    ? `+ ${modifier.name}`
+                    : `− ${modifier.name}`,
+                )
+                .join(", ")
+            : null;
+
+        return (
+          <li
+            key={item.id}
+            className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-white px-3 py-3.5"
+          >
+            <div className="relative z-[2] flex items-stretch gap-3">
+              {/* Order/R2 hosts vary — native img avoids brittle next/image allowlists. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageSrc}
+                alt={item.title}
+                className="size-16 shrink-0 rounded-[12px] object-cover"
+              />
+
+              <div className="flex min-h-16 min-w-0 flex-1 flex-col justify-between gap-1">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium leading-5 text-gray-900">
+                    {item.title}
+                  </p>
+                </div>
+                <div className="min-w-0">
+                  {modifierSummary ? (
+                    <p
+                      className="mb-0.5 truncate text-xs text-gray-500"
+                      title={modifierSummary}
+                    >
+                      {modifierSummary}
+                    </p>
+                  ) : null}
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="min-w-0 truncate text-sm font-semibold text-gray-900">
+                      {formatOrderDrawerMoney(
+                        item.lineTotalAmount,
+                        item.currency,
+                      )}
+                    </p>
+                    <div className="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-sky-50/70 px-2.5 py-0.5">
+                      <span className="min-w-5 text-center text-[11px] font-semibold tabular-nums text-gray-900">
+                        {item.quantity}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -371,21 +399,5 @@ function CustomerOrderSheetTotals({
         </div>
       </dl>
     </div>
-  );
-}
-
-function OrderItemThumb({
-  title,
-  imageUrl,
-}: {
-  title: string;
-  imageUrl: string | null;
-}) {
-  const src = storefrontProductImageSrc(imageUrl);
-
-  return (
-    // Order/R2 hosts vary — native img avoids brittle next/image allowlists.
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={title} className="h-24 w-24 shrink-0 rounded-2xl object-cover" />
   );
 }
