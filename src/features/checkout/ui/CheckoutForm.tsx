@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type FormEvent,
+} from "react";
 
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { BOTTOM_SHEET_SCROLL_ATTR } from "@/components/ui/use-bottom-sheet-drag";
@@ -27,6 +34,7 @@ import {
   CHECKOUT_SHEET_STICKY_SPACER_CLASS,
   CHECKOUT_SHEET_TEXTURE,
 } from "@/features/checkout/ui/checkout-sheet-surface";
+import { CHECKOUT_INVALID_FEEDBACK_MS } from "@/features/checkout/ui/checkout-ui";
 import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
 import {
   calculateBonusEarnAmount,
@@ -121,6 +129,9 @@ export function CheckoutForm({
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod | null>(null);
   const [invalidFields, setInvalidFields] = useState<CheckoutInvalidFields>({});
+  const invalidFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [couponDraft, setCouponDraft] = useState("");
   const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(
@@ -137,6 +148,14 @@ export function CheckoutForm({
   const [pending, startTransition] = useTransition();
   const [applyingCoupon, startApplyCoupon] = useTransition();
   const [applyingGiftCard, startApplyGiftCard] = useTransition();
+
+  useEffect(() => {
+    return () => {
+      if (invalidFeedbackTimeoutRef.current) {
+        clearTimeout(invalidFeedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const paymentOptions = useMemo(
     () => [
@@ -352,6 +371,27 @@ export function CheckoutForm({
     });
   }
 
+  function markInvalidAndScroll(nextInvalid: CheckoutInvalidFields): void {
+    if (invalidFeedbackTimeoutRef.current) {
+      clearTimeout(invalidFeedbackTimeoutRef.current);
+      invalidFeedbackTimeoutRef.current = null;
+    }
+    // Drop classes first so a repeat submit restarts the red + shake.
+    setInvalidFields({});
+    setError(null);
+    requestAnimationFrame(() => {
+      setInvalidFields(nextInvalid);
+      const firstInvalid = firstCheckoutInvalidField(nextInvalid);
+      if (firstInvalid) {
+        scrollToCheckoutField(firstInvalid);
+      }
+      invalidFeedbackTimeoutRef.current = setTimeout(() => {
+        setInvalidFields({});
+        invalidFeedbackTimeoutRef.current = null;
+      }, CHECKOUT_INVALID_FEEDBACK_MS);
+    });
+  }
+
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -365,7 +405,6 @@ export function CheckoutForm({
 
     const nextInvalid = collectCheckoutInvalidFields({
       firstName: String(data.get("firstName") ?? ""),
-      lastName: String(data.get("lastName") ?? ""),
       contactEmail: String(data.get("contactEmail") ?? ""),
       contactPhone: String(data.get("contactPhone") ?? ""),
       line1,
@@ -373,15 +412,9 @@ export function CheckoutForm({
       hasDeliverySlot: deliverySlot != null,
       hasPaymentMethod: paymentMethod != null,
     });
-    setInvalidFields(nextInvalid);
 
-    const firstInvalid = firstCheckoutInvalidField(nextInvalid);
-    if (firstInvalid) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          scrollToCheckoutField(firstInvalid);
-        });
-      });
+    if (firstCheckoutInvalidField(nextInvalid)) {
+      markInvalidAndScroll(nextInvalid);
       return;
     }
 

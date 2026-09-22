@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
+import { DisableStorefrontImageCapture } from "@/components/layout/DisableStorefrontImageCapture";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -48,6 +49,7 @@ export default async function StorefrontLayout({
 
   return (
     <div className="storefront-shell relative flex min-h-dvh flex-1 flex-col overflow-x-clip overflow-y-visible bg-brand-forest text-white">
+      <DisableStorefrontImageCapture />
       <StorefrontScrollToTop />
       <StorefrontBackground />
       <LiquidGlassOptics />

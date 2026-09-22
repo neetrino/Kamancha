@@ -1,6 +1,5 @@
 export const CHECKOUT_INVALID_FIELDS = [
   "firstName",
-  "lastName",
   "contactEmail",
   "contactPhone",
   "line1",
@@ -16,7 +15,6 @@ export type CheckoutInvalidFields = Partial<
 
 type CheckoutFieldValues = {
   firstName: string;
-  lastName: string;
   contactEmail: string;
   contactPhone: string;
   line1: string;
@@ -36,7 +34,6 @@ export function collectCheckoutInvalidFields(
   const invalid: CheckoutInvalidFields = {};
 
   if (!values.firstName.trim()) invalid.firstName = true;
-  if (!values.lastName.trim()) invalid.lastName = true;
   if (!isEmailValid(values.contactEmail.trim())) invalid.contactEmail = true;
   if (values.contactPhone.trim().length < 5) invalid.contactPhone = true;
   if (values.line1.trim().length < 3 || !values.line1QuoteOk) {

@@ -7,6 +7,10 @@ import {
   type CheckoutPaymentOption,
 } from "@/features/checkout/ui/CheckoutPaymentMethodOption";
 import type { CashChangeSelection } from "@/features/checkout/ui/checkout-cash-change-assets";
+import {
+  CHECKOUT_SECTION_TITLE_CLASS,
+  CHECKOUT_TITLE_INVALID_CLASS,
+} from "@/features/checkout/ui/checkout-ui";
 import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
 
 type CashChangeLabels = {
@@ -51,9 +55,11 @@ export function CheckoutPaymentMethods({
       className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7"
     >
       <h2
-        className={`relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide uppercase ${
-          invalid ? "text-red-500" : "text-white"
-        }`}
+        className={
+          invalid
+            ? `${CHECKOUT_SECTION_TITLE_CLASS} ${CHECKOUT_TITLE_INVALID_CLASS}`
+            : CHECKOUT_SECTION_TITLE_CLASS
+        }
       >
         {title}
       </h2>
