@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
-import { BackgroundMusic } from "@/components/layout/BackgroundMusic";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -82,7 +81,6 @@ export default async function StorefrontLayout({
         />
         <StorefrontAlertHost />
         <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
-        <BackgroundMusic labels={dictionary.music} />
       </div>
     </div>
   );

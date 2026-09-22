@@ -60,6 +60,9 @@ export function BottomSheet({
   const [rendered, setRendered] = useState(false);
   const [phase, setPhase] = useState<MotionPhase>("enter");
   const [isDragging, setIsDragging] = useState(false);
+  const [dragBackdropOpacity, setDragBackdropOpacity] = useState<number | null>(
+    null,
+  );
   const [displayChildren, setDisplayChildren] = useState(children);
   const [displayAriaLabel, setDisplayAriaLabel] = useState(ariaLabel);
 
@@ -97,6 +100,7 @@ export function BottomSheet({
     setRendered(false);
     setPhase("enter");
     setIsDragging(false);
+    setDragBackdropOpacity(null);
     const panel = panelRef.current;
     if (panel) {
       panel.style.transition = "";
@@ -107,6 +111,7 @@ export function BottomSheet({
   const handleDismissFromDrag = useCallback((releaseOffsetY: number) => {
     setIsDragging(false);
     setPhase("exit-drag");
+    setDragBackdropOpacity(0);
     const panel = panelRef.current;
     if (panel) {
       panel.style.transition = "none";
@@ -116,6 +121,18 @@ export function BottomSheet({
       panel.style.transform = "translateY(100%)";
     }
     onCloseRef.current();
+  }, []);
+
+  const handleSnapBack = useCallback(() => {
+    setIsDragging(false);
+    setDragBackdropOpacity(null);
+  }, []);
+
+  const handleOffsetChange = useCallback((offsetY: number) => {
+    setIsDragging(offsetY > 0);
+    setDragBackdropOpacity(
+      offsetY > 0 ? Math.max(0, 1 - offsetY / 280) : null,
+    );
   }, []);
 
   const dragEnabled = rendered && open && phase === "idle";
@@ -128,12 +145,8 @@ export function BottomSheet({
     panelRef,
     scrollAreaRef,
     onDismiss: handleDismissFromDrag,
-    onSnapBack: () => {
-      setIsDragging(false);
-    },
-    onOffsetChange: (offsetY) => {
-      setIsDragging(offsetY > 0);
-    },
+    onSnapBack: handleSnapBack,
+    onOffsetChange: handleOffsetChange,
   });
 
   useEffect(() => {
@@ -146,6 +159,7 @@ export function BottomSheet({
     if (open) {
       exitDoneRef.current = false;
       scheduleStateUpdate(setIsDragging, false);
+      scheduleStateUpdate(setDragBackdropOpacity, null);
       scheduleStateUpdate(setPhase, "enter");
       scheduleStateUpdate(setRendered, true);
       const panel = panelRef.current;
@@ -215,7 +229,7 @@ export function BottomSheet({
   const backdropClass =
     phase === "enter"
       ? "animate-bottom-sheet-backdrop-in"
-      : phase === "exit" || phase === "exit-drag"
+      : phase === "exit"
         ? "animate-bottom-sheet-backdrop-out"
         : "";
   const panelMotionClass =
@@ -231,6 +245,21 @@ export function BottomSheet({
     ? ariaLabel
     : displayAriaLabel;
 
+  const backdropStyle =
+    dragBackdropOpacity === null
+      ? phase === "exit-drag"
+        ? {
+            opacity: 0,
+            transition: `opacity ${BOTTOM_SHEET_ANIMATION_MS}ms ${SHEET_EASING}`,
+          }
+        : undefined
+      : {
+          opacity: dragBackdropOpacity,
+          transition: isDragging
+            ? "none"
+            : `opacity ${BOTTOM_SHEET_ANIMATION_MS}ms ${SHEET_EASING}`,
+        };
+
   return createPortal(
     <div
       className={`fixed inset-0 flex items-end overscroll-none xl:hidden ${zIndexClassName}`}
@@ -242,6 +271,7 @@ export function BottomSheet({
         role="button"
         tabIndex={0}
         className={`absolute inset-0 bg-black/40 backdrop-blur-sm ${backdropClass}`}
+        style={backdropStyle}
         aria-label={closeLabel}
         onClick={() => onCloseRef.current()}
         onKeyDown={(event) => {
