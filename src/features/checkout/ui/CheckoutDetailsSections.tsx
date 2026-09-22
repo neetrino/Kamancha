@@ -8,6 +8,10 @@ import { CheckoutPaymentMethods } from "@/features/checkout/ui/CheckoutPaymentMe
 import type { CheckoutPaymentOption } from "@/features/checkout/ui/CheckoutPaymentMethodOption";
 import type { CashChangeSelection } from "@/features/checkout/ui/checkout-cash-change-assets";
 import { DeliverySlotPicker } from "@/features/checkout/ui/DeliverySlotPicker";
+import {
+  CHECKOUT_SECTION_TITLE_CLASS,
+  CHECKOUT_TITLE_INVALID_CLASS,
+} from "@/features/checkout/ui/checkout-ui";
 import type { CashChangeDenominationView } from "@/features/delivery/domain/cash-change";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
 import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
@@ -19,23 +23,13 @@ const FIELD_CLASS =
 const FIELD_LABEL_CLASS =
   "flex flex-col gap-1.5 text-sm font-medium text-white/80";
 
-const FIELD_LABEL_INVALID_CLASS =
-  "flex flex-col gap-1.5 text-sm font-medium text-red-500";
-
 const SECTION_CLASS =
   "liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7";
 
-const SECTION_TITLE_CLASS =
-  "relative z-[2] mb-6 font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase";
-
-function labelClassName(invalid: boolean): string {
-  return invalid ? FIELD_LABEL_INVALID_CLASS : FIELD_LABEL_CLASS;
-}
-
-function captionClassName(invalid: boolean): string {
+function sectionTitleClassName(invalid: boolean): string {
   return invalid
-    ? "text-sm font-medium text-red-500"
-    : "text-sm font-medium text-white/80";
+    ? `${CHECKOUT_SECTION_TITLE_CLASS} ${CHECKOUT_TITLE_INVALID_CLASS}`
+    : CHECKOUT_SECTION_TITLE_CLASS;
 }
 
 type CheckoutDetailsLabels = {
@@ -133,15 +127,25 @@ export function CheckoutDetailsSections({
     onClearInvalidField?.(field);
   }
 
+  const contactInvalid = Boolean(
+    invalidFields.firstName ||
+      invalidFields.lastName ||
+      invalidFields.contactEmail ||
+      invalidFields.contactPhone,
+  );
+  const shippingInvalid = Boolean(
+    invalidFields.line1 || invalidFields.deliverySlot,
+  );
+
   return (
     <div className="space-y-6">
       <section className={SECTION_CLASS}>
-        <h2 className={SECTION_TITLE_CLASS}>
+        <h2 className={sectionTitleClassName(contactInvalid)}>
           {labels.contactInformation}
         </h2>
         <div className="relative z-[2] space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label className={labelClassName(Boolean(invalidFields.firstName))}>
+            <label className={FIELD_LABEL_CLASS}>
               {labels.firstName}
               <input
                 name="firstName"
@@ -155,7 +159,7 @@ export function CheckoutDetailsSections({
                 onChange={() => clearField("firstName")}
               />
             </label>
-            <label className={labelClassName(Boolean(invalidFields.lastName))}>
+            <label className={FIELD_LABEL_CLASS}>
               {labels.lastName}
               <input
                 name="lastName"
@@ -171,9 +175,7 @@ export function CheckoutDetailsSections({
             </label>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <label
-              className={labelClassName(Boolean(invalidFields.contactEmail))}
-            >
+            <label className={FIELD_LABEL_CLASS}>
               {labels.email}
               <input
                 name="contactEmail"
@@ -188,9 +190,7 @@ export function CheckoutDetailsSections({
                 onChange={() => clearField("contactEmail")}
               />
             </label>
-            <label
-              className={labelClassName(Boolean(invalidFields.contactPhone))}
-            >
+            <label className={FIELD_LABEL_CLASS}>
               {labels.phone}
               <input
                 name="contactPhone"
@@ -210,12 +210,12 @@ export function CheckoutDetailsSections({
       </section>
 
       <section className={SECTION_CLASS} id="checkout-shipping-address">
-        <h2 className={SECTION_TITLE_CLASS}>
+        <h2 className={sectionTitleClassName(shippingInvalid)}>
           {labels.shippingAddress}
         </h2>
         <div className="relative z-[2] space-y-4">
           <div className="space-y-1.5">
-            <span className={captionClassName(Boolean(invalidFields.line1))}>
+            <span className="text-sm font-medium text-white/80">
               {labels.address}
             </span>
             <div className="flex items-start gap-2">
@@ -282,7 +282,6 @@ export function CheckoutDetailsSections({
               onDeliverySlotChange(value);
             }}
             disabled={pending}
-            invalid={Boolean(invalidFields.deliverySlot)}
             locale={locale}
             labels={{
               title: labels.scheduleTitle,
@@ -308,7 +307,7 @@ export function CheckoutDetailsSections({
 
       {prepaidNotice ? (
         <section className={SECTION_CLASS}>
-          <h2 className={SECTION_TITLE_CLASS}>{prepaidNotice.title}</h2>
+          <h2 className={CHECKOUT_SECTION_TITLE_CLASS}>{prepaidNotice.title}</h2>
           <div className="relative z-[2] space-y-1 text-sm text-white">
             {prepaidNotice.lines.map((line) => (
               <p key={line}>{line}</p>
