@@ -7,6 +7,7 @@ import type {
   AdminCategoryOption,
   AdminProductListItem,
 } from "@/features/products/application/list-admin-products";
+import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
 import type { ProductModifierOption } from "@/features/products/types/modifiers";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsTable } from "@/features/products/ui/AdminProductsTable";
@@ -35,7 +36,7 @@ type AdminProductsViewProps = {
   total: number;
   q?: string;
   categoryId?: string;
-  stock: "all" | "in_stock" | "out_of_stock" | "low_stock";
+  stock: AdminProductsFilter["stock"];
   sort: string;
   dir: string;
   copy: ViewCopy;

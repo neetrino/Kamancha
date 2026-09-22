@@ -321,7 +321,8 @@
       "allProducts": "Բոլոր ապրանքները",
       "inStock": "Առկա է",
       "outOfStock": "Առկա չէ",
-      "lowStock": "Քիչ է մնացել"
+      "lowStock": "Քիչ է մնացել",
+      "draft": "Սևագիր"
     },
     "table": {
       "deleteSelected": "Ջնջել ընտրվածները",
