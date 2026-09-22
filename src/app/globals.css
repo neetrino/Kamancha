@@ -130,6 +130,18 @@ body {
     outline: 2px solid color-mix(in srgb, var(--brand-forest) 70%, white);
     outline-offset: 2px;
   }
+
+  /*
+   * Soft media guard on storefront (incl. body portals while shell is mounted):
+   * no native drag ghost, no text/image selection, reduced iOS long-press callout.
+   */
+  body:has(.storefront-shell) img,
+  body:has(.storefront-shell) picture {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
 }
 
 /**
