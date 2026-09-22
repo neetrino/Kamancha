@@ -227,7 +227,7 @@ export function CartDrawer({
               {labels.title}
             </h2>
           </div>
-          <span className="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-brand-forest px-2 text-xs font-semibold text-white tabular-nums">
+          <span className="inline-flex h-[26px] min-w-[30px] shrink-0 items-center justify-center rounded-full bg-brand-forest px-2.5 text-[13px] font-bold leading-none text-white tabular-nums">
             {badgeCount > 99 ? "99+" : badgeCount}
           </span>
         </div>

@@ -523,12 +523,14 @@ body {
 }
 
 .kamancha-pill-button:hover .kamancha-pill-ornament--left,
-.kamancha-pill-button:focus-visible .kamancha-pill-ornament--left {
+.kamancha-pill-button:focus-visible .kamancha-pill-ornament--left,
+.kamancha-pill-button:active .kamancha-pill-ornament--left {
   transform: translate(-36px, -50%);
 }
 
 .kamancha-pill-button:hover .kamancha-pill-ornament--right,
-.kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
+.kamancha-pill-button:focus-visible .kamancha-pill-ornament--right,
+.kamancha-pill-button:active .kamancha-pill-ornament--right {
   transform: translate(36px, -50%);
 }
 
@@ -551,19 +553,26 @@ body {
   line-height: 1.25;
 }
 
-/* Mobile sheet Patvirel: no ornament slide / fill flash on tap (sticky hover). */
+/* Mobile sheet Patvirel (light): no ornament slide / fill flash on tap.
+   Cart “Անցնել վճարման” (dark + sheet-cta) keeps the ornament animation. */
 .kamancha-pill-button--sheet-cta.kamancha-pill-button--light:hover,
 .kamancha-pill-button--sheet-cta.kamancha-pill-button--light:focus-visible,
 .kamancha-pill-button--sheet-cta.kamancha-pill-button--light:active {
   background-color: #ffffff;
 }
 
-.kamancha-pill-button--sheet-cta:hover .kamancha-pill-ornament--left,
-.kamancha-pill-button--sheet-cta:focus-visible .kamancha-pill-ornament--left,
-.kamancha-pill-button--sheet-cta:active .kamancha-pill-ornament--left,
-.kamancha-pill-button--sheet-cta:hover .kamancha-pill-ornament--right,
-.kamancha-pill-button--sheet-cta:focus-visible .kamancha-pill-ornament--right,
-.kamancha-pill-button--sheet-cta:active .kamancha-pill-ornament--right {
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:hover
+  .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:focus-visible
+  .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:active
+  .kamancha-pill-ornament--left,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:hover
+  .kamancha-pill-ornament--right,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:focus-visible
+  .kamancha-pill-ornament--right,
+.kamancha-pill-button--sheet-cta.kamancha-pill-button--light:active
+  .kamancha-pill-ornament--right {
   transform: translateY(-50%);
 }
 
@@ -723,8 +732,10 @@ body {
 
   .kamancha-pill-button:hover .kamancha-pill-ornament--left,
   .kamancha-pill-button:focus-visible .kamancha-pill-ornament--left,
+  .kamancha-pill-button:active .kamancha-pill-ornament--left,
   .kamancha-pill-button:hover .kamancha-pill-ornament--right,
-  .kamancha-pill-button:focus-visible .kamancha-pill-ornament--right {
+  .kamancha-pill-button:focus-visible .kamancha-pill-ornament--right,
+  .kamancha-pill-button:active .kamancha-pill-ornament--right {
     transform: translateY(-50%);
   }
 }
