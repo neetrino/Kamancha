@@ -321,7 +321,8 @@
       "allProducts": "All Products",
       "inStock": "In stock",
       "outOfStock": "Out of stock",
-      "lowStock": "Low stock"
+      "lowStock": "Low stock",
+      "draft": "Draft"
     },
     "table": {
       "deleteSelected": "Delete Selected",

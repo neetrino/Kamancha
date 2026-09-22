@@ -8,13 +8,14 @@ import { useAdminFilterNavigate } from "@/features/admin/ui/admin-filter-navigat
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import { ADMIN_LABEL } from "@/features/admin/ui/admin-form-classes";
 import type { AdminCategoryOption } from "@/features/products/application/list-admin-products";
+import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminProductsFiltersProps = {
   total: number;
   q?: string;
   categoryId?: string;
-  stock: "all" | "in_stock" | "out_of_stock" | "low_stock";
+  stock: AdminProductsFilter["stock"];
   categories: AdminCategoryOption[];
   sort: string;
   dir: string;
@@ -49,6 +50,7 @@ export function AdminProductsFilters({
     { label: copy.inStock, value: "in_stock" as const },
     { label: copy.outOfStock, value: "out_of_stock" as const },
     { label: copy.lowStock, value: "low_stock" as const },
+    { label: copy.draft, value: "draft" as const },
   ];
 
   function applyCategory(next: string): void {
