@@ -10,11 +10,20 @@ import {
   products,
 } from "@/db/schema";
 import type { LocaleTranslation, TranslationsJson } from "@/db/schema/catalog";
+import { loadAttributeTitles } from "@/features/attributes/application/library";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
 import { buildInvitePath } from "@/features/group-orders/application/money";
 import type { AdminGroupOrdersFilterInput } from "@/features/group-orders/schemas";
 import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  loadVariantSnapshots,
+  variantLabel,
+} from "@/features/products/application/load-variant-snapshots";
+import { mediaPublicUrl } from "@/lib/media/public-url";
+import {
+  pricedCartLineInput,
+  resolveProductPrices,
+} from "@/features/promotions/application/resolve-product-prices";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
 import type { Locale } from "@/lib/i18n/config";
 import { createDisplayPriceFormatter } from "@/lib/money/display-price";
@@ -145,14 +154,32 @@ export async function getGroupOrderDetailByInvite(input: {
   }
 
   const productIds = [...new Set(items.map((row) => row.product.id))];
+  const [variantsById, attributeTitles] = await Promise.all([
+    loadVariantSnapshots(
+      items.flatMap((row) => (row.item.variantId ? [row.item.variantId] : [])),
+    ),
+    loadAttributeTitles(
+      items.flatMap((row) =>
+        row.item.attributeId ? [row.item.attributeId] : [],
+      ),
+      input.locale,
+    ),
+  ]);
   const [imageByProduct, prices, formatPrice] = await Promise.all([
     loadPrimaryProductImageUrls(productIds),
     resolveProductPrices(
-      items.map((row) => ({
-        id: row.product.id,
-        priceAmount: row.product.priceAmount,
-        compareAtAmount: row.product.compareAtAmount,
-      })),
+      items.map((row) => {
+        const variant = row.item.variantId
+          ? variantsById.get(row.item.variantId)
+          : null;
+        return pricedCartLineInput({
+          itemId: row.item.id,
+          productId: row.product.id,
+          productPriceAmount: row.product.priceAmount,
+          compareAtAmount: row.product.compareAtAmount,
+          variantPriceAmount: variant?.priceAmount ?? null,
+        });
+      }),
     ),
     createDisplayPriceFormatter(input.locale, input.currency),
   ]);
@@ -180,20 +207,32 @@ export async function getGroupOrderDetailByInvite(input: {
               },
             ];
           });
-          const base =
-            prices.get(row.product.id)?.unitAmount ?? row.product.priceAmount;
+          const variant = row.item.variantId
+            ? variantsById.get(row.item.variantId)
+            : null;
+          const fallback = variant?.priceAmount ?? row.product.priceAmount;
+          const base = prices.get(row.item.id)?.unitAmount ?? fallback;
           const unitAmount = cartLineUnitAmount(base, pricedModifiers);
           const lineTotalAmount = unitAmount * row.item.quantity;
+          const attributeLabel = row.item.attributeId
+            ? (attributeTitles.get(row.item.attributeId) ?? null)
+            : null;
+          const optionLabel =
+            variantLabel(variant, input.locale) || attributeLabel;
+          const title = productTitle(
+            row.product.translations,
+            input.locale,
+            row.product.sku,
+          );
+          const variantImage = variant?.imageObjectKey
+            ? mediaPublicUrl(variant.imageObjectKey)
+            : null;
           return {
             id: row.item.id,
             participantId: participant.id,
             productId: row.product.id,
-            title: productTitle(
-              row.product.translations,
-              input.locale,
-              row.product.sku,
-            ),
-            imageUrl: imageByProduct.get(row.product.id) ?? null,
+            title: optionLabel ? `${title} · ${optionLabel}` : title,
+            imageUrl: variantImage ?? imageByProduct.get(row.product.id) ?? null,
             quantity: row.item.quantity,
             unitAmount,
             lineTotalAmount,

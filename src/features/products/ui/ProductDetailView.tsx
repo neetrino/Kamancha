@@ -1,10 +1,18 @@
+"use client";
+
+import { useState } from "react";
+
 import { SITE_HEADER_INNER, STOREFRONT_TABLET_INSET_X } from "@/components/layout/site-header-classes";
+import { defaultVariant } from "@/features/products/domain/variant-selection";
 import { ProductDetailInfo } from "@/features/products/ui/ProductDetailInfo";
 import { ProductGallery } from "@/features/products/ui/ProductGallery";
-import type { ProductDetail } from "@/features/products/types";
+import type { ProductDetail, ProductVariantChoice } from "@/features/products/types";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
+import { convertAmount } from "@/lib/money/convert";
 import type { Currency } from "@/lib/money/currency";
+import { defaultCurrency } from "@/lib/money/currency";
+import { formatMoneyAmount } from "@/lib/money/format";
 
 type ProductDetailViewProps = {
   locale: Locale;
@@ -42,7 +50,24 @@ export function ProductDetailView({
   reviewsSlot,
 }: ProductDetailViewProps) {
   const labels = dictionary.product;
-  const inStock = product.stockOnHand > 0;
+  const variants = product.variantSet?.variants ?? [];
+  const initialVariant = defaultVariant(variants);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+    initialVariant?.id ?? null,
+  );
+  const selected =
+    variants.find((variant) => variant.id === selectedVariantId) ??
+    initialVariant;
+  const stockOnHand = selected?.stockOnHand ?? product.stockOnHand;
+  const priceAmountActive = selected?.priceAmount ?? priceAmount;
+  const inStock = stockOnHand > 0;
+  const compareAtActive = formatCompareAt(
+    selected,
+    compareAtFormatted,
+    currency,
+    locale,
+    fxRate,
+  );
 
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
@@ -55,6 +80,7 @@ export function ProductDetailView({
             title={product.translation.title}
             discountPercent={product.discountPercent}
             discountOffLabel={dictionary.home.discountOff}
+            highlightUrl={selected?.imageUrl ?? null}
             inStock={inStock}
             outOfStockLabel={labels.outOfStock}
             zoomLabel={labels.zoomImage}
@@ -71,9 +97,27 @@ export function ProductDetailView({
           <ProductDetailInfo
             locale={locale}
             product={product}
-            priceAmount={priceAmount}
-            initialPriceFormatted={initialPriceFormatted}
-            compareAtFormatted={compareAtFormatted}
+            stockOnHand={stockOnHand}
+            selectedVariantId={selected?.id ?? null}
+            onSelectVariant={setSelectedVariantId}
+            priceAmount={priceAmountActive}
+            initialPriceFormatted={
+              selected
+                ? formatMoneyAmount(
+                    Number(
+                      convertAmount(
+                        priceAmountActive,
+                        fxRate,
+                        defaultCurrency,
+                        currency,
+                      ).amount,
+                    ),
+                    currency,
+                    locale,
+                  )
+                : initialPriceFormatted
+            }
+            compareAtFormatted={compareAtActive}
             currency={currency}
             fxRate={fxRate}
             ratingAverage={ratingAverage}
@@ -92,4 +136,22 @@ export function ProductDetailView({
       </article>
     </div>
   );
+}
+
+function formatCompareAt(
+  selected: ProductVariantChoice | null,
+  fallback: string | null,
+  currency: Currency,
+  locale: string,
+  fxRate: string,
+): string | null {
+  if (!selected) return fallback;
+  if (selected.compareAtAmount == null) return null;
+  const converted = convertAmount(
+    selected.compareAtAmount,
+    fxRate,
+    defaultCurrency,
+    currency,
+  );
+  return formatMoneyAmount(Number(converted.amount), currency, locale);
 }

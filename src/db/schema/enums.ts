@@ -14,6 +14,8 @@ export const productStatusEnum = pgEnum("product_status", [
   "ARCHIVED",
 ]);
 
+export const productKindEnum = pgEnum("product_kind", ["SIMPLE", "VARIABLE"]);
+
 export const categoryStatusEnum = pgEnum("category_status", [
   "ACTIVE",
   "ARCHIVED",

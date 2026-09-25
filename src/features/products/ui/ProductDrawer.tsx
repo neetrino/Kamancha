@@ -25,6 +25,8 @@ import {
   ProductDrawerImages,
   type ProductDraftImage,
 } from "@/features/products/ui/ProductDrawerImages";
+import type { AttributeOption } from "@/features/attributes/types";
+import { ProductAttributeField } from "@/features/products/ui/ProductAttributeField";
 import { ProductDrawerModifiers } from "@/features/products/ui/ProductDrawerModifiers";
 import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -42,6 +44,7 @@ type ProductDrawerProduct = Pick<
   | "status"
   | "categoryIds"
   | "modifierIds"
+  | "attributeIds"
   | "discount"
   | "translations"
   | "images"
@@ -58,6 +61,7 @@ type DrawerCopy = {
   images: Dictionary["admin"]["products"]["images"];
   discount: Dictionary["admin"]["products"]["discount"];
   modifiers: Dictionary["admin"]["products"]["modifiers"];
+  attributes: Dictionary["admin"]["products"]["attributes"];
   common: Dictionary["admin"]["common"];
   confirm: Dictionary["admin"]["confirm"];
 };
@@ -69,6 +73,7 @@ type ProductDrawerProps = {
   product?: ProductDrawerProduct | null;
   categories: AdminCategoryOption[];
   modifierLibrary: ProductModifierOption[];
+  attributeLibrary: AttributeOption[];
   copy: DrawerCopy;
 };
 
@@ -91,6 +96,7 @@ export function ProductDrawer({
   product = null,
   categories: initialCategories,
   modifierLibrary: initialModifierLibrary,
+  attributeLibrary: initialAttributeLibrary,
   copy,
 }: ProductDrawerProps) {
   const router = useRouter();
@@ -113,6 +119,10 @@ export function ProductDrawer({
     initialModifierLibrary,
   );
   const [modifierIds, setModifierIds] = useState<string[]>([]);
+  const [attributeLibrary, setAttributeLibrary] = useState<AttributeOption[]>(
+    initialAttributeLibrary,
+  );
+  const [attributeIds, setAttributeIds] = useState<string[]>([]);
   const [discount, setDiscount] = useState<ProductDiscountDraft | null>(null);
   const [priceAmount, setPriceAmount] = useState("");
   const [sku, setSku] = useState("");
@@ -133,6 +143,7 @@ export function ProductDrawer({
 
     scheduleStateUpdate(setCategories, initialCategories);
     scheduleStateUpdate(setModifierLibrary, initialModifierLibrary);
+    scheduleStateUpdate(setAttributeLibrary, initialAttributeLibrary);
     if (product) {
       scheduleStateUpdate(setActiveLocale, "hy");
       scheduleStateUpdate(setLocalizedText, {
@@ -154,6 +165,7 @@ export function ProductDrawer({
       scheduleStateUpdate(setRemovedImageIds, []);
       scheduleStateUpdate(setCategoryIds, product.categoryIds);
       scheduleStateUpdate(setModifierIds, product.modifierIds);
+      scheduleStateUpdate(setAttributeIds, product.attributeIds);
       scheduleStateUpdate(
         setDiscount,
         product.discount
@@ -185,13 +197,14 @@ export function ProductDrawer({
       scheduleStateUpdate(setRemovedImageIds, []);
       scheduleStateUpdate(setCategoryIds, []);
       scheduleStateUpdate(setModifierIds, []);
+      scheduleStateUpdate(setAttributeIds, []);
       scheduleStateUpdate(setDiscount, null);
       scheduleStateUpdate(setPriceAmount, "");
       scheduleStateUpdate(setSku, "");
       scheduleStateUpdate(setStockOnHand, "");
       scheduleStateUpdate(setError, null);
     }
-  }, [open, product, initialCategories, initialModifierLibrary]);
+  }, [open, product, initialCategories, initialModifierLibrary, initialAttributeLibrary]);
 
   function handleImagesChange(next: ProductDraftImage[]): void {
     const nextKeys = new Set(next.map((image) => image.key));
@@ -214,7 +227,7 @@ export function ProductDrawer({
       open={open}
       onClose={onClose}
       ariaLabel={isEdit ? copy.drawer.editAria : copy.drawer.addAria}
-      panelClassName="w-[min(100%,42rem)] sm:w-[40%]"
+      panelClassName="w-[min(100%,52rem)] sm:w-[48%]"
     >
         <div className="border-b border-gray-200 px-5 py-4">
           <h2 className="text-lg font-semibold text-gray-900">
@@ -243,6 +256,9 @@ export function ProductDrawer({
 
             const payload = {
               sku: sku.trim(),
+              kind: "SIMPLE" as const,
+              attributeIds,
+              variants: [],
               localizedText: {
                 hy: {
                   title: localizedText.hy.title.trim(),
@@ -411,6 +427,16 @@ export function ProductDrawer({
               onSelectedChange={setModifierIds}
               copy={copy.modifiers}
               confirm={copy.confirm}
+            />
+
+            <ProductAttributeField
+              locale={locale}
+              library={attributeLibrary}
+              selectedIds={attributeIds}
+              disabled={isPending}
+              onLibraryChange={setAttributeLibrary}
+              onSelectedChange={setAttributeIds}
+              copy={copy.attributes}
             />
 
             <div className="grid gap-4 sm:grid-cols-2">

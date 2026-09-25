@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { getDb } from "@/db/client";
@@ -9,6 +9,7 @@ import {
   cartItems,
   carts,
   productModifiers,
+  productVariants,
   products,
 } from "@/db/schema";
 import {
@@ -16,10 +17,15 @@ import {
   hashGuestToken,
   peekGuestCartToken,
 } from "@/features/cart/guest-token";
-import { buildModifierSelectionKey } from "@/features/products/domain/modifier-selection";
+import { resolveCartAttribute } from "@/features/attributes/application/library";
+import { buildLineSelectionKey } from "@/features/products/domain/modifier-selection";
 import { resolveSelectedModifiersForProduct } from "@/features/products/application/product-modifiers";
 import type { ProductModifierRow } from "@/features/products/types/modifiers";
 import { getGroupCartOverlayItemCount } from "@/features/group-orders/application/cart-overlay";
+import {
+  loadVariantSnapshots,
+  type VariantSnapshot,
+} from "@/features/products/application/load-variant-snapshots";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createId } from "@/lib/id";
 
@@ -36,6 +42,7 @@ export type CartItemWithProduct = {
   item: typeof cartItems.$inferSelect;
   product: typeof products.$inferSelect;
   modifiers: CartItemModifierView[];
+  variant: VariantSnapshot | null;
 };
 
 async function getCartOwnerForWrite(): Promise<{
@@ -152,6 +159,9 @@ export async function getCartWithItems(): Promise<{
   const modifiersByItem = await loadModifiersForCartItems(
     rows.map((row) => row.item.id),
   );
+  const variantsById = await loadVariantSnapshots(
+    rows.flatMap((row) => (row.item.variantId ? [row.item.variantId] : [])),
+  );
 
   return {
     cart,
@@ -159,6 +169,9 @@ export async function getCartWithItems(): Promise<{
       item: row.item,
       product: row.product,
       modifiers: modifiersByItem.get(row.item.id) ?? [],
+      variant: row.item.variantId
+        ? (variantsById.get(row.item.variantId) ?? null)
+        : null,
     })),
   };
 }
@@ -189,30 +202,64 @@ export async function getCartItemCount(): Promise<number> {
   return row?.total ?? 0;
 }
 
-export type AddToCartModifiers = {
+export type AddToCartOptions = {
   modifierIds?: ReadonlyArray<string>;
+  variantId?: string;
+  attributeId?: string;
 };
+
+async function resolveSellableStock(
+  productId: string,
+  variantId: string | undefined,
+): Promise<{ stock: number; variantId: string | null } | null> {
+  const [product] = await getDb()
+    .select({
+      id: products.id,
+      stock: products.stockOnHand,
+      status: products.status,
+      kind: products.kind,
+    })
+    .from(products)
+    .where(eq(products.id, productId))
+    .limit(1);
+  if (!product || product.status !== "ACTIVE") return null;
+
+  if (product.kind === "SIMPLE") {
+    if (variantId) return null;
+    if (product.stock < 1) return null;
+    return { stock: product.stock, variantId: null };
+  }
+
+  if (!variantId) return null;
+  const [variant] = await getDb()
+    .select({
+      id: productVariants.id,
+      stock: productVariants.stockOnHand,
+    })
+    .from(productVariants)
+    .where(
+      and(
+        eq(productVariants.id, variantId),
+        eq(productVariants.productId, productId),
+      ),
+    )
+    .limit(1);
+  if (!variant || variant.stock < 1) return null;
+  return { stock: variant.stock, variantId: variant.id };
+}
 
 export async function addToCart(
   productId: string,
   quantity = 1,
-  options: AddToCartModifiers = {},
+  options: AddToCartOptions = {},
 ): Promise<void> {
   if (!Number.isInteger(quantity) || quantity < 1) {
     throw new Error("Invalid quantity.");
   }
 
   const cart = await getOrCreateCart();
-  const [product] = await getDb()
-    .select({
-      id: products.id,
-      stock: products.stockOnHand,
-      status: products.status,
-    })
-    .from(products)
-    .where(eq(products.id, productId))
-    .limit(1);
-  if (!product || product.status !== "ACTIVE" || product.stock < 1) {
+  const sellable = await resolveSellableStock(productId, options.variantId);
+  if (!sellable) {
     throw new Error("Product unavailable.");
   }
 
@@ -224,10 +271,22 @@ export async function addToCart(
     throw new Error(resolved.error);
   }
 
-  const selectionKey = buildModifierSelectionKey(
+  const chosen = await resolveCartAttribute(productId, options.attributeId);
+  if (!chosen.ok) {
+    throw new Error(chosen.error);
+  }
+
+  const selectionKey = buildLineSelectionKey(
     resolved.modifiers.map((modifier) => modifier.id),
+    chosen.attributeId,
   );
-  const addQty = Math.min(quantity, product.stock);
+  const addQty = Math.min(quantity, sellable.stock);
+  const variantMatch = sellable.variantId
+    ? eq(cartItems.variantId, sellable.variantId)
+    : isNull(cartItems.variantId);
+  const attributeMatch = chosen.attributeId
+    ? eq(cartItems.attributeId, chosen.attributeId)
+    : isNull(cartItems.attributeId);
 
   const [existing] = await getDb()
     .select({ id: cartItems.id, quantity: cartItems.quantity })
@@ -237,6 +296,8 @@ export async function addToCart(
         eq(cartItems.cartId, cart.id),
         eq(cartItems.productId, productId),
         eq(cartItems.selectionKey, selectionKey),
+        variantMatch,
+        attributeMatch,
       ),
     )
     .limit(1);
@@ -245,7 +306,7 @@ export async function addToCart(
     await getDb()
       .update(cartItems)
       .set({
-        quantity: Math.min(existing.quantity + addQty, product.stock),
+        quantity: Math.min(existing.quantity + addQty, sellable.stock),
         updatedAt: new Date(),
       })
       .where(eq(cartItems.id, existing.id));
@@ -255,6 +316,8 @@ export async function addToCart(
       id: itemId,
       cartId: cart.id,
       productId,
+      variantId: sellable.variantId,
+      attributeId: chosen.attributeId,
       selectionKey,
       quantity: addQty,
     });

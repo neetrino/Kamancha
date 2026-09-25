@@ -15,7 +15,10 @@ import {
   bonusEligibleMerchandiseAmount,
 } from "@/features/bonuses/domain/bonus-rules";
 import { getUserBonusBalance } from "@/features/bonuses/application/queries";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  pricedCartLineInput,
+  resolveProductPrices,
+} from "@/features/promotions/application/resolve-product-prices";
 import { listPromotionUserIds } from "@/features/promotions/application/queries";
 import {
   couponDiscountErrorMessage,
@@ -56,14 +59,19 @@ export async function previewGiftCardAction(
   const user = await getCurrentUser();
 
   const prices = await resolveProductPrices(
-    items.map(({ product }) => ({
-      id: product.id,
-      priceAmount: product.priceAmount,
-      compareAtAmount: product.compareAtAmount,
-    })),
+    items.map(({ item, product, variant }) =>
+      pricedCartLineInput({
+        itemId: item.id,
+        productId: product.id,
+        productPriceAmount: product.priceAmount,
+        compareAtAmount: product.compareAtAmount,
+        variantPriceAmount: variant?.priceAmount ?? null,
+      }),
+    ),
   );
-  const subtotal = items.reduce((sum, { item, product, modifiers }) => {
-    const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+  const subtotal = items.reduce((sum, { item, product, modifiers, variant }) => {
+    const fallback = variant?.priceAmount ?? product.priceAmount;
+    const unit = prices.get(item.id)?.unitAmount ?? fallback;
     return sum + item.quantity * cartLineUnitAmount(unit, modifiers);
   }, 0);
 

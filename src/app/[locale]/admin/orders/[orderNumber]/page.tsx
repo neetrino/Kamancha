@@ -22,6 +22,7 @@ import {
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
+import { splitOrderItemTitle } from "@/features/orders/domain/order-item-label";
 import { getAdminOrderByNumber } from "@/features/orders/application/queries";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -32,6 +33,27 @@ type AdminOrderDetailPageProps = {
 
 function formatMoney(amount: number, currency: string): string {
   return `${amount.toLocaleString("en-US")} ${currency}`;
+}
+
+function OrderLineTitle({
+  title,
+  optionLabel,
+  sku,
+}: {
+  title: string;
+  optionLabel: string | null;
+  sku: string;
+}) {
+  const line = splitOrderItemTitle(title, optionLabel);
+  return (
+    <>
+      <p className="font-medium text-gray-900">{line.title}</p>
+      {line.optionLabel ? (
+        <p className="text-sm text-gray-600">{line.optionLabel}</p>
+      ) : null}
+      <p className="text-xs text-gray-500">{sku}</p>
+    </>
+  );
 }
 
 export default async function AdminOrderDetailPage({
@@ -204,12 +226,11 @@ export default async function AdminOrderDetailPage({
               {items.map((item) => (
                 <tr key={item.id} className={ADMIN_TABLE_ROW}>
                   <td className={ADMIN_TABLE_TD}>
-                    <p className="font-medium text-gray-900">
-                      {item.productTitleSnapshot}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {item.productSkuSnapshot}
-                    </p>
+                    <OrderLineTitle
+                      title={item.productTitleSnapshot}
+                      optionLabel={item.variantLabelSnapshot}
+                      sku={item.productSkuSnapshot}
+                    />
                   </td>
                   <td className={ADMIN_TABLE_TD}>×{item.quantity}</td>
                   <td className={ADMIN_TABLE_TD}>

@@ -36,7 +36,7 @@ function SettingsIcon() {
   );
 }
 
-/** Admin nav for capabilities that exist in this project (no brands/attributes). */
+/** Admin nav for capabilities that exist in this project. */
 export function getAdminMenuItems(
   locale: string,
   nav: Dictionary["admin"]["nav"],

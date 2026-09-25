@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -17,7 +17,8 @@ import {
   checkSpendLimit,
   SPEND_LIMIT_EXCEEDED_ERROR,
 } from "@/features/group-orders/domain/spend-limit";
-import { buildModifierSelectionKey } from "@/features/products/domain/modifier-selection";
+import { resolveCartAttribute } from "@/features/attributes/application/library";
+import { buildLineSelectionKey } from "@/features/products/domain/modifier-selection";
 import { resolveSelectedModifiersForProduct } from "@/features/products/application/product-modifiers";
 import { createId } from "@/lib/id";
 
@@ -53,6 +54,8 @@ export async function addGroupOrderItem(input: {
   productId: string;
   quantity: number;
   modifierIds?: string[];
+  variantId?: string;
+  attributeId?: string;
 }): Promise<GroupOrderMutationResult> {
   const access = await assertParticipantAccess(input.inviteToken);
   if (!access.ok) return access;
@@ -74,11 +77,16 @@ export async function addGroupOrderItem(input: {
     productId: input.productId,
     quantity: input.quantity,
     modifierIds: resolved.modifiers.map((m) => m.id),
+    variantId: input.variantId,
   });
   if (!pricing.ok) return pricing;
 
-  const selectionKey = buildModifierSelectionKey(
+  const chosen = await resolveCartAttribute(input.productId, input.attributeId);
+  if (!chosen.ok) return chosen;
+
+  const selectionKey = buildLineSelectionKey(
     resolved.modifiers.map((m) => m.id),
+    chosen.attributeId,
   );
   const db = getDb();
 
@@ -90,6 +98,12 @@ export async function addGroupOrderItem(input: {
         eq(groupOrderItems.participantId, participant.id),
         eq(groupOrderItems.productId, input.productId),
         eq(groupOrderItems.selectionKey, selectionKey),
+        input.variantId
+          ? eq(groupOrderItems.variantId, input.variantId)
+          : isNull(groupOrderItems.variantId),
+        chosen.attributeId
+          ? eq(groupOrderItems.attributeId, chosen.attributeId)
+          : isNull(groupOrderItems.attributeId),
       ),
     )
     .limit(1);
@@ -132,6 +146,8 @@ export async function addGroupOrderItem(input: {
       groupOrderId: groupOrder.id,
       participantId: participant.id,
       productId: input.productId,
+      variantId: input.variantId ?? null,
+      attributeId: chosen.attributeId,
       selectionKey,
       quantity: input.quantity,
       unitAmount: pricing.unitAmount,

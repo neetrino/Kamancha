@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { products } from "@/db/schema/catalog";
+import { productVariants } from "@/db/schema/variants";
 import {
   createdAtColumn,
   idColumn,
@@ -184,6 +185,10 @@ export const orderItems = pgTable(
     productTitleSnapshot: text("product_title_snapshot").notNull(),
     productSkuSnapshot: text("product_sku_snapshot").notNull(),
     productImageKeySnapshot: text("product_image_key_snapshot"),
+    variantId: uuid("variant_id").references(() => productVariants.id, {
+      onDelete: "restrict",
+    }),
+    variantLabelSnapshot: text("variant_label_snapshot"),
     quantity: integer("quantity").notNull(),
     unitBaseAmount: integer("unit_base_amount").notNull(),
     unitDisplayAmount: integer("unit_display_amount").notNull(),

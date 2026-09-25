@@ -13,7 +13,7 @@ import { addGroupOrderItem } from "@/features/group-orders/application/items";
 export async function addProductToActiveCart(
   productId: string,
   quantity: number,
-  options?: { modifierIds?: string[] },
+  options?: { modifierIds?: string[]; variantId?: string; attributeId?: string },
 ): Promise<{ ok: true; target: "group" | "cart" } | { ok: false; error: string }> {
   const overlay = await getGroupCartOverlay();
   if (overlay) {
@@ -22,6 +22,8 @@ export async function addProductToActiveCart(
       productId,
       quantity,
       modifierIds: options?.modifierIds,
+      variantId: options?.variantId,
+      attributeId: options?.attributeId,
     });
     if (!result.ok) {
       return {

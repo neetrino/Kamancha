@@ -35,11 +35,47 @@ export type ProductCategoryRef = {
   slug: string;
 };
 
+export type ProductVariantAxis = {
+  id: string;
+  title: string;
+  values: { id: string; title: string }[];
+};
+
+export type ProductVariantOption = {
+  attributeId: string;
+  valueId: string;
+  valueTitle: string;
+};
+
+export type ProductVariantChoice = {
+  id: string;
+  sku: string;
+  priceAmount: number;
+  listPriceAmount: number;
+  compareAtAmount: number | null;
+  stockOnHand: number;
+  imageUrl: string | null;
+  options: ProductVariantOption[];
+};
+
+export type ProductVariantSet = {
+  axes: ProductVariantAxis[];
+  variants: ProductVariantChoice[];
+};
+
 export type ProductDetail = CatalogProduct & {
   images: ProductGalleryImage[];
   categories: ProductCategoryRef[];
   additions: ProductModifierChoice[];
   exceptions: ProductModifierChoice[];
+  /** Named options such as meat type. The shopper picks one. */
+  options: ProductOptionChoice[];
+  variantSet: ProductVariantSet | null;
+};
+
+export type ProductOptionChoice = {
+  id: string;
+  title: string;
 };
 
 export type ProductModifierChoice = {

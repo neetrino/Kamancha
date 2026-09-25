@@ -9,7 +9,11 @@ import {
   getGroupCartOverlayLines,
   type GroupCartOverlayLine,
 } from "@/features/group-orders/application/cart-overlay";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import type { VariantSnapshot } from "@/features/products/application/load-variant-snapshots";
+import {
+  pricedCartLineInput,
+  resolveProductPrices,
+} from "@/features/promotions/application/resolve-product-prices";
 
 export type StorefrontCartLine = {
   id: string;
@@ -17,6 +21,8 @@ export type StorefrontCartLine = {
   product: GroupCartOverlayLine["product"];
   modifiers: CartItemModifierView[];
   unitAmount: number;
+  variant: VariantSnapshot | null;
+  attributeId: string | null;
 };
 
 export type StorefrontCart = {
@@ -45,11 +51,15 @@ async function fromGroupOverlay(
   lines: GroupCartOverlayLine[],
 ): Promise<StorefrontCart> {
   const prices = await resolveProductPrices(
-    lines.map((line) => ({
-      id: line.product.id,
-      priceAmount: line.product.priceAmount,
-      compareAtAmount: line.product.compareAtAmount,
-    })),
+    lines.map((line) =>
+      pricedCartLineInput({
+        itemId: line.id,
+        productId: line.product.id,
+        productPriceAmount: line.product.priceAmount,
+        compareAtAmount: line.product.compareAtAmount,
+        variantPriceAmount: line.variant?.priceAmount ?? null,
+      }),
+    ),
   );
 
   return {
@@ -57,13 +67,15 @@ async function fromGroupOverlay(
     inviteToken,
     canEdit,
     items: lines.map((line) => {
-      const base =
-        prices.get(line.product.id)?.unitAmount ?? line.product.priceAmount;
+      const fallback = line.variant?.priceAmount ?? line.product.priceAmount;
+      const base = prices.get(line.id)?.unitAmount ?? fallback;
       return {
         id: line.id,
         quantity: line.quantity,
         product: line.product,
         modifiers: line.modifiers,
+        variant: line.variant,
+        attributeId: line.attributeId,
         unitAmount: cartLineUnitAmount(base, line.modifiers),
       };
     }),
@@ -73,24 +85,31 @@ async function fromGroupOverlay(
 async function fromPersonalCart(): Promise<StorefrontCart> {
   const { items } = await getCartWithItems();
   const prices = await resolveProductPrices(
-    items.map(({ product }) => ({
-      id: product.id,
-      priceAmount: product.priceAmount,
-      compareAtAmount: product.compareAtAmount,
-    })),
+    items.map(({ item, product, variant }) =>
+      pricedCartLineInput({
+        itemId: item.id,
+        productId: product.id,
+        productPriceAmount: product.priceAmount,
+        compareAtAmount: product.compareAtAmount,
+        variantPriceAmount: variant?.priceAmount ?? null,
+      }),
+    ),
   );
 
   return {
     source: "personal",
     inviteToken: null,
     canEdit: true,
-    items: items.map(({ item, product, modifiers }) => {
-      const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+    items: items.map(({ item, product, modifiers, variant }) => {
+      const fallback = variant?.priceAmount ?? product.priceAmount;
+      const base = prices.get(item.id)?.unitAmount ?? fallback;
       return {
         id: item.id,
         quantity: item.quantity,
         product,
         modifiers,
+        variant,
+        attributeId: item.attributeId,
         unitAmount: cartLineUnitAmount(base, modifiers),
       };
     }),

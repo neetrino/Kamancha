@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { products } from "@/db/schema/catalog";
+import { attributes, productVariants } from "@/db/schema/variants";
 import {
   createdAtColumn,
   idColumn,
@@ -71,16 +72,26 @@ export const cartItems = pgTable(
      * selections to coexist as separate cart lines.
      */
     selectionKey: text("selection_key").notNull().default(""),
+    /** Set for variable products. Null keeps simple products on the existing line key. */
+    variantId: uuid("variant_id").references(() => productVariants.id, {
+      onDelete: "restrict",
+    }),
+    /** Chosen named option (meat type and similar). Null when the product has none. */
+    attributeId: uuid("attribute_id").references(() => attributes.id, {
+      onDelete: "restrict",
+    }),
     quantity: integer("quantity").notNull(),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    uniqueIndex("cart_items_cart_product_selection_uidx").on(
-      table.cartId,
-      table.productId,
-      table.selectionKey,
-    ),
+    uniqueIndex("cart_items_simple_line_uidx")
+      .on(table.cartId, table.productId, table.selectionKey)
+      .where(sql`${table.variantId} IS NULL`),
+    uniqueIndex("cart_items_variant_line_uidx")
+      .on(table.cartId, table.productId, table.variantId, table.selectionKey)
+      .where(sql`${table.variantId} IS NOT NULL`),
+    index("cart_items_variant_idx").on(table.variantId),
     check("cart_items_qty_chk", sql`${table.quantity} > 0`),
   ],
 );

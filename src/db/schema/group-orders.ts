@@ -13,6 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { products } from "@/db/schema/catalog";
+import { attributes, productVariants } from "@/db/schema/variants";
 import {
   createdAtColumn,
   idColumn,
@@ -160,6 +161,13 @@ export const groupOrderItems = pgTable(
       .notNull()
       .references(() => products.id, { onDelete: "restrict" }),
     selectionKey: text("selection_key").notNull().default(""),
+    variantId: uuid("variant_id").references(() => productVariants.id, {
+      onDelete: "restrict",
+    }),
+    /** Chosen named option. Null when the product has none. */
+    attributeId: uuid("attribute_id").references(() => attributes.id, {
+      onDelete: "restrict",
+    }),
     quantity: integer("quantity").notNull(),
     /** Unit price snapshot at last recalculation (AMD, product + additions). */
     unitAmount: integer("unit_amount").notNull().default(0),
@@ -168,11 +176,17 @@ export const groupOrderItems = pgTable(
     updatedAt: updatedAtColumn(),
   },
   (table) => [
-    uniqueIndex("group_order_items_participant_product_selection_uidx").on(
-      table.participantId,
-      table.productId,
-      table.selectionKey,
-    ),
+    uniqueIndex("group_order_items_simple_line_uidx")
+      .on(table.participantId, table.productId, table.selectionKey)
+      .where(sql`${table.variantId} IS NULL`),
+    uniqueIndex("group_order_items_variant_line_uidx")
+      .on(
+        table.participantId,
+        table.productId,
+        table.variantId,
+        table.selectionKey,
+      )
+      .where(sql`${table.variantId} IS NOT NULL`),
     index("group_order_items_order_idx").on(table.groupOrderId),
     index("group_order_items_participant_idx").on(table.participantId),
     check("group_order_items_qty_chk", sql`${table.quantity} > 0`),

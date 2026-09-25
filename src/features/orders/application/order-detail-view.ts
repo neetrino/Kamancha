@@ -5,6 +5,7 @@ import {
   loadAdminGroupOrderParticipantsView,
   type AdminGroupOrderParticipantView,
 } from "@/features/orders/application/group-order-participants-view";
+import { splitOrderItemTitle } from "@/features/orders/domain/order-item-label";
 import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 import { getStoreIdentity } from "@/features/settings/application/queries";
@@ -17,6 +18,8 @@ import type { Locale } from "@/lib/i18n/config";
 export type AdminOrderDetailItemView = {
   id: string;
   title: string;
+  /** Chosen variant or attribute label. Null when the line has neither. */
+  optionLabel: string | null;
   sku: string;
   imageUrl: string | null;
   quantity: number;
@@ -152,19 +155,26 @@ export function toAdminOrderDetailView(
       ? paymentMethodLabel(latestPayment.method)
       : "—",
     paymentAmount: latestPayment?.amount ?? order.totalAmount,
-    items: items.map((item) => ({
-      id: item.id,
-      title: item.productTitleSnapshot,
-      sku: item.productSkuSnapshot,
-      imageUrl: item.productImageKeySnapshot
-        ? mediaPublicUrl(item.productImageKeySnapshot)
-        : null,
-      quantity: item.quantity,
-      unitPriceAmount: item.unitBaseAmount,
-      lineTotalAmount: item.lineTotalAmount,
-      currency: item.currency,
-      modifiers: item.modifiers,
-    })),
+    items: items.map((item) => {
+      const line = splitOrderItemTitle(
+        item.productTitleSnapshot,
+        item.variantLabelSnapshot,
+      );
+      return {
+        id: item.id,
+        title: line.title,
+        optionLabel: line.optionLabel,
+        sku: item.productSkuSnapshot,
+        imageUrl: item.productImageKeySnapshot
+          ? mediaPublicUrl(item.productImageKeySnapshot)
+          : null,
+        quantity: item.quantity,
+        unitPriceAmount: item.unitBaseAmount,
+        lineTotalAmount: item.lineTotalAmount,
+        currency: item.currency,
+        modifiers: item.modifiers,
+      };
+    }),
     groupParticipants: [],
   };
 }

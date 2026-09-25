@@ -365,6 +365,16 @@
       "quantityPlaceholder": "Stock",
       "imagesTooLarge": "Images are too large to upload together. Use fewer or smaller files (max 5MB each)."
     },
+    "attributes": {
+      "label": "Attributes",
+      "open": "Choose attributes",
+      "add": "Add",
+      "addNew": "Add new",
+      "empty": "No attributes yet.",
+      "delete": "Delete attribute",
+      "close": "Close",
+      "required": "Armenian, English, and Russian names are required."
+    },
     "categories": {
       "label": "Categories",
       "selectCategories": "Select categories",

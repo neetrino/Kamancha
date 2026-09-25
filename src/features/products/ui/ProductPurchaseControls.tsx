@@ -23,6 +23,8 @@ const CART_PLUS_SRC = staticAssetUrl("/assets/brand/product/cart-plus-dark.svg")
 
 type ProductPurchaseControlsProps = {
   productId: string;
+  variantId?: string | null;
+  attributeId?: string | null;
   stockOnHand: number;
   /** Base unit price in AMD minor units (before additions). */
   priceAmount: number;
@@ -144,6 +146,8 @@ function ModifierCheckboxGrid({
 
 export function ProductPurchaseControls({
   productId,
+  variantId = null,
+  attributeId = null,
   stockOnHand,
   priceAmount,
   compareAtFormatted,
@@ -159,9 +163,14 @@ export function ProductPurchaseControls({
   const router = useRouter();
   const maxQty = Math.max(stockOnHand, 0);
   const [quantity, setQuantity] = useState(maxQty > 0 ? 1 : 0);
+  const [quantityCap, setQuantityCap] = useState(maxQty);
   const [additionIds, setAdditionIds] = useState<string[]>([]);
   const [exceptionIds, setExceptionIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  if (quantityCap !== maxQty) {
+    setQuantityCap(maxQty);
+    setQuantity(maxQty < 1 ? 0 : Math.min(Math.max(quantity, 1), maxQty));
+  }
   const addButtonRef = useRef<HTMLButtonElement>(null);
   const disabled = maxQty < 1;
 
@@ -199,6 +208,8 @@ export function ProductPurchaseControls({
     const selectedModifiers = [...additionIds, ...exceptionIds];
     void addProductToActiveCart(productId, quantity, {
       modifierIds: selectedModifiers,
+      variantId: variantId ?? undefined,
+      attributeId: attributeId ?? undefined,
     })
       .then((result) => {
         if (!result.ok) {

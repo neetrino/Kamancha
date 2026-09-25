@@ -18,7 +18,11 @@ import {
   idColumn,
   updatedAtColumn,
 } from "@/db/schema/columns";
-import { categoryStatusEnum, productStatusEnum } from "@/db/schema/enums";
+import {
+  categoryStatusEnum,
+  productKindEnum,
+  productStatusEnum,
+} from "@/db/schema/enums";
 
 export type LocaleTranslation = {
   title: string;
@@ -37,6 +41,7 @@ export const products = pgTable(
   {
     id: idColumn(),
     sku: text("sku").notNull(),
+    kind: productKindEnum("kind").notNull().default("SIMPLE"),
     translations: jsonb("translations").$type<TranslationsJson>().notNull(),
     priceAmount: integer("price_amount").notNull(),
     compareAtAmount: integer("compare_at_amount"),

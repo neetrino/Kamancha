@@ -309,9 +309,14 @@ function OrderItemsList({ items }: { items: DrawerOrderItem[] }) {
 
               <div className="flex min-h-16 min-w-0 flex-1 flex-col justify-between gap-1">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium leading-5 text-gray-900">
+                  <p className="text-sm font-medium leading-5 text-gray-900">
                     {item.title}
                   </p>
+                  {item.optionLabel ? (
+                    <p className="text-xs leading-4 text-gray-500">
+                      {item.optionLabel}
+                    </p>
+                  ) : null}
                 </div>
                 <div className="min-w-0">
                   {modifierSummary ? (

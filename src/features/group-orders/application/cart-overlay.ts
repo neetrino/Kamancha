@@ -13,6 +13,10 @@ import {
   isGroupOrderBagActive,
   isGroupOrderStatus,
 } from "@/features/group-orders/domain/status";
+import {
+  loadVariantSnapshots,
+  type VariantSnapshot,
+} from "@/features/products/application/load-variant-snapshots";
 import { peekGroupOrderSession } from "@/features/group-orders/session";
 
 export type GroupCartOverlay = {
@@ -27,6 +31,8 @@ export type GroupCartOverlayLine = {
   unitAmount: number;
   product: typeof products.$inferSelect;
   modifiers: OverlayModifierView[];
+  variant: VariantSnapshot | null;
+  attributeId: string | null;
 };
 
 type OverlayModifierView = {
@@ -106,9 +112,12 @@ export async function getGroupCartOverlayLines(): Promise<{
     .innerJoin(products, eq(groupOrderItems.productId, products.id))
     .where(eq(groupOrderItems.participantId, overlay.participantId));
 
-  const modifiersByItem = await loadOverlayModifiers(
-    rows.map((row) => row.item.id),
-  );
+  const [modifiersByItem, variantsById] = await Promise.all([
+    loadOverlayModifiers(rows.map((row) => row.item.id)),
+    loadVariantSnapshots(
+      rows.flatMap((row) => (row.item.variantId ? [row.item.variantId] : [])),
+    ),
+  ]);
 
   return {
     overlay,
@@ -118,6 +127,10 @@ export async function getGroupCartOverlayLines(): Promise<{
       unitAmount: row.item.unitAmount,
       product: row.product,
       modifiers: modifiersByItem.get(row.item.id) ?? [],
+      variant: row.item.variantId
+        ? (variantsById.get(row.item.variantId) ?? null)
+        : null,
+      attributeId: row.item.attributeId,
     })),
   };
 }

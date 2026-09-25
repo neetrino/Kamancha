@@ -15,6 +15,11 @@ export type ProductPriceInput = {
   id: string;
   priceAmount: number;
   compareAtAmount?: number | null;
+  /**
+   * Discount rules still resolve by product `id`.
+   * Set this when several lines share a product but have different list prices.
+   */
+  resultKey?: string;
 };
 
 function isPromotionActiveNow(
@@ -115,7 +120,7 @@ export async function resolveProductPrices(
     );
 
     result.set(
-      product.id,
+      product.resultKey ?? product.id,
       resolveCatalogPrice({
         listAmount: product.priceAmount,
         productDiscount: productDiscount.get(product.id) ?? null,
@@ -127,6 +132,23 @@ export async function resolveProductPrices(
   }
 
   return result;
+}
+
+/** One cart/checkout line. Variant list price wins; discounts still follow the product. */
+export function pricedCartLineInput(input: {
+  itemId: string;
+  productId: string;
+  productPriceAmount: number;
+  compareAtAmount: number | null;
+  variantPriceAmount?: number | null;
+}): ProductPriceInput {
+  const variantPrice = input.variantPriceAmount;
+  return {
+    id: input.productId,
+    resultKey: input.itemId,
+    priceAmount: variantPrice ?? input.productPriceAmount,
+    compareAtAmount: variantPrice == null ? input.compareAtAmount : null,
+  };
 }
 
 /** Resolves one product price (convenience wrapper). */

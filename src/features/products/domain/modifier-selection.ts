@@ -4,6 +4,19 @@ export function buildModifierSelectionKey(modifierIds: ReadonlyArray<string>): s
   return [...new Set(modifierIds)].sort().join(",");
 }
 
+/**
+ * Line identity for one product. The attribute id is appended so the same
+ * dish with a different option stays a separate cart line.
+ */
+export function buildLineSelectionKey(
+  modifierIds: ReadonlyArray<string>,
+  attributeId: string | null,
+): string {
+  const modifiers = buildModifierSelectionKey(modifierIds);
+  if (!attributeId) return modifiers;
+  return modifiers ? `${modifiers}#${attributeId}` : `#${attributeId}`;
+}
+
 /** Sums ADDITION unit prices; EXCEPTION prices are ignored (always 0). */
 export function sumAdditionPrices(
   modifiers: ReadonlyArray<{ kind: "ADDITION" | "EXCEPTION"; priceAmount: number }>,
