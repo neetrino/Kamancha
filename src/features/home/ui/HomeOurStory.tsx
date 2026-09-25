@@ -16,9 +16,8 @@ const RUG_SRC = staticAssetUrl('/assets/brand/home/our-story/rug.webp');
 const TUMANYAN_SRC = staticAssetUrl('/assets/brand/home/our-story/tumanyan-sign.webp');
 const SARYAN_SRC = staticAssetUrl('/assets/brand/home/our-story/saryan-mountains.webp');
 const DELIVERY_SRC = staticAssetUrl('/assets/brand/home/our-story/delivery-truck.webp');
-const FOUNDER_SRC = staticAssetUrl('/assets/brand/home/our-story/founder.webp');
+const FOUNDER_SRC = `${staticAssetUrl('/assets/brand/home/our-story/founder.webp')}?v=20260925`;
 const PHONE_ICON_SRC = staticAssetUrl('/assets/brand/home/our-story/phone.svg');
-const RESTOROMANIA_ARROW_SRC = staticAssetUrl('/assets/brand/home/our-story/restormania-arrow.svg');
 
 /** Figma section 455:190 — 1257px content width; type and cards scale with it. */
 const cardTitleClass =
@@ -57,13 +56,17 @@ const DELIVERY_IMAGE: HomeStoryCardImage = {
   inner: { left: 0, top: -20.94, width: 114.72, height: 143.59 },
 };
 
+/**
+ * Figma 479:171 on card 455:209 (390×766). The photo is not clipped, so the
+ * platter hangs past the bottom edge and sits on top of the frame.
+ */
 const FOUNDER_IMAGE = {
   src: FOUNDER_SRC,
-  width: 2240,
-  height: 1494,
-  sizes: '(min-width: 1440px) 1120px, 80vw',
-  frame: { left: -10.77, top: 36.95, width: 146.67, height: 73.5 },
-  inner: { left: -47.95, top: -32.82, width: 195.89, height: 132.88 },
+  width: 1024,
+  height: 1280,
+  sizes: '(min-width: 1440px) 461px, 45vw',
+  frame: { left: -9.23, top: 36, width: 118.21, height: 69.32 },
+  inner: { left: 0, top: -0.02, width: 100, height: 108.52 },
 } satisfies Omit<HomeStoryCardImage, 'alt'>;
 
 type StoryCard = {
@@ -75,12 +78,6 @@ type DeliveryCard = StoryCard & {
   phone: string;
 };
 
-type FounderCard = StoryCard & {
-  cta: string;
-  /** Empty until the Restormania URL is ready. */
-  ctaHref: string;
-};
-
 type HomeOurStoryProps = {
   title: string;
   intro: string;
@@ -88,44 +85,8 @@ type HomeOurStoryProps = {
   tumanyan: StoryCard;
   saryan: StoryCard;
   delivery: DeliveryCard;
-  founder: FounderCard;
+  founder: StoryCard;
 };
-
-const restormaniaLinkClass =
-  'mt-[20px] inline-flex size-[68px] items-center justify-center rounded-full bg-white lg:mt-[max(20px,1.59cqw)] lg:size-[max(68px,5.41cqw)]';
-
-/** Restormania external control — Figma 87:77 (white circle, arrow flipped up-right). */
-function RestormaniaLink({ href, label }: { href: string; label: string }) {
-  const icon = (
-    <span
-      className="relative size-[35px] -scale-y-100 overflow-clip lg:size-[max(35px,2.78cqw)]"
-      aria-hidden
-    >
-      <Image src={RESTOROMANIA_ARROW_SRC} alt="" width={35} height={35} className="size-full" />
-    </span>
-  );
-
-  if (href) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={label}
-        data-node-id="87:77"
-        className={restormaniaLinkClass}
-      >
-        {icon}
-      </a>
-    );
-  }
-
-  return (
-    <span role="img" aria-label={label} data-node-id="87:77" className={restormaniaLinkClass}>
-      {icon}
-    </span>
-  );
-}
 
 /**
  * Our story — venue, delivery, and founder cards over the rug backdrop.
@@ -264,12 +225,11 @@ export function HomeOurStory({
               body={founder.body}
               image={{ ...FOUNDER_IMAGE, alt: founder.title }}
               className="h-[766px] bg-[#efe7da] lg:h-[max(766px,60.94cqw)]"
-              contentClassName="pt-[44px] pr-[25px] pl-[36px] lg:pt-[max(44px,3.5cqw)] lg:pr-[max(25px,1.99cqw)] lg:pl-[max(36px,2.86cqw)]"
+              contentClassName="pt-[45px] pr-[25px] pl-[36px] lg:pt-[max(45px,3.58cqw)] lg:pr-[max(25px,1.99cqw)] lg:pl-[max(36px,2.86cqw)]"
               titleClassName={`${cardTitleClass} text-[#222]`}
-              bodyClassName={`${cardBodyRelaxedClass} mt-[30px] text-[rgba(34,34,34,0.81)] lg:mt-[max(30px,2.39cqw)]`}
-            >
-              <RestormaniaLink href={founder.ctaHref} label={founder.cta} />
-            </HomeStoryCard>
+              bodyClassName={`${cardBodyRelaxedClass} mt-[29px] max-w-[329px] text-[rgba(34,34,34,0.81)] lg:mt-[max(29px,2.31cqw)] lg:max-w-[max(329px,26.17cqw)]`}
+              bleed
+            />
           </HomeReveal>
         </div>
       </div>
