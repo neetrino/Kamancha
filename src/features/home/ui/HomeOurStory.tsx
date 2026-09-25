@@ -65,7 +65,7 @@ const FOUNDER_IMAGE = {
   width: 1024,
   height: 1280,
   sizes: '(min-width: 1440px) 461px, 45vw',
-  frame: { left: -9.23, top: 36, width: 118.21, height: 69.32 },
+  frame: { left: -9.23, top: 32, width: 118.21, height: 69.32 },
   inner: { left: 0, top: -0.02, width: 100, height: 108.52 },
 } satisfies Omit<HomeStoryCardImage, 'alt'>;
 
