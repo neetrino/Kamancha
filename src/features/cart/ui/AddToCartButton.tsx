@@ -1,6 +1,6 @@
 "use client";
 
-import type { MouseEvent } from "react";
+import { useLayoutEffect, useRef, useState, type MouseEvent, type RefObject } from "react";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,67 @@ import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 const CART_PLUS_SRC = staticAssetUrl("/assets/brand/home/cart-plus.svg");
 const CART_MOBILE_SRC = staticAssetUrl("/assets/brand/home/product-card-cart.svg");
+const DESKTOP_CARD_QUERY = "(min-width: 1280px)";
+const PRICE_STEPPER_GAP_PX = 8;
+
+function textWidth(element: HTMLElement): number {
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  return Math.ceil(range.getBoundingClientRect().width);
+}
+
+/** True when the price text and the quantity control fit on one row. */
+function stepperFitsBesidePrice(slot: HTMLElement): boolean {
+  if (window.matchMedia(DESKTOP_CARD_QUERY).matches) return true;
+
+  const article = slot.closest("article");
+  const body = article?.querySelector<HTMLElement>("[data-card-body]");
+  const priceSlot = article?.querySelector<HTMLElement>("[data-card-price]");
+  const stepper = slot.querySelector<HTMLElement>("[data-qty-stepper]");
+  if (!body || !priceSlot || !stepper) return true;
+
+  const style = getComputedStyle(body);
+  const available =
+    body.clientWidth -
+    Number.parseFloat(style.paddingLeft) -
+    Number.parseFloat(style.paddingRight);
+  const priceWidth = Math.max(
+    0,
+    ...[...priceSlot.querySelectorAll("p")].map((line) => textWidth(line)),
+  );
+
+  return priceWidth + stepper.offsetWidth + PRICE_STEPPER_GAP_PX <= available;
+}
+
+function useStackedQtyStepper(
+  slotRef: RefObject<HTMLDivElement | null>,
+  active: boolean,
+  quantity: number,
+): boolean {
+  const [stacked, setStacked] = useState(false);
+
+  useLayoutEffect(() => {
+    const slot = slotRef.current;
+    if (!active || slot == null) {
+      setStacked(false);
+      return;
+    }
+
+    const article = slot.closest("article");
+    if (article == null) return;
+
+    const update = (): void => {
+      setStacked(!stepperFitsBesidePrice(slot));
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(article);
+    return () => observer.disconnect();
+  }, [active, quantity, slotRef]);
+
+  return stacked;
+}
 
 type AddToCartIcon = "cart" | "cart-plus" | "cart-mobile";
 type StepperScale = "compact" | "catalog" | "regular";
@@ -112,8 +173,10 @@ export function AddToCartButton({
   const router = useRouter();
   const copy = useProductCardCartCopy();
   const quantity = useCartProductQuantity(productId);
-  const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const slotRef = useRef<HTMLDivElement>(null);
   const showStepper = quantity > 0 && !requiresCustomization;
+  const stacked = useStackedQtyStepper(slotRef, showStepper, quantity);
+  const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
 
   function stop(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
@@ -143,9 +206,20 @@ export function AddToCartButton({
   }
 
   return (
-    <div className={`relative shrink-0 ${slotClassName}`}>
+    <div
+      ref={slotRef}
+      className={`shrink-0 ${stacked ? "max-xl:static xl:relative" : "relative"} ${slotClassName}`}
+    >
       {showStepper ? (
-        <div className="absolute right-0 top-1/2 z-20 -translate-y-1/2">
+        <div
+          data-qty-stepper
+          data-qty-stacked={stacked ? "" : undefined}
+          className={
+            stacked
+              ? "absolute right-2.5 bottom-2.5 z-20 xl:right-0 xl:bottom-auto xl:top-1/2 xl:-translate-y-1/2"
+              : "absolute right-0 top-1/2 z-20 -translate-y-1/2"
+          }
+        >
           <ProductCardQtyStepper
             quantity={quantity}
             piecesTemplate={copy.piecesCount}

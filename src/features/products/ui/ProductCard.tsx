@@ -91,7 +91,7 @@ export function ProductCard({
   return (
     <article
       data-node-id={catalog ? "103:3029" : "22:230"}
-      className={`group relative flex flex-col overflow-hidden bg-white transition-[translate,box-shadow] duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:z-10 hover:-translate-y-2 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${ui.article} ${className}`}
+      className={`group relative flex flex-col overflow-hidden bg-white transition-[translate,box-shadow] duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:z-10 hover:-translate-y-2 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${ui.article} ${compact ? "has-[[data-qty-stacked]]:h-auto" : ""} ${className}`}
     >
       <div
         className={`relative z-[1] isolate shrink-0 bg-neutral-100 ${ui.image}`}
@@ -153,6 +153,7 @@ export function ProductCard({
       )}
 
       <div
+        data-card-body
         className={`relative z-[1] flex min-h-0 flex-1 ${ui.body}`}
       >
         <div
@@ -175,7 +176,8 @@ export function ProductCard({
             </p>
           ) : null}
           <div
-            className={`mt-auto flex flex-col justify-center ${
+            data-card-price
+            className={`mt-auto flex flex-col justify-center max-xl:group-has-[[data-qty-stacked]]:mb-9 max-xl:group-has-[[data-qty-stacked]]:min-h-0 max-xl:group-has-[[data-qty-stacked]]:justify-start ${
               showAddToCart ? ui.priceSlot : ""
             } ${
               compact
@@ -199,7 +201,7 @@ export function ProductCard({
         </div>
 
         <div
-          className={`relative flex shrink-0 flex-col items-end ${ui.metaCol}`}
+          className={`flex shrink-0 flex-col items-end ${ui.metaCol}`}
         >
           <div
             data-node-id="22:242"

@@ -25,17 +25,17 @@ const SCALE: Record<StepperScale, { button: string; count: string; icon: string 
   {
     compact: {
       button: "size-7",
-      count: "min-w-[2.7rem] text-[13px]",
+      count: "min-w-6 text-lg",
       icon: "size-3.5",
     },
     catalog: {
       button: "size-7 xl:size-9",
-      count: "min-w-[2.7rem] text-[13px] xl:min-w-[3.25rem] xl:text-base",
+      count: "min-w-6 text-lg xl:min-w-7 xl:text-xl",
       icon: "size-3.5 xl:size-4",
     },
     regular: {
       button: "size-9",
-      count: "min-w-[3.25rem] text-base",
+      count: "min-w-7 text-xl",
       icon: "size-4",
     },
   };
@@ -72,7 +72,7 @@ export function ProductCardQtyStepper({
         className={`text-center font-semibold leading-none whitespace-nowrap text-brand-forest tabular-nums ${ui.count}`}
         aria-live="polite"
       >
-        {pieces}
+        {quantity}
       </span>
       <button
         type="button"
