@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { FooterPaymentMarks } from "@/components/layout/FooterPaymentMarks";
 import { BrandLogo } from "@/components/layout/BrandLogo";
 import { KAMANCHA_BRANCHES } from "@/lib/brand/store-locations";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -98,11 +99,11 @@ function FooterCopyright() {
   return (
     <div
       data-node-id="22:388"
-      className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center pt-4 pb-2 xl:pt-8 xl:pb-4"
+      className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-center pt-4 pb-2 xl:flex-row xl:justify-between xl:pt-[18px] xl:pb-[18px]"
     >
       <p
         data-node-id="22:390"
-        className="max-w-full text-center font-big-fat-boii text-[12px] leading-4 font-normal whitespace-nowrap text-white/40 xl:text-[13px] xl:leading-5"
+        className="max-w-full text-center font-big-fat-boii text-[12px] leading-4 font-normal whitespace-nowrap text-white/40 xl:text-left xl:text-[14px] xl:leading-5"
       >
         <span className="xl:hidden">
           <CopyrightSymbol /> {year} <CopyrightPipe /> {COPYRIGHT_CREATED_BY}{" "}
@@ -128,6 +129,7 @@ function FooterCopyright() {
           </a>
         </span>
       </p>
+      <FooterPaymentMarks />
     </div>
   );
 }
