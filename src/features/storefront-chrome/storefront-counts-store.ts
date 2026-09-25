@@ -65,6 +65,11 @@ export function settleCartItemCountAdjust(): void {
   cartInFlight = Math.max(0, cartInFlight - 1);
 }
 
+/** True while an optimistic cart-count change is still waiting on the server. */
+export function isCartCountAdjusting(): boolean {
+  return cartInFlight > 0;
+}
+
 export function setWishlistCount(next: number): void {
   const value = Math.max(0, next);
   if (value === wishlistCount) return;

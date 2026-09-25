@@ -13,6 +13,8 @@ import { getActiveGroupOrderBanner } from "@/features/group-orders/application/a
 import { ActiveGroupOrderBanner } from "@/features/group-orders/ui/ActiveGroupOrderBanner";
 import { PromoPopupIsland } from "@/features/popups/ui/PromoPopupIsland";
 import { getStoreBlogSettings } from "@/features/settings/application/queries";
+import { CartProductLinesHydrator } from "@/features/cart/ui/CartProductLinesHydrator";
+import { ProductCardCartCopyProvider } from "@/features/products/ui/product-card-cart-copy";
 import { StorefrontAlertHost } from "@/features/storefront-chrome/StorefrontAlertHost";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -53,6 +55,13 @@ export default async function StorefrontLayout({
       <StorefrontScrollToTop />
       <StorefrontBackground />
       <LiquidGlassOptics />
+      <ProductCardCartCopyProvider
+        copy={{
+          piecesCount: dictionary.product.piecesCount,
+          decreaseQuantity: dictionary.product.decreaseQuantity,
+          increaseQuantity: dictionary.product.increaseQuantity,
+        }}
+      >
       <div className="relative z-10 flex min-h-dvh flex-1 flex-col">
         <SiteHeader
           locale={locale}
@@ -83,7 +92,9 @@ export default async function StorefrontLayout({
         />
         <StorefrontAlertHost />
         <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
+        <CartProductLinesHydrator />
       </div>
+      </ProductCardCartCopyProvider>
     </div>
   );
 }

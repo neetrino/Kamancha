@@ -226,7 +226,11 @@ export function ProductCard({
               icon={compact ? "cart-mobile" : "cart-plus"}
               productHref={href}
               requiresCustomization={requiresCustomization}
-              className={`mt-auto rounded-full bg-brand-forest hover:bg-[#1e3f1f] ${ui.cart}`}
+              slotClassName={`mt-auto ${ui.cart}`}
+              className="rounded-full bg-brand-forest hover:bg-[#1e3f1f]"
+              stepperScale={
+                compact ? "compact" : catalog ? "catalog" : "regular"
+              }
             />
           ) : null}
         </div>

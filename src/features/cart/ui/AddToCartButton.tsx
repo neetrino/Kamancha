@@ -4,21 +4,22 @@ import type { MouseEvent } from "react";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
+import { MAX_QUICK_ADD_QUANTITY } from "@/features/cart/domain/plain-line";
 import { flyToCart } from "@/features/cart/ui/fly-to-cart";
-import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
-import { showStorefrontAlert } from "@/features/storefront-chrome/storefront-alert-store";
 import {
-  adjustCartItemCount,
-  settleCartItemCountAdjust,
-} from "@/features/storefront-chrome/storefront-counts-store";
+  syncCartProductQuantity,
+  useCartProductQuantity,
+} from "@/features/cart/ui/cart-product-lines-store";
+import { useProductCardCartCopy } from "@/features/products/ui/product-card-cart-copy";
+import { ProductCardQtyStepper } from "@/features/products/ui/ProductCardQtyStepper";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 const CART_PLUS_SRC = staticAssetUrl("/assets/brand/home/cart-plus.svg");
 const CART_MOBILE_SRC = staticAssetUrl("/assets/brand/home/product-card-cart.svg");
 
 type AddToCartIcon = "cart" | "cart-plus" | "cart-mobile";
+type StepperScale = "compact" | "catalog" | "regular";
 
 type AddToCartButtonProps = {
   productId: string;
@@ -34,6 +35,9 @@ type AddToCartButtonProps = {
    */
   productHref?: string;
   requiresCustomization?: boolean;
+  /** Size box that keeps the price row aligned when the stepper replaces the icon. */
+  slotClassName?: string;
+  stepperScale?: StepperScale;
 };
 
 function AddToCartGlyph({
@@ -102,58 +106,72 @@ export function AddToCartButton({
   icon = "cart",
   productHref,
   requiresCustomization = false,
+  slotClassName = "",
+  stepperScale = "regular",
 }: AddToCartButtonProps) {
   const router = useRouter();
-  const [justAdded, setJustAdded] = useState(false);
+  const copy = useProductCardCartCopy();
+  const quantity = useCartProductQuantity(productId);
   const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+  const showStepper = quantity > 0 && !requiresCustomization;
 
-  function handleClick(event: MouseEvent<HTMLButtonElement>): void {
+  function stop(event: MouseEvent<HTMLButtonElement>): void {
     event.preventDefault();
     event.stopPropagation();
-    if (disabled) return;
+  }
 
+  function handleAdd(event: MouseEvent<HTMLButtonElement>): void {
+    stop(event);
+    if (disabled) return;
     if (requiresCustomization && productHref) {
       router.push(productHref);
       return;
     }
+    flyToCart(event.currentTarget);
+    void syncCartProductQuantity(productId, quantity + 1);
+  }
 
-    const origin = event.currentTarget;
-    void addProductToActiveCart(productId, 1)
-      .then((result) => {
-        if (!result.ok) {
-          showStorefrontAlert(result.error);
-          return;
-        }
-        flyToCart(origin);
-        setJustAdded(true);
-        window.setTimeout(() => setJustAdded(false), 1200);
-        adjustCartItemCount(1);
-        settleCartItemCountAdjust();
-        if (result.target !== "cart") {
-          router.refresh();
-        }
-      })
-      .catch((error: unknown) => {
-        if (error instanceof Error && error.message.length > 0) {
-          showStorefrontAlert(error.message);
-        }
-      });
+  function handleDecrease(event: MouseEvent<HTMLButtonElement>): void {
+    stop(event);
+    void syncCartProductQuantity(productId, quantity - 1);
+  }
+
+  function handleIncrease(event: MouseEvent<HTMLButtonElement>): void {
+    stop(event);
+    if (disabled || quantity >= MAX_QUICK_ADD_QUANTITY) return;
+    void syncCartProductQuantity(productId, quantity + 1);
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={disabled}
-      aria-label={label}
-      data-just-added={justAdded || undefined}
-      className={`inline-flex items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
-    >
-      <AddToCartGlyph
-        icon={icon}
-        justAdded={justAdded}
-        iconClass={iconClass}
-      />
-    </button>
+    <div className={`relative shrink-0 ${slotClassName}`}>
+      {showStepper ? (
+        <div className="absolute right-0 top-1/2 z-20 -translate-y-1/2">
+          <ProductCardQtyStepper
+            quantity={quantity}
+            piecesTemplate={copy.piecesCount}
+            decreaseLabel={copy.decreaseQuantity}
+            increaseLabel={copy.increaseQuantity}
+            disableIncrease={disabled || quantity >= MAX_QUICK_ADD_QUANTITY}
+            scale={stepperScale}
+            onDecrease={handleDecrease}
+            onIncrease={handleIncrease}
+          />
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={disabled}
+          aria-label={label}
+          className={`inline-flex size-full items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
+        >
+          <AddToCartGlyph
+            icon={icon}
+            justAdded={false}
+            iconClass={iconClass}
+          />
+        </button>
+      )}
+    </div>
   );
 }
