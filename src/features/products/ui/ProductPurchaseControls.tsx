@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import { loadStorefrontPlainLines } from "@/features/cart/storefront-cart-mutations";
+import { hydrateCartProductLines } from "@/features/cart/ui/cart-product-lines-store";
 import { flyToCart } from "@/features/cart/ui/fly-to-cart";
 import { addProductToActiveCart } from "@/features/group-orders/application/add-to-active";
 import type { ProductModifierChoice } from "@/features/products/types";
@@ -222,6 +224,19 @@ export function ProductPurchaseControls({
         }
         adjustCartItemCount(quantity);
         settleCartItemCountAdjust();
+        const plainAdd =
+          selectedModifiers.length === 0 &&
+          (variantId == null || variantId.length === 0) &&
+          (attributeId == null || attributeId.length === 0);
+        if (plainAdd) {
+          void loadStorefrontPlainLines()
+            .then((lines) => {
+              hydrateCartProductLines(lines);
+            })
+            .catch(() => {
+              // Badge already moved; cards refresh on the next cart read.
+            });
+        }
         if (result.target !== "cart") {
           router.refresh();
         }

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
 
 import { BrandHeaderIcon } from "@/components/layout/BrandHeaderIcon";
@@ -24,15 +24,24 @@ import {
   removeStorefrontCartItem,
   updateStorefrontCartItem,
 } from "@/features/cart/storefront-cart-mutations";
+import {
+  getCartProductQuantity,
+  hydrateCartProductLines,
+  subscribeCartLinesCommitted,
+  subscribeCartProductLines,
+  syncCartProductQuantity,
+} from "@/features/cart/ui/cart-product-lines-store";
 import { showStorefrontAlert } from "@/features/storefront-chrome/storefront-alert-store";
 import {
   adjustCartItemCount,
+  isCartCountAdjusting,
   revertCartItemCountAdjust,
   setCartItemCount,
   settleCartItemCountAdjust,
   useCartItemCount,
 } from "@/features/storefront-chrome/storefront-counts-store";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+import { logger } from "@/lib/observability/logger";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
@@ -77,6 +86,30 @@ function recountItems(items: CartDrawerItemView[]): number {
   return items.reduce((sum, item) => sum + item.quantity, 0);
 }
 
+function patchQuickAddQuantities(view: CartDrawerView): CartDrawerView {
+  let changed = false;
+  const items: CartDrawerItemView[] = [];
+  for (const item of view.items) {
+    if (!item.quickAdd) {
+      items.push(item);
+      continue;
+    }
+    const quantity = getCartProductQuantity(item.productId);
+    if (quantity < 1) {
+      changed = true;
+      continue;
+    }
+    if (quantity !== item.quantity) {
+      changed = true;
+      items.push({ ...item, quantity });
+      continue;
+    }
+    items.push(item);
+  }
+  if (!changed) return view;
+  return { ...view, items, itemCount: recountItems(items) };
+}
+
 export function CartDrawer({
   locale,
   currency,
@@ -101,10 +134,53 @@ export function CartDrawer({
     view?.source === "group" ? labels.checkoutGroupOrder : labels.checkout;
   const useCheckoutPage = isDesktop !== false || view?.source === "group";
 
-  function applyView(next: CartDrawerView): void {
+  const applyView = useCallback((next: CartDrawerView): void => {
     setView(next);
-    setCartItemCount(next.itemCount);
-  }
+    if (!isCartCountAdjusting()) {
+      setCartItemCount(next.itemCount);
+    }
+    hydrateCartProductLines(
+      next.items
+        .filter((item) => item.quickAdd)
+        .map((item) => ({
+          productId: item.productId,
+          itemId: item.id,
+          quantity: item.quantity,
+        })),
+    );
+  }, []);
+
+  useEffect(() => {
+    return subscribeCartProductLines(() => {
+      setView((current) =>
+        current ? patchQuickAddQuantities(current) : current,
+      );
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    return subscribeCartLinesCommitted(() => {
+      void loadCartDrawerViewAction(locale, currency)
+        .then((next) => {
+          hydrateCartProductLines(
+            next.items
+              .filter((item) => item.quickAdd)
+              .map((item) => ({
+                productId: item.productId,
+                itemId: item.id,
+                quantity: item.quantity,
+              })),
+          );
+          setView(patchQuickAddQuantities(next));
+        })
+        .catch((error: unknown) => {
+          logger.warn("Failed to refresh the cart drawer", {
+            error: error instanceof Error ? error.message : "unknown",
+          });
+        });
+    });
+  }, [open, locale, currency]);
 
   function syncViewInBackground(): void {
     void loadCartDrawerViewAction(locale, currency)
@@ -159,6 +235,11 @@ export function CartDrawer({
     const delta = nextQty - current.quantity;
     if (delta === 0) return;
 
+    if (current.quickAdd) {
+      void syncCartProductQuantity(current.productId, nextQty);
+      return;
+    }
+
     const nextItems = withUpdatedQuantity(view.items, itemId, nextQty);
     const nextCount = recountItems(nextItems);
     setView({
@@ -187,6 +268,10 @@ export function CartDrawer({
     if (!view || !view.canEdit) return;
     const current = view.items.find((item) => item.id === itemId);
     if (!current) return;
+    if (current.quickAdd) {
+      void syncCartProductQuantity(current.productId, 0);
+      return;
+    }
 
     const previous = view;
     const nextItems = view.items.filter((item) => item.id !== itemId);

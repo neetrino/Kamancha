@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isQuickAddLine } from "@/features/cart/domain/plain-line";
 import {
   getStorefrontCart,
   type StorefrontCartLine,
@@ -18,6 +19,9 @@ import { formatMoneyAmount } from "@/lib/money/format";
 
 export type CartDrawerItemView = {
   id: string;
+  productId: string;
+  /** Plain line the product card stepper can edit in sync. */
+  quickAdd: boolean;
   title: string;
   href: string;
   quantity: number;
@@ -129,6 +133,12 @@ function toDrawerItem(
 
   return {
     id: line.id,
+    productId: line.product.id,
+    quickAdd: isQuickAddLine({
+      modifiers: line.modifiers,
+      variant: line.variant,
+      attributeId: line.attributeId,
+    }),
     title: optionLabel ? `${title} · ${optionLabel}` : title,
     href: `/${locale}/products/${slug}`,
     quantity: line.quantity,
