@@ -42,6 +42,8 @@ type HomeStoryCardProps = {
   titleHref?: string;
   /** Extra content below the body, e.g. the delivery phone number. */
   children?: ReactNode;
+  /** Let the photo paint past the rounded card edge. */
+  bleed?: boolean;
 };
 
 function boxStyle({ left, top, width, height }: Box) {
@@ -65,11 +67,15 @@ export function HomeStoryCard({
   nodeId,
   titleHref,
   children,
+  bleed = false,
 }: HomeStoryCardProps) {
   const decorative = image.alt === undefined;
 
   return (
-    <article data-node-id={nodeId} className={`relative overflow-clip rounded-[30px] ${className}`}>
+    <article
+      data-node-id={nodeId}
+      className={`relative rounded-[30px] ${bleed ? 'overflow-visible' : 'overflow-clip'} ${className}`}
+    >
       <div className={`relative z-[1] ${contentClassName}`}>
         <h3 className={titleClassName}>
           {titleHref ? (
