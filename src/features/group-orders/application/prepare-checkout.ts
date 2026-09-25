@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -94,6 +94,12 @@ export async function prepareGroupOrderCheckout(
           eq(cartItems.cartId, cart.id),
           eq(cartItems.productId, line.productId),
           eq(cartItems.selectionKey, line.selectionKey),
+          line.variantId
+            ? eq(cartItems.variantId, line.variantId)
+            : isNull(cartItems.variantId),
+          line.attributeId
+            ? eq(cartItems.attributeId, line.attributeId)
+            : isNull(cartItems.attributeId),
         ),
       )
       .limit(1);
@@ -114,6 +120,8 @@ export async function prepareGroupOrderCheckout(
       id: itemId,
       cartId: cart.id,
       productId: line.productId,
+      variantId: line.variantId,
+      attributeId: line.attributeId,
       selectionKey: line.selectionKey,
       quantity: line.quantity,
     });

@@ -12,7 +12,12 @@ import {
   products,
 } from "@/db/schema";
 import { bonusTransactions } from "@/db/schema/bonuses";
+import { loadAttributeTitles } from "@/features/attributes/application/library";
 import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
+import {
+  loadVariantSnapshots,
+  variantLabel,
+} from "@/features/products/application/load-variant-snapshots";
 import type { Locale } from "@/lib/i18n/config";
 
 export type CustomerGroupOrderShare = {
@@ -194,6 +199,7 @@ export async function findCustomerBonusEarnedForOrder(
 export type CustomerGroupOrderShareItem = {
   id: string;
   title: string;
+  optionLabel: string | null;
   sku: string;
   imageUrl: string | null;
   quantity: number;
@@ -257,12 +263,25 @@ export async function loadCustomerGroupOrderShareItems(input: {
     modsByItem.set(mod.groupOrderItemId, list);
   }
 
-  const imageByProduct = await loadPrimaryProductImageUrls(
-    rows.map((row) => row.product.id),
-  );
+  const [imageByProduct, attributeTitles, variantsById] = await Promise.all([
+    loadPrimaryProductImageUrls(rows.map((row) => row.product.id)),
+    loadAttributeTitles(
+      rows.flatMap((row) => (row.item.attributeId ? [row.item.attributeId] : [])),
+      input.locale,
+    ),
+    loadVariantSnapshots(
+      rows.flatMap((row) => (row.item.variantId ? [row.item.variantId] : [])),
+    ),
+  ]);
 
   return rows.map((row) => {
     const itemMods = modsByItem.get(row.item.id) ?? [];
+    const variant = row.item.variantId
+      ? variantsById.get(row.item.variantId)
+      : null;
+    const attributeName = row.item.attributeId
+      ? attributeTitles.get(row.item.attributeId)
+      : null;
     return {
       id: row.item.id,
       title: resolveProductTitle(
@@ -270,6 +289,10 @@ export async function loadCustomerGroupOrderShareItems(input: {
         input.locale,
         row.product.sku,
       ),
+      optionLabel:
+        [variantLabel(variant, input.locale), attributeName]
+          .filter((label): label is string => Boolean(label))
+          .join(" · ") || null,
       sku: row.product.sku,
       imageUrl: imageByProduct.get(row.product.id) ?? null,
       quantity: row.item.quantity,

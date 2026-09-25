@@ -35,6 +35,8 @@ type ProductGalleryProps = {
   inWishlist: boolean;
   isSignedIn: boolean;
   wishlistLabel: string;
+  /** Variant image shown first when it is not already in the gallery. */
+  highlightUrl?: string | null;
 };
 
 function formatDiscountOff(template: string, percent: number): string {
@@ -57,19 +59,38 @@ export function ProductGallery({
   inWishlist,
   isSignedIn,
   wishlistLabel,
+  highlightUrl = null,
 }: ProductGalleryProps) {
   const galleryImages = useMemo<ProductGalleryImage[]>(() => {
-    if (images.length > 0) return images;
+    const base =
+      images.length > 0
+        ? images
+        : [
+            {
+              id: "placeholder",
+              url: STOREFRONT_PRODUCT_PHOTO,
+              alt: title,
+              isPrimary: true,
+            },
+          ];
+    if (!highlightUrl || base.some((image) => image.url === highlightUrl)) {
+      return base;
+    }
     return [
-      {
-        id: "placeholder",
-        url: STOREFRONT_PRODUCT_PHOTO,
-        alt: title,
-        isPrimary: true,
-      },
+      { id: "variant-image", url: highlightUrl, alt: title, isPrimary: true },
+      ...base,
     ];
-  }, [images, title]);
-  const [selectedId, setSelectedId] = useState(galleryImages[0]?.id ?? null);
+  }, [highlightUrl, images, title]);
+  const highlightMatch =
+    galleryImages.find((image) => image.url === highlightUrl) ?? null;
+  const [pinnedHighlight, setPinnedHighlight] = useState(highlightUrl);
+  const [selectedId, setSelectedId] = useState(
+    highlightMatch?.id ?? galleryImages[0]?.id ?? null,
+  );
+  if (highlightUrl !== pinnedHighlight) {
+    setPinnedHighlight(highlightUrl);
+    if (highlightMatch) setSelectedId(highlightMatch.id);
+  }
   const [zoomed, setZoomed] = useState(false);
   const portalReady = useIsClient();
   const mobileScrollerRef = useRef<HTMLDivElement>(null);

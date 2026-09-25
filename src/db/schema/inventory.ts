@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { products } from "@/db/schema/catalog";
+import { productVariants } from "@/db/schema/variants";
 import { createdAtColumn, idColumn } from "@/db/schema/columns";
 import { stockMovementReasonEnum } from "@/db/schema/enums";
 import { users } from "@/db/schema/identity";
@@ -19,6 +20,9 @@ export const stockMovements = pgTable(
     productId: uuid("product_id")
       .notNull()
       .references(() => products.id, { onDelete: "restrict" }),
+    variantId: uuid("variant_id").references(() => productVariants.id, {
+      onDelete: "restrict",
+    }),
     delta: integer("delta").notNull(),
     reason: stockMovementReasonEnum("reason").notNull(),
     orderId: uuid("order_id").references(() => orders.id, {

@@ -5,7 +5,10 @@ import {
   type StorefrontCartLine,
 } from "@/features/cart/get-storefront-cart";
 import { buildInvitePath } from "@/features/group-orders/application/money";
+import { loadAttributeTitles } from "@/features/attributes/application/library";
+import { variantLabel } from "@/features/products/application/load-variant-snapshots";
 import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
+import { mediaPublicUrl } from "@/lib/media/public-url";
 import type { Locale } from "@/lib/i18n/config";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { convertAmount } from "@/lib/money/convert";
@@ -56,16 +59,22 @@ export async function getCartDrawerView(
   currency: Currency,
 ): Promise<CartDrawerView> {
   const bag = await getStorefrontCart();
-  const [images, quote] = await Promise.all([
+  const [images, quote, attributeTitles] = await Promise.all([
     loadPrimaryProductImageUrls(bag.items.map((line) => line.product.id)),
     getCheckoutRateSnapshot(currency),
+    loadAttributeTitles(
+      bag.items.flatMap((line) => (line.attributeId ? [line.attributeId] : [])),
+      locale,
+    ),
   ]);
 
   const items: CartDrawerItemView[] = [];
   let subtotalBase = 0;
 
   for (const line of bag.items) {
-    items.push(toDrawerItem(line, locale, currency, quote.rate, images));
+    items.push(
+      toDrawerItem(line, locale, currency, quote.rate, images, attributeTitles),
+    );
     subtotalBase += line.quantity * line.unitAmount;
   }
 
@@ -97,9 +106,18 @@ function toDrawerItem(
   currency: Currency,
   rate: string,
   images: Map<string, string>,
+  attributeTitles: Map<string, string>,
 ): CartDrawerItemView {
   const translation =
     line.product.translations[locale] ?? line.product.translations.hy;
+  const optionLabel =
+    variantLabel(line.variant, locale) ||
+    (line.attributeId ? attributeTitles.get(line.attributeId) : null) ||
+    null;
+  const title = translation?.title ?? line.product.sku;
+  const variantImage = line.variant?.imageObjectKey
+    ? mediaPublicUrl(line.variant.imageObjectKey)
+    : null;
   const slug =
     translation?.slug ??
     line.product.translations.hy?.slug ??
@@ -111,10 +129,10 @@ function toDrawerItem(
 
   return {
     id: line.id,
-    title: translation?.title ?? line.product.sku,
+    title: optionLabel ? `${title} · ${optionLabel}` : title,
     href: `/${locale}/products/${slug}`,
     quantity: line.quantity,
-    imageUrl: images.get(line.product.id) ?? null,
+    imageUrl: variantImage ?? images.get(line.product.id) ?? null,
     unitPriceFormatted: formatConvertedAmount(
       line.unitAmount,
       rate,

@@ -8,6 +8,7 @@ import type {
   AdminProductListItem,
 } from "@/features/products/application/list-admin-products";
 import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
+import type { AttributeOption } from "@/features/attributes/types";
 import type { ProductModifierOption } from "@/features/products/types/modifiers";
 import { AdminProductsFilters } from "@/features/products/ui/AdminProductsFilters";
 import { AdminProductsTable } from "@/features/products/ui/AdminProductsTable";
@@ -33,6 +34,7 @@ type AdminProductsViewProps = {
   sortLinks: AdminProductsSortLinks;
   categories: AdminCategoryOption[];
   modifierLibrary: ProductModifierOption[];
+  attributeLibrary: AttributeOption[];
   total: number;
   q?: string;
   categoryId?: string;
@@ -48,6 +50,7 @@ export function AdminProductsView({
   sortLinks,
   categories,
   modifierLibrary,
+  attributeLibrary,
   total,
   q,
   categoryId,
@@ -119,12 +122,14 @@ export function AdminProductsView({
         product={editingProduct}
         categories={categories}
         modifierLibrary={modifierLibrary}
+        attributeLibrary={attributeLibrary}
         copy={{
           drawer: copy.products.drawer,
           categories: copy.products.categories,
           images: copy.products.images,
           discount: copy.products.discount,
           modifiers: copy.products.modifiers,
+          attributes: copy.products.attributes,
           common: copy.common,
           confirm: copy.confirm,
         }}

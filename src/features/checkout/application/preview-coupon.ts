@@ -13,7 +13,10 @@ import {
   evaluateCouponDiscount,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  pricedCartLineInput,
+  resolveProductPrices,
+} from "@/features/promotions/application/resolve-product-prices";
 import { getCurrentUser } from "@/lib/auth/session";
 
 const previewCouponSchema = z.object({
@@ -44,14 +47,19 @@ export async function previewCouponAction(
   }
 
   const prices = await resolveProductPrices(
-    items.map(({ product }) => ({
-      id: product.id,
-      priceAmount: product.priceAmount,
-      compareAtAmount: product.compareAtAmount,
-    })),
+    items.map(({ item, product, variant }) =>
+      pricedCartLineInput({
+        itemId: item.id,
+        productId: product.id,
+        productPriceAmount: product.priceAmount,
+        compareAtAmount: product.compareAtAmount,
+        variantPriceAmount: variant?.priceAmount ?? null,
+      }),
+    ),
   );
-  const subtotal = items.reduce((sum, { item, product, modifiers }) => {
-    const unit = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+  const subtotal = items.reduce((sum, { item, product, modifiers, variant }) => {
+    const fallback = variant?.priceAmount ?? product.priceAmount;
+    const unit = prices.get(item.id)?.unitAmount ?? fallback;
     return sum + item.quantity * cartLineUnitAmount(unit, modifiers);
   }, 0);
 

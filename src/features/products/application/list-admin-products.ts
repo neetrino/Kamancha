@@ -16,6 +16,7 @@ import {
   type SQL,
 } from "drizzle-orm";
 
+import { listAttributeIdsByProduct } from "@/features/attributes/application/library";
 import { getDb } from "@/db/client";
 import {
   categories,
@@ -25,6 +26,10 @@ import {
   products,
   type LocaleTranslation,
 } from "@/db/schema";
+import {
+  loadAdminVariantDrafts,
+  type AdminProductVariants,
+} from "@/features/products/application/load-admin-variant-drafts";
 import { loadProductImagesForAdmin } from "@/features/products/application/persist-product-media";
 import { loadProductDiscounts } from "@/features/products/application/sync-product-discount";
 import type { AdminProductDiscount } from "@/features/products/types/product-discount";
@@ -43,6 +48,7 @@ export type AdminProductImage = {
 export type AdminProductListItem = {
   id: string;
   sku: string;
+  kind: "SIMPLE" | "VARIABLE";
   status: string;
   priceAmount: number;
   compareAtAmount: number | null;
@@ -57,8 +63,10 @@ export type AdminProductListItem = {
   categoryIds: string[];
   categoryLabels: string[];
   modifierIds: string[];
+  attributeIds: string[];
   discount: AdminProductDiscount | null;
   images: AdminProductImage[];
+  variants: AdminProductVariants;
 };
 
 export type AdminCategoryOption = {
@@ -242,13 +250,15 @@ export async function listAdminProducts(
     .offset(offset);
 
   const ids = rows.map((row) => row.id);
-  const [primaryImages, categoryMap, modifierMap, discountMap, galleryImages] =
+  const [primaryImages, categoryMap, modifierMap, attributeMap, discountMap, galleryImages, variantDrafts] =
     await Promise.all([
       loadPrimaryImages(ids),
       loadCategoryMeta(ids, locale),
       loadModifierIds(ids),
+      listAttributeIdsByProduct(ids),
       loadProductDiscounts(ids),
       loadProductImagesForAdmin(ids),
+      loadAdminVariantDrafts(ids),
     ]);
 
   return {
@@ -261,6 +271,7 @@ export async function listAdminProducts(
       return {
         id: product.id,
         sku: product.sku,
+        kind: product.kind,
         status: product.status,
         priceAmount: product.priceAmount,
         compareAtAmount: product.compareAtAmount,
@@ -275,8 +286,13 @@ export async function listAdminProducts(
         categoryIds: categoryMeta?.ids ?? [],
         categoryLabels: categoryMeta?.labels ?? [],
         modifierIds: modifierMap.get(product.id) ?? [],
+        attributeIds: attributeMap.get(product.id) ?? [],
         discount,
         images: galleryImages.get(product.id) ?? [],
+        variants: variantDrafts.get(product.id) ?? {
+          attributeIds: [],
+          variants: [],
+        },
       };
     }),
   };

@@ -6,6 +6,14 @@ export {
   type LocaleTranslation,
   type TranslationsJson,
 } from "@/db/schema/catalog";
+export {
+  attributeValues,
+  attributes,
+  productAttributeLinks,
+  productVariantValues,
+  productVariants,
+  type AttributeTranslations,
+} from "@/db/schema/variants";
 export { stockMovements } from "@/db/schema/inventory";
 export { bonusTransactions } from "@/db/schema/bonuses";
 export {

@@ -71,6 +71,20 @@
       "when": 1788250000000,
       "tag": "0009_group_order_partially_paid",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788260000000,
+      "tag": "0010_product_variants",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788270000000,
+      "tag": "0011_cart_attribute",
+      "breakpoints": true
     }
   ]
 }

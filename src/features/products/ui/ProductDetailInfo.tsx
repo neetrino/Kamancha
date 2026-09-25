@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
+import { ProductVariantPicker } from "@/features/products/ui/ProductVariantPicker";
 import { displayProductRating } from "@/features/products/ui/ProductReviewRating";
 import type { ProductDetail } from "@/features/products/types";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -17,6 +18,9 @@ const STAR_SRC = staticAssetUrl("/assets/brand/product/star.svg");
 type ProductDetailInfoProps = {
   locale: Locale;
   product: ProductDetail;
+  stockOnHand: number;
+  selectedVariantId?: string | null;
+  onSelectVariant?: (variantId: string) => void;
   priceAmount: number;
   initialPriceFormatted: string;
   compareAtFormatted: string | null;
@@ -61,6 +65,9 @@ function ProductRating({
 export function ProductDetailInfo({
   locale,
   product,
+  stockOnHand,
+  selectedVariantId = null,
+  onSelectVariant,
   priceAmount,
   initialPriceFormatted,
   compareAtFormatted,
@@ -71,7 +78,11 @@ export function ProductDetailInfo({
   dictionary,
 }: ProductDetailInfoProps) {
   const labels = dictionary.product;
-  const inStock = product.stockOnHand > 0;
+  const inStock = stockOnHand > 0;
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(
+    product.options[0]?.id ?? null,
+  );
+  const variantSet = product.variantSet;
   const primaryCategory = product.categories[0] ?? null;
   const hasReviews = ratingAverage != null && ratingCount > 0;
   const displayRating = displayProductRating(ratingAverage);
@@ -154,11 +165,50 @@ export function ProductDetailInfo({
         </p>
       ) : null}
 
+      {variantSet && selectedVariantId && onSelectVariant ? (
+        <ProductVariantPicker
+          axes={variantSet.axes}
+          variants={variantSet.variants}
+          selectedId={selectedVariantId}
+          onSelect={onSelectVariant}
+        />
+      ) : null}
+
+      {product.options.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          <h2 className="font-big-fat-boii text-lg leading-[22px] font-normal tracking-[0.3px] text-white uppercase">
+            {labels.attribute}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {product.options.map((option) => {
+              const selected = option.id === selectedOptionId;
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setSelectedOptionId(option.id)}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                    selected
+                      ? "bg-white text-brand-forest"
+                      : "bg-white/10 text-white hover:bg-white/15"
+                  }`}
+                >
+                  {option.title}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
       <div className="h-px w-full bg-white/10" aria-hidden />
 
       <ProductPurchaseControls
         productId={product.id}
-        stockOnHand={product.stockOnHand}
+        variantId={selectedVariantId}
+        attributeId={selectedOptionId}
+        stockOnHand={stockOnHand}
         priceAmount={priceAmount}
         compareAtFormatted={compareAtFormatted}
         currency={currency}

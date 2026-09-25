@@ -9,6 +9,7 @@ import {
   groupOrderParticipants,
   groupOrders,
   productModifiers,
+  productVariants,
   products,
 } from "@/db/schema";
 import {
@@ -16,7 +17,10 @@ import {
   splitDeliveryFee,
 } from "@/features/group-orders/domain/delivery-split";
 import type { GroupOrderPaymentMode } from "@/features/group-orders/domain/status";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  pricedCartLineInput,
+  resolveProductPrices,
+} from "@/features/promotions/application/resolve-product-prices";
 import { createId } from "@/lib/id";
 
 type DbLike = ReturnType<typeof getDb> | DbTransaction;
@@ -162,6 +166,7 @@ export async function resolveLinePricing(input: {
   productId: string;
   quantity: number;
   modifierIds: readonly string[];
+  variantId?: string;
 }): Promise<
   | {
       ok: true;
@@ -183,23 +188,61 @@ export async function resolveLinePricing(input: {
       compareAtAmount: products.compareAtAmount,
       status: products.status,
       stock: products.stockOnHand,
+      kind: products.kind,
     })
     .from(products)
     .where(eq(products.id, input.productId))
     .limit(1);
 
-  if (!product || product.status !== "ACTIVE" || product.stock < 1) {
+  if (!product || product.status !== "ACTIVE") {
+    return { ok: false, error: "Product unavailable." };
+  }
+
+  let listPrice = product.price;
+  let compareAt = product.compareAtAmount;
+  let stock = product.stock;
+  if (product.kind === "VARIABLE") {
+    if (!input.variantId) {
+      return { ok: false, error: "Product unavailable." };
+    }
+    const [variant] = await getDb()
+      .select({
+        price: productVariants.priceAmount,
+        stock: productVariants.stockOnHand,
+      })
+      .from(productVariants)
+      .where(
+        and(
+          eq(productVariants.id, input.variantId),
+          eq(productVariants.productId, product.id),
+        ),
+      )
+      .limit(1);
+    if (!variant || variant.stock < 1) {
+      return { ok: false, error: "Product unavailable." };
+    }
+    listPrice = variant.price;
+    compareAt = null;
+    stock = variant.stock;
+  } else if (product.stock < 1) {
+    return { ok: false, error: "Product unavailable." };
+  }
+
+  if (stock < input.quantity) {
     return { ok: false, error: "Product unavailable." };
   }
 
   const priced = await resolveProductPrices([
-    {
-      id: product.id,
-      priceAmount: product.price,
-      compareAtAmount: product.compareAtAmount,
-    },
+    pricedCartLineInput({
+      itemId: input.variantId ?? product.id,
+      productId: product.id,
+      productPriceAmount: listPrice,
+      compareAtAmount: compareAt,
+      variantPriceAmount: product.kind === "VARIABLE" ? listPrice : null,
+    }),
   ]);
-  const catalogUnit = priced.get(product.id)?.unitAmount ?? product.price;
+  const catalogUnit =
+    priced.get(input.variantId ?? product.id)?.unitAmount ?? listPrice;
 
   let modifiers: Array<{
     id: string;

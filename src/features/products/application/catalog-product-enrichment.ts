@@ -2,6 +2,7 @@ import "server-only";
 
 import { and, eq, inArray } from "drizzle-orm";
 
+import { productIdsWithAttributes } from "@/features/attributes/application/library";
 import { getDb } from "@/db/client";
 import { productModifierLinks, productModifiers, products } from "@/db/schema";
 import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
@@ -65,7 +66,7 @@ export async function enrichCatalogProducts(
   locale: Locale,
 ): Promise<CatalogProduct[]> {
   const productIds = rows.map((row) => row.id);
-  const [images, prices, customizable] = await Promise.all([
+  const [images, prices, customizable, withAttributes] = await Promise.all([
     loadPrimaryProductImageUrls(productIds),
     resolveProductPrices(
       rows.map((row) => ({
@@ -75,6 +76,7 @@ export async function enrichCatalogProducts(
       })),
     ),
     loadProductsWithCustomizationOptions(productIds),
+    productIdsWithAttributes(productIds),
   ]);
 
   return rows
@@ -93,7 +95,8 @@ export async function enrichCatalogProducts(
         priceAmount: resolved?.unitAmount ?? product.priceAmount,
         compareAtAmount: resolved?.compareAtAmount ?? null,
         discountPercent: resolved?.discountPercent ?? null,
-        hasCustomizationOptions: customizable.has(product.id),
+        hasCustomizationOptions:
+          customizable.has(product.id) || withAttributes.has(product.id),
       } satisfies CatalogProduct;
     })
     .filter((product): product is CatalogProduct => product !== null);

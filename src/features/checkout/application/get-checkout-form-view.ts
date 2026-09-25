@@ -15,7 +15,10 @@ import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delive
 import { getGroupCartOverlay } from "@/features/group-orders/application/cart-overlay";
 import { buildInvitePath } from "@/features/group-orders/application/money";
 import { getDefaultShippingAddress } from "@/features/profile/application/address-queries";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import {
+  pricedCartLineInput,
+  resolveProductPrices,
+} from "@/features/promotions/application/resolve-product-prices";
 import { getStoreBonusSettings } from "@/features/settings/application/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import type { Locale } from "@/lib/i18n/config";
@@ -68,11 +71,15 @@ export async function getCheckoutFormView(
   const [defaultAddress, prices, bonusBalance] = await Promise.all([
     user ? getDefaultShippingAddress(user.id) : Promise.resolve(null),
     resolveProductPrices(
-      items.map(({ product }) => ({
-        id: product.id,
-        priceAmount: product.priceAmount,
-        compareAtAmount: product.compareAtAmount,
-      })),
+      items.map(({ item, product, variant }) =>
+        pricedCartLineInput({
+          itemId: item.id,
+          productId: product.id,
+          productPriceAmount: product.priceAmount,
+          compareAtAmount: product.compareAtAmount,
+          variantPriceAmount: variant?.priceAmount ?? null,
+        }),
+      ),
     ),
     user ? getUserBonusBalance(user.id) : Promise.resolve(null),
   ]);
@@ -81,8 +88,9 @@ export async function getCheckoutFormView(
     items,
     prices,
   );
-  const subtotal = items.reduce((sum, { item, product, modifiers }) => {
-    const base = prices.get(product.id)?.unitAmount ?? product.priceAmount;
+  const subtotal = items.reduce((sum, { item, product, modifiers, variant }) => {
+    const fallback = variant?.priceAmount ?? product.priceAmount;
+    const base = prices.get(item.id)?.unitAmount ?? fallback;
     return sum + item.quantity * cartLineUnitAmount(base, modifiers);
   }, 0);
 

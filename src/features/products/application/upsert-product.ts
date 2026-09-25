@@ -12,7 +12,9 @@ import {
   stockMovements,
   type TranslationsJson,
 } from "@/db/schema";
+import { syncProductAttributeLinks } from "@/features/attributes/application/library";
 import { persistProductMedia } from "@/features/products/application/persist-product-media";
+import { syncProductVariants } from "@/features/products/application/sync-product-variants";
 import { syncProductModifierLinks } from "@/features/products/application/product-modifiers";
 import { syncProductDiscount } from "@/features/products/application/sync-product-discount";
 import { requireAdmin } from "@/lib/auth/policies";
@@ -36,6 +38,21 @@ const productUpsertSchema = z.object({
   slug: z.string().trim().min(1).max(200),
   priceAmount: z.number().int().nonnegative(),
   stockOnHand: z.number().int().nonnegative(),
+  kind: z.enum(["SIMPLE", "VARIABLE"]).optional(),
+  attributeIds: z.array(z.string().uuid()).optional(),
+  variants: z
+    .array(
+      z.object({
+        id: z.string().uuid().nullable(),
+        clientKey: z.string().trim().min(1).max(80),
+        sku: z.string().trim().min(1).max(120),
+        priceAmount: z.number().int().nonnegative(),
+        stockOnHand: z.number().int().nonnegative(),
+        valueIds: z.array(z.string().uuid()),
+        removeImage: z.boolean(),
+      }),
+    )
+    .optional(),
   categoryIds: z.array(z.string().uuid()),
   modifierIds: z.array(z.string().uuid()),
   discount: z
@@ -100,6 +117,40 @@ function parsePayload(formData: FormData): ProductUpsertInput | null {
   } catch {
     return null;
   }
+}
+
+function collectVariantFiles(
+  formData: FormData,
+  data: ProductUpsertInput,
+): Map<string, File> {
+  const files = new Map<string, File>();
+  for (const variant of data.variants ?? []) {
+    const entry = formData.get(`variantImage:${variant.clientKey}`);
+    if (entry instanceof File && entry.size > 0) {
+      files.set(variant.clientKey, entry);
+    }
+  }
+  return files;
+}
+
+async function applyProductVariants(
+  productId: string,
+  data: ProductUpsertInput,
+  formData: FormData,
+): Promise<{ error: string | null; stockOnHand: number | null }> {
+  const kind = data.kind ?? "SIMPLE";
+  const result = await syncProductVariants({
+    productId,
+    kind,
+    attributeIds: data.attributeIds ?? [],
+    variants: data.variants ?? [],
+    filesByClientKey: collectVariantFiles(formData, data),
+  });
+  if (!result.ok) return { error: result.error, stockOnHand: null };
+  return {
+    error: null,
+    stockOnHand: kind === "VARIABLE" ? result.stockOnHand : null,
+  };
 }
 
 function collectImageFiles(formData: FormData): File[] {
@@ -195,19 +246,25 @@ export async function createProductFromDrawerAction(
     return err("VALIDATION_ERROR", modifierError);
   }
 
+  const variants = await applyProductVariants(id, data, formData);
+  if (variants.error) return err("VALIDATION_ERROR", variants.error);
+  const attributeError = await syncProductAttributeLinks(id, data.attributeIds ?? []);
+  if (attributeError) return err("VALIDATION_ERROR", attributeError);
+  const createdStock = variants.stockOnHand ?? data.stockOnHand;
+
   const discountError = await syncProductDiscount(id, data.discount);
   if (discountError) {
     return err("VALIDATION_ERROR", discountError);
   }
 
-  if (data.stockOnHand > 0) {
+  if (createdStock > 0) {
     await getDb().insert(stockMovements).values({
       id: createId(),
       productId: id,
-      delta: data.stockOnHand,
+      delta: createdStock,
       reason: "ADMIN_ADJUSTMENT",
       actorUserId: actor.id,
-      resultingBalance: data.stockOnHand,
+      resultingBalance: createdStock,
     });
   }
 
@@ -297,12 +354,21 @@ export async function updateProductFromDrawerAction(
     return err("VALIDATION_ERROR", modifierError);
   }
 
+  const variants = await applyProductVariants(existing.id, data, formData);
+  if (variants.error) return err("VALIDATION_ERROR", variants.error);
+  const attributeError = await syncProductAttributeLinks(
+    existing.id,
+    data.attributeIds ?? [],
+  );
+  if (attributeError) return err("VALIDATION_ERROR", attributeError);
+  const nextStock = variants.stockOnHand ?? data.stockOnHand;
+
   const discountError = await syncProductDiscount(existing.id, data.discount);
   if (discountError) {
     return err("VALIDATION_ERROR", discountError);
   }
 
-  const delta = data.stockOnHand - existing.stockOnHand;
+  const delta = nextStock - existing.stockOnHand;
   if (delta !== 0) {
     await getDb().insert(stockMovements).values({
       id: createId(),
@@ -310,7 +376,7 @@ export async function updateProductFromDrawerAction(
       delta,
       reason: "ADMIN_ADJUSTMENT",
       actorUserId: actor.id,
-      resultingBalance: data.stockOnHand,
+      resultingBalance: nextStock,
     });
   }
 

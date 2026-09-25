@@ -20,8 +20,10 @@ import {
   productCategories,
   products,
 } from "@/db/schema";
+import { listProductAttributeOptions } from "@/features/attributes/application/library";
 import { enrichCatalogProducts } from "@/features/products/application/catalog-product-enrichment";
 import { listCatalogProducts } from "@/features/products/application/list-catalog-products";
+import { loadStorefrontVariants } from "@/features/products/application/load-storefront-variants";
 import { listLinkedModifiersForProduct } from "@/features/products/application/product-modifiers";
 import {
   DEFAULT_CATALOG_PAGE_SIZE,
@@ -277,10 +279,12 @@ async function loadProductDetailBySlug(
     return null;
   }
 
-  const [images, productCats, linkedModifiers] = await Promise.all([
+  const [images, productCats, linkedModifiers, variantSet, options] = await Promise.all([
     loadProductGallery(product.id, locale, product.translation.title),
     loadProductCategories(product.id, locale),
     listLinkedModifiersForProduct(product.id),
+    loadStorefrontVariants(product.id, locale),
+    listProductAttributeOptions(product.id, locale),
   ]);
 
   const gallery =
@@ -315,6 +319,8 @@ async function loadProductDetailBySlug(
         name: row.name,
         priceAmount: 0,
       })),
+    options,
+    variantSet,
   };
 }
 
@@ -323,7 +329,7 @@ export const getProductDetailBySlug = cache(
   async (locale: Locale, slug: string): Promise<ProductDetail | null> => {
     return unstable_cache(
       async () => loadProductDetailBySlug(locale, slug),
-      ["product-detail-v2", locale, slug],
+      ["product-detail-v4", locale, slug],
       {
         tags: [
           CACHE_TAGS.productDetail,

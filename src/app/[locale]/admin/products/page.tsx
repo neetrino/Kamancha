@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { listAttributeOptions } from "@/features/attributes/application/library";
 import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import {
@@ -85,11 +86,12 @@ export default async function AdminProductsPage({
         categoryId: undefined,
       };
 
-  const [{ rows, total, pageSize }, categories, modifierLibrary] =
+  const [{ rows, total, pageSize }, categories, modifierLibrary, attributeLibrary] =
     await Promise.all([
       listAdminProducts(locale, filters),
       listAdminCategoryOptions(locale),
       listModifiersForProductAdmin(null),
+      listAttributeOptions(locale),
     ]);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -125,6 +127,7 @@ export default async function AdminProductsPage({
         sortLinks={sortLinks}
         categories={categories}
         modifierLibrary={modifierLibrary}
+        attributeLibrary={attributeLibrary}
         total={total}
         q={filters.q}
         categoryId={filters.categoryId}

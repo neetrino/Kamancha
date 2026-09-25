@@ -183,6 +183,10 @@ Immutable ledger՝ product, signed delta, reason (`ORDER`,`CANCEL`,`RETURN`,`ADM
 
 Direct unexplained stock overwrite չի թույլատրվում։
 
+### 6.7 Attributes և variants
+
+Simple ապրանքը (`products.kind = SIMPLE`) մնում է մեկ գին/պահեստ/SKU-ով։ Variable ապրանքը օգտագործում է գլոբալ `attributes` + `attribute_values` գրադարան (մսի տեսակ, չափ, քաշ, կծվություն, համ), `product_attribute_links` և `product_variants`։ Յուրաքանչյուր variant ունի իր price, stock, SKU և optional image key։ Համակցությունը (`Գառան + Մեծ`) առանձին variant է (`option_signature`)։ Product-ի `price_amount`-ը variable-ի համար նվազագույն variant գինն է, `stock_on_hand`-ը՝ variant պահեստների գումարը, որպեսզի կատալոգի գործող ֆիլտրերը չկոտրվեն։
+
 ## 7. Content
 
 ### 7.1 `hero_slides`
@@ -207,7 +211,7 @@ Nullable user կամ guest token hash, status (`ACTIVE`,`MERGED`,`CONVERTED`,`AB
 
 ### 8.2 `cart_items`
 
-Cart/product, `selection_key` (sorted modifier IDs), quantity > 0, timestamps և unique `(cart_id, product_id, selection_key)`։ Նույն product-ը տարբեր modifier ընտրությամբ առանձին line է։ Cart-ի ցուցադրվող price-ը authoritative snapshot չէ. checkout-ը նորից հաշվարկում է։
+Cart/product, optional `variant_id` (variable ապրանքի ընտրված տարբերակ), `selection_key` (sorted modifier IDs), quantity > 0։ Unique line-ը simple-ի համար `(cart_id, product_id, selection_key)` է, variable-ի համար՝ նաև `variant_id`։ Նույն product-ը տարբեր variant-ով կամ modifier ընտրությամբ առանձին line է։ Cart-ի ցուցադրվող price-ը authoritative snapshot չէ. checkout-ը նորից հաշվարկում է variant-ի գինը։
 
 ### 8.3 `cart_item_modifiers`
 

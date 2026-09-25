@@ -2,7 +2,7 @@
 
 import { createHash } from "node:crypto";
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 import { getProviders } from "@/config/providers";
@@ -14,6 +14,7 @@ import {
   orderItems,
   orders,
   payments,
+  productVariants,
   products,
   promotions,
   promotionUsers,
@@ -62,7 +63,13 @@ import {
   evaluateCouponDiscount,
 } from "@/features/promotions/domain/evaluate-coupon";
 import { normalizePromotionCode } from "@/features/promotions/domain/promotion-rules";
-import { resolveProductPrices } from "@/features/promotions/application/resolve-product-prices";
+import { loadAttributeTitles } from "@/features/attributes/application/library";
+import { variantLabel } from "@/features/products/application/load-variant-snapshots";
+import {
+  pricedCartLineInput,
+  resolveProductPrices,
+} from "@/features/promotions/application/resolve-product-prices";
+import { isLocale } from "@/lib/i18n/config";
 import {
   lockAndQuoteBonusForCheckout,
   persistCheckoutBonusRedeem,
@@ -304,6 +311,8 @@ export async function createOrderAction(
         compareAtAmount: number | null;
         lineDiscountAmount: number;
         lineTotal: number;
+        variantId: string | null;
+        variantLabel: string | null;
         modifiers: Array<{
           modifierId: string;
           kind: "ADDITION" | "EXCEPTION";
@@ -312,19 +321,34 @@ export async function createOrderAction(
         }>;
       }> = [];
 
-      const qtyByProduct = new Map<string, number>();
-      for (const { item, product } of items) {
+      const simpleQty = new Map<string, number>();
+      const variantQty = new Map<string, { productId: string; qty: number }>();
+      for (const { item, product, variant } of items) {
         if (product.status !== "ACTIVE") {
           throw new Error("A product in the cart is unavailable.");
         }
-        qtyByProduct.set(
+        if (product.kind === "VARIABLE") {
+          if (!variant || variant.productId !== product.id) {
+            throw new Error("A product option in the cart is unavailable.");
+          }
+          const current = variantQty.get(variant.id);
+          variantQty.set(variant.id, {
+            productId: product.id,
+            qty: (current?.qty ?? 0) + item.quantity,
+          });
+          continue;
+        }
+        if (item.variantId) {
+          throw new Error("A product in the cart is unavailable.");
+        }
+        simpleQty.set(
           product.id,
-          (qtyByProduct.get(product.id) ?? 0) + item.quantity,
+          (simpleQty.get(product.id) ?? 0) + item.quantity,
         );
       }
 
       const lockedById = new Map<string, typeof products.$inferSelect>();
-      for (const [productId, neededQty] of qtyByProduct) {
+      for (const productId of new Set(items.map(({ product }) => product.id))) {
         const [locked] = await tx
           .select()
           .from(products)
@@ -332,40 +356,75 @@ export async function createOrderAction(
           .for("update")
           .limit(1);
 
-        if (!locked || locked.stockOnHand < neededQty) {
+        const neededQty = simpleQty.get(productId) ?? 0;
+        if (!locked || (locked.kind === "SIMPLE" && locked.stockOnHand < neededQty)) {
           throw new Error("Insufficient stock for one or more items.");
         }
         lockedById.set(productId, locked);
       }
 
+      const lockedVariants = new Map<string, typeof productVariants.$inferSelect>();
+      for (const [variantId, needed] of variantQty) {
+        const [locked] = await tx
+          .select()
+          .from(productVariants)
+          .where(eq(productVariants.id, variantId))
+          .for("update")
+          .limit(1);
+        if (
+          !locked ||
+          locked.productId !== needed.productId ||
+          locked.stockOnHand < needed.qty
+        ) {
+          throw new Error("Insufficient stock for one or more items.");
+        }
+        lockedVariants.set(variantId, locked);
+      }
+
+      const labelLocale = isLocale(input.locale) ? input.locale : "hy";
+      const attributeTitles = await loadAttributeTitles(
+        items.flatMap(({ item }) => (item.attributeId ? [item.attributeId] : [])),
+        labelLocale,
+      );
       const pricedUnits = await resolveProductPrices(
-        [...lockedById.values()].map((product) => ({
-          id: product.id,
-          priceAmount: product.priceAmount,
-          compareAtAmount: product.compareAtAmount,
-        })),
+        items.map(({ item, product, variant }) =>
+          pricedCartLineInput({
+            itemId: item.id,
+            productId: product.id,
+            productPriceAmount: variant?.priceAmount ?? product.priceAmount,
+            compareAtAmount: variant ? null : product.compareAtAmount,
+            variantPriceAmount: variant?.priceAmount ?? null,
+          }),
+        ),
       );
 
       const remainingStock = new Map(
-        [...lockedById.entries()].map(([id, product]) => [
+        [...simpleQty.keys()].map((id) => [
           id,
-          product.stockOnHand,
+          lockedById.get(id)?.stockOnHand ?? 0,
+        ]),
+      );
+      const remainingVariantStock = new Map(
+        [...lockedVariants.entries()].map(([id, variant]) => [
+          id,
+          variant.stockOnHand,
         ]),
       );
 
-      for (const { item, product, modifiers } of items) {
+      for (const { item, product, modifiers, variant } of items) {
         const locked = lockedById.get(product.id);
         if (!locked) {
           throw new Error("A product in the cart is unavailable.");
         }
 
-        const resolved = pricedUnits.get(locked.id);
-        const baseUnit = resolved?.unitAmount ?? locked.priceAmount;
+        const listAmount = variant?.priceAmount ?? locked.priceAmount;
+        const resolved = pricedUnits.get(item.id);
+        const baseUnit = resolved?.unitAmount ?? listAmount;
         const unitAmount = cartLineUnitAmount(baseUnit, modifiers);
         const compareAtAmount = resolved?.compareAtAmount ?? null;
         const lineDiscountAmount = Math.max(
           0,
-          (resolved?.listAmount ?? locked.priceAmount) - baseUnit,
+          (resolved?.listAmount ?? listAmount) - baseUnit,
         );
         const lineTotal = unitAmount * item.quantity;
         const unitDisplayAmount = Number(
@@ -378,17 +437,34 @@ export async function createOrderAction(
         );
         subtotal += lineTotal;
 
-        const nextStock =
-          (remainingStock.get(locked.id) ?? locked.stockOnHand) - item.quantity;
-        remainingStock.set(locked.id, nextStock);
+        if (variant) {
+          const nextVariantStock =
+            (remainingVariantStock.get(variant.id) ?? variant.stockOnHand) -
+            item.quantity;
+          remainingVariantStock.set(variant.id, nextVariantStock);
+        } else {
+          const nextStock =
+            (remainingStock.get(locked.id) ?? locked.stockOnHand) - item.quantity;
+          remainingStock.set(locked.id, nextStock);
+        }
+
+        const attributeLabel = item.attributeId
+          ? (attributeTitles.get(item.attributeId) ?? null)
+          : null;
+        const optionLabel = [variantLabel(variant, labelLocale), attributeLabel]
+          .filter((label): label is string => Boolean(label))
+          .join(" · ");
+        const productTitle =
+          locked.translations[labelLocale]?.title ??
+          locked.translations.hy?.title ??
+          locked.sku;
 
         lineSnapshots.push({
           productId: locked.id,
-          title:
-            locked.translations.en?.title ??
-            locked.translations.hy?.title ??
-            locked.sku,
-          sku: locked.sku,
+          title: optionLabel ? `${productTitle} · ${optionLabel}` : productTitle,
+          sku: variant?.sku ?? locked.sku,
+          variantId: variant?.id ?? null,
+          variantLabel: optionLabel || null,
           quantity: item.quantity,
           unitAmount,
           unitDisplayAmount,
@@ -588,6 +664,8 @@ export async function createOrderAction(
           productId: line.productId,
           productTitleSnapshot: line.title,
           productSkuSnapshot: line.sku,
+          variantId: line.variantId,
+          variantLabelSnapshot: line.variantLabel,
           quantity: line.quantity,
           unitBaseAmount: line.unitAmount,
           unitDisplayAmount: line.unitDisplayAmount,
@@ -621,8 +699,7 @@ export async function createOrderAction(
           })
           .where(eq(products.id, productId));
 
-        const orderedQty =
-          (qtyByProduct.get(productId) ?? 0);
+        const orderedQty = simpleQty.get(productId) ?? 0;
         await tx.insert(stockMovements).values({
           id: createId(),
           productId,
@@ -632,6 +709,54 @@ export async function createOrderAction(
           resultingBalance: nextStock,
           correlationId: number,
         });
+      }
+
+      for (const [variantId, nextStock] of remainingVariantStock) {
+        await tx
+          .update(productVariants)
+          .set({ stockOnHand: nextStock, updatedAt: now })
+          .where(eq(productVariants.id, variantId));
+      }
+
+      const variableProductIds = [
+        ...new Set([...variantQty.values()].map((row) => row.productId)),
+      ];
+      if (variableProductIds.length > 0) {
+        const variantRows = await tx
+          .select({
+            productId: productVariants.productId,
+            stockOnHand: productVariants.stockOnHand,
+          })
+          .from(productVariants)
+          .where(inArray(productVariants.productId, variableProductIds));
+        const stockByProduct = new Map<string, number>();
+        for (const row of variantRows) {
+          stockByProduct.set(
+            row.productId,
+            (stockByProduct.get(row.productId) ?? 0) + row.stockOnHand,
+          );
+        }
+        for (const productId of variableProductIds) {
+          const nextStock = stockByProduct.get(productId) ?? 0;
+          const previous = lockedById.get(productId)?.stockOnHand ?? nextStock;
+          await tx
+            .update(products)
+            .set({
+              stockOnHand: nextStock,
+              version: sql`${products.version} + 1`,
+              updatedAt: now,
+            })
+            .where(eq(products.id, productId));
+          await tx.insert(stockMovements).values({
+            id: createId(),
+            productId,
+            delta: nextStock - previous,
+            reason: "ORDER",
+            orderId,
+            resultingBalance: nextStock,
+            correlationId: number,
+          });
+        }
       }
 
       const payment = await getProviders().payment.createPayment({
