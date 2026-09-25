@@ -3,6 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
+import { FooterPaymentMarks } from "@/components/layout/FooterPaymentMarks";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
   LegalDocumentView,
@@ -58,6 +59,8 @@ export function LegalPoliciesHub({
             </li>
           ))}
         </ul>
+
+        <FooterPaymentMarks layout="grid" />
       </div>
 
       <SideSheet
