@@ -30,24 +30,63 @@ const PAYMENT_MARKS = [
   },
 ] as const;
 
-export function FooterPaymentMarks() {
+type FooterPaymentMarksProps = {
+  /** `grid` is the mobile policies page: two marks per row. */
+  layout?: "row" | "grid";
+};
+
+/** Policies-page pills are taller, so the marks inside scale up with them. */
+const GRID_MARK_SCALE = 1.4;
+const ARCA_GRID_MARK_SCALE = 1.2;
+/** Desktop footer Visa wordmark sits a bit larger inside the same pill. */
+const VISA_ROW_SCALE = 18 / 14;
+
+function scaledMark(
+  mark: (typeof PAYMENT_MARKS)[number],
+  scale: number,
+) {
+  return {
+    ...mark,
+    width: Math.round(mark.width * scale),
+    height: Math.round(mark.height * scale),
+  };
+}
+
+function markSize(mark: (typeof PAYMENT_MARKS)[number], layout: "row" | "grid") {
+  if (layout === "row") {
+    return mark.alt === "Visa" ? scaledMark(mark, VISA_ROW_SCALE) : mark;
+  }
+  const scale = mark.alt === "Arca" ? ARCA_GRID_MARK_SCALE : GRID_MARK_SCALE;
+  return scaledMark(mark, scale);
+}
+
+export function FooterPaymentMarks({ layout = "row" }: FooterPaymentMarksProps) {
+  const listClassName =
+    layout === "grid"
+      ? "grid grid-cols-2 gap-3 xl:hidden"
+      : "ml-auto hidden shrink-0 items-center gap-6 xl:flex";
+  const itemClassName =
+    layout === "grid"
+      ? "flex h-12 w-full items-center justify-center rounded-[15px] bg-white px-4"
+      : "flex h-10 items-center justify-center rounded-[15px] bg-white px-4";
+
   return (
-    <ul className="ml-auto hidden shrink-0 items-center gap-6 xl:flex">
-      {PAYMENT_MARKS.map((mark) => (
-        <li
-          key={mark.alt}
-          className="flex h-10 items-center justify-center rounded-[15px] bg-white px-4"
-        >
-          <Image
-            src={staticAssetUrl(mark.src, { sameOrigin: true })}
-            alt={mark.alt}
-            width={mark.width}
-            height={mark.height}
-            unoptimized
-            style={{ width: "auto", height: mark.height }}
-          />
-        </li>
-      ))}
+    <ul className={listClassName}>
+      {PAYMENT_MARKS.map((source) => {
+        const mark = markSize(source, layout);
+        return (
+          <li key={mark.alt} className={itemClassName}>
+            <Image
+              src={staticAssetUrl(mark.src, { sameOrigin: true })}
+              alt={mark.alt}
+              width={mark.width}
+              height={mark.height}
+              unoptimized
+              style={{ width: "auto", height: mark.height }}
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }
