@@ -29,14 +29,14 @@ const SCALE: Record<StepperScale, { button: string; count: string; icon: string 
       icon: "size-3.5",
     },
     catalog: {
-      button: "size-7 xl:size-9",
+      button: "size-7 xl:size-8",
       count: "min-w-6 text-lg xl:min-w-7 xl:text-xl",
-      icon: "size-3.5 xl:size-4",
+      icon: "size-3.5",
     },
     regular: {
-      button: "size-9",
+      button: "size-8",
       count: "min-w-7 text-xl",
-      icon: "size-4",
+      icon: "size-3.5",
     },
   };
 

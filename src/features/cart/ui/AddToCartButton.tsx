@@ -18,7 +18,7 @@ import { staticAssetUrl } from "@/lib/media/static-asset-url";
 const CART_PLUS_SRC = staticAssetUrl("/assets/brand/home/cart-plus.svg");
 const CART_MOBILE_SRC = staticAssetUrl("/assets/brand/home/product-card-cart.svg");
 const DESKTOP_CARD_QUERY = "(min-width: 1280px)";
-const PRICE_STEPPER_GAP_PX = 8;
+const PRICE_STEPPER_GAP_PX = 4;
 
 function textWidth(element: HTMLElement): number {
   const range = document.createRange();
@@ -31,22 +31,25 @@ function stepperFitsBesidePrice(slot: HTMLElement): boolean {
   if (window.matchMedia(DESKTOP_CARD_QUERY).matches) return true;
 
   const article = slot.closest("article");
-  const body = article?.querySelector<HTMLElement>("[data-card-body]");
   const priceSlot = article?.querySelector<HTMLElement>("[data-card-price]");
   const stepper = slot.querySelector<HTMLElement>("[data-qty-stepper]");
-  if (!body || !priceSlot || !stepper) return true;
+  const minus = stepper?.querySelector("button");
+  if (!priceSlot || !stepper || !minus) return true;
 
-  const style = getComputedStyle(body);
-  const available =
-    body.clientWidth -
-    Number.parseFloat(style.paddingLeft) -
-    Number.parseFloat(style.paddingRight);
+  const price = priceSlot.querySelector("p");
+  if (!price) return true;
+
   const priceWidth = Math.max(
     0,
     ...[...priceSlot.querySelectorAll("p")].map((line) => textWidth(line)),
   );
+  const priceLeft = price.getBoundingClientRect().left;
+  const stepperBox = stepper.getBoundingClientRect();
+  const leadingSpace = minus.getBoundingClientRect().left - stepperBox.left;
+  const inlineMinusLeft =
+    slot.getBoundingClientRect().right - stepper.offsetWidth + leadingSpace;
 
-  return priceWidth + stepper.offsetWidth + PRICE_STEPPER_GAP_PX <= available;
+  return priceLeft + priceWidth + PRICE_STEPPER_GAP_PX <= inlineMinusLeft;
 }
 
 function useStackedQtyStepper(
