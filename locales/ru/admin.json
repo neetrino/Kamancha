@@ -473,6 +473,7 @@
     "storeAddress": "Адрес магазина",
     "storeAddressPlaceholder": "например, Андраник 108/10, Ереван",
     "storeAddressHint": "Начните вводить название улицы — выберите вариант из подсказок Google, затем сохраните.",
+    "pickOnMap": "Отметить на карте",
     "geocoded": "Геокодировано: {lat}, {lng}",
     "pricePerKm": "Цена за километр (AMD)",
     "pricePerKmPlaceholder": "1000",

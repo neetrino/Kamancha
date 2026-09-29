@@ -72,6 +72,8 @@ const cashChangeDenominationSchema = z.object({
 export const deliverySettingsSchema = z
   .object({
     originAddress: z.string().trim().min(3).max(300),
+    originLat: z.number().finite().min(-90).max(90).nullable().optional(),
+    originLng: z.number().finite().min(-180).max(180).nullable().optional(),
     pricePerKmAmount: z.coerce.number().int().min(0).max(10_000_000),
     isActive: z.boolean(),
     schedule: deliveryScheduleSchema,
@@ -81,6 +83,16 @@ export const deliverySettingsSchema = z
       .default([]),
   })
   .superRefine((value, ctx) => {
+    const hasOriginLat = value.originLat != null;
+    const hasOriginLng = value.originLng != null;
+    if (hasOriginLat !== hasOriginLng) {
+      ctx.addIssue({
+        code: "custom",
+        path: hasOriginLat ? ["originLng"] : ["originLat"],
+        message: "Both origin coordinates must be provided together.",
+      });
+    }
+
     const amounts = new Set<number>();
     for (const [index, item] of value.cashChangeDenominations.entries()) {
       if (amounts.has(item.amount)) {

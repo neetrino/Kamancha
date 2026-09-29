@@ -93,21 +93,27 @@ export async function saveDeliverySettingsAction(
   let originLat: number;
   let originLng: number;
   let formattedAddress: string;
-  try {
-    const geocoded = await geocodeAddress(data.originAddress);
-    originLat = geocoded.location.lat;
-    originLng = geocoded.location.lng;
-    formattedAddress = geocoded.formattedAddress;
-  } catch (error) {
-    logger.warn("delivery.origin_geocode_failed", {
-      message: error instanceof Error ? error.message : "unknown",
-    });
-    return err(
-      "GEOCODE_FAILED",
-      error instanceof Error
-        ? error.message
-        : "Store address could not be found on the map.",
-    );
+  if (data.originLat != null && data.originLng != null) {
+    originLat = data.originLat;
+    originLng = data.originLng;
+    formattedAddress = data.originAddress.trim();
+  } else {
+    try {
+      const geocoded = await geocodeAddress(data.originAddress);
+      originLat = geocoded.location.lat;
+      originLng = geocoded.location.lng;
+      formattedAddress = geocoded.formattedAddress;
+    } catch (error) {
+      logger.warn("delivery.origin_geocode_failed", {
+        message: error instanceof Error ? error.message : "unknown",
+      });
+      return err(
+        "GEOCODE_FAILED",
+        error instanceof Error
+          ? error.message
+          : "Store address could not be found on the map.",
+      );
+    }
   }
 
   const value = {

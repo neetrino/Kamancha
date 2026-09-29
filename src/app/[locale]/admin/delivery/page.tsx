@@ -39,6 +39,7 @@ export default async function AdminDeliveryPage({
         delivery: dict.admin.delivery,
         common: dict.admin.common,
         confirm: dict.admin.confirm,
+        map: dict.checkout.map,
       }}
     />
   );
