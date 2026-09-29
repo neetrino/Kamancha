@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
+import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import {
   ADMIN_INPUT,
   ADMIN_LABEL,
@@ -28,6 +29,7 @@ type AdminDeliveryViewCopy = {
   delivery: Dictionary["admin"]["delivery"];
   common: Dictionary["admin"]["common"];
   confirm: Dictionary["admin"]["confirm"];
+  map: Dictionary["checkout"]["map"];
 };
 
 type AdminDeliveryViewProps = {
@@ -146,6 +148,21 @@ export function AdminDeliveryView({
     sortedDenominations,
   ]);
 
+  function onOriginAddressChange(nextAddress: string): void {
+    setOriginAddress(nextAddress);
+    setOriginLat(null);
+    setOriginLng(null);
+  }
+
+  function onOriginAddressMapSelected(
+    nextAddress: string,
+    point?: { lat: number; lng: number },
+  ): void {
+    setOriginAddress(nextAddress);
+    setOriginLat(point?.lat ?? null);
+    setOriginLng(point?.lng ?? null);
+  }
+
   function onSave(): void {
     if (!isDirty) return;
     startTransition(async () => {
@@ -160,6 +177,8 @@ export function AdminDeliveryView({
       }));
       const result = await saveDeliverySettingsAction(locale, {
         originAddress,
+        originLat,
+        originLng,
         pricePerKmAmount: Number(pricePerKmAmount),
         isActive,
         schedule: {
@@ -233,28 +252,47 @@ export function AdminDeliveryView({
               </p>
             </div>
 
-            <label>
+            <div>
               <span className={ADMIN_LABEL}>{copy.delivery.storeAddress}</span>
-              <AddressAutocomplete
-                value={originAddress}
-                onValueChange={setOriginAddress}
-                placeholder={copy.delivery.storeAddressPlaceholder}
-                required
-                className={ADMIN_INPUT}
-                disabled={isPending}
-                languageCode={languageCode}
-              />
-              <span className="mt-1 block text-xs text-gray-500">
-                {copy.delivery.storeAddressHint}
-              </span>
-              {originLat != null && originLng != null ? (
+              <div className="mt-1 flex items-center gap-2 sm:gap-3">
+                <div className="min-w-0 flex-1">
+                  <AddressAutocomplete
+                    value={originAddress}
+                    onValueChange={onOriginAddressChange}
+                    placeholder={copy.delivery.storeAddressPlaceholder}
+                    required
+                    className={ADMIN_INPUT}
+                    disabled={isPending}
+                    languageCode={languageCode}
+                  />
+                </div>
+                <AddressMapPicker
+                  addressValue={originAddress}
+                  disabled={isPending}
+                  onAddressSelected={onOriginAddressMapSelected}
+                  labels={{
+                    openMap: copy.delivery.pickOnMap,
+                    title: copy.map.title,
+                    hint: copy.map.hint,
+                    confirm: copy.map.confirm,
+                    cancel: copy.map.cancel,
+                    resolving: copy.map.resolving,
+                  }}
+                />
+              </div>
+              <div>
                 <span className="mt-1 block text-xs text-gray-500">
-                  {copy.delivery.geocoded
-                    .replace("{lat}", originLat.toFixed(5))
-                    .replace("{lng}", originLng.toFixed(5))}
+                  {copy.delivery.storeAddressHint}
                 </span>
-              ) : null}
-            </label>
+                {originLat != null && originLng != null ? (
+                  <span className="mt-1 block text-xs text-gray-500">
+                    {copy.delivery.geocoded
+                      .replace("{lat}", originLat.toFixed(5))
+                      .replace("{lng}", originLng.toFixed(5))}
+                  </span>
+                ) : null}
+              </div>
+            </div>
 
             <label>
               <span className={ADMIN_LABEL}>{copy.delivery.pricePerKm}</span>

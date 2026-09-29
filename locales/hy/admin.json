@@ -473,6 +473,7 @@
     "storeAddress": "Խանութի հասցե",
     "storeAddressPlaceholder": "օր.՝ Անդրանիկ 108/10, Երևան",
     "storeAddressHint": "Սկսեք մուտքագրել փողոցի անունը — ընտրեք Google-ի առաջարկներից, ապա պահպանեք։",
+    "pickOnMap": "Նշել քարտեզով",
     "geocoded": "Գեոկոդավորված՝ {lat}, {lng}",
     "pricePerKm": "Գին մեկ կիլոմետրի համար (AMD)",
     "pricePerKmPlaceholder": "1000",

@@ -473,6 +473,7 @@
     "storeAddress": "Store address",
     "storeAddressPlaceholder": "e.g. Andranik 108/10, Yerevan",
     "storeAddressHint": "Start typing a street name — pick from Google suggestions, then Save.",
+    "pickOnMap": "Pick on map",
     "geocoded": "Geocoded: {lat}, {lng}",
     "pricePerKm": "Price per kilometer (AMD)",
     "pricePerKmPlaceholder": "1000",
