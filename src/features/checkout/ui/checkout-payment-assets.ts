@@ -27,11 +27,11 @@ export const CHECKOUT_PAYMENT_CASH_SRC = staticAssetUrl(
 );
 
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =
-  "ring-2 ring-inset ring-brand-forest";
+  "ring-2 ring-inset ring-[#dcecc6]";
 export const CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS =
-  "hover:bg-gray-50";
+  "ring-2 ring-inset ring-transparent hover:bg-gray-50";
 export const CHECKOUT_PAYMENT_OPTION_BASE_CLASS =
-  "flex cursor-pointer items-center overflow-hidden rounded-[15px] bg-white p-4 outline-none transition-colors [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
+  "flex cursor-pointer items-center overflow-hidden rounded-[15px] bg-white p-2.5 text-sm outline-none transition-[box-shadow,background-color] duration-300 ease-out [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0 xl:p-4 xl:text-base";
 
 export const CHECKOUT_PAYMENT_ICON_BOX_HEIGHT_PX = 40;
 export const CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX = 8;
@@ -58,8 +58,8 @@ export const CHECKOUT_PAYMENT_CARD_BADGE_ORDER = [
   "ArCa",
 ] as const;
 
-export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX = 48;
-export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX = 40;
+export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX = 40;
+export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX = 33;
 
 export type CheckoutCardPaymentBadgeAlt =
   (typeof CHECKOUT_PAYMENT_CARD_BADGE_ORDER)[number];
@@ -102,12 +102,25 @@ export const CHECKOUT_PAYMENT_IDRAM_LOGO_WIDTH_PX = 415;
 export const CHECKOUT_PAYMENT_IDRAM_LOGO_HEIGHT_PX = 121;
 export const CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_PX = 112;
 export const CHECKOUT_PAYMENT_IDRAM_LOGO_DISPLAY_HEIGHT_PX = 32;
-export const CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_MOBILE_PX = 96;
-export const CHECKOUT_PAYMENT_IDRAM_LOGO_DISPLAY_HEIGHT_MOBILE_PX = 26;
-export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX = 64;
+export const CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_MOBILE_PX = 80;
+export const CHECKOUT_PAYMENT_IDRAM_LOGO_DISPLAY_HEIGHT_MOBILE_PX = 22;
+export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX = 40;
 export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_DESKTOP_PX = 56;
-export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX = 64;
+export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX = 48;
 export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_DESKTOP_PX = 64;
+
+/** Same box for Visa, Mastercard, and ArCa at a given display height. */
+export function getCheckoutCardBadgeUniformBoxSize(
+  logoHeightPx: number,
+): CheckoutCardBadgeFramedBoxSize {
+  const widthPx = Math.max(
+    ...CHECKOUT_CARD_PAYMENT_BADGES.map((badge) =>
+      Math.round(badge.sourceWidthPx * (logoHeightPx / badge.sourceHeightPx)),
+    ),
+  );
+
+  return { widthPx, heightPx: logoHeightPx };
+}
 
 /** Uniform framed box — sized from Visa wordmark width at the given logo height. */
 export function getCheckoutCardBadgeFramedBoxSize(

@@ -26,8 +26,10 @@ type CheckoutPaymentMethodOptionProps = {
   cardDescriptionBelowIcons?: boolean;
 };
 
-function optionClass(selected: boolean): string {
+function optionClass(selected: boolean, matchFirstField: boolean): string {
   return `${CHECKOUT_PAYMENT_OPTION_BASE_CLASS} ${
+    matchFirstField ? "min-h-16 xl:min-h-0" : ""
+  } ${
     selected
       ? CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS
       : CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS
@@ -47,6 +49,11 @@ export function CheckoutPaymentMethodOption({
   cardDescriptionBelowIcons = false,
 }: CheckoutPaymentMethodOptionProps) {
   const isCardMethod = option.id === "arca";
+  const matchFirstField =
+    option.id === "cash_on_delivery" ||
+    option.id === "idram" ||
+    option.id === "arca";
+  const fieldClass = optionClass(selected, matchFirstField);
   const useExpandedCardLayout = isCardMethod && cardBadgeSize === "desktop";
   const useStackedCardDescription =
     isCardMethod && cardDescriptionBelowIcons;
@@ -59,13 +66,14 @@ export function CheckoutPaymentMethodOption({
 
   if (isCardMethod) {
     return (
-      <label className={optionClass(selected)}>
+      <label className={fieldClass}>
         <CheckoutRadio
           name="paymentMethod"
           value={option.id}
           checked={selected}
           onChange={() => onSelect(option.id)}
           disabled={disabled}
+          compactOnMobile
           className="relative z-[2] self-center"
         />
         {useStackedCardDescription ? (
@@ -83,9 +91,11 @@ export function CheckoutPaymentMethodOption({
           </div>
         ) : (
           <>
-            <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-1.5 xl:hidden">
-              <span className="font-medium text-gray-900">{option.shortName}</span>
+            <div className="relative z-[2] flex w-full min-w-0 flex-1 items-center gap-2 xl:hidden">
               {icons}
+              <span className="ml-0.5 shrink-0 text-[15px] font-medium text-gray-900 xl:ml-0 xl:text-base">
+                {option.shortName}
+              </span>
             </div>
             <div className="relative z-[2] hidden min-w-0 flex-1 items-center gap-3 xl:flex xl:gap-4">
               <div className="flex shrink-0 items-center">{icons}</div>
@@ -101,13 +111,14 @@ export function CheckoutPaymentMethodOption({
   }
 
   return (
-    <label className={optionClass(selected)}>
+    <label className={fieldClass}>
       <CheckoutRadio
         name="paymentMethod"
         value={option.id}
         checked={selected}
         onChange={() => onSelect(option.id)}
         disabled={disabled}
+        compactOnMobile
         className="relative z-[2]"
       />
       <div className="relative z-[2] flex min-w-0 flex-1 items-center gap-3 xl:gap-4">
@@ -115,21 +126,23 @@ export function CheckoutPaymentMethodOption({
         <div className="min-w-0">
           {option.id === "terminal" ? (
             <>
-              <div className="font-medium text-gray-900">{option.name}</div>
+              <div className="text-[15px] font-medium text-gray-900 xl:text-base">
+                {option.name}
+              </div>
               <div className={descriptionClass(selected)}>
                 {option.description}
               </div>
             </>
           ) : option.id === "cash_on_delivery" ? (
             <>
-              <div className="font-medium text-gray-900">{option.name}</div>
+              <div className="text-[15px] font-medium text-gray-900 xl:text-base">{option.name}</div>
               <div className={`hidden xl:block ${descriptionClass(selected)}`}>
                 {option.description}
               </div>
             </>
           ) : (
             <>
-              <span className="font-medium text-gray-900 xl:hidden">
+              <span className="text-base font-medium text-gray-900 xl:hidden">
                 {option.shortName}
               </span>
               <div className="hidden xl:block">

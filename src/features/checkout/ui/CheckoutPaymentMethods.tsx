@@ -52,7 +52,7 @@ export function CheckoutPaymentMethods({
   return (
     <section
       data-checkout-field="paymentMethod"
-      className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-6 sm:px-6 sm:py-7"
+      className="liquid-glass isolate overflow-hidden rounded-3xl px-4 py-4 sm:px-6 sm:py-7"
     >
       <h2
         className={
@@ -63,7 +63,7 @@ export function CheckoutPaymentMethods({
       >
         {title}
       </h2>
-      <div className="relative z-[2] space-y-3">
+      <div className="relative z-[2] space-y-2 xl:space-y-3">
         {options.map((option) => (
           <div key={option.id} className="space-y-3">
             <CheckoutPaymentMethodOption

@@ -1,15 +1,23 @@
 import type { InputHTMLAttributes } from "react";
 
-type CheckoutRadioProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type">;
+type CheckoutRadioProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
+  /** Smaller hit target below the desktop checkout breakpoint. */
+  compactOnMobile?: boolean;
+};
 
 export function CheckoutRadio({
   className = "",
+  compactOnMobile = false,
   disabled,
   ...props
 }: CheckoutRadioProps) {
+  const sizeClass = compactOnMobile
+    ? "mr-2.5 h-4 w-4 xl:mr-4 xl:h-5 xl:w-5"
+    : "mr-4 h-5 w-5";
+
   return (
     <span
-      className={`relative mr-4 inline-flex h-5 w-5 shrink-0 items-center justify-center ${className}`.trim()}
+      className={`relative inline-flex shrink-0 items-center justify-center ${sizeClass} ${className}`.trim()}
     >
       <input type="radio" disabled={disabled} className="peer sr-only" {...props} />
       <span
