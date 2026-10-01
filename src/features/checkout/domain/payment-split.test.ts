@@ -33,6 +33,16 @@ describe("plannedOrderPaymentSplit", () => {
     ).toEqual({ onlineAmount: 3000, cashAmount: 2000 });
   });
 
+  it("puts the charge on cash when paying by terminal on site", () => {
+    expect(
+      plannedOrderPaymentSplit({
+        totalAmount: 2099,
+        chargeAmount: 2099,
+        paymentMethod: "terminal",
+      }),
+    ).toEqual({ onlineAmount: 0, cashAmount: 2099 });
+  });
+
   it("counts the full total as online when organizer pays by card", () => {
     expect(
       plannedOrderPaymentSplit({

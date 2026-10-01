@@ -51,6 +51,8 @@ export type CheckoutLabels = {
   idramDescription: string;
   card: string;
   cardDescription: string;
+  terminal: string;
+  terminalDescription: string;
   couponTitle: string;
   couponPlaceholder: string;
   couponApply: string;
@@ -141,6 +143,8 @@ export function checkoutFormLabels(
     idramDescription: copy.payment.idramDescription,
     card: copy.payment.card,
     cardDescription: copy.payment.cardDescription,
+    terminal: copy.payment.terminal,
+    terminalDescription: copy.payment.terminalDescription,
     couponTitle: copy.coupon.title,
     couponPlaceholder: copy.coupon.placeholder,
     couponApply: copy.coupon.apply,

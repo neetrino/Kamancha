@@ -76,6 +76,8 @@
     "cardDescription": "Оплата картами Visa, Mastercard или ArCa",
     "arca": "ArCa",
     "arcaDescription": "Оплата картой ArCa",
+    "terminal": "Terminal",
+    "terminalDescription": "Оплатите картой на месте",
     "selectMethod": "Пожалуйста, выберите способ оплаты"
   },
   "groupPrepaid": {

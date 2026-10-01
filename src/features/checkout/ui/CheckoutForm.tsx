@@ -177,6 +177,12 @@ export function CheckoutForm({
         shortName: labels.card,
         description: labels.cardDescription,
       },
+      {
+        id: "terminal" as const,
+        name: labels.terminal,
+        shortName: labels.terminal,
+        description: labels.terminalDescription,
+      },
     ],
     [
       labels.card,
@@ -186,6 +192,8 @@ export function CheckoutForm({
       labels.cashShort,
       labels.idram,
       labels.idramDescription,
+      labels.terminal,
+      labels.terminalDescription,
     ],
   );
 
