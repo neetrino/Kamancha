@@ -6,6 +6,7 @@ import {
   CHECKOUT_CARD_PAYMENT_BADGES,
   CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX,
   CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX,
+  getCheckoutCardBadgeUniformBoxSize,
   CHECKOUT_PAYMENT_CARD_BADGE_ORDER,
   CHECKOUT_PAYMENT_CARD_BADGE_RADIUS_MOBILE_PX,
   CHECKOUT_PAYMENT_CARD_BADGES_GAP_MOBILE_PX,
@@ -176,6 +177,9 @@ function CheckoutCardPaymentBadges({
           logoHeightPx={CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX}
           radiusPx={CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX}
           paddingPx={0}
+          boxSize={getCheckoutCardBadgeUniformBoxSize(
+            CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX,
+          )}
         />
       ))}
     </div>
@@ -198,6 +202,9 @@ function CheckoutCardPaymentBadges({
             logoHeightPx={CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX}
             radiusPx={CHECKOUT_PAYMENT_CARD_BADGE_RADIUS_MOBILE_PX}
             paddingPx={0}
+            boxSize={getCheckoutCardBadgeUniformBoxSize(
+              CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX,
+            )}
           />
         ))}
       </div>

@@ -12,6 +12,8 @@ type CheckoutPaymentBadgeProps = {
   paddingPx: number;
   framed?: boolean;
   framedBoxSize?: CheckoutCardBadgeFramedBoxSize;
+  /** Equal slot for each card image, without a border. */
+  boxSize?: CheckoutCardBadgeFramedBoxSize;
 };
 
 function getLogoSize(
@@ -32,19 +34,22 @@ export function CheckoutPaymentBadge({
   paddingPx,
   framed = false,
   framedBoxSize,
+  boxSize,
 }: CheckoutPaymentBadgeProps) {
   const logoSize = getLogoSize(badge, logoHeightPx);
+  const displayWidthPx = boxSize?.widthPx ?? logoSize.widthPx;
+  const displayHeightPx = boxSize?.heightPx ?? logoSize.heightPx;
 
   if (!framed) {
     return (
       <Image
         src={badge.src}
         alt={badge.alt}
-        width={logoSize.widthPx}
-        height={logoSize.heightPx}
+        width={displayWidthPx}
+        height={displayHeightPx}
         unoptimized
-        className="shrink-0 object-contain object-left"
-        style={{ height: logoSize.heightPx, width: logoSize.widthPx }}
+        className="shrink-0 object-contain object-center"
+        style={{ height: displayHeightPx, width: displayWidthPx }}
       />
     );
   }
