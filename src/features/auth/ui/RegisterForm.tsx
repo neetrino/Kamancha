@@ -230,17 +230,7 @@ function PolicyTextButton({
         onOpen();
       }}
     >
-      <PolicyLinkLabel label={label} />
+      {label}
     </button>
   );
-}
-
-function PolicyLinkLabel({ label }: { label: string }) {
-  const lines = label.split("\n");
-  return lines.map((line, index) => (
-    <span key={line}>
-      {index > 0 ? <br className="sm:hidden" /> : null}
-      {line}
-    </span>
-  ));
 }
