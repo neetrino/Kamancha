@@ -61,9 +61,9 @@ const BLOCK_TITLE =
 const SECTION_TITLE =
   "font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase xl:text-base";
 
-/** Long settings labels — one line on narrow mobile viewports. */
+/** Long settings labels wrap so the full title stays visible on narrow screens. */
 const SETTINGS_FIELD_TITLE =
-  "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase whitespace-nowrap xl:text-base xl:tracking-wide xl:leading-normal xl:whitespace-normal";
+  "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase xl:text-base xl:tracking-wide xl:leading-normal";
 
 const PRODUCT_THUMB_PX = 80;
 const PRODUCT_THUMB_RADIUS_PX = 14;
@@ -337,7 +337,7 @@ export function GroupOrderPageClient({
           <KamanchaPillButton
             href={`/${locale}/products`}
             label={labels.browseMenu}
-            className="max-w-none w-full sm:max-w-[316px]"
+            className="kamancha-pill-button--menu-cta max-w-none w-full sm:max-w-[316px]"
           />
         </div>
       </div>

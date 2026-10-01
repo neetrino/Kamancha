@@ -30,7 +30,7 @@ export function CheckoutSuccessView({
     <div className="checkout-page mx-auto max-w-lg">
       <h1 className={PAGE_TITLE}>{labels.title}</h1>
 
-      <section className="liquid-glass isolate overflow-hidden rounded-3xl px-5 py-8 text-center sm:px-8 sm:py-10">
+      <section className="liquid-glass isolate overflow-hidden rounded-[20px] px-5 py-8 text-center sm:px-8 sm:py-10">
         <div className="relative z-[2] mx-auto mb-5 flex size-16 items-center justify-center rounded-full bg-white sm:size-20">
           <Check
             className="size-8 text-brand-forest sm:size-10"
