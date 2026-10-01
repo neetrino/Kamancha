@@ -156,15 +156,6 @@ export function AdminProductRow({
           </button>
           <button
             type="button"
-            disabled={disabled}
-            onClick={onDelete}
-            className="rounded p-1.5 text-red-600 hover:bg-red-50"
-            aria-label={copy.table.deleteAria.replace("{title}", product.title)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
             role="switch"
             aria-checked={isActive}
             disabled={disabled}
@@ -179,6 +170,15 @@ export function AdminProductRow({
                 isActive ? "translate-x-4" : "translate-x-0"
               }`}
             />
+          </button>
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={onDelete}
+            className="rounded p-1.5 text-red-600 hover:bg-red-50"
+            aria-label={copy.table.deleteAria.replace("{title}", product.title)}
+          >
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       </td>

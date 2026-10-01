@@ -53,7 +53,6 @@ export function CheckoutPaymentMethodOption({
   const icons = (
     <CheckoutPaymentMethodIcons
       methodId={option.id}
-      mobileCardFramed={isCardMethod}
       cardBadgeSize={cardBadgeSize}
     />
   );

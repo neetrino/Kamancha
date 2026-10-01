@@ -50,6 +50,7 @@ const GLASS_ACTION_BUTTON =
   "inline-flex items-center justify-center rounded-[15px] bg-white px-4 py-2 text-sm font-semibold text-gray-900 disabled:cursor-not-allowed disabled:opacity-50";
 
 const PILL_FULL = "max-w-none sm:max-w-none";
+const PILL_CART_HEIGHT = `${PILL_FULL} kamancha-pill-button--order-cta`;
 /** Match «Հաշվել առաքումը»: same height, compact type, no ornaments. */
 const PILL_COMPACT =
   "!h-11 !min-h-11 !max-h-11 !py-0 !pt-0 !pb-0 !w-full max-w-none px-7 text-[14px] leading-5 sm:max-w-none";
@@ -60,9 +61,9 @@ const BLOCK_TITLE =
 const SECTION_TITLE =
   "font-big-fat-boii text-xl font-normal tracking-wide text-white uppercase xl:text-base";
 
-/** Long settings labels — one line on narrow mobile viewports. */
+/** Long settings labels wrap so the full title stays visible on narrow screens. */
 const SETTINGS_FIELD_TITLE =
-  "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase whitespace-nowrap xl:text-base xl:tracking-wide xl:leading-normal xl:whitespace-normal";
+  "font-big-fat-boii text-[clamp(1rem,0.25rem+4.2vw,1.125rem)] font-normal leading-tight tracking-normal text-white uppercase xl:text-base xl:tracking-wide xl:leading-normal";
 
 const PRODUCT_THUMB_PX = 80;
 const PRODUCT_THUMB_RADIUS_PX = 14;
@@ -324,22 +325,19 @@ export function GroupOrderPageClient({
 
   return (
     <div
-      className={`group-order-page mx-auto max-w-7xl px-0 py-8 ${pending ? "opacity-70" : ""}`}
+      className={`group-order-page mx-auto max-w-7xl px-0 pt-0 pb-8 xl:py-8 ${pending ? "opacity-70" : ""}`}
     >
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-12 flex flex-col gap-8 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
           <h1 className="font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px]">
             {labels.manageTitle}
           </h1>
-          <p className="mt-1 text-sm text-white/70">
-            {labels.status}: {view.status}
-          </p>
         </div>
         <div className="w-full shrink-0 sm:max-w-[316px]">
           <KamanchaPillButton
             href={`/${locale}/products`}
             label={labels.browseMenu}
-            className="max-w-none w-full sm:max-w-[316px]"
+            className="kamancha-pill-button--menu-cta max-w-none w-full sm:max-w-[316px]"
           />
         </div>
       </div>
@@ -762,7 +760,7 @@ export function GroupOrderPageClient({
                 type="button"
                 variant="light"
                 label={labels.lockAndContinue}
-                className={PILL_FULL}
+                className={PILL_CART_HEIGHT}
                 disabled={pending}
                 onClick={() =>
                   run(async () => lockGroupOrderAction({ inviteToken }))
@@ -861,7 +859,7 @@ export function GroupOrderPageClient({
                 label={
                   view.joinsClosed ? labels.openJoins : labels.closeJoins
                 }
-                className={PILL_FULL}
+                className={PILL_CART_HEIGHT}
                 disabled={pending}
                 onClick={() =>
                   run(async () =>

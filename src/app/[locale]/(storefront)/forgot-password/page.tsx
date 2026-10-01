@@ -21,7 +21,11 @@ export default async function ForgotPasswordPage({
   const dictionary = getDictionary(rawLocale);
 
   return (
-    <AuthPageShell title={dictionary.auth.forgotPasswordTitle} compactForm>
+    <AuthPageShell
+      title={dictionary.auth.forgotPasswordTitle}
+      compactForm
+      compactTitle
+    >
       <ForgotPasswordForm locale={rawLocale} dictionary={dictionary.auth} />
     </AuthPageShell>
   );

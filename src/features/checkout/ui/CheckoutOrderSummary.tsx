@@ -14,7 +14,7 @@ const SUMMARY_ALERT_PILL_CLASS =
 
 /** Static fill — nested `backdrop-filter` on iOS turns these cards milky white. */
 const CHECKOUT_CODE_GLASS_CLASS =
-  "relative z-[2] mb-6 isolate overflow-hidden rounded-xl border border-white/20 bg-white/[0.1] p-4";
+  "relative z-[2] mb-6 isolate overflow-hidden rounded-xl border border-white/20 bg-white/[0.1] p-4 xl:mb-3 xl:px-2 xl:py-2";
 
 type GiftCardPreviewView = {
   initialAmount: number;
@@ -273,7 +273,7 @@ export function CheckoutOrderSummary({
             variant="light"
             label={isSubmitting ? processingLabel : placeOrderLabel}
             disabled={isSubmitting}
-            className="max-w-none sm:max-w-none"
+            className="kamancha-pill-button--order-cta max-w-none sm:max-w-none"
           />
         </div>
         )}

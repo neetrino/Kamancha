@@ -11,10 +11,10 @@ const APPLY_MOBILE_CLASS =
   "h-9 shrink-0 rounded-[15px] border-0 bg-[#d4e5c8] px-4 text-sm font-medium text-[#222] hover:bg-[#c8dcb8] disabled:cursor-not-allowed disabled:opacity-50";
 
 const INPUT_DESKTOP_CLASS =
-  "h-11 min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200";
+  "h-9 min-w-0 flex-1 rounded-[10px] border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200";
 
 const APPLY_DESKTOP_CLASS =
-  "h-11 shrink-0 rounded-lg border-gray-200 bg-white px-4 text-sm text-gray-900 hover:bg-gray-50";
+  "h-9 shrink-0 rounded-[10px]! border-gray-200 bg-white px-4 py-0 text-sm text-gray-900 hover:bg-gray-50";
 
 const ALERT_PILL_CLASS =
   "relative z-[2] mt-2 mb-0 w-full rounded-full bg-white px-4 py-3 text-center text-sm font-medium leading-snug text-red-600";

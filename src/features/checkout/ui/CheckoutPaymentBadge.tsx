@@ -42,6 +42,7 @@ export function CheckoutPaymentBadge({
         alt={badge.alt}
         width={logoSize.widthPx}
         height={logoSize.heightPx}
+        unoptimized
         className="shrink-0 object-contain object-left"
         style={{ height: logoSize.heightPx, width: logoSize.widthPx }}
       />
@@ -75,6 +76,7 @@ export function CheckoutPaymentBadge({
           src={badge.src}
           alt={badge.alt}
           fill
+          unoptimized
           sizes={`${boxWidthPx}px`}
           className="object-contain object-center"
         />

@@ -15,6 +15,7 @@ import { Menu, X } from "lucide-react";
 
 import { HeaderMenuIcon } from "@/components/layout/storefront-nav-icons";
 import { AppLink } from "@/components/ui/AppLink";
+import { LegalPolicySheet } from "@/features/legal/ui/LegalPolicySheet";
 import type { SessionUser } from "@/lib/auth/session";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
@@ -25,6 +26,8 @@ import {
 } from "@/lib/react/use-body-scroll-lock";
 import { useIsClient } from "@/lib/react/use-is-client";
 
+const DRAWER_ITEM_CLASS =
+  "rounded-xl px-1 py-3.5 text-left font-big-fat-boii text-lg text-brand-forest transition-colors hover:bg-gray-50";
 const MENU_TRANSITION_MS = 320;
 const MENU_GAP_PX = 8;
 const MENU_INSET_PX = 12;
@@ -80,6 +83,7 @@ export function MobileNavDrawer({
   const pillPlaceholderRef = useRef<HTMLDivElement | null>(null);
 
   const [open, setOpen] = useState(false);
+  const [legalSheetOpen, setLegalSheetOpen] = useState(false);
   const mounted = useIsClient();
   const [rendered, setRendered] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -271,6 +275,8 @@ export function MobileNavDrawer({
 
   const homeHref = `/${locale}`;
   const legalHref = `/${locale}/legal`;
+  const loginPage =
+    pathname === `/${locale}/login` || pathname === `/${locale}/login/`;
   const legalActive =
     pathname === legalHref || pathname.startsWith(`${legalHref}/`);
   const drawerNavItems = navItems.filter(
@@ -378,7 +384,7 @@ export function MobileNavDrawer({
                           href={item.href}
                           prefetchPolicy="intent"
                           aria-current={active ? "page" : undefined}
-                          className="rounded-xl px-1 py-3.5 font-big-fat-boii text-lg text-brand-forest transition-colors hover:bg-gray-50"
+                          className={DRAWER_ITEM_CLASS}
                           onClick={() => setOpen(false)}
                         >
                           {item.label}
@@ -386,32 +392,41 @@ export function MobileNavDrawer({
                       );
                     })}
 
-                    <AppLink
-                      href={legalHref}
-                      prefetchPolicy="intent"
-                      aria-current={legalActive ? "page" : undefined}
-                      className="rounded-xl px-1 py-3.5 font-big-fat-boii text-lg text-brand-forest transition-colors hover:bg-gray-50"
-                      onClick={() => setOpen(false)}
-                    >
-                      {dictionary.nav.policy}
-                    </AppLink>
-
-                    <div className="px-1 pb-2 pt-1">
+                    {loginPage ? (
+                      <button
+                        type="button"
+                        className={`${DRAWER_ITEM_CLASS} w-full`}
+                        onClick={() => {
+                          setOpen(false);
+                          setLegalSheetOpen(true);
+                        }}
+                      >
+                        {dictionary.nav.policy}
+                      </button>
+                    ) : (
                       <AppLink
-                        href={
-                          user
-                            ? `/${locale}/profile`
-                            : `/${locale}/login`
-                        }
+                        href={legalHref}
                         prefetchPolicy="intent"
-                        className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#dcecc6] px-8 font-big-fat-boii text-base font-normal tracking-wide text-brand-forest transition-colors hover:bg-[#d0e4b8]"
+                        aria-current={legalActive ? "page" : undefined}
+                        className={DRAWER_ITEM_CLASS}
                         onClick={() => setOpen(false)}
                       >
-                        {user
-                          ? dictionary.header.profile
-                          : dictionary.header.login}
+                        {dictionary.nav.policy}
                       </AppLink>
-                    </div>
+                    )}
+
+                    {user ? null : (
+                      <div className="px-1 pb-2 pt-1">
+                        <AppLink
+                          href={`/${locale}/login`}
+                          prefetchPolicy="intent"
+                          className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#dcecc6] px-8 font-big-fat-boii text-base font-normal tracking-wide text-brand-forest transition-colors hover:bg-[#d0e4b8]"
+                          onClick={() => setOpen(false)}
+                        >
+                          {dictionary.header.login}
+                        </AppLink>
+                      </div>
+                    )}
                   </div>
 
                   {panelFooter ? (
@@ -425,6 +440,13 @@ export function MobileNavDrawer({
             document.body,
           )
         : null}
+      {loginPage ? (
+        <LegalPolicySheet
+          open={legalSheetOpen}
+          onClose={() => setLegalSheetOpen(false)}
+          legal={dictionary.legal}
+        />
+      ) : null}
     </>
   );
 }

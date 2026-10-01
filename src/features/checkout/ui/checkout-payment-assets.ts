@@ -3,19 +3,26 @@
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 export const CHECKOUT_PAYMENT_VISA_SRC = staticAssetUrl(
-  "/assets/payments/checkout/visa.webp",
+  "/assets/payments/checkout/visa-card.webp?v=2",
+  { sameOrigin: true },
 );
 export const CHECKOUT_PAYMENT_MASTERCARD_SRC = staticAssetUrl(
-  "/assets/payments/checkout/mastercard-classic.webp",
+  "/assets/payments/checkout/mastercard-card.webp?v=2",
+  { sameOrigin: true },
 );
 export const CHECKOUT_PAYMENT_ARCA_SRC = staticAssetUrl(
-  "/assets/payments/checkout/arca.webp",
+  "/assets/payments/checkout/arca-card.webp?v=2",
+  { sameOrigin: true },
 );
 export const CHECKOUT_PAYMENT_IDRAM_SRC = staticAssetUrl(
   "/assets/payments/checkout/idram.webp",
 );
 export const CHECKOUT_PAYMENT_TERMINAL_SRC = staticAssetUrl(
   "/assets/payments/checkout/terminal.webp?v=2",
+  { sameOrigin: true },
+);
+export const CHECKOUT_PAYMENT_CASH_SRC = staticAssetUrl(
+  "/assets/payments/checkout/cash.webp?v=4",
   { sameOrigin: true },
 );
 
@@ -51,9 +58,8 @@ export const CHECKOUT_PAYMENT_CARD_BADGE_ORDER = [
   "ArCa",
 ] as const;
 
-export const CHECKOUT_PAYMENT_VISA_INNER_LOGO_SCALE = 0.9;
-export const CHECKOUT_PAYMENT_ARCA_INNER_LOGO_SCALE = 3.5;
-export const CHECKOUT_PAYMENT_MASTERCARD_INNER_LOGO_SCALE = 1.25;
+export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX = 48;
+export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX = 40;
 
 export type CheckoutCardPaymentBadgeAlt =
   (typeof CHECKOUT_PAYMENT_CARD_BADGE_ORDER)[number];
@@ -75,23 +81,20 @@ export const CHECKOUT_CARD_PAYMENT_BADGES: CheckoutCardPaymentBadge[] = [
   {
     alt: "Visa",
     src: CHECKOUT_PAYMENT_VISA_SRC,
-    sourceWidthPx: 640,
-    sourceHeightPx: 207,
-    innerLogoScale: CHECKOUT_PAYMENT_VISA_INNER_LOGO_SCALE,
+    sourceWidthPx: 720,
+    sourceHeightPx: 432,
   },
   {
     alt: "Mastercard",
     src: CHECKOUT_PAYMENT_MASTERCARD_SRC,
-    sourceWidthPx: 1012,
-    sourceHeightPx: 607,
-    innerLogoScale: CHECKOUT_PAYMENT_MASTERCARD_INNER_LOGO_SCALE,
+    sourceWidthPx: 720,
+    sourceHeightPx: 393,
   },
   {
     alt: "ArCa",
     src: CHECKOUT_PAYMENT_ARCA_SRC,
-    sourceWidthPx: 640,
-    sourceHeightPx: 640,
-    innerLogoScale: CHECKOUT_PAYMENT_ARCA_INNER_LOGO_SCALE,
+    sourceWidthPx: 720,
+    sourceHeightPx: 384,
   },
 ];
 
@@ -101,9 +104,9 @@ export const CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_PX = 112;
 export const CHECKOUT_PAYMENT_IDRAM_LOGO_DISPLAY_HEIGHT_PX = 32;
 export const CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_MOBILE_PX = 96;
 export const CHECKOUT_PAYMENT_IDRAM_LOGO_DISPLAY_HEIGHT_MOBILE_PX = 26;
-export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX = 42;
-export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_DESKTOP_PX = 36;
-export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX = 72;
+export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX = 64;
+export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_DESKTOP_PX = 56;
+export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX = 64;
 export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_DESKTOP_PX = 64;
 
 /** Uniform framed box — sized from Visa wordmark width at the given logo height. */
