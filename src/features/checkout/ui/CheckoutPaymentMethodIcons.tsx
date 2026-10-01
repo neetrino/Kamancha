@@ -25,6 +25,9 @@ import {
   CHECKOUT_PAYMENT_IDRAM_LOGO_DISPLAY_HEIGHT_PX,
   CHECKOUT_PAYMENT_IDRAM_LOGO_HEIGHT_PX,
   CHECKOUT_PAYMENT_IDRAM_SRC,
+  CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_DESKTOP_PX,
+  CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX,
+  CHECKOUT_PAYMENT_TERMINAL_SRC,
   CHECKOUT_PAYMENT_IDRAM_LOGO_WIDTH_PX,
   getCheckoutCardBadgeFramedBoxSize,
 } from "@/features/checkout/ui/checkout-payment-assets";
@@ -35,6 +38,21 @@ function getCheckoutCardBadges() {
   ).filter(
     (badge): badge is (typeof CHECKOUT_CARD_PAYMENT_BADGES)[number] =>
       badge !== undefined,
+  );
+}
+
+function CheckoutTerminalIcon({ sizePx }: { sizePx: number }) {
+  return (
+    <Image
+      src={CHECKOUT_PAYMENT_TERMINAL_SRC}
+      alt=""
+      width={640}
+      height={612}
+      unoptimized
+      priority
+      className="w-auto object-contain object-center"
+      style={{ height: sizePx }}
+    />
   );
 }
 
@@ -89,6 +107,23 @@ export function CheckoutPaymentMethodIcons({
         </div>
         <div className="hidden shrink-0 items-center justify-center xl:flex">
           <CheckoutCashIcon sizePx={CHECKOUT_PAYMENT_CASH_ICON_SIZE_DESKTOP_PX} />
+        </div>
+      </>
+    );
+  }
+
+  if (methodId === "terminal") {
+    return (
+      <>
+        <div className="flex shrink-0 items-center justify-center xl:hidden">
+          <CheckoutTerminalIcon
+            sizePx={CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX}
+          />
+        </div>
+        <div className="hidden shrink-0 items-center justify-center xl:flex">
+          <CheckoutTerminalIcon
+            sizePx={CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_DESKTOP_PX}
+          />
         </div>
       </>
     );

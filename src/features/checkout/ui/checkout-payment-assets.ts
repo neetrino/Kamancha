@@ -14,6 +14,10 @@ export const CHECKOUT_PAYMENT_ARCA_SRC = staticAssetUrl(
 export const CHECKOUT_PAYMENT_IDRAM_SRC = staticAssetUrl(
   "/assets/payments/checkout/idram.webp",
 );
+export const CHECKOUT_PAYMENT_TERMINAL_SRC = staticAssetUrl(
+  "/assets/payments/checkout/terminal.webp?v=2",
+  { sameOrigin: true },
+);
 
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =
   "ring-2 ring-inset ring-brand-forest";
@@ -99,6 +103,8 @@ export const CHECKOUT_PAYMENT_IDRAM_BOX_WIDTH_MOBILE_PX = 96;
 export const CHECKOUT_PAYMENT_IDRAM_LOGO_DISPLAY_HEIGHT_MOBILE_PX = 26;
 export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX = 42;
 export const CHECKOUT_PAYMENT_CASH_ICON_SIZE_DESKTOP_PX = 36;
+export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX = 72;
+export const CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_DESKTOP_PX = 64;
 
 /** Uniform framed box — sized from Visa wordmark width at the given logo height. */
 export function getCheckoutCardBadgeFramedBoxSize(

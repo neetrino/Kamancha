@@ -10,5 +10,8 @@ export function paymentMethodLabel(method: string): string {
   if (normalized === "ARCA") {
     return "Card";
   }
+  if (normalized === "TERMINAL") {
+    return "Terminal";
+  }
   return method;
 }

@@ -15,8 +15,10 @@ export function plannedOrderPaymentSplit(input: {
   chargeAmount: number;
   paymentMethod: CheckoutPaymentMethod;
 }): OrderPaymentSplit {
-  const cashAmount =
-    input.paymentMethod === "cash_on_delivery" ? input.chargeAmount : 0;
+  const collectedInPerson =
+    input.paymentMethod === "cash_on_delivery" ||
+    input.paymentMethod === "terminal";
+  const cashAmount = collectedInPerson ? input.chargeAmount : 0;
   return {
     onlineAmount: input.totalAmount - cashAmount,
     cashAmount,

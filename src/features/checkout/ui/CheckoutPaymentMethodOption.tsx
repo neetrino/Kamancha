@@ -114,7 +114,14 @@ export function CheckoutPaymentMethodOption({
       <div className="relative z-[2] flex min-w-0 flex-1 items-center gap-3 xl:gap-4">
         <div className="flex shrink-0 items-center">{icons}</div>
         <div className="min-w-0">
-          {option.id === "cash_on_delivery" ? (
+          {option.id === "terminal" ? (
+            <>
+              <div className="font-medium text-gray-900">{option.name}</div>
+              <div className={descriptionClass(selected)}>
+                {option.description}
+              </div>
+            </>
+          ) : option.id === "cash_on_delivery" ? (
             <>
               <div className="font-medium text-gray-900">{option.name}</div>
               <div className={`hidden xl:block ${descriptionClass(selected)}`}>

@@ -76,6 +76,8 @@
     "cardDescription": "Pay with Visa, Mastercard or ArCa card",
     "arca": "ArCa",
     "arcaDescription": "Pay with ArCa card",
+    "terminal": "Terminal",
+    "terminalDescription": "Pay by card on site",
     "selectMethod": "Please select a payment method"
   },
   "groupPrepaid": {
