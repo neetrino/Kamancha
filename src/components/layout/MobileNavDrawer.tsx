@@ -396,22 +396,18 @@ export function MobileNavDrawer({
                       {dictionary.nav.policy}
                     </AppLink>
 
-                    <div className="px-1 pb-2 pt-1">
-                      <AppLink
-                        href={
-                          user
-                            ? `/${locale}/profile`
-                            : `/${locale}/login`
-                        }
-                        prefetchPolicy="intent"
-                        className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#dcecc6] px-8 font-big-fat-boii text-base font-normal tracking-wide text-brand-forest transition-colors hover:bg-[#d0e4b8]"
-                        onClick={() => setOpen(false)}
-                      >
-                        {user
-                          ? dictionary.header.profile
-                          : dictionary.header.login}
-                      </AppLink>
-                    </div>
+                    {user ? null : (
+                      <div className="px-1 pb-2 pt-1">
+                        <AppLink
+                          href={`/${locale}/login`}
+                          prefetchPolicy="intent"
+                          className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#dcecc6] px-8 font-big-fat-boii text-base font-normal tracking-wide text-brand-forest transition-colors hover:bg-[#d0e4b8]"
+                          onClick={() => setOpen(false)}
+                        >
+                          {dictionary.header.login}
+                        </AppLink>
+                      </div>
+                    )}
                   </div>
 
                   {panelFooter ? (
