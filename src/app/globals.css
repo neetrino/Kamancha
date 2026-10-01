@@ -534,13 +534,15 @@ body {
   transform: translate(36px, -50%);
 }
 
-/* Cart checkout CTA: nudge ornaments outward on narrow screens so long labels clear. */
+/* Narrow phones: nudge ornaments outward so long labels do not meet the pattern. */
 @media (max-width: 639px) {
-  .kamancha-pill-button--cart-cta .kamancha-pill-ornament--left {
+  .kamancha-pill-button--cart-cta .kamancha-pill-ornament--left,
+  .kamancha-pill-button--order-cta .kamancha-pill-ornament--left {
     left: -14px;
   }
 
-  .kamancha-pill-button--cart-cta .kamancha-pill-ornament--right {
+  .kamancha-pill-button--cart-cta .kamancha-pill-ornament--right,
+  .kamancha-pill-button--order-cta .kamancha-pill-ornament--right {
     right: -14px;
   }
 }
@@ -845,6 +847,10 @@ body {
   .storefront-main:has(.group-order-page) {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
+  }
+
+  .storefront-main:has(.group-order-page) {
+    padding-top: 2rem;
   }
 
   /* Catalog MENU — tighter space above the heading on phone/tablet. */

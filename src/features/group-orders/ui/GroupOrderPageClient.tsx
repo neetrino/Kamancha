@@ -325,9 +325,9 @@ export function GroupOrderPageClient({
 
   return (
     <div
-      className={`group-order-page mx-auto max-w-7xl px-0 py-8 ${pending ? "opacity-70" : ""}`}
+      className={`group-order-page mx-auto max-w-7xl px-0 pt-0 pb-8 xl:py-8 ${pending ? "opacity-70" : ""}`}
     >
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-12 flex flex-col gap-8 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
           <h1 className="font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px]">
             {labels.manageTitle}
