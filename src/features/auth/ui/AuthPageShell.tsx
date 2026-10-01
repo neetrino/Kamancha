@@ -57,7 +57,7 @@ export function AuthPageShell({
     <div
       className={`relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible ${
         tightNavGap
-          ? "-mt-1 pt-1 sm:-mt-2 sm:pt-3 max-xl:-mt-3"
+          ? "auth-page-tight -mt-1 pt-1 sm:-mt-2 sm:pt-3 max-xl:-mt-3"
           : "pt-1 sm:pt-8 max-xl:-mt-4"
       }`}
     >
@@ -76,7 +76,9 @@ export function AuthPageShell({
             <span className="size-1.5 rounded-full bg-white" />
           </motion.div>
           <motion.h1
-            className="mb-5 text-center font-big-fat-boii text-[44px] leading-[1.1] font-bold tracking-wide text-white uppercase sm:mb-8 sm:text-[52px] md:text-[62px]"
+            className={`mb-5 text-center font-big-fat-boii leading-[1.1] font-bold tracking-wide text-white uppercase sm:mb-8 sm:text-[52px] md:text-[62px] ${
+              tightNavGap ? "text-[36px]" : "text-[44px]"
+            }`}
             initial={
               playMotion
                 ? { opacity: 0, y: 18, filter: "blur(4px)" }

@@ -1,9 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { LegalPolicySheet } from "@/features/legal/ui/LegalPolicySheet";
+import type { LegalPolicyKey } from "@/features/legal/ui/LegalPolicyPage";
 import { type AuthActionState } from "@/features/auth/auth-action-state";
 import { registerAction } from "@/features/auth/register-action";
 import {
@@ -30,14 +32,17 @@ const initialState: AuthActionState = {};
 type RegisterFormProps = {
   locale: Locale;
   dictionary: Dictionary["auth"];
+  legal: Dictionary["legal"];
 };
 
-export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
+export function RegisterForm({ locale, dictionary, legal }: RegisterFormProps) {
   const action = registerAction.bind(null, locale);
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const [policyKey, setPolicyKey] = useState<LegalPolicyKey | null>(null);
   const fieldErrors = state.fieldErrors;
 
   return (
+    <>
     <form
       key={state.resetKey ?? 0}
       action={formAction}
@@ -152,21 +157,15 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
           />
           <span>
             {dictionary.agreePrefix}{" "}
-            <AppLink
-              href={`/${locale}/legal/terms`}
-              prefetchPolicy="intent"
-              className={AUTH_LINK_CLASS}
-            >
-              {dictionary.termsLink}
-            </AppLink>
+            <PolicyTextButton
+              label={dictionary.termsLink}
+              onOpen={() => setPolicyKey("terms")}
+            />
             {dictionary.agreeAnd}
-            <AppLink
-              href={`/${locale}/legal/privacy`}
-              prefetchPolicy="intent"
-              className={AUTH_LINK_CLASS}
-            >
-              {dictionary.privacyLink}
-            </AppLink>
+            <PolicyTextButton
+              label={dictionary.privacyLink}
+              onOpen={() => setPolicyKey("privacy")}
+            />
             {REQUIRED_MARK}
           </span>
         </label>
@@ -203,5 +202,45 @@ export function RegisterForm({ locale, dictionary }: RegisterFormProps) {
         </AppLink>
       </p>
     </form>
+    <LegalPolicySheet
+      open={policyKey != null}
+      documentKey={policyKey}
+      onClose={() => setPolicyKey(null)}
+      legal={legal}
+    />
+    </>
   );
+}
+
+function PolicyTextButton({
+  label,
+  onOpen,
+}: {
+  label: string;
+  onOpen: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`${AUTH_LINK_CLASS} inline cursor-pointer border-0 bg-transparent p-0`}
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onOpen();
+      }}
+    >
+      <PolicyLinkLabel label={label} />
+    </button>
+  );
+}
+
+function PolicyLinkLabel({ label }: { label: string }) {
+  const lines = label.split("\n");
+  return lines.map((line, index) => (
+    <span key={line}>
+      {index > 0 ? <br className="sm:hidden" /> : null}
+      {line}
+    </span>
+  ));
 }
