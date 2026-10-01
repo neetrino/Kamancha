@@ -142,7 +142,7 @@ export function CheckoutPaymentMethodOption({
             </>
           ) : (
             <>
-              <span className="text-[15px] font-medium text-gray-900 xl:hidden">
+              <span className="text-base font-medium text-gray-900 xl:hidden">
                 {option.shortName}
               </span>
               <div className="hidden xl:block">
