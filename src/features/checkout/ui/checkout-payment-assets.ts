@@ -27,11 +27,11 @@ export const CHECKOUT_PAYMENT_CASH_SRC = staticAssetUrl(
 );
 
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =
-  "ring-2 ring-inset ring-brand-forest";
+  "ring-2 ring-inset ring-[#dcecc6]";
 export const CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS =
-  "hover:bg-gray-50";
+  "ring-2 ring-inset ring-transparent hover:bg-gray-50";
 export const CHECKOUT_PAYMENT_OPTION_BASE_CLASS =
-  "flex cursor-pointer items-center overflow-hidden rounded-[15px] bg-white p-4 outline-none transition-colors [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
+  "flex cursor-pointer items-center overflow-hidden rounded-[15px] bg-white p-4 outline-none transition-[box-shadow,background-color] duration-300 ease-out [-webkit-tap-highlight-color:transparent] focus-within:outline-none focus-within:ring-0";
 
 export const CHECKOUT_PAYMENT_ICON_BOX_HEIGHT_PX = 40;
 export const CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX = 8;
