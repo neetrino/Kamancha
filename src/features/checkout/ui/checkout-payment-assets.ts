@@ -58,7 +58,7 @@ export const CHECKOUT_PAYMENT_CARD_BADGE_ORDER = [
   "ArCa",
 ] as const;
 
-export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX = 45;
+export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX = 40;
 export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX = 40;
 
 export type CheckoutCardPaymentBadgeAlt =
