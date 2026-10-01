@@ -192,7 +192,7 @@ function CheckoutCardPaymentBadges({
   return (
     <>
       <div
-        className="flex max-w-full flex-wrap items-center justify-start self-start xl:hidden"
+        className="flex min-w-0 max-w-full flex-nowrap items-center justify-start xl:hidden"
         style={{ gap: CHECKOUT_PAYMENT_CARD_BADGES_GAP_MOBILE_PX }}
       >
         {badges.map((badge) => (
