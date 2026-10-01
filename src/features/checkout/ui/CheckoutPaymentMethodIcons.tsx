@@ -4,18 +4,15 @@ import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-m
 import { CheckoutPaymentBadge } from "@/features/checkout/ui/CheckoutPaymentBadge";
 import {
   CHECKOUT_CARD_PAYMENT_BADGES,
-  CHECKOUT_PAYMENT_CARD_BADGE_BOX_HEIGHT_MOBILE_PX,
-  CHECKOUT_PAYMENT_CARD_BADGE_BOX_HEIGHT_PX,
-  CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_MOBILE_PX,
-  CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_PX,
+  CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX,
+  CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX,
   CHECKOUT_PAYMENT_CARD_BADGE_ORDER,
-  CHECKOUT_PAYMENT_CARD_BADGE_PADDING_MOBILE_PX,
-  CHECKOUT_PAYMENT_CARD_BADGE_PADDING_PX,
   CHECKOUT_PAYMENT_CARD_BADGE_RADIUS_MOBILE_PX,
   CHECKOUT_PAYMENT_CARD_BADGES_GAP_MOBILE_PX,
   CHECKOUT_PAYMENT_CARD_BADGES_GAP_PX,
   CHECKOUT_PAYMENT_CASH_ICON_SIZE_DESKTOP_PX,
   CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX,
+  CHECKOUT_PAYMENT_CASH_SRC,
   CHECKOUT_PAYMENT_ICON_BOX_HEIGHT_PX,
   CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX,
   CHECKOUT_PAYMENT_IDRAM_BOX_HEIGHT_MOBILE_PX,
@@ -29,7 +26,6 @@ import {
   CHECKOUT_PAYMENT_TERMINAL_ICON_SIZE_MOBILE_PX,
   CHECKOUT_PAYMENT_TERMINAL_SRC,
   CHECKOUT_PAYMENT_IDRAM_LOGO_WIDTH_PX,
-  getCheckoutCardBadgeFramedBoxSize,
 } from "@/features/checkout/ui/checkout-payment-assets";
 
 function getCheckoutCardBadges() {
@@ -58,45 +54,26 @@ function CheckoutTerminalIcon({ sizePx }: { sizePx: number }) {
 
 function CheckoutCashIcon({ sizePx }: { sizePx: number }) {
   return (
-    <svg
-      viewBox="0 0 32 32"
-      className="shrink-0 text-brand-forest"
-      style={{ width: sizePx, height: sizePx }}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-    >
-      <rect
-        x="3"
-        y="9"
-        width="26"
-        height="14"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.75"
-      />
-      <circle
-        cx="16"
-        cy="16"
-        r="3.25"
-        stroke="currentColor"
-        strokeWidth="1.75"
-      />
-      <path d="M3 13h26" stroke="currentColor" strokeWidth="1.75" />
-    </svg>
+    <Image
+      src={CHECKOUT_PAYMENT_CASH_SRC}
+      alt=""
+      width={640}
+      height={567}
+      unoptimized
+      className="w-auto object-contain object-center"
+      style={{ height: sizePx }}
+    />
   );
 }
 
 type CheckoutPaymentMethodIconsProps = {
   methodId: CheckoutPaymentMethod;
-  mobileCardFramed?: boolean;
   /** Use checkout desktop badge sizing at all breakpoints (group-order pay). */
   cardBadgeSize?: "mobile" | "desktop";
 };
 
 export function CheckoutPaymentMethodIcons({
   methodId,
-  mobileCardFramed = false,
   cardBadgeSize = "mobile",
 }: CheckoutPaymentMethodIconsProps) {
   if (methodId === "cash_on_delivery") {
@@ -172,29 +149,16 @@ export function CheckoutPaymentMethodIcons({
 
   return (
     <CheckoutCardPaymentBadges
-      mobileCardFramed={mobileCardFramed}
       size={cardBadgeSize === "desktop" ? "desktop" : "responsive"}
     />
   );
 }
 
 function CheckoutCardPaymentBadges({
-  mobileCardFramed,
   size = "responsive",
 }: {
-  mobileCardFramed: boolean;
   size?: "responsive" | "desktop";
 }) {
-  const mobileFramedBoxSize = getCheckoutCardBadgeFramedBoxSize(
-    CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_MOBILE_PX,
-    CHECKOUT_PAYMENT_CARD_BADGE_PADDING_MOBILE_PX,
-    CHECKOUT_PAYMENT_CARD_BADGE_BOX_HEIGHT_MOBILE_PX,
-  );
-  const desktopFramedBoxSize = getCheckoutCardBadgeFramedBoxSize(
-    CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_PX,
-    CHECKOUT_PAYMENT_CARD_BADGE_PADDING_PX,
-    CHECKOUT_PAYMENT_CARD_BADGE_BOX_HEIGHT_PX,
-  );
   const badges = getCheckoutCardBadges();
   const desktopBadges = (
     <div
@@ -209,11 +173,9 @@ function CheckoutCardPaymentBadges({
         <CheckoutPaymentBadge
           key={badge.alt}
           badge={badge}
-          logoHeightPx={CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_PX}
+          logoHeightPx={CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX}
           radiusPx={CHECKOUT_PAYMENT_ICON_BOX_RADIUS_PX}
-          paddingPx={CHECKOUT_PAYMENT_CARD_BADGE_PADDING_PX}
-          framed
-          framedBoxSize={desktopFramedBoxSize}
+          paddingPx={0}
         />
       ))}
     </div>
@@ -233,11 +195,9 @@ function CheckoutCardPaymentBadges({
           <CheckoutPaymentBadge
             key={badge.alt}
             badge={badge}
-            logoHeightPx={CHECKOUT_PAYMENT_CARD_BADGE_LOGO_HEIGHT_MOBILE_PX}
+            logoHeightPx={CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX}
             radiusPx={CHECKOUT_PAYMENT_CARD_BADGE_RADIUS_MOBILE_PX}
-            paddingPx={CHECKOUT_PAYMENT_CARD_BADGE_PADDING_MOBILE_PX}
-            framed={mobileCardFramed}
-            framedBoxSize={mobileCardFramed ? mobileFramedBoxSize : undefined}
+            paddingPx={0}
           />
         ))}
       </div>

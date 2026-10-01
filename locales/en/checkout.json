@@ -77,7 +77,7 @@
     "arca": "ArCa",
     "arcaDescription": "Pay with ArCa card",
     "terminal": "Terminal",
-    "terminalDescription": "Pay by card on site",
+    "terminalDescription": "Pay by card when you receive your order",
     "selectMethod": "Please select a payment method"
   },
   "groupPrepaid": {

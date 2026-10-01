@@ -77,7 +77,7 @@
     "arca": "ArCa",
     "arcaDescription": "Վճարեք ArCa քարտով",
     "terminal": "Terminal",
-    "terminalDescription": "Վճարեք քարտով տեղում",
+    "terminalDescription": "Վճարեք քարտով՝ պատվերը ստանալիս",
     "selectMethod": "Խնդրում ենք ընտրել վճարման եղանակը"
   },
   "groupPrepaid": {
