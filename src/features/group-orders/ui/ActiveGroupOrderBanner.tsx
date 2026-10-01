@@ -39,7 +39,7 @@ export function ActiveGroupOrderBanner({
       <div className="liquid-glass isolate overflow-hidden rounded-2xl px-4 py-2.5">
         <div className="relative z-[2] flex flex-col gap-2 text-sm text-white sm:flex-row sm:items-center sm:justify-between">
           <p className="inline-flex items-center gap-2 font-medium">
-            <Users className="h-4 w-4 shrink-0" aria-hidden />
+            <Users className="h-6 w-6 shrink-0 xl:h-4 xl:w-4" aria-hidden />
             {labels.activeSessionBanner.replace("{name}", organizerDisplayName)}
           </p>
           <div className="flex items-center justify-end gap-3">
