@@ -59,7 +59,7 @@ export const CHECKOUT_PAYMENT_CARD_BADGE_ORDER = [
 ] as const;
 
 export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_DESKTOP_PX = 40;
-export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX = 32;
+export const CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX = 33;
 
 export type CheckoutCardPaymentBadgeAlt =
   (typeof CHECKOUT_PAYMENT_CARD_BADGE_ORDER)[number];
