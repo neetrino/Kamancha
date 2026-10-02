@@ -22,14 +22,11 @@ type ProductDetailViewProps = {
   compareAtFormatted: string | null;
   currency: Currency;
   fxRate: string;
-  ratingAverage: number | null;
-  ratingCount: number;
   isSignedIn: boolean;
   inWishlist: boolean;
   dictionary: Dictionary;
   jsonLd: Record<string, unknown>;
   relatedSlot: React.ReactNode;
-  reviewsSlot: React.ReactNode;
 };
 
 export function ProductDetailView({
@@ -40,14 +37,11 @@ export function ProductDetailView({
   compareAtFormatted,
   currency,
   fxRate,
-  ratingAverage,
-  ratingCount,
   isSignedIn,
   inWishlist,
   dictionary,
   jsonLd,
   relatedSlot,
-  reviewsSlot,
 }: ProductDetailViewProps) {
   const labels = dictionary.product;
   const variants = product.variantSet?.variants ?? [];
@@ -120,14 +114,11 @@ export function ProductDetailView({
             compareAtFormatted={compareAtActive}
             currency={currency}
             fxRate={fxRate}
-            ratingAverage={ratingAverage}
-            ratingCount={ratingCount}
             dictionary={dictionary}
           />
         </div>
 
         {relatedSlot}
-        {reviewsSlot}
 
         <script
           type="application/ld+json"

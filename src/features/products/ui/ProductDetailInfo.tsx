@@ -1,19 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { ProductPurchaseControls } from "@/features/products/ui/ProductPurchaseControls";
 import { ProductVariantPicker } from "@/features/products/ui/ProductVariantPicker";
-import { displayProductRating } from "@/features/products/ui/ProductReviewRating";
 import type { ProductDetail } from "@/features/products/types";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
-import { staticAssetUrl } from "@/lib/media/static-asset-url";
-
-const STAR_SRC = staticAssetUrl("/assets/brand/product/star.svg");
 
 type ProductDetailInfoProps = {
   locale: Locale;
@@ -26,41 +21,11 @@ type ProductDetailInfoProps = {
   compareAtFormatted: string | null;
   currency: Currency;
   fxRate: string;
-  ratingAverage: number | null;
-  ratingCount: number;
   dictionary: Dictionary;
 };
 
-function ProductRating({
-  displayRating,
-  hasReviews,
-  ratingCount,
-  reviewCountLabel,
-  className = "",
-}: {
-  displayRating: number;
-  hasReviews: boolean;
-  ratingCount: number;
-  reviewCountLabel: string;
-  className?: string;
-}) {
-  return (
-    <div className={`flex items-center gap-1.5 ${className}`}>
-      <Image src={STAR_SRC} alt="" width={20} height={20} aria-hidden />
-      <span className="text-lg font-semibold leading-[27px] text-white">
-        {displayRating.toFixed(1)}
-      </span>
-      {hasReviews ? (
-        <span className="text-sm leading-[21px] text-white/50">
-          {reviewCountLabel.replace("{count}", String(ratingCount))}
-        </span>
-      ) : null}
-    </div>
-  );
-}
-
 /**
- * PDP title column: mobile price + rating under the title; purchase controls below.
+ * PDP title column: mobile price under the title; purchase controls below.
  */
 export function ProductDetailInfo({
   locale,
@@ -73,8 +38,6 @@ export function ProductDetailInfo({
   compareAtFormatted,
   currency,
   fxRate,
-  ratingAverage,
-  ratingCount,
   dictionary,
 }: ProductDetailInfoProps) {
   const labels = dictionary.product;
@@ -84,8 +47,6 @@ export function ProductDetailInfo({
   );
   const variantSet = product.variantSet;
   const primaryCategory = product.categories[0] ?? null;
-  const hasReviews = ratingAverage != null && ratingCount > 0;
-  const displayRating = displayProductRating(ratingAverage);
   const [livePriceFormatted, setLivePriceFormatted] = useState(
     initialPriceFormatted,
   );
@@ -115,49 +76,26 @@ export function ProductDetailInfo({
         </span>
       </div>
 
-      <div className="flex items-start justify-between gap-4 xl:hidden">
-        <div className="flex min-w-0 flex-col items-start gap-px">
-          <p className="whitespace-nowrap text-4xl leading-9 font-bold text-white">
-            {livePriceFormatted}
+      <div className="flex min-w-0 flex-col items-start gap-px xl:hidden">
+        <p className="whitespace-nowrap text-4xl leading-9 font-bold text-white">
+          {livePriceFormatted}
+        </p>
+        {compareAtFormatted ? (
+          <p className="whitespace-nowrap text-[19px] leading-4 text-white/45 line-through">
+            {compareAtFormatted}
           </p>
-          {compareAtFormatted ? (
-            <p className="whitespace-nowrap text-[19px] leading-4 text-white/45 line-through">
-              {compareAtFormatted}
-            </p>
-          ) : null}
-        </div>
-        <ProductRating
-          displayRating={displayRating}
-          hasReviews={hasReviews}
-          ratingCount={ratingCount}
-          reviewCountLabel={labels.reviewCountParen}
-          className="shrink-0 pt-1"
-        />
-      </div>
-
-      <div
-        className={`flex flex-wrap items-center gap-4 ${
-          primaryCategory ? "" : "hidden xl:flex"
-        }`}
-      >
-        {primaryCategory ? (
-          <AppLink
-            href={`/${locale}/products?category=${encodeURIComponent(primaryCategory.slug)}`}
-            prefetchPolicy="intent"
-            className="text-lg leading-[27px] text-white/60 transition-colors hover:text-white"
-          >
-            {primaryCategory.title}
-          </AppLink>
         ) : null}
-
-        <ProductRating
-          displayRating={displayRating}
-          hasReviews={hasReviews}
-          ratingCount={ratingCount}
-          reviewCountLabel={labels.reviewCountParen}
-          className="hidden xl:flex"
-        />
       </div>
+
+      {primaryCategory ? (
+        <AppLink
+          href={`/${locale}/products?category=${encodeURIComponent(primaryCategory.slug)}`}
+          prefetchPolicy="intent"
+          className="self-start text-lg leading-[27px] text-white/60 transition-colors hover:text-white"
+        >
+          {primaryCategory.title}
+        </AppLink>
+      ) : null}
 
       {product.translation.description ? (
         <p className="text-[15px] leading-6 font-medium whitespace-pre-wrap text-white">
