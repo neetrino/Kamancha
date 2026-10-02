@@ -761,6 +761,18 @@
           "EXPIRE": "Ժամկետի ավարտ"
         }
       },
+      "tabs": {
+        "aria": "Հաճախորդի պատմություն",
+        "orders": "Պատվերների պատմություն",
+        "bonuses": "Բոնուս",
+        "gifts": "Gift",
+        "coupons": "Կտրոններ"
+      },
+      "coupons": {
+        "title": "Կտրոններ",
+        "empty": "Կտրոն դեռ չի օգտագործվել։",
+        "order": "Պատվեր"
+      },
       "giftCards": {
         "title": "Gift Card-եր",
         "empty": "Gift Card դեռ չկա։",

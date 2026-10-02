@@ -761,6 +761,18 @@
           "EXPIRE": "Expired"
         }
       },
+      "tabs": {
+        "aria": "Customer history",
+        "orders": "Order history",
+        "bonuses": "Bonus",
+        "gifts": "Gift",
+        "coupons": "Coupons"
+      },
+      "coupons": {
+        "title": "Coupons",
+        "empty": "No coupons used yet.",
+        "order": "Order"
+      },
       "giftCards": {
         "title": "Gift cards",
         "empty": "No gift cards.",

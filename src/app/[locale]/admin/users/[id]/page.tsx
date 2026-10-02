@@ -19,7 +19,9 @@ import {
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
 import { AdminUserBonuses } from "@/features/users/ui/AdminUserBonuses";
+import { AdminUserCoupons } from "@/features/users/ui/AdminUserCoupons";
 import { AdminUserGiftCards } from "@/features/users/ui/AdminUserGiftCards";
+import { AdminUserHistoryTabs } from "@/features/users/ui/AdminUserHistoryTabs";
 import { AdminUserNoteForm } from "@/features/users/ui/AdminUserNoteForm";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
@@ -49,7 +51,7 @@ export default async function AdminUserDetailPage({
     notFound();
   }
 
-  const { user, recentOrders, bonusSummary, giftCards } = detail;
+  const { user, recentOrders, bonusSummary, giftCards, coupons } = detail;
   const role = isUserRole(user.role) ? user.role : null;
   const status = isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
@@ -70,8 +72,9 @@ export default async function AdminUserDetailPage({
         </h1>
       </div>
 
-      <Card className="mb-4 p-5 sm:p-6">
-        <div className="grid gap-4 md:grid-cols-3 md:gap-x-8">
+      <div className="mb-4 grid gap-4 xl:grid-cols-2">
+      <Card className="h-full p-5 sm:p-6">
+        <div className="grid gap-4">
           <AdminDetailField
             icon={<Shield className={FIELD_ICON_CLASS} />}
             label={t.users.detail.roleLabel}
@@ -97,12 +100,6 @@ export default async function AdminUserDetailPage({
             {user.phone ?? t.common.none}
           </AdminDetailField>
           <AdminDetailField
-            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.createdLabel}
-          >
-            {user.createdAt.toISOString().slice(0, 10)}
-          </AdminDetailField>
-          <AdminDetailField
             icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
             label={t.common.status}
           >
@@ -120,14 +117,18 @@ export default async function AdminUserDetailPage({
               </span>
             )}
           </AdminDetailField>
-          <div className="md:col-span-2">
-            <AdminDetailField
-              icon={<Mail className={FIELD_ICON_CLASS} />}
-              label={t.users.detail.emailLabel}
-            >
-              {user.email}
-            </AdminDetailField>
-          </div>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.createdLabel}
+          >
+            {user.createdAt.toISOString().slice(0, 10)}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Mail className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.emailLabel}
+          >
+            {user.email}
+          </AdminDetailField>
         </div>
       </Card>
 
@@ -138,24 +139,52 @@ export default async function AdminUserDetailPage({
         disabled={isAnonymized}
         copy={t}
       />
+      </div>
 
-      <AdminUserBonuses
-        locale={locale}
-        summary={bonusSummary}
-        copy={t.users.detail.bonuses}
-        adminCopy={t}
+      <AdminUserHistoryTabs
+        ariaLabel={t.users.detail.tabs.aria}
+        labels={{
+          orders: t.users.detail.tabs.orders,
+          bonuses: t.users.detail.tabs.bonuses,
+          gifts: t.users.detail.tabs.gifts,
+          coupons: t.users.detail.tabs.coupons,
+        }}
+        panels={{
+          orders: (
+            <AdminUserRecentOrders
+              locale={locale}
+              orders={recentOrders}
+              copy={t}
+            />
+          ),
+          bonuses: (
+            <AdminUserBonuses
+              locale={locale}
+              summary={bonusSummary}
+              copy={t.users.detail.bonuses}
+              adminCopy={t}
+            />
+          ),
+          gifts: (
+            <AdminUserGiftCards
+              locale={locale}
+              userId={user.id}
+              userEmail={user.email}
+              cards={giftCards}
+              copy={t.users.detail.giftCards}
+              adminCopy={t}
+            />
+          ),
+          coupons: (
+            <AdminUserCoupons
+              locale={locale}
+              coupons={coupons}
+              copy={t.users.detail.coupons}
+              adminCopy={t}
+            />
+          ),
+        }}
       />
-
-      <AdminUserGiftCards
-        locale={locale}
-        userId={user.id}
-        userEmail={user.email}
-        cards={giftCards}
-        copy={t.users.detail.giftCards}
-        adminCopy={t}
-      />
-
-      <AdminUserRecentOrders locale={locale} orders={recentOrders} copy={t} />
     </section>
   );
 }
