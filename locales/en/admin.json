@@ -366,7 +366,7 @@
       "inStock": "In stock",
       "outOfStock": "Out of stock",
       "lowStock": "Low stock",
-      "draft": "Draft"
+      "draft": "Stop product"
     },
     "table": {
       "deleteSelected": "Delete Selected",

@@ -366,7 +366,7 @@
       "inStock": "В наличии",
       "outOfStock": "Нет в наличии",
       "lowStock": "Мало на складе",
-      "draft": "Черновик"
+      "draft": "Stop product"
     },
     "table": {
       "deleteSelected": "Удалить выбранные",
