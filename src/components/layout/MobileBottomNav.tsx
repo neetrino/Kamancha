@@ -229,7 +229,7 @@ export function MobileBottomNav({
   const shopTab: NavTab = {
     id: "shop",
     href: `/${locale}/products`,
-    label: dictionary.nav.shop,
+    label: dictionary.nav.restaurant,
     icon: <NavClocheIcon className="h-[25px] w-[29px]" />,
   };
 
