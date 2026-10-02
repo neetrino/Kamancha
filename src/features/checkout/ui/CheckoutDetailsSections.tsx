@@ -1,7 +1,6 @@
 "use client";
 
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
 import type { CheckoutInvalidField } from "@/features/checkout/ui/checkout-invalid-fields";
@@ -47,19 +46,15 @@ type CheckoutDetailsLabels = {
   selectDeliveryZone: string;
   floor: string;
   intercomCode: string;
-  note: string;
   phonePlaceholder: string;
   addressPlaceholder: string;
   floorPlaceholder: string;
   intercomCodePlaceholder: string;
-  notePlaceholder: string;
-  openMap: string;
-  mapTitle: string;
-  mapHint: string;
-  mapConfirm: string;
-  mapCancel: string;
-  mapResolving: string;
   scheduleTitle: string;
+  scheduleDeliverTo: string;
+  scheduleApproximatelyOneHour: string;
+  scheduleChange: string;
+  scheduleAsapOption: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
@@ -257,40 +252,20 @@ export function CheckoutDetailsSections({
             <span className="text-sm font-medium text-white/80">
               {labels.address}
             </span>
-            <div className="flex items-start gap-2">
-              <div className="min-w-0 flex-1" data-checkout-field="line1">
-                <AddressAutocomplete
-                  name="line1"
-                  required
-                  value={line1}
-                  onValueChange={(value) => {
-                    clearField("line1");
-                    onLine1Change(value);
-                  }}
-                  placeholder={labels.addressPlaceholder}
-                  disabled={pending || addressLocked}
-                  className={FIELD_CLASS}
-                  languageCode={locale}
-                />
-              </div>
-              {addressLocked ? null : (
-                <AddressMapPicker
-                  addressValue={line1}
-                  disabled={pending}
-                  onAddressSelected={(value) => {
-                    clearField("line1");
-                    onLine1Change(value);
-                  }}
-                  labels={{
-                    openMap: labels.openMap,
-                    title: labels.mapTitle,
-                    hint: labels.mapHint,
-                    confirm: labels.mapConfirm,
-                    cancel: labels.mapCancel,
-                    resolving: labels.mapResolving,
-                  }}
-                />
-              )}
+            <div data-checkout-field="line1">
+              <AddressAutocomplete
+                name="line1"
+                required
+                value={line1}
+                onValueChange={(value) => {
+                  clearField("line1");
+                  onLine1Change(value);
+                }}
+                placeholder={labels.addressPlaceholder}
+                disabled={pending || addressLocked}
+                className={FIELD_CLASS}
+                languageCode={locale}
+              />
             </div>
           </div>
           </div>
@@ -314,17 +289,6 @@ export function CheckoutDetailsSections({
               />
             </label>
           </div>
-          <label className={FIELD_LABEL_CLASS}>
-            {labels.note}
-            <textarea
-              name="customerNote"
-              disabled={pending}
-              rows={3}
-              maxLength={500}
-              placeholder={labels.notePlaceholder}
-              className="min-h-[5.5rem] w-full resize-y rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-500 hover:border-gray-300 focus:border-gray-400 disabled:bg-gray-50"
-            />
-          </label>
           <DeliverySlotPicker
             schedule={deliverySchedule}
             selected={deliverySlot}
@@ -336,6 +300,10 @@ export function CheckoutDetailsSections({
             locale={locale}
             labels={{
               title: labels.scheduleTitle,
+              deliverTo: labels.scheduleDeliverTo,
+              approximatelyOneHour: labels.scheduleApproximatelyOneHour,
+              change: labels.scheduleChange,
+              asapOption: labels.scheduleAsapOption,
               pickDate: labels.schedulePickDate,
               pickTime: labels.schedulePickTime,
               noSlots: labels.scheduleNoSlots,

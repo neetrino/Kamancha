@@ -294,6 +294,34 @@ export type SelectedDeliverySlot = {
   endTime: string;
 };
 
+/** Earliest bookable slot (ASAP / default checkout choice). */
+export function resolveEarliestDeliverySlot(
+  schedule: DeliveryScheduleSettings,
+  now: Date = new Date(),
+): SelectedDeliverySlot | null {
+  const days = listAvailableDeliveryDays(schedule, now);
+  const firstDay = days[0];
+  const firstSlot = firstDay?.slots[0];
+  if (!firstDay || !firstSlot) return null;
+  return {
+    date: firstDay.date,
+    startTime: firstSlot.startTime,
+    endTime: firstSlot.endTime,
+  };
+}
+
+export function isSameDeliverySlot(
+  left: SelectedDeliverySlot | null,
+  right: SelectedDeliverySlot | null,
+): boolean {
+  if (!left || !right) return left === right;
+  return (
+    left.date === right.date &&
+    left.startTime === right.startTime &&
+    left.endTime === right.endTime
+  );
+}
+
 /** True when the selected slot is still bookable under the schedule. */
 export function isDeliverySlotAvailable(
   schedule: DeliveryScheduleSettings,

@@ -35,6 +35,7 @@ type CustomerOrdersViewProps = {
     | "noOrders"
     | "startShopping"
     | "groupOrderBadge"
+    | "orderFeedback"
   >;
 };
 
@@ -93,6 +94,20 @@ export function CustomerOrdersView({
         isLoading={isPending}
         copy={copy}
         groupOrderBadgeLabel={profileCopy.groupOrderBadge}
+        locale={locale as Locale}
+        feedbackLabels={profileCopy.orderFeedback}
+        onFeedbackSubmitted={(value) => {
+          setDetail((current) =>
+            current
+              ? {
+                  ...current,
+                  customerRating: value.rating,
+                  customerFeedback: value.comment,
+                  canSubmitFeedback: false,
+                }
+              : current,
+          );
+        }}
       />
     </>
   );

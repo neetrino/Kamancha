@@ -63,12 +63,19 @@ function normalizeTranslations(
   return next;
 }
 
-/** Builds checkout/admin display label: "Yerevan" or "Shrjanayin (Shengavit)". */
+export type DeliveryZoneLabelStyle = "full" | "community";
+
+/**
+ * Builds a delivery zone display label.
+ * - `full`: "Yerevan (Shengavit)" for admin.
+ * - `community`: district only when set ("Shengavit"), else area — for checkout.
+ */
 export function formatDeliveryZoneLabel(
   translations: DeliveryZoneTranslationsJson | null | undefined,
   locale: Locale,
   fallbackCity?: string | null,
   fallbackRegion?: string | null,
+  style: DeliveryZoneLabelStyle = "full",
 ): string {
   const normalized = normalizeTranslations(
     translations,
@@ -82,6 +89,9 @@ export function formatDeliveryZoneLabel(
     normalized.ru;
   const area = copy.area.trim();
   const district = copy.district?.trim() || "";
+  if (style === "community") {
+    return district || area || "Delivery";
+  }
   if (area && district) {
     return `${area} (${district})`;
   }
@@ -146,7 +156,13 @@ export async function listCheckoutDeliveryOptions(
     return {
       id: row.id,
       priceAmount: row.priceAmount,
-      label: formatDeliveryZoneLabel(translations, locale, row.city, row.region),
+      label: formatDeliveryZoneLabel(
+        translations,
+        locale,
+        row.city,
+        row.region,
+        "community",
+      ),
     };
   });
 }

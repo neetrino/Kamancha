@@ -21,8 +21,8 @@
     "intercomCode": "Դոմոֆոնի կոդ",
     "note": "Նշում պատվերի համար",
     "city": "Քաղաք",
-    "deliveryLocation": "Առաքման վայր",
-    "selectLocation": "Ընտրեք վայրը"
+    "deliveryLocation": "Համայնք",
+    "selectLocation": "Ընտրեք համայնքը"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -41,7 +41,11 @@
     "resolving": "Հասցեն որոշվում է…"
   },
   "schedule": {
-    "title": "Առաքման օր",
+    "title": "Ամսաթիվ և ժամ",
+    "deliverTo": "Առաքում",
+    "approximatelyOneHour": "մոտավորապես 1 ժամում",
+    "change": "Փոխել",
+    "asapOption": "Հնարավորինս շուտ (≈1 ժամ)",
     "pickDate": "Ընտրեք օրը",
     "pickTime": "Առաքման ժամային միջակայք",
     "noSlots": "Առայժմ հասանելի առաքման ժամեր չկան։",
@@ -61,10 +65,10 @@
     "storePickup": "Ինքնաառաքում",
     "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
     "delivery": "Առաքում",
-    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Ընտրեք առաքման տարածքը ֆիքսված գնի համար։",
+    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Ընտրեք համայնքը ֆիքսված գնի համար։",
     "freePickup": "Անվճար (Ինքնաառաքում)",
     "enterCity": "Մուտքագրեք քաղաքը",
-    "selectDeliveryLocation": "Ընտրեք առաքման տարածքը",
+    "selectDeliveryLocation": "Ընտրեք համայնքը",
     "enterDeliveryAddress": "Մուտքագրեք առաքման հասցեն",
     "calculatingDelivery": "Առաքման գինը հաշվվում է…"
   },

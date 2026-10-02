@@ -66,6 +66,7 @@ export async function resolveZoneDelivery(
     locale,
     row.city,
     row.region,
+    "community",
   );
 
   return {

@@ -21,8 +21,8 @@
     "intercomCode": "Intercom code",
     "note": "Order note",
     "city": "City",
-    "deliveryLocation": "Delivery location",
-    "selectLocation": "Select location"
+    "deliveryLocation": "Community",
+    "selectLocation": "Select community"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -41,7 +41,11 @@
     "resolving": "Resolving address…"
   },
   "schedule": {
-    "title": "Delivery day",
+    "title": "Date and time",
+    "deliverTo": "Deliver to",
+    "approximatelyOneHour": "approximately 1 hour",
+    "change": "Change",
+    "asapOption": "As soon as possible (≈1 hour)",
     "pickDate": "Pick a date",
     "pickTime": "Delivery time slot",
     "noSlots": "No delivery slots are available right now.",
@@ -61,10 +65,10 @@
     "storePickup": "Store Pickup",
     "storePickupDescription": "Pick up your order from our store (Free)",
     "delivery": "Delivery",
-    "deliveryDescription": "We will deliver your order to your address. Choose a delivery zone for the fixed fee.",
+    "deliveryDescription": "We will deliver your order to your address. Choose a community for the fixed fee.",
     "freePickup": "Free (Store Pickup)",
     "enterCity": "Enter City",
-    "selectDeliveryLocation": "Select a delivery zone",
+    "selectDeliveryLocation": "Select a community",
     "enterDeliveryAddress": "Enter a delivery address",
     "calculatingDelivery": "Calculating delivery…"
   },

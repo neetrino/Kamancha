@@ -10,6 +10,7 @@ import {
   type AdminOrderDetailView,
 } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderByNumber } from "@/features/orders/application/queries";
+import { canSubmitOrderFeedback } from "@/features/orders/domain/order-feedback";
 import { getStoreIdentity } from "@/features/settings/application/queries";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -60,9 +61,15 @@ export async function getCustomerOrderDetailAction(
     identity.name,
     locale as Locale,
   );
+  const canSubmitFeedback =
+    ownsOrder &&
+    canSubmitOrderFeedback({
+      status: loaded.order.status,
+      hasFeedback: loaded.order.customerRating != null,
+    });
 
   if (!loaded.order.groupOrderId) {
-    return ok(view);
+    return ok({ ...view, canSubmitFeedback });
   }
 
   const [{ paymentMode, participants: groupParticipants }, bonusEarnedAmount] =
@@ -77,6 +84,7 @@ export async function getCustomerOrderDetailAction(
 
   return ok({
     ...view,
+    canSubmitFeedback,
     groupPaymentMode: paymentMode,
     groupParticipants,
     bonusEarnedAmount,
