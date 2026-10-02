@@ -12,7 +12,6 @@ import {
 import { Card } from "@/components/ui/Card";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   getEligibleUserStatuses,
@@ -25,7 +24,6 @@ import { AdminUserNoteForm } from "@/features/users/ui/AdminUserNoteForm";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
-import { userRoleLabel, userStatusLabel } from "@/features/users/ui/user-labels";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -33,29 +31,7 @@ type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
 
-function userStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "ACTIVE") return "bg-green-100 text-green-800";
-  if (normalized === "PENDING" || normalized === "INVITED") {
-    return "bg-yellow-100 text-yellow-800";
-  }
-  if (
-    normalized === "SUSPENDED" ||
-    normalized === "BANNED" ||
-    normalized === "ANONYMIZED"
-  ) {
-    return "bg-red-100 text-red-800";
-  }
-  return "bg-gray-100 text-gray-800";
-}
-
 const FIELD_ICON_CLASS = "h-4 w-4";
-
-function userRoleBadgeClass(role: string): string {
-  return role.toUpperCase() === "ADMIN"
-    ? "bg-blue-100 text-blue-800"
-    : "bg-gray-100 text-gray-800";
-}
 
 export default async function AdminUserDetailPage({
   params,
@@ -100,11 +76,19 @@ export default async function AdminUserDetailPage({
             icon={<Shield className={FIELD_ICON_CLASS} />}
             label={t.users.detail.roleLabel}
           >
-            <span
-              className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
-            >
-              {userRoleLabel(user.role, t.users.roleLabels)}
-            </span>
+            {role ? (
+              <UpdateUserRoleForm
+                locale={locale}
+                userId={user.id}
+                currentRole={role}
+                disabled={isAnonymized}
+                copy={t}
+              />
+            ) : (
+              <span className="text-sm text-red-700">
+                {t.users.detail.unknownRole}
+              </span>
+            )}
           </AdminDetailField>
           <AdminDetailField
             icon={<Phone className={FIELD_ICON_CLASS} />}
@@ -122,11 +106,19 @@ export default async function AdminUserDetailPage({
             icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
             label={t.common.status}
           >
-            <span
-              className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
-            >
-              {userStatusLabel(user.status, t.users.statusLabels)}
-            </span>
+            {status ? (
+              <UpdateUserStatusForm
+                locale={locale}
+                userId={user.id}
+                currentStatus={status}
+                eligibleStatuses={eligibleStatuses}
+                copy={t}
+              />
+            ) : (
+              <span className="text-sm text-red-700">
+                {t.users.detail.unknownStatus}
+              </span>
+            )}
           </AdminDetailField>
           <div className="md:col-span-2">
             <AdminDetailField
@@ -138,31 +130,6 @@ export default async function AdminUserDetailPage({
           </div>
         </div>
       </Card>
-
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-stretch">
-        {role ? (
-          <UpdateUserRoleForm
-            locale={locale}
-            userId={user.id}
-            currentRole={role}
-            disabled={isAnonymized}
-            copy={t}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{t.users.detail.unknownRole}</p>
-        )}
-        {status ? (
-          <UpdateUserStatusForm
-            locale={locale}
-            userId={user.id}
-            currentStatus={status}
-            eligibleStatuses={eligibleStatuses}
-            copy={t}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{t.users.detail.unknownStatus}</p>
-        )}
-      </div>
 
       <AdminUserNoteForm
         locale={locale}

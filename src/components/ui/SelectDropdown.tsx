@@ -44,6 +44,8 @@ type SelectDropdownProps = {
    * The chevron still opens the menu.
    */
   triggerContent?: ReactNode;
+  /** Replaces the default field trigger. Use for a pill or other compact control. */
+  triggerClassName?: string;
 };
 
 function DropdownChevron({ open }: { open: boolean }) {
@@ -77,6 +79,7 @@ export function SelectDropdown({
   fitContent = false,
   fitContentFromSm = false,
   triggerContent,
+  triggerClassName,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -215,7 +218,10 @@ export function SelectDropdown({
         <button
           type="button"
           disabled={disabled}
-          className={`flex h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 ${fitContent ? (fitContentFromSm ? "w-full sm:w-auto" : "w-auto") : "w-full"}`}
+          className={
+            triggerClassName ??
+            `flex h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 ${fitContent ? (fitContentFromSm ? "w-full sm:w-auto" : "w-auto") : "w-full"}`
+          }
           aria-label={ariaLabel}
           aria-haspopup="listbox"
           aria-expanded={open}
