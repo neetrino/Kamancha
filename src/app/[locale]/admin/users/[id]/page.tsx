@@ -59,10 +59,10 @@ export default async function AdminUserDetailPage({
 
   return (
     <section>
-      <div className="mb-6">
+      <div className="-mt-6 mb-6">
         <Link
           href={`/${locale}/admin/users`}
-          className="mb-4 inline-flex h-11 items-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-4 text-sm font-medium text-gray-900 shadow-sm transition-colors hover:bg-gray-50"
+          className="mb-6 inline-flex h-11 items-center gap-1.5 rounded-2xl border border-gray-200 bg-white px-4 text-sm font-medium text-gray-900 shadow-sm transition-colors hover:bg-gray-50"
         >
           <ChevronLeft className="h-4 w-4" aria-hidden />
           {t.common.back}

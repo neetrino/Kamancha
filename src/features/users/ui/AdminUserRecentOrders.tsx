@@ -1,16 +1,19 @@
 "use client";
 
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, CreditCard, Package } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import {
-  ADMIN_BADGE,
   orderStatusBadgeClass,
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
+import {
+  localizeOrderStatus,
+  localizePaymentStatus,
+} from "@/features/orders/ui/localize-order-status";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
 import {
@@ -75,8 +78,8 @@ export function AdminUserRecentOrders({
     return orders.filter((order) => {
       const haystack = [
         order.orderNumber,
-        order.status,
-        order.paymentStatus,
+        localizeOrderStatus(order.status, copy.orders.statusLabels),
+        localizePaymentStatus(order.paymentStatus, copy.orders.statusLabels),
         order.baseCurrency,
       ]
         .join(" ")
@@ -167,14 +170,19 @@ function RecentOrdersCard({
                 </strong>
                 <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
                   <span
-                    className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
+                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(order.status)}`}
                   >
-                    {order.status}
+                    <Package className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    {localizeOrderStatus(order.status, copy.orders.statusLabels)}
                   </span>
                   <span
-                    className={`${ADMIN_BADGE} ${paymentStatusBadgeClass(order.paymentStatus)}`}
+                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(order.paymentStatus)}`}
                   >
-                    {order.paymentStatus}
+                    <CreditCard className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    {localizePaymentStatus(
+                      order.paymentStatus,
+                      copy.orders.statusLabels,
+                    )}
                   </span>
                 </div>
               </div>
