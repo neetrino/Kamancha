@@ -235,12 +235,7 @@ export async function listAdminOrders(
       .from(orders)
       .leftJoin(users, eq(orders.userId, users.id))
       .where(where)
-      .orderBy(
-        sql`case when ${orders.adminSeenAt} is null then 0 else 1 end`,
-        sql`${orders.shippingAddress}->>'scheduledDeliveryDate' asc nulls last`,
-        sql`${orders.shippingAddress}->>'scheduledDeliveryStart' asc nulls last`,
-        desc(orders.placedAt),
-      )
+      .orderBy(desc(orders.placedAt))
       .limit(PAGE_SIZE)
       .offset(offset),
     getDb().select({ value: count() }).from(orders).where(where),

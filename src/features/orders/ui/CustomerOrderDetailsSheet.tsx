@@ -194,50 +194,60 @@ function CustomerOrderSheetBody({
       ) : null}
 
       <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
+        <div
+          className={
+            detail.scheduledDeliveryDate
+              ? "flex items-stretch gap-3"
+              : "space-y-3"
+          }
+        >
+          <div className="min-w-0 flex-1 space-y-3">
         <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
           {labels.shippingAddress}
         </h3>
-        <div className="flex items-start gap-2 text-sm text-gray-700">
-          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
-            <MapPin className="h-3.5 w-3.5" aria-hidden />
-          </span>
-          <div className="min-w-0 space-y-1">
-            <p className="font-medium text-gray-900">{detail.addressLine}</p>
-            <p className="text-xs text-gray-500 capitalize">
-              {detail.isPickup
-                ? detail.storeName
-                  ? `${labels.pickupStore} ${detail.storeName}`
-                  : detail.shippingMethod
-                : labels.delivery}
-            </p>
-            {includeAdminDetails && !detail.isPickup && detail.floor ? (
-              <p className="text-xs text-gray-500">
-                {labels.floor} {detail.floor}
-              </p>
-            ) : null}
-            {includeAdminDetails && !detail.isPickup && detail.intercomCode ? (
-              <p className="text-xs text-gray-500">
-                {labels.intercomCode} {detail.intercomCode}
-              </p>
-            ) : null}
-            {detail.addressHint ? (
-              <p className="text-xs text-gray-500">{detail.addressHint}</p>
-            ) : null}
+          <div className="flex min-w-0 items-start gap-2 text-sm text-gray-700">
+            <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
+              <MapPin className="h-3.5 w-3.5" aria-hidden />
+            </span>
+            <div className="min-w-0 space-y-1">
+              <p className="font-medium text-gray-900">{detail.addressLine}</p>
+              {detail.isPickup ? (
+                <p className="text-xs text-gray-500 capitalize">
+                  {detail.storeName
+                    ? `${labels.pickupStore} ${detail.storeName}`
+                    : detail.shippingMethod}
+                </p>
+              ) : null}
+              {includeAdminDetails && !detail.isPickup && detail.floor ? (
+                <p className="text-xs text-gray-500">
+                  {labels.floor} {detail.floor}
+                </p>
+              ) : null}
+              {includeAdminDetails && !detail.isPickup && detail.intercomCode ? (
+                <p className="text-xs text-gray-500">
+                  {labels.intercomCode} {detail.intercomCode}
+                </p>
+              ) : null}
+              {detail.addressHint ? (
+                <p className="text-xs text-gray-500">{detail.addressHint}</p>
+              ) : null}
+            </div>
           </div>
+          </div>
+          {detail.scheduledDeliveryDate ? (
+            <OrderScheduledDeliveryBanner
+              scheduledDeliveryDate={detail.scheduledDeliveryDate}
+              scheduledDeliveryStart={detail.scheduledDeliveryStart}
+              scheduledDeliveryEnd={detail.scheduledDeliveryEnd}
+              labels={{
+                today: labels.deliveryDayToday,
+                tomorrow: labels.deliveryDayTomorrow,
+                later: labels.deliveryDayLater,
+                title: labels.deliverySlot,
+              }}
+            />
+          ) : null}
         </div>
-        {detail.scheduledDeliveryDate ? (
-          <OrderScheduledDeliveryBanner
-            scheduledDeliveryDate={detail.scheduledDeliveryDate}
-            scheduledDeliveryStart={detail.scheduledDeliveryStart}
-            scheduledDeliveryEnd={detail.scheduledDeliveryEnd}
-            labels={{
-              today: labels.deliveryDayToday,
-              tomorrow: labels.deliveryDayTomorrow,
-              later: labels.deliveryDayLater,
-              title: labels.deliverySlot,
-            }}
-          />
-        ) : null}
         <CustomerOrderSheetPayment
           detail={detail}
           labels={labels}
@@ -305,7 +315,10 @@ function CustomerOrderSheetBody({
                   </dl>
                 </div>
                 {participant.items.length > 0 ? (
-                  <OrderItemsList items={participant.items} />
+                  <OrderItemsList
+                    items={participant.items}
+                    stacked={!includeAdminDetails}
+                  />
                 ) : (
                   <p className="text-xs text-gray-500">
                     {labels.participantNoItems}
@@ -320,16 +333,22 @@ function CustomerOrderSheetBody({
           <h3 className="px-1 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
             {labels.items}
           </h3>
-          <OrderItemsList items={detail.items} />
+          <OrderItemsList items={detail.items} stacked={!includeAdminDetails} />
         </section>
       )}
     </div>
   );
 }
 
-function OrderItemsList({ items }: { items: DrawerOrderItem[] }) {
+function OrderItemsList({
+  items,
+  stacked = false,
+}: {
+  items: DrawerOrderItem[];
+  stacked?: boolean;
+}) {
   return (
-    <ul className="space-y-3">
+    <ul className={stacked ? "space-y-3" : "grid grid-cols-2 gap-3"}>
       {items.map((item) => {
         const imageSrc = storefrontProductImageSrc(item.imageUrl);
         const modifierSummary =

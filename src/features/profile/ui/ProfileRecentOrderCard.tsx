@@ -53,7 +53,7 @@ export function ProfileRecentOrderCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
+          <h3 className="font-big-fat-boii text-base font-normal tracking-wide whitespace-nowrap text-gray-900 uppercase">
             {orderNumberLabel} {orderNumber}
           </h3>
           <p className="mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest">
