@@ -18,6 +18,7 @@ import {
   CheckoutPaymentMethodOption,
   type CheckoutPaymentOption,
 } from "@/features/checkout/ui/CheckoutPaymentMethodOption";
+import { CHECKOUT_INVALID_FEEDBACK_MS, CHECKOUT_TITLE_INVALID_CLASS } from "@/features/checkout/ui/checkout-ui";
 import { purchaseGiftCardAction } from "@/features/gift-cards/application/admin-actions";
 import type { GiftCardPaymentMethod } from "@/features/gift-cards/domain/gift-card-payment-method";
 import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
@@ -31,6 +32,32 @@ const DRAWER_FIELD =
 
 const DRAWER_LABEL =
   "flex flex-col gap-1.5 text-sm font-medium text-gray-900";
+
+const GIFT_CARD_INVALID_FIELDS = [
+  "amount",
+  "recipientName",
+  "recipientEmail",
+  "purchaserName",
+  "paymentMethod",
+] as const;
+
+type GiftCardInvalidField = (typeof GIFT_CARD_INVALID_FIELDS)[number];
+
+type GiftCardInvalidFields = Partial<Record<GiftCardInvalidField, true>>;
+
+function isEmailValid(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function labelClass(invalid: boolean | undefined): string {
+  return invalid ? `${DRAWER_LABEL} ${CHECKOUT_TITLE_INVALID_CLASS}` : DRAWER_LABEL;
+}
+
+function fieldClass(invalid: boolean | undefined, extra = ""): string {
+  return `${DRAWER_FIELD} ${extra} ${
+    invalid ? "border-red-500 focus:border-red-500" : ""
+  }`;
+}
 
 export type GiftCardPaymentLabels = {
   cashOnDelivery: string;
@@ -87,7 +114,11 @@ export function BuyGiftCardForm({
   const [customAmount, setCustomAmount] = useState("");
   const [scheduledSendAt, setScheduledSendAt] = useState("");
   const [paymentMethod, setPaymentMethod] =
-    useState<GiftCardPaymentMethod>("cash_on_delivery");
+    useState<GiftCardPaymentMethod | null>(null);
+  const [invalidFields, setInvalidFields] = useState<GiftCardInvalidFields>({});
+  const invalidFeedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -132,6 +163,7 @@ export function BuyGiftCardForm({
     const list = paymentListRef.current;
     const selected = list?.querySelector<HTMLElement>("[data-payment-selected='true']");
     if (!list || !selected) {
+      setPaymentFrame(null);
       return;
     }
     setPaymentFrame({
@@ -148,11 +180,74 @@ export function BuyGiftCardForm({
     return Number.isInteger(parsed) ? parsed : 0;
   }, [selectedAmount, customAmount, useCustom]);
 
+  function clearInvalidField(field: GiftCardInvalidField): void {
+    setInvalidFields((current) => {
+      if (!current[field]) {
+        return current;
+      }
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function markInvalid(nextInvalid: GiftCardInvalidFields): void {
+    if (invalidFeedbackTimeoutRef.current) {
+      clearTimeout(invalidFeedbackTimeoutRef.current);
+    }
+    setInvalidFields({});
+    requestAnimationFrame(() => {
+      setInvalidFields(nextInvalid);
+      const first = GIFT_CARD_INVALID_FIELDS.find((field) => nextInvalid[field]);
+      const target = first
+        ? document.querySelector(`[data-gift-card-field="${first}"]`)
+        : null;
+      if (target instanceof HTMLElement) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        const focusable =
+          target instanceof HTMLInputElement
+            ? target
+            : target.querySelector("input, button, [tabindex]:not([tabindex='-1'])");
+        if (focusable instanceof HTMLElement) {
+          focusable.focus({ preventScroll: true });
+        }
+      }
+      invalidFeedbackTimeoutRef.current = setTimeout(() => {
+        setInvalidFields({});
+        invalidFeedbackTimeoutRef.current = null;
+      }, CHECKOUT_INVALID_FEEDBACK_MS);
+    });
+  }
+
   function onSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     setError(null);
     setSuccess(null);
+
+    const nextInvalid: GiftCardInvalidFields = {};
+    if (useCustom && (resolvedAmount < settings.minAmount || resolvedAmount > settings.maxAmount)) {
+      nextInvalid.amount = true;
+    }
+    if (!String(data.get("recipientName") ?? "").trim()) {
+      nextInvalid.recipientName = true;
+    }
+    if (!isEmailValid(String(data.get("recipientEmail") ?? "").trim())) {
+      nextInvalid.recipientEmail = true;
+    }
+    if (!String(data.get("purchaserName") ?? "").trim()) {
+      nextInvalid.purchaserName = true;
+    }
+    if (!paymentMethod) {
+      nextInvalid.paymentMethod = true;
+    }
+    if (GIFT_CARD_INVALID_FIELDS.some((field) => nextInvalid[field])) {
+      markInvalid(nextInvalid);
+      return;
+    }
+    if (!paymentMethod) {
+      return;
+    }
 
     startTransition(async () => {
       const result = await purchaseGiftCardAction({
@@ -185,8 +280,8 @@ export function BuyGiftCardForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
-      <div className={DRAWER_LABEL}>
+    <form noValidate onSubmit={onSubmit} className="space-y-5">
+      <div className={labelClass(invalidFields.amount)} data-gift-card-field="amount">
         <span>{copy.amount}</span>
         <SelectDropdown
           className={useCustom ? undefined : "md:hidden"}
@@ -202,11 +297,13 @@ export function BuyGiftCardForm({
                 min={settings.minAmount}
                 max={settings.maxAmount}
                 value={customAmount}
-                onChange={(event) => setCustomAmount(event.target.value)}
+                onChange={(event) => {
+                  setCustomAmount(event.target.value);
+                  clearInvalidField("amount");
+                }}
                 className="h-full w-full min-w-0 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 placeholder={copy.customAmount}
                 autoFocus
-                required
               />
             ) : undefined
           }
@@ -223,37 +320,40 @@ export function BuyGiftCardForm({
         )}
       </div>
 
-      <label className={DRAWER_LABEL}>
+      <label className={labelClass(invalidFields.recipientName)}>
         {copy.recipientName}
         <input
           name="recipientName"
-          required
+          data-gift-card-field="recipientName"
           maxLength={120}
-          className={DRAWER_FIELD}
+          className={fieldClass(invalidFields.recipientName)}
+          onChange={() => clearInvalidField("recipientName")}
         />
       </label>
-      <label className={DRAWER_LABEL}>
+      <label className={labelClass(invalidFields.recipientEmail)}>
         {copy.recipientEmail}
         <input
           name="recipientEmail"
+          data-gift-card-field="recipientEmail"
           type="email"
-          required
           maxLength={254}
-          className={DRAWER_FIELD}
+          className={fieldClass(invalidFields.recipientEmail)}
+          onChange={() => clearInvalidField("recipientEmail")}
         />
       </label>
       <label className={DRAWER_LABEL}>
         {copy.recipientPhone}
         <input name="recipientPhone" maxLength={40} className={DRAWER_FIELD} />
       </label>
-      <label className={DRAWER_LABEL}>
+      <label className={labelClass(invalidFields.purchaserName)}>
         {copy.purchaserName}
         <input
           name="purchaserName"
-          required
+          data-gift-card-field="purchaserName"
           maxLength={120}
           defaultValue={defaultPurchaserName}
-          className={DRAWER_FIELD}
+          className={fieldClass(invalidFields.purchaserName)}
+          onChange={() => clearInvalidField("purchaserName")}
         />
       </label>
       <label className={DRAWER_LABEL}>
@@ -282,11 +382,15 @@ export function BuyGiftCardForm({
           }}
         />
       </label>
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-medium text-gray-900">
+      <fieldset className="space-y-2" data-gift-card-field="paymentMethod">
+        <legend
+          className={`text-sm font-medium text-gray-900 ${
+            invalidFields.paymentMethod ? CHECKOUT_TITLE_INVALID_CLASS : ""
+          }`}
+        >
           {copy.paymentMethod}
         </legend>
-        <div ref={paymentListRef} className="relative space-y-2">
+        <div ref={paymentListRef} className="relative min-w-0 space-y-2">
           {paymentFrame ? (
             <div
               aria-hidden
@@ -305,9 +409,10 @@ export function BuyGiftCardForm({
                 disabled={pending}
                 compact
                 persistentBorder
-                onSelect={(method) =>
-                  setPaymentMethod(method as GiftCardPaymentMethod)
-                }
+                onSelect={(method) => {
+                  clearInvalidField("paymentMethod");
+                  setPaymentMethod(method as GiftCardPaymentMethod);
+                }}
               />
             </div>
           ))}

@@ -115,8 +115,10 @@ export function CheckoutPaymentMethodOption({
             >
               {icons}
               <span
-                className={`shrink-0 text-[15px] font-medium text-gray-900 xl:text-base ${
-                  compact ? "ml-[6px]" : "ml-0.5 xl:ml-0"
+                className={`font-medium text-gray-900 ${
+                  compact
+                    ? "ml-[6px] min-w-0 text-sm"
+                    : "ml-0.5 shrink-0 text-[15px] xl:ml-0 xl:text-base"
                 }`}
               >
                 {option.shortName}
@@ -164,7 +166,13 @@ export function CheckoutPaymentMethodOption({
             </>
           ) : option.id === "cash_on_delivery" ? (
             <>
-              <div className="text-[15px] font-medium text-gray-900 xl:text-base">{option.name}</div>
+              <div
+                className={`font-medium text-gray-900 ${
+                  compact ? "text-sm break-words" : "text-[15px] xl:text-base"
+                }`}
+              >
+                {option.name}
+              </div>
               <div
                 className={`${compact ? "hidden" : "hidden xl:block"} ${descriptionClass(selected)}`}
               >

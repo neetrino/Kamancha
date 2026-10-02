@@ -162,7 +162,7 @@ export function CheckoutPaymentMethodIcons({
     <CheckoutCardPaymentBadges
       size={
         compact
-          ? "mobile"
+          ? "compact"
           : cardBadgeSize === "desktop"
             ? "desktop"
             : "responsive"
@@ -174,7 +174,7 @@ export function CheckoutPaymentMethodIcons({
 function CheckoutCardPaymentBadges({
   size = "responsive",
 }: {
-  size?: "responsive" | "desktop" | "mobile";
+  size?: "responsive" | "desktop" | "mobile" | "compact";
 }) {
   const badges = getCheckoutCardBadges();
   const desktopBadges = (
@@ -205,10 +205,12 @@ function CheckoutCardPaymentBadges({
     return desktopBadges;
   }
 
+  const badgeHeightPx =
+    size === "compact" ? 28 : CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX;
   const mobileBadges = (
     <div
       className={
-        size === "mobile"
+        size === "mobile" || size === "compact"
           ? "flex min-w-0 max-w-full flex-nowrap items-center justify-start"
           : "flex min-w-0 max-w-full flex-nowrap items-center justify-start xl:hidden"
       }
@@ -218,18 +220,16 @@ function CheckoutCardPaymentBadges({
           <CheckoutPaymentBadge
             key={badge.alt}
             badge={badge}
-            logoHeightPx={CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX}
+            logoHeightPx={badgeHeightPx}
             radiusPx={CHECKOUT_PAYMENT_CARD_BADGE_RADIUS_MOBILE_PX}
             paddingPx={0}
-            boxSize={getCheckoutCardBadgeUniformBoxSize(
-              CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX,
-            )}
+            boxSize={getCheckoutCardBadgeUniformBoxSize(badgeHeightPx)}
           />
         ))}
     </div>
   );
 
-  if (size === "mobile") {
+  if (size === "mobile" || size === "compact") {
     return mobileBadges;
   }
 
