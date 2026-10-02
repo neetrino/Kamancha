@@ -20,7 +20,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import {
@@ -165,11 +167,11 @@ export function AdminGiftCardsView({
             <thead className={ADMIN_TABLE_THEAD}>
               <tr>
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.code}</th>
-                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.balance}</th>
-                <th className={ADMIN_TABLE_TH}>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.giftCards.table.balance}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>
                   {copy.giftCards.table.paymentMethod}
                 </th>
-                <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.status}</th>
+                <th className={ADMIN_TABLE_TH_CENTER}>{copy.giftCards.table.status}</th>
                 <th className={ADMIN_TABLE_TH}>
                   {copy.giftCards.table.recipient}
                 </th>
@@ -219,13 +221,13 @@ export function AdminGiftCardsView({
                         </button>
                       </div>
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {giftCardPaymentLabel(card.paymentMethod, copy.giftCards)}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
                       {copy.giftCards.statuses[card.status] ?? card.status}
                     </td>
                     <td className={ADMIN_TABLE_TD}>
