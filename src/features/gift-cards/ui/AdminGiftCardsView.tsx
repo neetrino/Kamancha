@@ -40,6 +40,23 @@ import { GiftCardDetailSheet } from "@/features/gift-cards/ui/GiftCardDetailShee
 import { GiftCardDrawer } from "@/features/gift-cards/ui/GiftCardDrawer";
 import type { GiftCardPaymentLabels } from "@/features/gift-cards/ui/BuyGiftCardForm";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+function giftCardStatusPillClass(status: GiftCardListItem["status"]): string {
+  switch (status) {
+    case "ACTIVE":
+      return "bg-brand-forest/10 text-brand-forest";
+    case "PENDING_PAYMENT":
+      return "bg-amber-100 text-amber-800";
+    case "DISABLED":
+      return "bg-red-100 text-red-700";
+    case "USED":
+      return "bg-gray-100 text-gray-700";
+    case "EXPIRED":
+      return "bg-orange-100 text-orange-800";
+    default:
+      return "bg-gray-100 text-gray-700";
+  }
+}
 import { formatMoneyAmount } from "@/lib/money/format";
 
 function giftCardPaymentLabel(
@@ -228,7 +245,11 @@ export function AdminGiftCardsView({
                       {giftCardPaymentLabel(card.paymentMethod, copy.giftCards)}
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      {copy.giftCards.statuses[card.status] ?? card.status}
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${giftCardStatusPillClass(card.status)}`}
+                      >
+                        {copy.giftCards.statuses[card.status] ?? card.status}
+                      </span>
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       <div className="text-sm">{card.recipientName}</div>
