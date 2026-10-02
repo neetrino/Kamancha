@@ -125,6 +125,14 @@ export function getAdminMenuItems(
       ),
     },
     {
+      id: "messages",
+      label: nav.messages,
+      href: `${base}/messages`,
+      icon: (
+        <MenuIcon d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      ),
+    },
+    {
       id: "hero",
       label: nav.hero,
       href: `${base}/hero`,
@@ -146,14 +154,6 @@ export function getAdminMenuItems(
       href: `${base}/blog`,
       icon: (
         <MenuIcon d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-      ),
-    },
-    {
-      id: "messages",
-      label: nav.messages,
-      href: `${base}/messages`,
-      icon: (
-        <MenuIcon d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
       ),
     },
     {
