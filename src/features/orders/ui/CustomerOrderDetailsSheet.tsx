@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin } from "lucide-react";
+import { CreditCard, MapPin, Package } from "lucide-react";
 
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
@@ -88,13 +88,19 @@ export function CustomerOrderDetailsSheet({
               />
             ) : null}
             <span
-              className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
             >
+              {includeAdminDetails ? null : (
+                <Package className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              )}
               {localizeOrderStatus(detail.status, copy.orders.statusLabels)}
             </span>
             <span
-              className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(detail.paymentStatus)}`}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(detail.paymentStatus)}`}
             >
+              {includeAdminDetails ? null : (
+                <CreditCard className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              )}
               {localizePaymentStatus(
                 detail.paymentStatus,
                 copy.orders.statusLabels,
