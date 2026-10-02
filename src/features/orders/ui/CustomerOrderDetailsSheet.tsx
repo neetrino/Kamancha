@@ -371,7 +371,7 @@ function OrderItemsList({
         return (
           <li
             key={item.id}
-            className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-white px-3 py-3.5"
+            className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-gray-50 px-3 py-3.5 shadow-sm"
           >
             <div className="relative z-[2] flex items-stretch gap-3">
               {/* Order/R2 hosts vary — native img avoids brittle next/image allowlists. */}
@@ -409,7 +409,7 @@ function OrderItemsList({
                         item.currency,
                       )}
                     </p>
-                    <div className="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-sky-50/70 px-2.5 py-0.5">
+                    <div className="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-white px-2.5 py-0.5">
                       <span className="min-w-5 text-center text-[11px] font-semibold tabular-nums text-gray-900">
                         {item.quantity}
                       </span>
