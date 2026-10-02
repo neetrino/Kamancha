@@ -61,7 +61,7 @@
   "saveLimit": "Պահպանել",
   "editLimit": "Խմբագրել",
   "deliveryFieldLabel": "Առաքման հասցե",
-  "deliveryFieldHint": "Նախ լրացրեք հասցեն՝ առաքման գումարը հաշվելու և խմբի միջև բաժանելու համար։",
+  "deliveryFieldHint": "Ընտրեք տարածքը ֆիքսված գնի համար, ապա մուտքագրեք փողոցի հասցեն։",
   "deliveryPlaceholder": "օր.՝ 1000",
   "lockAndContinue": "Ավարտել հավաքագրումը",
   "goToCheckout": "Անցնել Checkout և վճարել",
@@ -82,7 +82,7 @@
   "browseMenu": "Դիտել մենյուն",
   "deliveryAddressPlaceholder": "Փողոց, շենք, քաղաք…",
   "calculateDelivery": "Հաշվել առաքումը",
-  "calculatingDelivery": "Առաքման գինը հաշվվում է…",
+  "calculatingDelivery": "Առաքումը պահպանվում է…",
   "deliveryQuoteReady": "Առաքում՝ {amount} ({distance})",
   "deliverySplitHint": "",
   "deliveryOrganizerPaysHint": "Եթե դուք եք վճարում բոլորի համար՝ առաքման ամբողջ գումարը ձեր վրա է։",
@@ -119,5 +119,7 @@
     "removeItem": "Վստա՞հ եք, որ ցանկանում եք հեռացնել «{name}»-ը այս խմբային պատվերից։",
     "cancelOrder": "Վստա՞հ եք, որ ցանկանում եք չեղարկել այս խմբային պատվերը։ Այս գործողությունն անհնար է հետարկել։",
     "cancelOrderConfirm": "Չեղարկել պատվերը"
-  }
+  },
+  "deliveryZoneLabel": "Առաքման տարածք",
+  "selectDeliveryZone": "Ընտրեք առաքման տարածքը"
 }

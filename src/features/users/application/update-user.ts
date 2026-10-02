@@ -17,9 +17,12 @@ import {
 import {
   updateUserRoleSchema,
   updateUserStatusSchema,
+  updateUserAdminNoteSchema,
   bulkAnonymizeUsersSchema,
+  normalizeUserAdminNote,
   type UpdateUserRoleInput,
   type UpdateUserStatusInput,
+  type UpdateUserAdminNoteInput,
   type BulkAnonymizeUsersInput,
 } from "@/features/users/schemas/admin-users";
 import { requireAdmin } from "@/lib/auth/policies";
@@ -214,6 +217,7 @@ export async function updateUserStatusAction(
                 firstName: "Anonymized",
                 lastName: "User",
                 phone: null,
+                adminNote: null,
               }
             : {}),
         })
@@ -247,6 +251,84 @@ export async function updateUserStatusAction(
 
     revalidatePath(`/${locale}/admin/users`);
     revalidatePath(`/${locale}/admin/users/${userId}`);
+    return ok(result);
+  } catch (error) {
+    return mapUserMutationError(error);
+  }
+}
+
+/**
+ * Saves or clears the internal operator note on a customer profile.
+ */
+export async function updateUserAdminNoteAction(
+  locale: string,
+  raw: UpdateUserAdminNoteInput,
+): Promise<Result<{ userId: string; adminNote: string | null }>> {
+  if (!isLocale(locale)) {
+    return err("INVALID_LOCALE", "Invalid locale.");
+  }
+
+  const parsed = updateUserAdminNoteSchema.safeParse(raw);
+  if (!parsed.success) {
+    return err("VALIDATION_ERROR", "Invalid operator note payload.");
+  }
+
+  const actor = await requireAdmin(locale as Locale);
+  const { userId } = parsed.data;
+  const nextNote = normalizeUserAdminNote(parsed.data.adminNote);
+
+  try {
+    const result = await withTransaction(async (tx) => {
+      const [target] = await tx
+        .select({
+          id: users.id,
+          status: users.status,
+          adminNote: users.adminNote,
+        })
+        .from(users)
+        .where(eq(users.id, userId))
+        .for("update")
+        .limit(1);
+
+      if (!target) {
+        throw new Error("USER_NOT_FOUND");
+      }
+
+      if (target.status === "ANONYMIZED") {
+        throw new Error("USER_ANONYMIZED");
+      }
+
+      const previousNote = normalizeUserAdminNote(target.adminNote);
+      if (previousNote === nextNote) {
+        return { userId: target.id, adminNote: previousNote };
+      }
+
+      const now = new Date();
+      const correlationId = createId();
+
+      await tx
+        .update(users)
+        .set({ adminNote: nextNote, updatedAt: now })
+        .where(eq(users.id, target.id));
+
+      await tx.insert(auditLogs).values({
+        id: createId(),
+        actorUserId: actor.id,
+        action: "user.update_admin_note",
+        targetType: "user",
+        targetId: target.id,
+        beforeDiff: { adminNote: previousNote },
+        afterDiff: { adminNote: nextNote },
+        correlationId,
+        context: { actorId: actor.id },
+      });
+
+      return { userId: target.id, adminNote: nextNote };
+    });
+
+    revalidatePath(`/${locale}/admin/users`);
+    revalidatePath(`/${locale}/admin/users/${userId}`);
+    revalidatePath(`/${locale}/admin/orders`);
     return ok(result);
   } catch (error) {
     return mapUserMutationError(error);

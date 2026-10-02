@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   DEFAULT_DELIVERY_SETTINGS,
-  isDistanceDeliveryReady,
+  isDeliveryOfferingEnabled,
   parseDeliverySettings,
 } from "@/features/delivery/domain/delivery-settings";
 
@@ -11,7 +11,7 @@ describe("parseDeliverySettings", () => {
     expect(parseDeliverySettings(null)).toEqual(DEFAULT_DELIVERY_SETTINGS);
   });
 
-  it("parses a configured store origin", () => {
+  it("parses active flag, schedule, and legacy map center", () => {
     expect(
       parseDeliverySettings({
         originAddress: "Tumanyan 40, Yerevan",
@@ -21,37 +21,28 @@ describe("parseDeliverySettings", () => {
         isActive: true,
       }),
     ).toEqual({
-      originAddress: "Tumanyan 40, Yerevan",
-      originLat: 40.18,
-      originLng: 44.51,
-      pricePerKmAmount: 1000,
       isActive: true,
       schedule: DEFAULT_DELIVERY_SETTINGS.schedule,
       cashChangeDenominations: DEFAULT_DELIVERY_SETTINGS.cashChangeDenominations,
+      mapCenterLat: 40.18,
+      mapCenterLng: 44.51,
     });
   });
 });
 
-describe("isDistanceDeliveryReady", () => {
-  it("requires active geocoded origin", () => {
+describe("isDeliveryOfferingEnabled", () => {
+  it("requires isActive", () => {
     expect(
-      isDistanceDeliveryReady({
+      isDeliveryOfferingEnabled({
         ...DEFAULT_DELIVERY_SETTINGS,
-        isActive: true,
-        originAddress: "Yerevan",
-        pricePerKmAmount: 500,
+        isActive: false,
       }),
     ).toBe(false);
 
     expect(
-      isDistanceDeliveryReady({
-        originAddress: "Yerevan",
-        originLat: 40.1,
-        originLng: 44.5,
-        pricePerKmAmount: 500,
+      isDeliveryOfferingEnabled({
+        ...DEFAULT_DELIVERY_SETTINGS,
         isActive: true,
-        schedule: DEFAULT_DELIVERY_SETTINGS.schedule,
-        cashChangeDenominations: DEFAULT_DELIVERY_SETTINGS.cashChangeDenominations,
       }),
     ).toBe(true);
   });

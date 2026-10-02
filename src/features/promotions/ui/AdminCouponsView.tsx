@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Check, Copy, Pencil, Plus, Trash2 } from "lucide-react";
+import { Copy, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -28,6 +28,7 @@ import {
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
+import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import {
   deletePromotionAction,
   duplicatePromotionAction,
@@ -36,8 +37,38 @@ import type {
   AdminPromotionListItem,
   CouponUserOption,
 } from "@/features/promotions/application/queries";
+import {
+  resolveCouponAvailabilityStatus,
+  type CouponAvailabilityStatus,
+} from "@/features/promotions/domain/coupon-availability-status";
 import { CouponDrawer } from "@/features/promotions/ui/CouponDrawer";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
+
+function couponStatusBadgeClass(status: CouponAvailabilityStatus): string {
+  switch (status) {
+    case "AVAILABLE":
+      return "bg-green-100 text-green-800";
+    case "SCHEDULED":
+      return "bg-blue-100 text-blue-800";
+    case "USED":
+    case "EXPIRED":
+      return "bg-gray-100 text-gray-700";
+    case "INACTIVE":
+      return "bg-red-100 text-red-800";
+  }
+}
+
+function formatCouponUsage(
+  promo: AdminPromotionListItem,
+  copy: Dictionary["admin"]["coupons"]["table"],
+): string {
+  if (promo.totalUsageLimit == null) {
+    return copy.usageUnlimited.replace("{used}", String(promo.usedCount));
+  }
+  return copy.usageOf
+    .replace("{used}", String(promo.usedCount))
+    .replace("{limit}", String(promo.totalUsageLimit));
+}
 
 type AdminCouponsViewCopy = {
   coupons: Dictionary["admin"]["coupons"];
@@ -168,16 +199,27 @@ export function AdminCouponsView({
                   <th className={ADMIN_TABLE_TH}>{copy.coupons.table.code}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.type}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.value}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.usageLimit}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.used}</th>
-                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.active}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.usage}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.status}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.validUntil}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.coupons.table.actions}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
-                {coupons.map((promo) => (
-                  <tr key={promo.id} className={ADMIN_TABLE_ROW}>
+                {coupons.map((promo) => {
+                  const status = resolveCouponAvailabilityStatus(promo);
+                  const statusLabel =
+                    copy.coupons.statuses[status] ?? status;
+                  const isUnavailable =
+                    status === "USED" ||
+                    status === "EXPIRED" ||
+                    status === "INACTIVE";
+
+                  return (
+                  <tr
+                    key={promo.id}
+                    className={`${ADMIN_TABLE_ROW}${isUnavailable ? " opacity-70" : ""}`}
+                  >
                     <td className={ADMIN_TABLE_TD}>
                       {promo.code ? (
                         <button
@@ -208,18 +250,22 @@ export function AdminCouponsView({
                         : String(promo.discountValue)}
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.totalUsageLimit ?? "—"}
+                      <span
+                        className={
+                          status === "USED"
+                            ? "tabular-nums text-gray-500"
+                            : "tabular-nums text-gray-900"
+                        }
+                      >
+                        {formatCouponUsage(promo, copy.coupons.table)}
+                      </span>
                     </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>{promo.usedCount}</td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
-                      {promo.isActive ? (
-                        <Check
-                          className="mx-auto h-4 w-4 text-gray-900"
-                          aria-label={copy.coupons.table.activeAria}
-                        />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
+                      <span
+                        className={`${ADMIN_BADGE} ${couponStatusBadgeClass(status)}`}
+                      >
+                        {statusLabel}
+                      </span>
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
                       <span className="text-sm text-gray-700">
@@ -281,7 +327,8 @@ export function AdminCouponsView({
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -15,7 +15,6 @@ import { requireAdmin } from "@/lib/auth/policies";
 import { getProviders } from "@/config/providers";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { geocodeAddress } from "@/lib/maps/google-maps";
 import { logger } from "@/lib/observability/logger";
 import { err, ok, type Result } from "@/lib/result";
 
@@ -49,13 +48,11 @@ function weekdayLabel(
   }
 }
 
-/** Saves store origin + AMD/km after geocoding the origin address. */
+/** Saves delivery offering flag, schedule, and cash-change options. */
 export async function saveDeliverySettingsAction(
   locale: string,
   raw: DeliverySettingsInput,
-): Promise<
-  Result<{ originAddress: string; originLat: number; originLng: number }>
-> {
+): Promise<Result<{ saved: true }>> {
   if (!isLocale(locale)) {
     return err("INVALID_LOCALE", "Invalid locale.");
   }
@@ -89,38 +86,24 @@ export async function saveDeliverySettingsAction(
   }
 
   const data = parsed.data;
+  const now = new Date();
+  const [existing] = await getDb()
+    .select({ key: storeSettings.key, value: storeSettings.value })
+    .from(storeSettings)
+    .where(eq(storeSettings.key, DELIVERY_SETTING_KEY))
+    .limit(1);
 
-  let originLat: number;
-  let originLng: number;
-  let formattedAddress: string;
-  if (data.originLat != null && data.originLng != null) {
-    originLat = data.originLat;
-    originLng = data.originLng;
-    formattedAddress = data.originAddress.trim();
-  } else {
-    try {
-      const geocoded = await geocodeAddress(data.originAddress);
-      originLat = geocoded.location.lat;
-      originLng = geocoded.location.lng;
-      formattedAddress = geocoded.formattedAddress;
-    } catch (error) {
-      logger.warn("delivery.origin_geocode_failed", {
-        message: error instanceof Error ? error.message : "unknown",
-      });
-      return err(
-        "GEOCODE_FAILED",
-        error instanceof Error
-          ? error.message
-          : "Store address could not be found on the map.",
-      );
-    }
-  }
+  const previous = parseDeliverySettings(existing?.value ?? null);
+  const previousKeys = new Set(
+    previous.cashChangeDenominations
+      .map((item) => item.imageObjectKey)
+      .filter((key): key is string => Boolean(key)),
+  );
 
   const value = {
-    originAddress: formattedAddress,
-    originLat,
-    originLng,
-    pricePerKmAmount: data.pricePerKmAmount,
+    // Preserve legacy map-center coords so the address picker keeps a sensible default.
+    originLat: previous.mapCenterLat,
+    originLng: previous.mapCenterLng,
     isActive: data.isActive,
     schedule: {
       timezone: "Asia/Yerevan" as const,
@@ -132,18 +115,6 @@ export async function saveDeliverySettingsAction(
     })),
   };
 
-  const now = new Date();
-  const [existing] = await getDb()
-    .select({ key: storeSettings.key, value: storeSettings.value })
-    .from(storeSettings)
-    .where(eq(storeSettings.key, DELIVERY_SETTING_KEY))
-    .limit(1);
-
-  const previousKeys = new Set(
-    parseDeliverySettings(existing?.value ?? null).cashChangeDenominations
-      .map((item) => item.imageObjectKey)
-      .filter((key): key is string => Boolean(key)),
-  );
   const nextKeys = new Set(
     value.cashChangeDenominations
       .map((item) => item.imageObjectKey)
@@ -181,5 +152,5 @@ export async function saveDeliverySettingsAction(
   }
 
   revalidateDeliveryPaths(locale);
-  return ok({ originAddress: formattedAddress, originLat, originLng });
+  return ok({ saved: true });
 }

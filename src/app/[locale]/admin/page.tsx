@@ -168,7 +168,7 @@ export default async function AdminPage({
             id: order.id,
             orderNumber: order.orderNumber,
             status: order.status,
-            contactEmail: order.contactEmail,
+            contactPhone: order.contactPhone,
             totalAmount: order.totalAmount,
           }))}
           copy={dictionary.admin}

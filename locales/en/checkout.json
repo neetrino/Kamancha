@@ -19,6 +19,7 @@
     "address": "Address",
     "floor": "Floor",
     "intercomCode": "Intercom code",
+    "note": "Order note",
     "city": "City",
     "deliveryLocation": "Delivery location",
     "selectLocation": "Select location"
@@ -28,6 +29,7 @@
     "address": "Street, building, etc.",
     "floor": "e.g. 3",
     "intercomCode": "e.g. 24#",
+    "note": "Any special requests for your order (optional)",
     "city": "City"
   },
   "map": {
@@ -59,11 +61,11 @@
     "storePickup": "Store Pickup",
     "storePickupDescription": "Pick up your order from our store (Free)",
     "delivery": "Delivery",
-    "deliveryDescription": "We will deliver your order to your address. Price is based on distance.",
+    "deliveryDescription": "We will deliver your order to your address. Choose a delivery zone for the fixed fee.",
     "freePickup": "Free (Store Pickup)",
     "enterCity": "Enter City",
-    "selectDeliveryLocation": "Select delivery location",
-    "enterDeliveryAddress": "Enter a delivery address to calculate shipping",
+    "selectDeliveryLocation": "Select a delivery zone",
+    "enterDeliveryAddress": "Enter a delivery address",
     "calculatingDelivery": "Calculating delivery…"
   },
   "payment": {

@@ -14,15 +14,29 @@ export type ChangeOrderStatusInput = z.infer<typeof changeOrderStatusSchema>;
 export const CUSTOMER_ORDER_KINDS = ["all", "personal", "group"] as const;
 export type CustomerOrderKind = (typeof CUSTOMER_ORDER_KINDS)[number];
 
+/** Admin orders list kinds — includes unseen "new" filter. */
+export const ADMIN_ORDER_KINDS = [
+  "all",
+  "personal",
+  "group",
+  "new",
+] as const;
+export type AdminOrderKind = (typeof ADMIN_ORDER_KINDS)[number];
+
 export const adminOrdersFilterSchema = z.object({
   status: z.enum(ORDER_STATUSES).optional(),
   paymentStatus: z.enum(PAYMENT_STATUSES).optional(),
   archived: z.enum(["active", "archived", "all"]).default("active"),
   dateFrom: z.string().date().optional(),
   dateTo: z.string().date().optional(),
+  /**
+   * Filter by scheduled delivery calendar day (`YYYY-MM-DD`, Asia/Yerevan),
+   * stored on `shipping_address.scheduledDeliveryDate`.
+   */
+  deliveryDate: z.string().date().optional(),
   q: z.string().trim().max(100).optional(),
-  /** Solo vs group-order linked rows (admin + profile). */
-  kind: z.enum(CUSTOMER_ORDER_KINDS).optional(),
+  /** Solo / group / unseen-new rows (admin). Profile uses CUSTOMER_ORDER_KINDS. */
+  kind: z.enum(ADMIN_ORDER_KINDS).optional(),
   page: z.coerce.number().int().min(1).max(500).default(1),
 });
 

@@ -10,6 +10,8 @@ import {
   ADMIN_MAIN_INNER,
   ADMIN_PAGE_SHELL,
 } from "@/features/admin/ui/admin-shell-classes";
+import { AdminNewOrderAlert } from "@/features/orders/ui/AdminNewOrderAlert";
+import { AdminOrderAlertsProvider } from "@/features/orders/ui/AdminOrderAlertsContext";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -22,14 +24,22 @@ type AdminShellProps = {
 export function AdminShell({ locale, copy, children }: AdminShellProps) {
   return (
     <AdminSidebarCollapseProvider>
-      <div className={ADMIN_PAGE_SHELL} data-admin-shell="">
-        <AdminSidebar locale={locale} shell={copy.shell} nav={copy.nav} />
-        <div className={ADMIN_MAIN_COLUMN}>
-          <div className={ADMIN_MAIN_INNER}>
-            <AdminPageReveal>{children}</AdminPageReveal>
+      <AdminOrderAlertsProvider locale={locale}>
+        <div className={ADMIN_PAGE_SHELL} data-admin-shell="">
+          <AdminSidebar
+            locale={locale}
+            shell={copy.shell}
+            nav={copy.nav}
+            ordersBadgeAria={copy.orders.newAlert.badgeAria}
+          />
+          <div className={ADMIN_MAIN_COLUMN}>
+            <div className={ADMIN_MAIN_INNER}>
+              <AdminPageReveal>{children}</AdminPageReveal>
+            </div>
           </div>
+          <AdminNewOrderAlert locale={locale} copy={copy.orders.newAlert} />
         </div>
-      </div>
+      </AdminOrderAlertsProvider>
     </AdminSidebarCollapseProvider>
   );
 }

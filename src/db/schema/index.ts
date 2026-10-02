@@ -71,6 +71,8 @@ export {
   deliveryRules,
   promotionUsers,
   promotions,
+  type DeliveryZoneLocaleCopy,
+  type DeliveryZoneTranslationsJson,
 } from "@/db/schema/pricing";
 export {
   auditLogs,

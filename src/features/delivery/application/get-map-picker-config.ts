@@ -33,8 +33,8 @@ export async function getMapPickerConfigAction(
 
   const settings = await getDeliverySettings();
   let center =
-    settings.originLat != null && settings.originLng != null
-      ? { lat: settings.originLat, lng: settings.originLng }
+    settings.mapCenterLat != null && settings.mapCenterLng != null
+      ? { lat: settings.mapCenterLat, lng: settings.mapCenterLng }
       : { ...YEREVAN_CENTER };
   let zoom = 13;
 

@@ -42,6 +42,8 @@ export type AddressSnapshot = {
   floor?: string;
   /** Intercom / door code for delivery. */
   intercomCode?: string;
+  /** Optional note left by the customer at checkout. */
+  customerNote?: string;
   /** Scheduled delivery date `YYYY-MM-DD` (Asia/Yerevan). */
   scheduledDeliveryDate?: string;
   /** Scheduled slot start `HH:mm`. */
@@ -128,11 +130,22 @@ export const orders = pgTable(
     })
       .notNull()
       .default(sql`now()`),
+    /**
+     * When an admin acknowledged / opened this order.
+     * `null` means the order is still "new" in the admin inbox.
+     */
+    adminSeenAt: timestamp("admin_seen_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
   (table) => [
     uniqueIndex("orders_order_number_uidx").on(table.orderNumber),
+    index("orders_admin_unseen_idx")
+      .on(table.placedAt)
+      .where(sql`${table.adminSeenAt} is null`),
     uniqueIndex("orders_idempotency_uidx").on(
       table.idempotencyScopeHash,
       table.idempotencyKeyHash,

@@ -17,12 +17,16 @@ export type CheckoutLabels = {
   email: string;
   phone: string;
   address: string;
+  deliveryZone: string;
+  selectDeliveryZone: string;
   floor: string;
   intercomCode: string;
+  note: string;
   phonePlaceholder: string;
   addressPlaceholder: string;
   floorPlaceholder: string;
   intercomCodePlaceholder: string;
+  notePlaceholder: string;
   openMap: string;
   mapTitle: string;
   mapHint: string;
@@ -30,7 +34,7 @@ export type CheckoutLabels = {
   mapCancel: string;
   mapResolving: string;
   enterDeliveryAddress: string;
-  calculatingDelivery: string;
+  selectDeliveryZoneError: string;
   scheduleTitle: string;
   schedulePickDate: string;
   schedulePickTime: string;
@@ -109,12 +113,16 @@ export function checkoutFormLabels(
     email: copy.form.email,
     phone: copy.form.phone,
     address: copy.form.address,
+    deliveryZone: copy.form.deliveryLocation,
+    selectDeliveryZone: copy.form.selectLocation,
     floor: copy.form.floor,
     intercomCode: copy.form.intercomCode,
+    note: copy.form.note,
     phonePlaceholder: copy.placeholders.phone,
     addressPlaceholder: copy.placeholders.address,
     floorPlaceholder: copy.placeholders.floor,
     intercomCodePlaceholder: copy.placeholders.intercomCode,
+    notePlaceholder: copy.placeholders.note,
     openMap: copy.map.openMap,
     mapTitle: copy.map.title,
     mapHint: copy.map.hint,
@@ -122,7 +130,7 @@ export function checkoutFormLabels(
     mapCancel: copy.map.cancel,
     mapResolving: copy.map.resolving,
     enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
-    calculatingDelivery: copy.shipping.calculatingDelivery,
+    selectDeliveryZoneError: copy.shipping.selectDeliveryLocation,
     scheduleTitle: copy.schedule.title,
     schedulePickDate: copy.schedule.pickDate,
     schedulePickTime: copy.schedule.pickTime,

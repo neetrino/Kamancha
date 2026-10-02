@@ -152,11 +152,30 @@
   "orders": {
     "title": "Заказы",
     "breadcrumb": "Заказы",
+    "newAlert": {
+      "heading": "Новый заказ ({count} ожидает)",
+      "orderTitle": "Заказ #{orderNumber}",
+      "customer": "Клиент",
+      "total": "Итого",
+      "payment": "Оплата",
+      "time": "Время",
+      "acknowledge": "Услышал — закрыть все ({count})",
+      "badgeAria": "{count} новых заказов"
+    },
     "kindFilter": {
       "aria": "Тип заказов",
       "all": "Все",
       "personal": "Личные",
-      "group": "Групповые"
+      "group": "Групповые",
+      "new": "Новые"
+    },
+    "deliveryDayFilter": {
+      "aria": "День доставки",
+      "all": "Все дни",
+      "today": "Сегодня",
+      "tomorrow": "Завтра",
+      "pickDate": "Выбрать день",
+      "datePlaceholder": "ДД.ММ.ГГГГ"
     },
     "filters": {
       "orderStatusAria": "Статус заказа",
@@ -190,9 +209,25 @@
       "payment": "Оплата",
       "paymentMethod": "Способ оплаты",
       "total": "Итого",
+      "delivery": "Доставка",
       "placed": "Размещён",
       "archivedBadge": "В архиве",
-      "groupOrderBadge": "Групповой"
+      "groupOrderBadge": "Групповой",
+      "newBadge": "Новый",
+      "deliveryEmpty": "—",
+      "deliveryTodayBadge": "Сегодня",
+      "deliveryTomorrowBadge": "Завтра",
+      "deliveryLaterBadge": "Позже",
+      "deliveryGroupToday": "Сегодня · {date}",
+      "deliveryGroupTomorrow": "Завтра · {date}",
+      "deliveryGroupDate": "{date}",
+      "deliveryGroupNone": "Без слота доставки",
+      "deliveryGroupCount": "{count} заказов"
+    },
+    "customerNote": {
+      "title": "Заметка оператора",
+      "close": "Закрыть",
+      "openAria": "Открыть заметку оператора для {name}"
     },
     "inlineStatus": {
       "changeOrderAria": "Изменить статус заказа",
@@ -224,7 +259,11 @@
       "pickupStore": "Магазин самовывоза:",
       "floor": "Этаж:",
       "intercomCode": "Код домофона:",
-      "deliverySlot": "Интервал доставки:",
+      "orderNote": "Комментарий:",
+      "deliverySlot": "Время доставки",
+      "deliveryDayToday": "Сегодня",
+      "deliveryDayTomorrow": "Завтра",
+      "deliveryDayLater": "Позже",
       "cashChange": "Сдача с:",
       "paymentSection": "Оплата",
       "method": "Способ оплаты:",
@@ -266,7 +305,11 @@
       "placedAt": "Оформлен: {datetime} UTC",
       "floor": "Этаж:",
       "intercomCode": "Код домофона:",
-      "deliverySlot": "Интервал доставки:",
+      "orderNote": "Комментарий:",
+      "deliverySlot": "Время доставки",
+      "deliveryDayToday": "Сегодня",
+      "deliveryDayTomorrow": "Завтра",
+      "deliveryDayLater": "Позже",
       "cashChange": "Сдача с:",
       "lineItems": "Состав заказа",
       "product": "Товар",
@@ -466,18 +509,14 @@
   },
   "delivery": {
     "title": "Доставка",
-    "subtitle": "Укажите адрес магазина, цену за километр в AMD и календарь доставки, из которого клиенты смогут выбрать время при оформлении заказа.",
+    "subtitle": "Задайте зоны доставки с фиксированной ценой в AMD, график и купюры для сдачи, которые клиенты используют при оформлении заказа.",
     "saved": "Настройки доставки сохранены.",
-    "storeAndPricing": "Магазин и цены",
-    "storeAndPricingHint": "Адрес отправления и стоимость доставки за километр, используемые при оформлении заказа.",
-    "storeAddress": "Адрес магазина",
-    "storeAddressPlaceholder": "например, Андраник 108/10, Ереван",
-    "storeAddressHint": "Начните вводить название улицы — выберите вариант из подсказок Google, затем сохраните.",
-    "pickOnMap": "Отметить на карте",
-    "geocoded": "Геокодировано: {lat}, {lng}",
-    "pricePerKm": "Цена за километр (AMD)",
-    "pricePerKmPlaceholder": "1000",
-    "pricePerKmExample": "Пример: 1.101 км → {amount}",
+    "zonesTitle": "Зоны доставки",
+    "zonesHint": "У каждой зоны есть название и фиксированная стоимость. Клиент выбирает зону при оформлении заказа.",
+    "zonesEmpty": "Зон пока нет. Добавьте, например, Ереван или Регион.",
+    "addZone": "Добавить зону",
+    "deleteZoneTitle": "Удалить зону доставки",
+    "deleteZoneDescription": "Убрать «{name}» из оформления заказа? Существующие заказы сохранят записанную стоимость.",
     "offerDelivery": "Предлагать доставку при оформлении заказа",
     "cashChange": {
       "title": "Купюры для сдачи",
@@ -517,18 +556,18 @@
       "noClosedDates": "Закрытых дат нет. Добавьте праздники или дни без доставки."
     },
     "locationDrawer": {
-      "addTitle": "Добавить местоположение",
-      "editTitle": "Редактировать местоположение",
-      "addAria": "Добавить местоположение",
-      "editAria": "Редактировать местоположение",
-      "country": "Страна",
-      "countryPlaceholder": "Армения",
-      "city": "Город",
-      "cityPlaceholder": "Ереван",
+      "addTitle": "Добавить зону доставки",
+      "editTitle": "Редактировать зону",
+      "addAria": "Добавить зону доставки",
+      "editAria": "Редактировать зону доставки",
+      "translations": "Названия по языкам",
+      "areaName": "Район",
+      "areaNamePlaceholder": "",
+      "districtName": "Квартал (необязательно)",
+      "districtNamePlaceholder": "",
+      "districtNameHint": "Отображается как Район (Квартал), например Регион (Шенгавит).",
       "priceAmd": "Цена (AMD)",
-      "pricePlaceholder": "1500",
-      "freeDeliveryFrom": "Бесплатная доставка от (AMD)",
-      "freeDeliveryPlaceholder": "50000"
+      "pricePlaceholder": ""
     }
   },
   "discounts": {
@@ -616,17 +655,24 @@
       "copyCodeAria": "Скопировать код {code}",
       "type": "Тип",
       "value": "Значение",
-      "usageLimit": "Лимит использования",
-      "used": "Использовано",
-      "active": "Активен",
+      "usage": "Использование",
+      "usageOf": "{used} / {limit}",
+      "usageUnlimited": "{used} / ∞",
+      "status": "Статус",
       "validUntil": "Действует до",
       "actions": "Действия",
       "percentOff": "Скидка в процентах",
       "fixedAmountAmd": "Фиксированная сумма (AMD)",
-      "activeAria": "Активен",
       "editAria": "Редактировать {code}",
       "duplicateAria": "Дублировать {code}",
       "deleteAria": "Удалить {code}"
+    },
+    "statuses": {
+      "AVAILABLE": "Доступен",
+      "USED": "Использован",
+      "EXPIRED": "Истёк",
+      "INACTIVE": "Неактивен",
+      "SCHEDULED": "Запланирован"
     },
     "drawer": {
       "newTitle": "Новый купон",
@@ -746,6 +792,14 @@
       "newStatus": "Новый статус",
       "newStatusAria": "Новый статус",
       "updateStatus": "Обновить статус"
+    },
+    "noteForm": {
+      "title": "Заметка оператора",
+      "hint": "Показывается значком звонка на заказах этого клиента в Admin → Orders.",
+      "label": "Заметка",
+      "placeholder": "напр. Позвонить перед доставкой, предпочитает наличные, была жалоба…",
+      "save": "Сохранить заметку",
+      "saved": "Заметка сохранена."
     }
   },
   "analytics": {
@@ -1060,9 +1114,15 @@
       "EXPIRED": "Истекла",
       "DISABLED": "Отключена"
     },
+    "paymentMethods": {
+      "cash": "Наличные",
+      "card": "Карта",
+      "unknown": "—"
+    },
     "table": {
       "code": "Код",
       "balance": "Баланс",
+      "paymentMethod": "Оплата",
       "status": "Статус",
       "recipient": "Получатель",
       "purchaser": "Покупатель",
@@ -1074,6 +1134,7 @@
       "newTitle": "Новая подарочная карта",
       "newAria": "Новая подарочная карта",
       "amount": "Сумма (AMD)",
+      "paymentMethod": "Способ оплаты",
       "recipientName": "Имя получателя",
       "recipientEmail": "Email получателя",
       "recipientPhone": "Телефон получателя",

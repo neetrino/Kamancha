@@ -19,6 +19,7 @@
     "address": "Հասցե",
     "floor": "Հարկ",
     "intercomCode": "Դոմոֆոնի կոդ",
+    "note": "Նշում պատվերի համար",
     "city": "Քաղաք",
     "deliveryLocation": "Առաքման վայր",
     "selectLocation": "Ընտրեք վայրը"
@@ -28,6 +29,7 @@
     "address": "Փողոց, շենք և այլն",
     "floor": "Օր․ 3",
     "intercomCode": "Օր․ 24#",
+    "note": "Հատուկ խնդրանքներ պատվերի համար (ըստ ցանկության)",
     "city": "Քաղաք"
   },
   "map": {
@@ -59,11 +61,11 @@
     "storePickup": "Ինքնաառաքում",
     "storePickupDescription": "Վերցրեք պատվերը խանութից (Անվճար)",
     "delivery": "Առաքում",
-    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Գինը հաշվվում է հեռավորությամբ։",
+    "deliveryDescription": "Կառաքենք ձեր հասցեով։ Ընտրեք առաքման տարածքը ֆիքսված գնի համար։",
     "freePickup": "Անվճար (Ինքնաառաքում)",
     "enterCity": "Մուտքագրեք քաղաքը",
-    "selectDeliveryLocation": "Ընտրեք առաքման վայրը",
-    "enterDeliveryAddress": "Մուտքագրեք հասցեն՝ առաքման գինը հաշվելու համար",
+    "selectDeliveryLocation": "Ընտրեք առաքման տարածքը",
+    "enterDeliveryAddress": "Մուտքագրեք առաքման հասցեն",
     "calculatingDelivery": "Առաքման գինը հաշվվում է…"
   },
   "payment": {

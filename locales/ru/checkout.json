@@ -19,6 +19,7 @@
     "address": "Адрес",
     "floor": "Этаж",
     "intercomCode": "Код домофона",
+    "note": "Комментарий к заказу",
     "city": "Город",
     "deliveryLocation": "Место доставки",
     "selectLocation": "Выберите место"
@@ -28,6 +29,7 @@
     "address": "Улица, дом и т.д.",
     "floor": "напр. 3",
     "intercomCode": "напр. 24#",
+    "note": "Особые пожелания к заказу (необязательно)",
     "city": "Город"
   },
   "map": {
@@ -59,11 +61,11 @@
     "storePickup": "Самовывоз",
     "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
     "delivery": "Доставка",
-    "deliveryDescription": "Доставим заказ по вашему адресу. Цена зависит от расстояния.",
+    "deliveryDescription": "Доставим заказ по вашему адресу. Выберите зону доставки с фиксированной ценой.",
     "freePickup": "Бесплатно (Самовывоз)",
     "enterCity": "Укажите город",
-    "selectDeliveryLocation": "Выберите место доставки",
-    "enterDeliveryAddress": "Введите адрес, чтобы рассчитать доставку",
+    "selectDeliveryLocation": "Выберите зону доставки",
+    "enterDeliveryAddress": "Введите адрес доставки",
     "calculatingDelivery": "Расчёт доставки…"
   },
   "payment": {

@@ -73,7 +73,11 @@ export async function bulkChangeOrderStatusAction(
         const now = new Date();
         await tx
           .update(orders)
-          .set({ status: toStatus, updatedAt: now })
+          .set({
+            status: toStatus,
+            updatedAt: now,
+            adminSeenAt: existing.adminSeenAt ?? now,
+          })
           .where(eq(orders.id, existing.id));
 
         if (

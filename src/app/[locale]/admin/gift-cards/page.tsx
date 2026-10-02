@@ -55,6 +55,14 @@ export default async function AdminGiftCardsPage({
         copy={{
           giftCards: dict.admin.giftCards,
           common: dict.admin.common,
+          payment: {
+            cashOnDelivery: dict.checkout.payment.cashOnDelivery,
+            cashShort: dict.checkout.payment.cashShort,
+            cashOnDeliveryDescription:
+              dict.checkout.payment.cashOnDeliveryDescription,
+            card: dict.checkout.payment.card,
+            cardDescription: dict.checkout.payment.cardDescription,
+          },
         }}
       />
       {totalPages > 1 ? (

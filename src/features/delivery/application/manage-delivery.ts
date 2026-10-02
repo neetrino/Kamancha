@@ -14,21 +14,15 @@ import { createId } from "@/lib/id";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { err, ok, type Result } from "@/lib/result";
 
+const DEFAULT_COUNTRY_CODE = "AM";
+
 function revalidateDelivery(locale: string): void {
   revalidatePath(`/${locale}/admin/delivery`);
   revalidatePath(`/${locale}/checkout`);
   revalidatePath(`/${locale}/cart`);
 }
 
-function normalizeCountry(country: string): string {
-  const trimmed = country.trim();
-  if (/^[a-z]{2}$/i.test(trimmed)) {
-    return trimmed.toUpperCase();
-  }
-  return trimmed;
-}
-
-/** Creates a delivery location for checkout pricing. */
+/** Creates a delivery zone for checkout pricing. */
 export async function createDeliveryLocationAction(
   locale: string,
   raw: DeliveryLocationInput,
@@ -41,7 +35,7 @@ export async function createDeliveryLocationAction(
 
   const parsed = deliveryLocationSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION", "Invalid delivery location.");
+    return err("VALIDATION", "Invalid delivery zone.");
   }
 
   const data = parsed.data;
@@ -52,10 +46,12 @@ export async function createDeliveryLocationAction(
   const id = createId();
   await getDb().insert(deliveryRules).values({
     id,
-    countryCode: normalizeCountry(data.country),
-    city: data.city.trim(),
+    countryCode: DEFAULT_COUNTRY_CODE,
+    city: data.translations.hy.area.trim(),
+    region: data.translations.hy.district?.trim() || null,
+    translations: data.translations,
     priceAmount: data.priceAmount,
-    freeThresholdAmount: data.freeThresholdAmount,
+    freeThresholdAmount: null,
     isActive: true,
     priority: (maxPriority?.value ?? 0) + 1,
   });
@@ -64,7 +60,7 @@ export async function createDeliveryLocationAction(
   return ok({ id });
 }
 
-/** Updates an existing delivery location. */
+/** Updates an existing delivery zone. */
 export async function updateDeliveryLocationAction(
   locale: string,
   id: string,
@@ -78,7 +74,7 @@ export async function updateDeliveryLocationAction(
 
   const parsed = deliveryLocationSchema.safeParse(raw);
   if (!parsed.success) {
-    return err("VALIDATION", "Invalid delivery location.");
+    return err("VALIDATION", "Invalid delivery zone.");
   }
 
   const data = parsed.data;
@@ -89,16 +85,16 @@ export async function updateDeliveryLocationAction(
     .limit(1);
 
   if (!existing) {
-    return err("NOT_FOUND", "Delivery location not found.");
+    return err("NOT_FOUND", "Delivery zone not found.");
   }
 
   await getDb()
     .update(deliveryRules)
     .set({
-      countryCode: normalizeCountry(data.country),
-      city: data.city.trim(),
+      city: data.translations.hy.area.trim(),
+      region: data.translations.hy.district?.trim() || null,
+      translations: data.translations,
       priceAmount: data.priceAmount,
-      freeThresholdAmount: data.freeThresholdAmount,
       updatedAt: new Date(),
     })
     .where(eq(deliveryRules.id, id));
@@ -107,7 +103,7 @@ export async function updateDeliveryLocationAction(
   return ok({ id });
 }
 
-/** Soft-deactivates a delivery location (keeps order history references). */
+/** Soft-deactivates a delivery zone (keeps order history references). */
 export async function deleteDeliveryLocationAction(
   locale: string,
   id: string,
@@ -125,7 +121,7 @@ export async function deleteDeliveryLocationAction(
     .limit(1);
 
   if (!existing) {
-    return err("NOT_FOUND", "Delivery location not found.");
+    return err("NOT_FOUND", "Delivery zone not found.");
   }
 
   await getDb()

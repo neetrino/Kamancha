@@ -2,6 +2,7 @@
 
 import {
   Calendar,
+  CreditCard,
   Gift,
   ShoppingBag,
   Wallet,
@@ -11,6 +12,7 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { SideSheet } from "@/components/ui/SideSheet";
 import type { GiftCardDetail } from "@/features/gift-cards/application/queries";
+import { giftCardPaymentDisplayKey } from "@/features/gift-cards/domain/gift-card-payment-method";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -96,6 +98,13 @@ export function GiftCardDetailSheet({
   const showDisable =
     detail != null && detail.status !== "DISABLED" && onDisable;
   const showActions = Boolean(showActivate || showResend || showDisable);
+  const paymentKey = detail
+    ? giftCardPaymentDisplayKey(detail.paymentMethod)
+    : "unknown";
+  const paymentLabel =
+    paymentKey === "unknown"
+      ? giftCards.paymentMethods.unknown
+      : giftCards.paymentMethods[paymentKey];
 
   return (
     <SideSheet
@@ -136,8 +145,13 @@ export function GiftCardDetailSheet({
                 icon={<Wallet className="h-4 w-4" aria-hidden />}
                 label={giftCards.table.balance}
               >
-                {formatMoneyAmount(detail.balanceAmount, "AMD", locale)} /{" "}
-                {formatMoneyAmount(detail.initialAmount, "AMD", locale)}
+                {formatMoneyAmount(detail.balanceAmount, "AMD", locale)}
+              </DetailRow>
+              <DetailRow
+                icon={<CreditCard className="h-4 w-4" aria-hidden />}
+                label={giftCards.table.paymentMethod}
+              >
+                {paymentLabel}
               </DetailRow>
               <DetailRow
                 icon={<Gift className="h-4 w-4" aria-hidden />}

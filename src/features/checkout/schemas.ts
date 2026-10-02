@@ -15,6 +15,10 @@ export const checkoutSchema = z
     line2: z.string().trim().max(160).optional(),
     floor: z.string().trim().max(20).optional(),
     intercomCode: z.string().trim().max(40).optional(),
+    /** Optional customer note for the kitchen / courier. */
+    customerNote: z.string().trim().max(500).optional(),
+    /** Selected fixed-fee delivery zone (`delivery_rules.id`). */
+    deliveryRuleId: z.string().uuid().optional(),
     scheduledDeliveryDate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/)

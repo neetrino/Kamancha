@@ -152,11 +152,30 @@
   "orders": {
     "title": "Orders",
     "breadcrumb": "Orders",
+    "newAlert": {
+      "heading": "New order ({count} waiting)",
+      "orderTitle": "Order #{orderNumber}",
+      "customer": "Customer",
+      "total": "Total",
+      "payment": "Payment",
+      "time": "Time",
+      "acknowledge": "Got it — close all ({count})",
+      "badgeAria": "{count} new orders"
+    },
     "kindFilter": {
       "aria": "Order type",
       "all": "All",
       "personal": "Personal",
-      "group": "Group"
+      "group": "Group",
+      "new": "New"
+    },
+    "deliveryDayFilter": {
+      "aria": "Delivery day",
+      "all": "All days",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "pickDate": "Pick date",
+      "datePlaceholder": "DD.MM.YYYY"
     },
     "filters": {
       "orderStatusAria": "Order status",
@@ -190,9 +209,25 @@
       "payment": "Payment",
       "paymentMethod": "Payment method",
       "total": "Total",
+      "delivery": "Delivery",
       "placed": "Placed",
       "archivedBadge": "Archived",
-      "groupOrderBadge": "Group"
+      "groupOrderBadge": "Group",
+      "newBadge": "New",
+      "deliveryEmpty": "—",
+      "deliveryTodayBadge": "Today",
+      "deliveryTomorrowBadge": "Tomorrow",
+      "deliveryLaterBadge": "Later",
+      "deliveryGroupToday": "Today · {date}",
+      "deliveryGroupTomorrow": "Tomorrow · {date}",
+      "deliveryGroupDate": "{date}",
+      "deliveryGroupNone": "No delivery slot",
+      "deliveryGroupCount": "{count} orders"
+    },
+    "customerNote": {
+      "title": "Operator note",
+      "close": "Close",
+      "openAria": "Open operator note for {name}"
     },
     "inlineStatus": {
       "changeOrderAria": "Change order status",
@@ -224,7 +259,11 @@
       "pickupStore": "Pickup store:",
       "floor": "Floor:",
       "intercomCode": "Intercom code:",
-      "deliverySlot": "Delivery slot:",
+      "orderNote": "Note:",
+      "deliverySlot": "Delivery time",
+      "deliveryDayToday": "Today",
+      "deliveryDayTomorrow": "Tomorrow",
+      "deliveryDayLater": "Later",
       "cashChange": "Cash change:",
       "paymentSection": "Payment",
       "method": "Payment method:",
@@ -266,7 +305,11 @@
       "placedAt": "Placed {datetime} UTC",
       "floor": "Floor:",
       "intercomCode": "Intercom code:",
-      "deliverySlot": "Delivery slot:",
+      "orderNote": "Note:",
+      "deliverySlot": "Delivery time",
+      "deliveryDayToday": "Today",
+      "deliveryDayTomorrow": "Tomorrow",
+      "deliveryDayLater": "Later",
       "cashChange": "Cash change:",
       "lineItems": "Line items",
       "product": "Product",
@@ -466,18 +509,14 @@
   },
   "delivery": {
     "title": "Delivery",
-    "subtitle": "Set the store address, AMD price per kilometer, and the delivery calendar customers can book from at checkout.",
+    "subtitle": "Define delivery zones with fixed AMD prices, schedule, and cash-change options customers use at checkout.",
     "saved": "Delivery settings saved.",
-    "storeAndPricing": "Store & pricing",
-    "storeAndPricingHint": "Origin address and per-kilometer delivery fee used at checkout.",
-    "storeAddress": "Store address",
-    "storeAddressPlaceholder": "e.g. Andranik 108/10, Yerevan",
-    "storeAddressHint": "Start typing a street name — pick from Google suggestions, then Save.",
-    "pickOnMap": "Pick on map",
-    "geocoded": "Geocoded: {lat}, {lng}",
-    "pricePerKm": "Price per kilometer (AMD)",
-    "pricePerKmPlaceholder": "1000",
-    "pricePerKmExample": "Example: 1.101 km → {amount}",
+    "zonesTitle": "Delivery zones",
+    "zonesHint": "Each zone has a name and a fixed delivery fee. Customers pick a zone at checkout.",
+    "zonesEmpty": "No zones yet. Add areas such as Yerevan or Regional.",
+    "addZone": "Add zone",
+    "deleteZoneTitle": "Delete delivery zone",
+    "deleteZoneDescription": "Remove \"{name}\" from checkout? Existing orders keep their recorded fee.",
     "offerDelivery": "Offer delivery at checkout",
     "cashChange": {
       "title": "Cash change denominations",
@@ -517,18 +556,18 @@
       "noClosedDates": "No closed dates. Add holidays or days you do not deliver."
     },
     "locationDrawer": {
-      "addTitle": "Add location",
-      "editTitle": "Edit location",
-      "addAria": "Add location",
-      "editAria": "Edit location",
-      "country": "Country",
-      "countryPlaceholder": "Armenia",
-      "city": "City",
-      "cityPlaceholder": "Yerevan",
+      "addTitle": "Add delivery zone",
+      "editTitle": "Edit delivery zone",
+      "addAria": "Add delivery zone",
+      "editAria": "Edit delivery zone",
+      "translations": "Names by language",
+      "areaName": "Area",
+      "areaNamePlaceholder": "",
+      "districtName": "District (optional)",
+      "districtNamePlaceholder": "",
+      "districtNameHint": "Shown as Area (District), e.g. Regional (Shengavit).",
       "priceAmd": "Price (AMD)",
-      "pricePlaceholder": "1500",
-      "freeDeliveryFrom": "Free delivery from (AMD)",
-      "freeDeliveryPlaceholder": "50000"
+      "pricePlaceholder": ""
     }
   },
   "discounts": {
@@ -616,17 +655,24 @@
       "copyCodeAria": "Copy code {code}",
       "type": "Type",
       "value": "Value",
-      "usageLimit": "Usage limit",
-      "used": "Used",
-      "active": "Active",
+      "usage": "Usage",
+      "usageOf": "{used} / {limit}",
+      "usageUnlimited": "{used} / ∞",
+      "status": "Status",
       "validUntil": "Valid until",
       "actions": "Actions",
       "percentOff": "Percent off",
       "fixedAmountAmd": "Fixed amount (AMD)",
-      "activeAria": "Active",
       "editAria": "Edit {code}",
       "duplicateAria": "Duplicate {code}",
       "deleteAria": "Delete {code}"
+    },
+    "statuses": {
+      "AVAILABLE": "Available",
+      "USED": "Used up",
+      "EXPIRED": "Expired",
+      "INACTIVE": "Inactive",
+      "SCHEDULED": "Scheduled"
     },
     "drawer": {
       "newTitle": "New coupon",
@@ -746,6 +792,14 @@
       "newStatus": "New status",
       "newStatusAria": "New status",
       "updateStatus": "Update status"
+    },
+    "noteForm": {
+      "title": "Operator note",
+      "hint": "Shown as a call icon on this customer’s orders in Admin → Orders.",
+      "label": "Note",
+      "placeholder": "e.g. Call before delivery, prefers cash, previous complaint…",
+      "save": "Save note",
+      "saved": "Note saved."
     }
   },
   "analytics": {
@@ -1060,9 +1114,15 @@
       "EXPIRED": "Expired",
       "DISABLED": "Disabled"
     },
+    "paymentMethods": {
+      "cash": "Cash",
+      "card": "Card",
+      "unknown": "—"
+    },
     "table": {
       "code": "Code",
       "balance": "Balance",
+      "paymentMethod": "Payment",
       "status": "Status",
       "recipient": "Recipient",
       "purchaser": "Purchaser",
@@ -1074,6 +1134,7 @@
       "newTitle": "New gift card",
       "newAria": "New gift card",
       "amount": "Amount (AMD)",
+      "paymentMethod": "Payment method",
       "recipientName": "Recipient name",
       "recipientEmail": "Recipient email",
       "recipientPhone": "Recipient phone",

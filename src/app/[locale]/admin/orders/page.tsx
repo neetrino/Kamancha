@@ -6,10 +6,12 @@ import { listAdminOrders } from "@/features/orders/application/queries";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import {
   adminOrdersFilterSchema,
-  type CustomerOrderKind,
+  type AdminOrderKind,
 } from "@/features/orders/schemas/change-status";
 import { AdminOrderKindFilter } from "@/features/orders/ui/AdminOrderKindFilter";
+import { AdminOrdersDeliveryDayFilter } from "@/features/orders/ui/AdminOrdersDeliveryDayFilter";
 import { AdminOrdersFilters } from "@/features/orders/ui/AdminOrdersFilters";
+import { AdminOrdersUnseenBadge } from "@/features/orders/ui/AdminOrdersUnseenBadge";
 import { AdminOrdersView } from "@/features/orders/ui/AdminOrdersView";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -33,7 +35,8 @@ function buildOrdersQuery(
     q?: string;
     status?: OrderStatus;
     paymentStatus?: string;
-    kind: CustomerOrderKind;
+    kind: AdminOrderKind;
+    deliveryDate?: string;
     page: number;
   },
   page: number,
@@ -43,6 +46,7 @@ function buildOrdersQuery(
   if (filters.status) params.set("status", filters.status);
   if (filters.paymentStatus) params.set("paymentStatus", filters.paymentStatus);
   if (filters.kind !== "all") params.set("kind", filters.kind);
+  if (filters.deliveryDate) params.set("deliveryDate", filters.deliveryDate);
   params.set("page", String(page));
   return params.toString();
 }
@@ -66,6 +70,7 @@ export default async function AdminOrdersPage({
     archived: "active",
     q: firstParam(raw.q) || undefined,
     kind: firstParam(raw.kind) || "all",
+    deliveryDate: firstParam(raw.deliveryDate) || undefined,
     page: firstParam(raw.page) ?? "1",
   });
 
@@ -78,6 +83,7 @@ export default async function AdminOrdersPage({
         paymentStatus: undefined,
         dateFrom: undefined,
         dateTo: undefined,
+        deliveryDate: undefined,
         q: undefined,
         kind: "all" as const,
       };
@@ -85,10 +91,19 @@ export default async function AdminOrdersPage({
   const { rows, total, pageSize } = await listAdminOrders(filters);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
+  const sharedBaseQuery = {
+    q: filters.q,
+    status: filters.status,
+    paymentStatus: filters.paymentStatus,
+    deliveryDate: filters.deliveryDate,
+    kind: filters.kind !== "all" ? filters.kind : undefined,
+  };
+
   return (
     <section>
-      <div className="mb-6">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.orders.title}</h1>
+        <AdminOrdersUnseenBadge ariaLabel={copy.orders.newAlert.badgeAria} />
       </div>
 
       <AdminOrderKindFilter
@@ -98,13 +113,27 @@ export default async function AdminOrdersPage({
           q: filters.q,
           status: filters.status,
           paymentStatus: filters.paymentStatus,
+          deliveryDate: filters.deliveryDate,
         }}
         labels={{
           all: copy.orders.kindFilter.all,
           personal: copy.orders.kindFilter.personal,
           group: copy.orders.kindFilter.group,
+          new: copy.orders.kindFilter.new,
           aria: copy.orders.kindFilter.aria,
         }}
+      />
+
+      <AdminOrdersDeliveryDayFilter
+        locale={locale}
+        deliveryDate={filters.deliveryDate}
+        baseQuery={{
+          q: filters.q,
+          status: filters.status,
+          paymentStatus: filters.paymentStatus,
+          kind: sharedBaseQuery.kind,
+        }}
+        copy={copy}
       />
 
       <AdminOrdersFilters
@@ -112,6 +141,7 @@ export default async function AdminOrdersPage({
         status={filters.status}
         paymentStatus={filters.paymentStatus}
         kind={filters.kind}
+        deliveryDate={filters.deliveryDate}
         q={filters.q}
         copy={copy}
       />

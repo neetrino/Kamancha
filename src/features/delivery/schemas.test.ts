@@ -5,8 +5,6 @@ import { DEFAULT_DELIVERY_SCHEDULE } from "@/features/delivery/domain/delivery-s
 
 describe("deliverySettingsSchema", () => {
   const base = {
-    originAddress: "Yerevan, Armenia",
-    pricePerKmAmount: 1000,
     isActive: true,
     schedule: {
       slotMinutes: DEFAULT_DELIVERY_SCHEDULE.slotMinutes,

@@ -152,11 +152,30 @@
   "orders": {
     "title": "Պատվերներ",
     "breadcrumb": "Պատվերներ",
+    "newAlert": {
+      "heading": "Նոր պատվեր ({count} սպասում է)",
+      "orderTitle": "Պատվեր #{orderNumber}",
+      "customer": "Հաճախորդ",
+      "total": "Ընդամենը",
+      "payment": "Վճարում",
+      "time": "Ժամանակ",
+      "acknowledge": "Լսեցի — փակել բոլորը ({count})",
+      "badgeAria": "{count} նոր պատվեր"
+    },
     "kindFilter": {
       "aria": "Պատվերների տեսակ",
       "all": "Բոլորը",
       "personal": "Անհատական",
-      "group": "Խմբային"
+      "group": "Խմբային",
+      "new": "Նոր"
+    },
+    "deliveryDayFilter": {
+      "aria": "Առաքման օր",
+      "all": "Բոլոր օրերը",
+      "today": "Այսօր",
+      "tomorrow": "Վաղը",
+      "pickDate": "Ընտրել օր",
+      "datePlaceholder": "ՕՕ.ԱԱ.ՏՏՏՏ"
     },
     "filters": {
       "orderStatusAria": "Պատվերի կարգավիճակ",
@@ -190,9 +209,25 @@
       "payment": "Վճարում",
       "paymentMethod": "Վճարման եղանակ",
       "total": "Ընդամենը",
+      "delivery": "Առաքում",
       "placed": "Տեղադրված",
       "archivedBadge": "Արխիվացված",
-      "groupOrderBadge": "Խմբային"
+      "groupOrderBadge": "Խմբային",
+      "newBadge": "Նոր",
+      "deliveryEmpty": "—",
+      "deliveryTodayBadge": "Այսօր",
+      "deliveryTomorrowBadge": "Վաղը",
+      "deliveryLaterBadge": "Ավելի ուշ",
+      "deliveryGroupToday": "Այսօր · {date}",
+      "deliveryGroupTomorrow": "Վաղը · {date}",
+      "deliveryGroupDate": "{date}",
+      "deliveryGroupNone": "Առանց առաքման ժամանակի",
+      "deliveryGroupCount": "{count} պատվեր"
+    },
+    "customerNote": {
+      "title": "Օպերատորի նշում",
+      "close": "Փակել",
+      "openAria": "Բացել օպերատորի նշումը՝ {name}"
     },
     "inlineStatus": {
       "changeOrderAria": "Փոխել պատվերի կարգավիճակը",
@@ -224,7 +259,11 @@
       "pickupStore": "Ինքնաառաքման խանութ՝",
       "floor": "Հարկ՝",
       "intercomCode": "Դոմոֆոնի կոդ՝",
-      "deliverySlot": "Առաքման ժամային միջակայք՝",
+      "orderNote": "Նշում՝",
+      "deliverySlot": "Առաքման ժամանակ",
+      "deliveryDayToday": "Այսօր",
+      "deliveryDayTomorrow": "Վաղը",
+      "deliveryDayLater": "Ավելի ուշ",
       "cashChange": "Մանր՝",
       "paymentSection": "Վճարում",
       "method": "Վճարման եղանակ՝",
@@ -266,7 +305,11 @@
       "placedAt": "Կատարված է {datetime} UTC",
       "floor": "Հարկ՝",
       "intercomCode": "Դոմոֆոնի կոդ՝",
-      "deliverySlot": "Առաքման ժամային միջակայք՝",
+      "orderNote": "Նշում՝",
+      "deliverySlot": "Առաքման ժամանակ",
+      "deliveryDayToday": "Այսօր",
+      "deliveryDayTomorrow": "Վաղը",
+      "deliveryDayLater": "Ավելի ուշ",
       "cashChange": "Մանր՝",
       "lineItems": "Պատվերի ապրանքներ",
       "product": "Ապրանք",
@@ -466,18 +509,14 @@
   },
   "delivery": {
     "title": "Առաքում",
-    "subtitle": "Սահմանեք խանութի հասցեն, մեկ կիլոմետրի համար AMD-ով գինը և առաքման օրացույցը, որից հաճախորդները կարող են ընտրել պատվերի ձևակերպման ժամանակ։",
+    "subtitle": "Սահմանեք առաքման տարածքներ ֆիքսված AMD գներով, ժամանակացույց և մանրի ընտրանքներ, որոնք հաճախորդները օգտագործում են պատվերի ձևակերպման ժամանակ։",
     "saved": "Առաքման կարգավորումները պահպանվել են։",
-    "storeAndPricing": "Խանութ և գնագոյացում",
-    "storeAndPricingHint": "Մեկնարկային հասցեն և մեկ կիլոմետրի առաքման վճարը, որոնք օգտագործվում են պատվերի ձևակերպման ժամանակ։",
-    "storeAddress": "Խանութի հասցե",
-    "storeAddressPlaceholder": "օր.՝ Անդրանիկ 108/10, Երևան",
-    "storeAddressHint": "Սկսեք մուտքագրել փողոցի անունը — ընտրեք Google-ի առաջարկներից, ապա պահպանեք։",
-    "pickOnMap": "Նշել քարտեզով",
-    "geocoded": "Գեոկոդավորված՝ {lat}, {lng}",
-    "pricePerKm": "Գին մեկ կիլոմետրի համար (AMD)",
-    "pricePerKmPlaceholder": "1000",
-    "pricePerKmExample": "Օրինակ՝ 1.101 կմ → {amount}",
+    "zonesTitle": "Առաքման տարածքներ",
+    "zonesHint": "Յուրաքանչյուր տարածք ունի անուն և ֆիքսված առաքման վճար։ Հաճախորդը ընտրում է տարածքը checkout-ում։",
+    "zonesEmpty": "Տարածքներ դեռ չկան։ Ավելացրեք օրինակ Երևան կամ Շրջանային։",
+    "addZone": "Ավելացնել տարածք",
+    "deleteZoneTitle": "Ջնջել առաքման տարածքը",
+    "deleteZoneDescription": "Հեռացնե՞լ «{name}»-ը checkout-ից։ Առկա պատվերները պահում են գրանցված վճարը։",
     "offerDelivery": "Առաջարկել առաքում պատվերի ձևակերպման ժամանակ",
     "cashChange": {
       "title": "Մանրի անվանումներ",
@@ -517,18 +556,18 @@
       "noClosedDates": "Փակ օրեր չկան։ Ավելացրեք տոներ կամ օրեր, երբ չեք առաքում։"
     },
     "locationDrawer": {
-      "addTitle": "Ավելացնել տեղադրություն",
-      "editTitle": "Խմբագրել տեղադրությունը",
-      "addAria": "Ավելացնել տեղադրություն",
-      "editAria": "Խմբագրել տեղադրությունը",
-      "country": "Երկիր",
-      "countryPlaceholder": "Հայաստան",
-      "city": "Քաղաք",
-      "cityPlaceholder": "Երևան",
+      "addTitle": "Ավելացնել տարածք",
+      "editTitle": "Խմբագրել տարածքը",
+      "addAria": "Ավելացնել տարածք",
+      "editAria": "Խմբագրել տարածքը",
+      "translations": "Անուններ ըստ լեզվի",
+      "areaName": "Տարածք",
+      "areaNamePlaceholder": "",
+      "districtName": "Թաղամաս (ոչ պարտադիր)",
+      "districtNamePlaceholder": "",
+      "districtNameHint": "Ցուցադրվում է որպես Տարածք (Թաղամաս), օր.՝ Շրջանային (Շենգավիթ)։",
       "priceAmd": "Գին (AMD)",
-      "pricePlaceholder": "1500",
-      "freeDeliveryFrom": "Անվճար առաքում սկսած (AMD)",
-      "freeDeliveryPlaceholder": "50000"
+      "pricePlaceholder": ""
     }
   },
   "discounts": {
@@ -616,17 +655,24 @@
       "copyCodeAria": "Պատճենել {code} կոդը",
       "type": "Տեսակ",
       "value": "Արժեք",
-      "usageLimit": "Օգտագործման սահմանաչափ",
-      "used": "Օգտագործված",
-      "active": "Ակտիվ",
+      "usage": "Օգտագործում",
+      "usageOf": "{used} / {limit}",
+      "usageUnlimited": "{used} / ∞",
+      "status": "Կարգավիճակ",
       "validUntil": "Գործում է մինչև",
       "actions": "Գործողություններ",
       "percentOff": "Տոկոսային զեղչ",
       "fixedAmountAmd": "Ֆիքսված գումար (AMD)",
-      "activeAria": "Ակտիվ",
       "editAria": "Խմբագրել {code}",
       "duplicateAria": "Կրկնօրինակել {code}",
       "deleteAria": "Ջնջել {code}"
+    },
+    "statuses": {
+      "AVAILABLE": "Օգտագործման ենթակա",
+      "USED": "Օգտագործված",
+      "EXPIRED": "Ժամկետանց",
+      "INACTIVE": "Անակտիվ",
+      "SCHEDULED": "Պլանավորված"
     },
     "drawer": {
       "newTitle": "Նոր կուպոն",
@@ -746,6 +792,14 @@
       "newStatus": "Նոր կարգավիճակ",
       "newStatusAria": "Նոր կարգավիճակ",
       "updateStatus": "Թարմացնել կարգավիճակը"
+    },
+    "noteForm": {
+      "title": "Օպերատորի նշում",
+      "hint": "Երևում է զանգի նշանով այս հաճախորդի պատվերների վրա Admin → Orders-ում։",
+      "label": "Նշում",
+      "placeholder": "օր. Զանգել առաքումից առաջ, նախընտրում է կանխիկ, նախկին բողոք…",
+      "save": "Պահել նշումը",
+      "saved": "Նշումը պահված է։"
     }
   },
   "analytics": {
@@ -1060,9 +1114,15 @@
       "EXPIRED": "Ժամկետանց",
       "DISABLED": "Անջատված"
     },
+    "paymentMethods": {
+      "cash": "Կանխիկ",
+      "card": "Քարտ",
+      "unknown": "—"
+    },
     "table": {
       "code": "Կոդ",
       "balance": "Մնացորդ",
+      "paymentMethod": "Վճարում",
       "status": "Կարգավիճակ",
       "recipient": "Ստացող",
       "purchaser": "Գնորդ",
@@ -1074,6 +1134,7 @@
       "newTitle": "Նոր Gift Card",
       "newAria": "Նոր Gift Card",
       "amount": "Գումար (AMD)",
+      "paymentMethod": "Վճարման եղանակ",
       "recipientName": "Ստացողի անուն",
       "recipientEmail": "Ստացողի email",
       "recipientPhone": "Ստացողի հեռախոս",

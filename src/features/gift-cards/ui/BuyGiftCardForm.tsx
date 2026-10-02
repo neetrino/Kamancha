@@ -7,8 +7,12 @@ import { DateTimePickerField } from "@/components/ui/DateTimePickerField";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { formatYerevanDate } from "@/features/delivery/domain/delivery-schedule";
+import {
+  CheckoutPaymentMethodOption,
+  type CheckoutPaymentOption,
+} from "@/features/checkout/ui/CheckoutPaymentMethodOption";
 import { purchaseGiftCardAction } from "@/features/gift-cards/application/admin-actions";
-import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import type { GiftCardPaymentMethod } from "@/features/gift-cards/domain/gift-card-payment-method";
 import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
 import { PROFILE_PILL_DARK } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
@@ -20,6 +24,14 @@ const DRAWER_FIELD =
 
 const DRAWER_LABEL =
   "flex flex-col gap-1.5 text-sm font-medium text-gray-900";
+
+export type GiftCardPaymentLabels = {
+  cashOnDelivery: string;
+  cashShort: string;
+  cashOnDeliveryDescription: string;
+  card: string;
+  cardDescription: string;
+};
 
 type BuyGiftCardFormCopy = {
   title: string;
@@ -39,10 +51,11 @@ type BuyGiftCardFormCopy = {
     weekdaysShort: readonly string[];
   };
   paymentMethod: string;
-  cashOnDelivery: string;
+  payment: GiftCardPaymentLabels;
   submit: string;
   submitting: string;
-  successPending: string;
+  successActive: string;
+  successPendingPayment: string;
 };
 
 type BuyGiftCardFormProps = {
@@ -67,12 +80,30 @@ export function BuyGiftCardForm({
   const [customAmount, setCustomAmount] = useState("");
   const [scheduledSendAt, setScheduledSendAt] = useState("");
   const [paymentMethod, setPaymentMethod] =
-    useState<CheckoutPaymentMethod>("cash_on_delivery");
+    useState<GiftCardPaymentMethod>("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const minSendDate = formatYerevanDate(new Date());
   const useCustom = selectedAmount === "custom";
+
+  const paymentOptions = useMemo<CheckoutPaymentOption[]>(
+    () => [
+      {
+        id: "cash_on_delivery",
+        name: copy.payment.cashOnDelivery,
+        shortName: copy.payment.cashShort,
+        description: copy.payment.cashOnDeliveryDescription,
+      },
+      {
+        id: "arca",
+        name: copy.payment.card,
+        shortName: copy.payment.card,
+        description: copy.payment.cardDescription,
+      },
+    ],
+    [copy.payment],
+  );
 
   const amountOptions = useMemo(
     () => [
@@ -111,9 +142,7 @@ export function BuyGiftCardForm({
         scheduledSendAt: String(data.get("scheduledSendAt") ?? "")
           ? new Date(String(data.get("scheduledSendAt"))).toISOString()
           : null,
-        paymentMethod: String(
-          data.get("paymentMethod") ?? "cash_on_delivery",
-        ) as CheckoutPaymentMethod,
+        paymentMethod,
       });
 
       if (!result.ok) {
@@ -121,7 +150,11 @@ export function BuyGiftCardForm({
         return;
       }
 
-      setSuccess(copy.successPending);
+      setSuccess(
+        result.value.status === "ACTIVE"
+          ? copy.successActive
+          : copy.successPendingPayment,
+      );
       router.refresh();
       onSuccess?.();
     });
@@ -225,19 +258,25 @@ export function BuyGiftCardForm({
           }}
         />
       </label>
-      <div className={DRAWER_LABEL}>
-        <span>{copy.paymentMethod}</span>
-        <SelectDropdown
-          name="paymentMethod"
-          ariaLabel={copy.paymentMethod}
-          value={paymentMethod}
-          options={[{ label: copy.cashOnDelivery, value: "cash_on_delivery" }]}
-          onValueChange={(value) =>
-            setPaymentMethod(value as CheckoutPaymentMethod)
-          }
-          deferChange={false}
-        />
-      </div>
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-medium text-gray-900">
+          {copy.paymentMethod}
+        </legend>
+        <div className="space-y-2">
+          {paymentOptions.map((option) => (
+            <CheckoutPaymentMethodOption
+              key={option.id}
+              option={option}
+              selected={paymentMethod === option.id}
+              disabled={pending}
+              cardDescriptionBelowIcons={option.id === "arca"}
+              onSelect={(method) =>
+                setPaymentMethod(method as GiftCardPaymentMethod)
+              }
+            />
+          ))}
+        </div>
+      </fieldset>
 
       {error ? (
         <p className="text-sm text-red-700" role="alert">

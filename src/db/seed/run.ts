@@ -191,23 +191,35 @@ async function seed(): Promise<void> {
     .insert(schema.deliveryRules)
     .values({
       id: seedIds.deliveryArmenia,
-      countryCode: "Armenia",
-      city: "Yerevan",
-      priceAmount: 1500,
-      freeThresholdAmount: 50000,
+      countryCode: "AM",
+      city: "Երևան",
+      region: "Կենտրոն",
+      translations: {
+        hy: { area: "Երևան", district: "Կենտրոն" },
+        en: { area: "Yerevan", district: "Kentron" },
+        ru: { area: "Ереван", district: "Центр" },
+      },
+      priceAmount: 500,
+      freeThresholdAmount: null,
       estimatedDaysMin: 1,
       estimatedDaysMax: 3,
       isActive: true,
-      priority: 100,
+      priority: 110,
     })
     .onConflictDoUpdate({
       target: schema.deliveryRules.id,
       set: {
         isActive: true,
-        countryCode: "Armenia",
-        city: "Yerevan",
-        priceAmount: 1500,
-        freeThresholdAmount: 50000,
+        countryCode: "AM",
+        city: "Երևան",
+        region: "Կենտրոն",
+        translations: {
+          hy: { area: "Երևան", district: "Կենտրոն" },
+          en: { area: "Yerevan", district: "Kentron" },
+          ru: { area: "Ереван", district: "Центр" },
+        },
+        priceAmount: 500,
+        freeThresholdAmount: null,
         updatedAt: now,
       },
     });

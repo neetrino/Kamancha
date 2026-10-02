@@ -71,10 +71,6 @@ const cashChangeDenominationSchema = z.object({
 
 export const deliverySettingsSchema = z
   .object({
-    originAddress: z.string().trim().min(3).max(300),
-    originLat: z.number().finite().min(-90).max(90).nullable().optional(),
-    originLng: z.number().finite().min(-180).max(180).nullable().optional(),
-    pricePerKmAmount: z.coerce.number().int().min(0).max(10_000_000),
     isActive: z.boolean(),
     schedule: deliveryScheduleSchema,
     cashChangeDenominations: z
@@ -83,16 +79,6 @@ export const deliverySettingsSchema = z
       .default([]),
   })
   .superRefine((value, ctx) => {
-    const hasOriginLat = value.originLat != null;
-    const hasOriginLng = value.originLng != null;
-    if (hasOriginLat !== hasOriginLng) {
-      ctx.addIssue({
-        code: "custom",
-        path: hasOriginLat ? ["originLng"] : ["originLat"],
-        message: "Both origin coordinates must be provided together.",
-      });
-    }
-
     const amounts = new Set<number>();
     for (const [index, item] of value.cashChangeDenominations.entries()) {
       if (amounts.has(item.amount)) {
@@ -108,23 +94,22 @@ export const deliverySettingsSchema = z
 
 export type DeliverySettingsInput = z.infer<typeof deliverySettingsSchema>;
 
-export const quoteDistanceDeliverySchema = z.object({
-  line1: z.string().trim().min(3).max(300),
-});
-
-export type QuoteDistanceDeliveryInput = z.infer<
-  typeof quoteDistanceDeliverySchema
->;
-
-/** @deprecated City-based rules; kept for historical order FK rows. */
-export const deliveryLocationSchema = z.object({
-  country: z.string().trim().min(1).max(80),
-  city: z.string().trim().min(1).max(80),
-  priceAmount: z.coerce.number().int().min(0).max(10_000_000),
-  freeThresholdAmount: z.preprocess((value) => {
+const deliveryZoneLocaleCopySchema = z.object({
+  area: z.string().trim().min(1).max(80),
+  district: z.preprocess((value) => {
     if (value === "" || value == null) return null;
     return value;
-  }, z.coerce.number().int().min(0).max(100_000_000).nullable()),
+  }, z.string().trim().min(1).max(80).nullable()),
+});
+
+/** Delivery zone (fixed fee area) managed from admin — names in hy/en/ru. */
+export const deliveryLocationSchema = z.object({
+  translations: z.object({
+    hy: deliveryZoneLocaleCopySchema,
+    en: deliveryZoneLocaleCopySchema,
+    ru: deliveryZoneLocaleCopySchema,
+  }),
+  priceAmount: z.coerce.number().int().min(0).max(10_000_000),
 });
 
 export type DeliveryLocationInput = z.infer<typeof deliveryLocationSchema>;

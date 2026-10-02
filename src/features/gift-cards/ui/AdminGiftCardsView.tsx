@@ -33,14 +33,28 @@ import type {
   GiftCardDetail,
   GiftCardListItem,
 } from "@/features/gift-cards/application/queries";
+import { giftCardPaymentDisplayKey } from "@/features/gift-cards/domain/gift-card-payment-method";
 import { GiftCardDetailSheet } from "@/features/gift-cards/ui/GiftCardDetailSheet";
 import { GiftCardDrawer } from "@/features/gift-cards/ui/GiftCardDrawer";
+import type { GiftCardPaymentLabels } from "@/features/gift-cards/ui/BuyGiftCardForm";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
+
+function giftCardPaymentLabel(
+  paymentMethod: string | null,
+  copy: Dictionary["admin"]["giftCards"],
+): string {
+  const key = giftCardPaymentDisplayKey(paymentMethod);
+  if (key === "unknown") {
+    return copy.paymentMethods.unknown;
+  }
+  return copy.paymentMethods[key];
+}
 
 type AdminGiftCardsViewCopy = {
   giftCards: Dictionary["admin"]["giftCards"];
   common: Dictionary["admin"]["common"];
+  payment: GiftCardPaymentLabels;
 };
 
 type AdminGiftCardsViewProps = {
@@ -152,6 +166,9 @@ export function AdminGiftCardsView({
               <tr>
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.code}</th>
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.balance}</th>
+                <th className={ADMIN_TABLE_TH}>
+                  {copy.giftCards.table.paymentMethod}
+                </th>
                 <th className={ADMIN_TABLE_TH}>{copy.giftCards.table.status}</th>
                 <th className={ADMIN_TABLE_TH}>
                   {copy.giftCards.table.recipient}
@@ -164,7 +181,7 @@ export function AdminGiftCardsView({
             <tbody className={ADMIN_TABLE_TBODY}>
               {cards.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className={ADMIN_TABLE_STATE_INSET}>
+                  <td colSpan={6} className={ADMIN_TABLE_STATE_INSET}>
                     {copy.giftCards.empty}
                   </td>
                 </tr>
@@ -204,9 +221,9 @@ export function AdminGiftCardsView({
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
-                      <span className="block text-xs text-gray-500">
-                        / {formatMoneyAmount(card.initialAmount, "AMD", locale)}
-                      </span>
+                    </td>
+                    <td className={ADMIN_TABLE_TD}>
+                      {giftCardPaymentLabel(card.paymentMethod, copy.giftCards)}
                     </td>
                     <td className={ADMIN_TABLE_TD}>
                       {copy.giftCards.statuses[card.status] ?? card.status}
@@ -293,6 +310,7 @@ export function AdminGiftCardsView({
         presets={presets}
         copy={{
           drawer: copy.giftCards.drawer,
+          payment: copy.payment,
           common: copy.common,
         }}
       />

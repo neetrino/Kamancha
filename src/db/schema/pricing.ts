@@ -4,6 +4,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -19,6 +20,18 @@ import {
 } from "@/db/schema/columns";
 import { discountTypeEnum, promotionKindEnum } from "@/db/schema/enums";
 import { users } from "@/db/schema/identity";
+
+/** Localized area + optional district for a delivery zone. */
+export type DeliveryZoneLocaleCopy = {
+  area: string;
+  district: string | null;
+};
+
+export type DeliveryZoneTranslationsJson = {
+  hy: DeliveryZoneLocaleCopy;
+  en: DeliveryZoneLocaleCopy;
+  ru: DeliveryZoneLocaleCopy;
+};
 
 export const promotions = pgTable(
   "promotions",
@@ -105,6 +118,11 @@ export const deliveryRules = pgTable(
     countryCode: text("country_code").notNull().default("AM"),
     region: text("region"),
     city: text("city"),
+    /** Localized area/district names shown at checkout (hy / en / ru). */
+    translations: jsonb("translations")
+      .$type<DeliveryZoneTranslationsJson>()
+      .notNull()
+      .default(sql`'{"hy":{"area":"","district":null},"en":{"area":"","district":null},"ru":{"area":"","district":null}}'::jsonb`),
     priceAmount: integer("price_amount").notNull(),
     freeThresholdAmount: integer("free_threshold_amount"),
     estimatedDaysMin: integer("estimated_days_min"),

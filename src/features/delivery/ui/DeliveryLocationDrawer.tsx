@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/Button";
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
@@ -13,6 +14,8 @@ import {
   updateDeliveryLocationAction,
 } from "@/features/delivery/application/manage-delivery";
 import type { AdminDeliveryLocation } from "@/features/delivery/application/queries";
+import type { DeliveryZoneTranslationsJson } from "@/db/schema";
+import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type LocationDrawerCopy = {
@@ -35,6 +38,35 @@ type DeliveryLocationFormProps = {
   copy: LocationDrawerCopy;
 };
 
+type LocaleFields = {
+  area: string;
+  district: string;
+};
+
+const EMPTY_LOCALE_FIELDS: LocaleFields = { area: "", district: "" };
+
+function emptyLocalizedFields(): Record<Locale, LocaleFields> {
+  return {
+    hy: { ...EMPTY_LOCALE_FIELDS },
+    en: { ...EMPTY_LOCALE_FIELDS },
+    ru: { ...EMPTY_LOCALE_FIELDS },
+  };
+}
+
+function fromTranslations(
+  translations: DeliveryZoneTranslationsJson | null | undefined,
+): Record<Locale, LocaleFields> {
+  const next = emptyLocalizedFields();
+  if (!translations) return next;
+  for (const loc of locales) {
+    next[loc] = {
+      area: translations[loc]?.area ?? "",
+      district: translations[loc]?.district ?? "",
+    };
+  }
+  return next;
+}
+
 function DeliveryLocationForm({
   locale,
   location,
@@ -43,18 +75,28 @@ function DeliveryLocationForm({
 }: DeliveryLocationFormProps) {
   const router = useRouter();
   const isEdit = location != null;
-  const [country, setCountry] = useState(location?.country ?? "");
-  const [city, setCity] = useState(location?.city ?? "");
+  const [activeLocale, setActiveLocale] = useState<Locale>("hy");
+  const [localized, setLocalized] = useState<Record<Locale, LocaleFields>>(
+    () => fromTranslations(location?.translations),
+  );
   const [priceAmount, setPriceAmount] = useState(
     location ? String(location.priceAmount) : "",
   );
-  const [freeThresholdAmount, setFreeThresholdAmount] = useState(
-    location?.freeThresholdAmount != null
-      ? String(location.freeThresholdAmount)
-      : "",
-  );
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function updateActiveField(
+    field: keyof LocaleFields,
+    value: string,
+  ): void {
+    setLocalized((prev) => ({
+      ...prev,
+      [activeLocale]: {
+        ...prev[activeLocale],
+        [field]: value,
+      },
+    }));
+  }
 
   return (
     <form
@@ -62,14 +104,35 @@ function DeliveryLocationForm({
       onSubmit={(event) => {
         event.preventDefault();
 
+        const missingLocale = locales.find(
+          (loc) => !localized[loc].area.trim(),
+        );
+        if (missingLocale) {
+          setError(
+            `${localeLabels[missingLocale]} — ${copy.locationDrawer.areaName} ${copy.common.requiredMark}`,
+          );
+          setActiveLocale(missingLocale);
+          return;
+        }
+
+        const translations: DeliveryZoneTranslationsJson = {
+          hy: {
+            area: localized.hy.area.trim(),
+            district: localized.hy.district.trim() || null,
+          },
+          en: {
+            area: localized.en.area.trim(),
+            district: localized.en.district.trim() || null,
+          },
+          ru: {
+            area: localized.ru.area.trim(),
+            district: localized.ru.district.trim() || null,
+          },
+        };
+
         const payload = {
-          country,
-          city,
+          translations,
           priceAmount: Number(priceAmount),
-          freeThresholdAmount:
-            freeThresholdAmount.trim() === ""
-              ? null
-              : Number(freeThresholdAmount),
         };
 
         startTransition(async () => {
@@ -93,34 +156,65 @@ function DeliveryLocationForm({
         });
       }}
     >
-      <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <label>
-            <span className={ADMIN_LABEL}>{copy.locationDrawer.country}</span>
-            <input
-              value={country}
-              onChange={(event) => setCountry(event.target.value)}
-              placeholder={copy.locationDrawer.countryPlaceholder}
-              required
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
-
-          <label>
-            <span className={ADMIN_LABEL}>{copy.locationDrawer.city}</span>
-            <input
-              value={city}
-              onChange={(event) => setCity(event.target.value)}
-              placeholder={copy.locationDrawer.cityPlaceholder}
-              required
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
+      <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5 sm:px-6">
+        <div>
+          <p className="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+            {copy.locationDrawer.translations}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {locales.map((loc) => {
+              const selected = loc === activeLocale;
+              return (
+                <button
+                  key={loc}
+                  type="button"
+                  onClick={() => setActiveLocale(loc)}
+                  className={`rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
+                    selected
+                      ? "bg-brand-forest text-white"
+                      : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  {localeLabels[loc]}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label>
+            <span className={ADMIN_LABEL}>
+              {copy.locationDrawer.areaName}
+              <span className="text-red-600"> {copy.common.requiredMark}</span>
+            </span>
+            <input
+              value={localized[activeLocale].area}
+              onChange={(event) => updateActiveField("area", event.target.value)}
+              placeholder={copy.locationDrawer.areaNamePlaceholder}
+              required
+              maxLength={80}
+              className={ADMIN_INPUT}
+              disabled={isPending}
+            />
+          </label>
+
+          <label>
+            <span className={ADMIN_LABEL}>
+              {copy.locationDrawer.districtName}
+            </span>
+            <input
+              value={localized[activeLocale].district}
+              onChange={(event) =>
+                updateActiveField("district", event.target.value)
+              }
+              placeholder={copy.locationDrawer.districtNamePlaceholder}
+              maxLength={80}
+              className={ADMIN_INPUT}
+              disabled={isPending}
+            />
+          </label>
+
           <label>
             <span className={ADMIN_LABEL}>{copy.locationDrawer.priceAmd}</span>
             <input
@@ -135,28 +229,15 @@ function DeliveryLocationForm({
               disabled={isPending}
             />
           </label>
-
-          <label>
-            <span className={ADMIN_LABEL}>
-              {copy.locationDrawer.freeDeliveryFrom}
-            </span>
-            <input
-              type="number"
-              min={0}
-              step={1}
-              value={freeThresholdAmount}
-              onChange={(event) => setFreeThresholdAmount(event.target.value)}
-              placeholder={copy.locationDrawer.freeDeliveryPlaceholder}
-              className={ADMIN_INPUT}
-              disabled={isPending}
-            />
-          </label>
         </div>
+        <p className="text-xs text-gray-500">
+          {copy.locationDrawer.districtNameHint}
+        </p>
 
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
       </div>
 
-      <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4">
+      <div className="flex items-center gap-4 border-t border-gray-200 px-5 py-4 sm:px-6">
         <Button type="submit" disabled={isPending}>
           {isPending ? copy.common.saving : copy.common.save}
         </Button>
@@ -190,8 +271,9 @@ export function DeliveryLocationDrawer({
           ? copy.locationDrawer.editAria
           : copy.locationDrawer.addAria
       }
+      panelClassName="w-[min(100%,56rem)] sm:w-[min(100%,52rem)]"
     >
-      <div className="border-b border-gray-200 px-5 py-4">
+      <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
         <h2 className="text-lg font-semibold text-gray-900">
           {location
             ? copy.locationDrawer.editTitle

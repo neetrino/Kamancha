@@ -9,14 +9,15 @@ import { useAdminFilterNavigate } from "@/features/admin/ui/admin-filter-navigat
 import { AdminSearchInput } from "@/features/admin/ui/AdminSearchInput";
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import type { PaymentStatus } from "@/features/orders/domain/payment-status";
-import type { CustomerOrderKind } from "@/features/orders/schemas/change-status";
+import type { AdminOrderKind } from "@/features/orders/schemas/change-status";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminOrdersFiltersProps = {
   total: number;
   status?: OrderStatus;
   paymentStatus?: string;
-  kind?: CustomerOrderKind;
+  kind?: AdminOrderKind;
+  deliveryDate?: string;
   q?: string;
   copy: Dictionary["admin"];
 };
@@ -26,6 +27,7 @@ export function AdminOrdersFilters({
   status,
   paymentStatus,
   kind = "all",
+  deliveryDate,
   q,
   copy,
 }: AdminOrdersFiltersProps) {
@@ -78,6 +80,9 @@ export function AdminOrdersFilters({
       >
         {kind !== "all" ? (
           <input type="hidden" name="kind" value={kind} />
+        ) : null}
+        {deliveryDate ? (
+          <input type="hidden" name="deliveryDate" value={deliveryDate} />
         ) : null}
         <SelectDropdown
           name="status"

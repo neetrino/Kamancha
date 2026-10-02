@@ -276,9 +276,8 @@ export async function markParticipantItemsReady(input: {
 export async function setGroupOrderDeliveryAddress(input: {
   inviteToken: string;
   deliveryAddress: string;
+  deliveryRuleId: string;
   locale: "hy" | "en" | "ru";
-  deliveryLat?: number;
-  deliveryLng?: number;
 }): Promise<
   | { ok: true; deliveryAmount: number; distanceLabel: string }
   | { ok: false; error: string }
@@ -297,10 +296,13 @@ export async function setGroupOrderDeliveryAddress(input: {
     return { ok: false, error: "Enter a delivery address." };
   }
 
-  const { quoteDistanceDelivery } = await import(
-    "@/features/delivery/application/quote-distance-delivery"
+  const { resolveZoneDelivery } = await import(
+    "@/features/delivery/application/resolve-zone-delivery"
   );
-  const quoted = await quoteDistanceDelivery(address, input.locale);
+  const quoted = await resolveZoneDelivery(
+    input.deliveryRuleId,
+    input.locale,
+  );
   if (!quoted.ok) {
     return { ok: false, error: quoted.error };
   }
@@ -309,8 +311,8 @@ export async function setGroupOrderDeliveryAddress(input: {
   await db
     .update(groupOrders)
     .set({
-      deliveryAddress: quoted.quote.destinationFormattedAddress || address,
-      deliveryDistanceLabel: quoted.quote.distanceLabel,
+      deliveryAddress: address,
+      deliveryDistanceLabel: quoted.quote.zoneName,
       deliveryAmount: quoted.quote.deliveryAmount,
       updatedAt: new Date(),
     })
@@ -324,16 +326,15 @@ export async function setGroupOrderDeliveryAddress(input: {
     payload: {
       action: "delivery_address_set",
       deliveryAmount: quoted.quote.deliveryAmount,
-      distanceLabel: quoted.quote.distanceLabel,
-      usedMapPin:
-        input.deliveryLat != null && input.deliveryLng != null,
+      zoneName: quoted.quote.zoneName,
+      deliveryRuleId: quoted.quote.deliveryRuleId,
     },
   });
 
   return {
     ok: true,
     deliveryAmount: quoted.quote.deliveryAmount,
-    distanceLabel: quoted.quote.distanceLabel,
+    distanceLabel: quoted.quote.zoneName,
   };
 }
 

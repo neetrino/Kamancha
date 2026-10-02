@@ -67,10 +67,10 @@
       "weekdaysShort": ["Երկ", "Երք", "Չրք", "Հնգ", "Ուրբ", "Շբթ", "Կիր"]
     },
     "paymentMethod": "Վճարման եղանակ",
-    "cashOnDelivery": "Կանխիկ առաքման ժամանակ",
     "submit": "Գրանցել գնումը",
     "submitting": "Ուղարկվում է…",
-    "successPending": "Գնումը գրանցվեց։ Gift Card-ը ակտիվ է, կոդը ուղարկվել է ստացողի email-ին։"
+    "successActive": "Գնումը գրանցվեց։ Gift Card-ը ակտիվ է, կոդը ուղարկվել է ստացողի email-ին։",
+    "successPendingPayment": "Գնումը գրանցվեց։ Gift Card-ը կակտիվանա վճարման հաստատումից հետո։"
   },
   "personal": "Անձնական տվյալներ",
   "addresses": "Հասցեներ",

@@ -12,6 +12,7 @@ import {
 import { getGiftCardDetail } from "@/features/gift-cards/application/queries";
 import type { GiftCardDetail } from "@/features/gift-cards/application/queries";
 import { sendGiftCardEmail } from "@/features/gift-cards/application/send-gift-card-email";
+import { shouldActivateGiftCardOnPurchase } from "@/features/gift-cards/domain/gift-card-payment-method";
 import {
   isValidGiftCardAmount,
 } from "@/features/gift-cards/domain/gift-card-rules";
@@ -80,16 +81,22 @@ export async function purchaseGiftCardAction(
         settings,
       });
 
-      // Digital gift cards must be ACTIVE to redeem/email. With COD-only checkout,
-      // placing the purchase activates the card immediately.
-      await activateGiftCardRecord({
-        tx,
-        giftCardId: created.id,
-        actorUserId: user.id,
-        correlationId: created.id,
-        sendEmail: true,
-        locale: parsed.data.locale,
-      });
+      // Cash activates immediately. Card stays PENDING_PAYMENT until capture/admin.
+      const activateNow = shouldActivateGiftCardOnPurchase(
+        parsed.data.paymentMethod,
+      );
+      if (activateNow) {
+        await activateGiftCardRecord({
+          tx,
+          giftCardId: created.id,
+          actorUserId: user.id,
+          correlationId: created.id,
+          sendEmail: true,
+          locale: parsed.data.locale,
+        });
+      }
+
+      const status = activateNow ? "ACTIVE" : "PENDING_PAYMENT";
 
       await tx.insert(auditLogs).values({
         id: createId(),
@@ -101,16 +108,20 @@ export async function purchaseGiftCardAction(
           amount: parsed.data.amount,
           paymentMethod: parsed.data.paymentMethod,
           code: created.code,
-          status: "ACTIVE",
+          status,
         },
         correlationId: created.id,
       });
 
-      return created;
+      return { created, status };
     });
 
-    revalidateGiftCardPaths(parsed.data.locale, result.id);
-    return ok({ id: result.id, code: result.code, status: "ACTIVE" });
+    revalidateGiftCardPaths(parsed.data.locale, result.created.id);
+    return ok({
+      id: result.created.id,
+      code: result.created.code,
+      status: result.status,
+    });
   } catch (caught) {
     return err(
       "PURCHASE_FAILED",
@@ -157,7 +168,7 @@ export async function adminCreateGiftCardAction(
           ? new Date(parsed.data.expiresAt)
           : null,
         createdByUserId: actor.id,
-        paymentMethod: "ADMIN_ISSUE",
+        paymentMethod: parsed.data.paymentMethod,
         settings,
       });
 

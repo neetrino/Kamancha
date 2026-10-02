@@ -73,10 +73,18 @@ export default async function MyGiftCardsPage({ params }: PageProps) {
           sendDate: buyCopy.sendDate,
           datePicker: buyCopy.datePicker,
           paymentMethod: buyCopy.paymentMethod,
-          cashOnDelivery: buyCopy.cashOnDelivery,
+          payment: {
+            cashOnDelivery: dictionary.checkout.payment.cashOnDelivery,
+            cashShort: dictionary.checkout.payment.cashShort,
+            cashOnDeliveryDescription:
+              dictionary.checkout.payment.cashOnDeliveryDescription,
+            card: dictionary.checkout.payment.card,
+            cardDescription: dictionary.checkout.payment.cardDescription,
+          },
           submit: buyCopy.submit,
           submitting: buyCopy.submitting,
-          successPending: buyCopy.successPending,
+          successActive: buyCopy.successActive,
+          successPendingPayment: buyCopy.successPendingPayment,
         },
       }}
     />

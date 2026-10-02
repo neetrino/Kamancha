@@ -55,7 +55,11 @@ export async function getCustomerOrderDetailAction(
   }
 
   const identity = await getStoreIdentity();
-  const view = toAdminOrderDetailView(loaded, identity.name);
+  const view = await toAdminOrderDetailView(
+    loaded,
+    identity.name,
+    locale as Locale,
+  );
 
   if (!loaded.order.groupOrderId) {
     return ok(view);

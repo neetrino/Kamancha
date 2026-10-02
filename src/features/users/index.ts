@@ -1,5 +1,6 @@
 export {
   bulkAnonymizeUsersAction,
+  updateUserAdminNoteAction,
   updateUserRoleAction,
   updateUserStatusAction,
 } from "@/features/users/application/update-user";
@@ -21,6 +22,9 @@ export {
 export {
   adminUsersFilterSchema,
   bulkAnonymizeUsersSchema,
+  normalizeUserAdminNote,
+  updateUserAdminNoteSchema,
   updateUserRoleSchema,
   updateUserStatusSchema,
+  USER_ADMIN_NOTE_MAX_LENGTH,
 } from "@/features/users/schemas/admin-users";

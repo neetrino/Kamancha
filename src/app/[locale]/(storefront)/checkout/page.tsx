@@ -38,10 +38,13 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       defaultLine1={view.defaultLine1}
       subtotalAmount={view.subtotalAmount}
       deliverySchedule={view.deliverySchedule}
+      deliveryZones={view.deliveryZones}
       cashChangeOptions={view.cashChangeOptions}
+      isGroupOrderCheckout={view.isGroupOrderCheckout}
       splitOthersPrepaid={view.splitOthersPrepaid}
       othersPrepaidAmount={view.othersPrepaidAmount}
       lockedDeliveryAmount={view.lockedDeliveryAmount}
+      lockedDeliveryZoneLabel={view.lockedDeliveryZoneLabel}
       bonusAvailableBalance={view.bonusAvailableBalance}
       bonusMaxRedeemPercent={view.bonusMaxRedeemPercent}
       bonusAccrualPercent={view.bonusAccrualPercent}

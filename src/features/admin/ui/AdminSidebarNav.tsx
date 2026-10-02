@@ -12,6 +12,7 @@ import {
   isAdminTabActive,
 } from "@/features/admin/ui/admin-menu.config";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
+import { AdminOrdersNavBadge } from "@/features/orders/ui/AdminOrdersNavBadge";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -20,6 +21,7 @@ type AdminSidebarNavProps = {
   pathname: string;
   shell: Dictionary["admin"]["shell"];
   nav: Dictionary["admin"]["nav"];
+  ordersBadgeAria: string;
 };
 
 function navIconClass(active: boolean): string {
@@ -38,6 +40,7 @@ export function AdminSidebarNav({
   locale,
   pathname,
   nav,
+  ordersBadgeAria,
 }: AdminSidebarNavProps) {
   const tabs = getAdminMenuItems(locale, nav);
   const { collapsed } = useAdminSidebarCollapse();
@@ -86,15 +89,28 @@ export function AdminSidebarNav({
             className={navRowClass(isActive, collapsed)}
             aria-current={isActive ? "page" : undefined}
           >
-            <span className={navIconClass(isActive)}>{tab.icon}</span>
+            <span className={`relative ${navIconClass(isActive)}`}>
+              {tab.icon}
+              {tab.id === "orders" && collapsed ? (
+                <AdminOrdersNavBadge
+                  ariaLabel={ordersBadgeAria}
+                  compact
+                />
+              ) : null}
+            </span>
             {collapsed ? null : (
-              <span
-                className={`profile-nav-label min-w-0 flex-1 truncate ${
-                  isActive ? "text-brand-forest" : "text-white"
-                }`}
-              >
-                {tab.label}
-              </span>
+              <>
+                <span
+                  className={`profile-nav-label min-w-0 flex-1 truncate ${
+                    isActive ? "text-brand-forest" : "text-white"
+                  }`}
+                >
+                  {tab.label}
+                </span>
+                {tab.id === "orders" ? (
+                  <AdminOrdersNavBadge ariaLabel={ordersBadgeAria} />
+                ) : null}
+              </>
             )}
           </AppLink>
         );

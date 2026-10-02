@@ -35,7 +35,11 @@ import {
   CHECKOUT_SHEET_TEXTURE,
 } from "@/features/checkout/ui/checkout-sheet-surface";
 import { CHECKOUT_INVALID_FEEDBACK_MS } from "@/features/checkout/ui/checkout-ui";
-import { useDistanceDeliveryQuote } from "@/features/checkout/ui/use-distance-delivery-quote";
+import {
+  clearCheckoutDeliveryRuleId,
+  readCheckoutDeliveryRuleId,
+  writeCheckoutDeliveryRuleId,
+} from "@/features/checkout/ui/checkout-delivery-zone-storage";
 import {
   calculateBonusEarnAmount,
   calculateMaxRedeemAmount,
@@ -46,6 +50,7 @@ import {
   bonusEligibleAfterGiftCard,
   type GiftCardRedeemPreview,
 } from "@/features/gift-cards/domain/gift-card-rules";
+import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
 import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
 import {
@@ -78,14 +83,18 @@ type CheckoutFormProps = {
   defaultLine1: string;
   subtotalAmount: number;
   deliverySchedule: DeliveryScheduleSettings;
+  deliveryZones: CheckoutDeliveryOption[];
   cashChangeOptions: CashChangeDenominationView[];
   hasItems: boolean;
   bonusAvailableBalance?: number | null;
   bonusMaxRedeemPercent?: number;
   bonusAccrualPercent?: number;
+  /** Organizer finishing a group order — cash-on-delivery is not offered. */
+  isGroupOrderCheckout?: boolean;
   splitOthersPrepaid?: boolean;
   othersPrepaidAmount?: number;
   lockedDeliveryAmount?: number | null;
+  lockedDeliveryZoneLabel?: string | null;
   variant?: "page" | "sheet";
   /** Called after a successful place-order (close mobile sheet). */
   onOrderPlaced?: () => void;
@@ -103,29 +112,29 @@ export function CheckoutForm({
   defaultLine1,
   subtotalAmount,
   deliverySchedule,
+  deliveryZones,
   cashChangeOptions,
   hasItems,
   bonusAvailableBalance = null,
   bonusMaxRedeemPercent = 0,
   bonusAccrualPercent = 0,
+  isGroupOrderCheckout = false,
   splitOthersPrepaid = false,
   othersPrepaidAmount = 0,
   lockedDeliveryAmount = null,
+  lockedDeliveryZoneLabel = null,
   variant = "page",
   onOrderPlaced,
 }: CheckoutFormProps) {
   const router = useRouter();
   const idempotencyKey = useMemo(() => createClientId(), []);
   const [line1, setLine1] = useState(defaultLine1);
+  const [deliveryRuleId, setDeliveryRuleId] = useState("");
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
     null,
   );
   const [cashChangeAmount, setCashChangeAmount] =
     useState<CashChangeSelection>(CASH_CHANGE_NONE);
-  const deliveryQuote = useDistanceDeliveryQuote(
-    lockedDeliveryAmount != null ? "" : line1,
-    locale,
-  );
   const [paymentMethod, setPaymentMethod] =
     useState<CheckoutPaymentMethod | null>(null);
   const [invalidFields, setInvalidFields] = useState<CheckoutInvalidFields>({});
@@ -150,6 +159,14 @@ export function CheckoutForm({
   const [applyingGiftCard, startApplyGiftCard] = useTransition();
 
   useEffect(() => {
+    if (lockedDeliveryAmount != null) return;
+    const stored = readCheckoutDeliveryRuleId();
+    if (!stored) return;
+    if (!deliveryZones.some((zone) => zone.id === stored)) return;
+    setDeliveryRuleId(stored);
+  }, [deliveryZones, lockedDeliveryAmount]);
+
+  useEffect(() => {
     return () => {
       if (invalidFeedbackTimeoutRef.current) {
         clearTimeout(invalidFeedbackTimeoutRef.current);
@@ -157,8 +174,8 @@ export function CheckoutForm({
     };
   }, []);
 
-  const paymentOptions = useMemo(
-    () => [
+  const paymentOptions = useMemo(() => {
+    const options = [
       {
         id: "cash_on_delivery" as const,
         name: labels.cashOnDelivery,
@@ -183,26 +200,32 @@ export function CheckoutForm({
         shortName: labels.terminal,
         description: labels.terminalDescription,
       },
-    ],
-    [
-      labels.card,
-      labels.cardDescription,
-      labels.cashOnDelivery,
-      labels.cashOnDeliveryDescription,
-      labels.cashShort,
-      labels.idram,
-      labels.idramDescription,
-      labels.terminal,
-      labels.terminalDescription,
-    ],
-  );
+    ];
+    if (!isGroupOrderCheckout) return options;
+    return options.filter((option) => option.id !== "cash_on_delivery");
+  }, [
+    isGroupOrderCheckout,
+    labels.card,
+    labels.cardDescription,
+    labels.cashOnDelivery,
+    labels.cashOnDeliveryDescription,
+    labels.cashShort,
+    labels.idram,
+    labels.idramDescription,
+    labels.terminal,
+    labels.terminalDescription,
+  ]);
 
   function formatMoney(amount: number): string {
     return formatMoneyAmount(amount, "AMD", locale);
   }
 
+  const selectedZone = useMemo(
+    () => deliveryZones.find((zone) => zone.id === deliveryRuleId) ?? null,
+    [deliveryRuleId, deliveryZones],
+  );
   const shippingAmount =
-    lockedDeliveryAmount ?? deliveryQuote.deliveryAmount;
+    lockedDeliveryAmount ?? selectedZone?.priceAmount ?? 0;
   const merchandiseAfterDiscount = Math.max(0, subtotalAmount - discountAmount);
   const maxBonusRedeem =
     bonusAvailableBalance == null
@@ -247,22 +270,12 @@ export function CheckoutForm({
   const cashChangeDueFormatted =
     cashChangeDue != null ? formatMoney(cashChangeDue) : null;
 
-  const shippingDistanceLabel =
-    lockedDeliveryAmount == null &&
-    !deliveryQuote.pending &&
-    deliveryQuote.distanceLabel &&
-    !deliveryQuote.error
-      ? deliveryQuote.distanceLabel
-      : null;
-
   const shippingFormatted =
     lockedDeliveryAmount != null
       ? formatMoney(lockedDeliveryAmount)
-      : deliveryQuote.pending
-        ? labels.calculatingDelivery
-        : shippingDistanceLabel
-          ? formatMoney(shippingAmount)
-          : "—";
+      : selectedZone
+        ? formatMoney(shippingAmount)
+        : "—";
 
   function clearAppliedCoupon(): void {
     setAppliedCouponCode(null);
@@ -405,18 +418,12 @@ export function CheckoutForm({
     const data = new FormData(event.currentTarget);
     setError(null);
 
-    const line1QuoteOk =
-      lockedDeliveryAmount != null ||
-      (!deliveryQuote.pending &&
-        !deliveryQuote.error &&
-        Boolean(deliveryQuote.distanceLabel));
-
     const nextInvalid = collectCheckoutInvalidFields({
       firstName: String(data.get("firstName") ?? ""),
       contactEmail: String(data.get("contactEmail") ?? ""),
       contactPhone: String(data.get("contactPhone") ?? ""),
       line1,
-      line1QuoteOk,
+      hasDeliveryZone: lockedDeliveryAmount != null || Boolean(deliveryRuleId),
       hasDeliverySlot: deliverySlot != null,
       hasPaymentMethod: paymentMethod != null,
     });
@@ -441,8 +448,11 @@ export function CheckoutForm({
         shippingMethod: "delivery",
         paymentMethod,
         line1,
+        deliveryRuleId:
+          lockedDeliveryAmount != null ? undefined : deliveryRuleId || undefined,
         floor: String(data.get("floor") ?? ""),
         intercomCode: String(data.get("intercomCode") ?? ""),
+        customerNote: String(data.get("customerNote") ?? ""),
         scheduledDeliveryDate: deliverySlot.date,
         scheduledDeliveryStart: deliverySlot.startTime,
         scheduledDeliveryEnd: deliverySlot.endTime,
@@ -461,6 +471,7 @@ export function CheckoutForm({
         return;
       }
 
+      clearCheckoutDeliveryRuleId();
       onOrderPlaced?.();
       router.push(`/${locale}/checkout/success/${result.orderNumber}`);
       router.refresh();
@@ -523,15 +534,17 @@ export function CheckoutForm({
             onCashChangeAmountChange={setCashChangeAmount}
             payableTotal={totalAmount}
             cashChangeDueFormatted={cashChangeDueFormatted}
+            deliveryZones={deliveryZones}
+            deliveryRuleId={deliveryRuleId}
+            onDeliveryRuleIdChange={(value) => {
+              setDeliveryRuleId(value);
+              writeCheckoutDeliveryRuleId(value);
+            }}
             line1={line1}
             onLine1Change={setLine1}
-            deliveryQuotePending={
-              lockedDeliveryAmount != null ? false : deliveryQuote.pending
-            }
-            deliveryQuoteError={
-              lockedDeliveryAmount != null ? null : deliveryQuote.error
-            }
             addressLocked={lockedDeliveryAmount != null}
+            zoneLocked={lockedDeliveryAmount != null}
+            lockedZoneLabel={lockedDeliveryZoneLabel}
             invalidFields={invalidFields}
             onClearInvalidField={clearInvalidField}
             prepaidNotice={
@@ -593,7 +606,7 @@ export function CheckoutForm({
             totalLabel={labels.total}
             subtotalFormatted={formatMoney(subtotalAmount)}
             shippingFormatted={shippingFormatted}
-            shippingDistanceLabel={shippingDistanceLabel}
+            shippingDistanceLabel={null}
             discountFormatted={
               discountAmount > 0 ? formatMoney(discountAmount) : null
             }
