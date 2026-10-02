@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
 import { BulkChangeOrderStatusForm } from "@/features/orders/ui/BulkChangeOrderStatusForm";
-import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
+import {
+  ADMIN_ORDER_SHEET_PANEL,
+  CustomerOrderDetailsSheet,
+} from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminOrdersViewOrder = {
@@ -26,6 +30,7 @@ type AdminOrdersViewOrder = {
   scheduledDeliveryDate: string | null;
   scheduledDeliveryStart: string | null;
   scheduledDeliveryEnd: string | null;
+  bonusEarnedAmount: number;
 };
 
 type AdminOrdersViewProps = {
@@ -35,20 +40,27 @@ type AdminOrdersViewProps = {
 };
 
 export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) {
+  const router = useRouter();
   const [rows, setRows] = useState(orders);
+  const [syncedOrders, setSyncedOrders] = useState(orders);
+  if (orders !== syncedOrders) {
+    setSyncedOrders(orders);
+    setRows(orders);
+  }
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    setRows(orders);
-  }, [orders]);
-
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
     setDetail(null);
     setError(null);
+    setRows((current) =>
+      current.map((row) =>
+        row.orderNumber === orderNumber ? { ...row, isNew: false } : row,
+      ),
+    );
 
     startTransition(async () => {
       const detailResult = await getAdminOrderDetailAction(locale, orderNumber);
@@ -58,6 +70,7 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         return;
       }
       setDetail(detailResult.value);
+      router.refresh();
     });
   }
 
@@ -84,7 +97,7 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         copy={copy}
         includeAdminDetails
         groupOrderBadgeLabel={copy.orders.table.groupOrderBadge}
-        panelClassName="w-[92%] max-w-none sm:w-1/2"
+        panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>
   );

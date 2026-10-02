@@ -4,10 +4,7 @@ import { claimGuestGroupOrderParticipantsForUser } from "@/features/group-orders
 import { getProfileDashboard } from "@/features/profile/application/dashboard-queries";
 import { ProfileRecentOrders } from "@/features/profile/ui/ProfileRecentOrders";
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
-import {
-  PROFILE_PAGE_SUBTITLE,
-  PROFILE_PAGE_TITLE,
-} from "@/features/profile/ui/profile-surface";
+import { PROFILE_PAGE_TITLE } from "@/features/profile/ui/profile-surface";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -29,15 +26,10 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const { stats, recentOrders } = await getProfileDashboard(user.id);
 
   return (
-    <section className="profile-sheet-keep-frame space-y-8">
-      <div>
-        <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.dashboard}</h1>
-        <p className={PROFILE_PAGE_SUBTITLE}>
-          {dictionary.profile.welcome}, {user.firstName}.
-        </p>
-      </div>
+    <section className="profile-sheet-keep-frame">
+      <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.dashboard}</h1>
 
-      <div className="grid grid-cols-2 gap-3 overflow-visible sm:gap-4 min-[834px]:max-xl:grid-cols-3 xl:grid-cols-4">
+      <div className="mt-[28px] grid grid-cols-2 gap-3 overflow-visible sm:gap-4 min-[834px]:max-xl:grid-cols-3 xl:grid-cols-4">
         <ProfileStatCard
           label={dictionary.profile.totalOrders}
           value={String(stats.totalOrders)}
@@ -56,6 +48,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         />
       </div>
 
+      <div className="mt-8">
       <ProfileRecentOrders
         locale={locale}
         orders={recentOrders.map((order) => ({
@@ -71,6 +64,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         dictionary={dictionary.profile}
         adminCopy={dictionary.admin}
       />
+      </div>
     </section>
   );
 }

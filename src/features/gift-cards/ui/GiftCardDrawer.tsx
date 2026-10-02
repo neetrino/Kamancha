@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
@@ -53,6 +53,11 @@ export function GiftCardDrawer({
   const [sendEmail, setSendEmail] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const paymentListRef = useRef<HTMLDivElement>(null);
+  const [paymentFrame, setPaymentFrame] = useState<{
+    top: number;
+    height: number;
+  } | null>(null);
 
   const paymentOptions = useMemo<CheckoutPaymentOption[]>(
     () => [
@@ -71,6 +76,21 @@ export function GiftCardDrawer({
     ],
     [copy.payment],
   );
+
+  useLayoutEffect(() => {
+    const list = paymentListRef.current;
+    const selected = list?.querySelector<HTMLElement>(
+      "[data-payment-selected='true']",
+    );
+    if (!list || !selected) {
+      setPaymentFrame(null);
+      return;
+    }
+    setPaymentFrame({
+      top: selected.offsetTop,
+      height: selected.offsetHeight,
+    });
+  }, [paymentMethod, open]);
 
   function onSubmit(): void {
     setError(null);
@@ -103,12 +123,13 @@ export function GiftCardDrawer({
       ariaLabel={copy.drawer.newAria}
       panelClassName="w-full max-w-md"
     >
-      <div className="border-b border-gray-200 px-5 py-4">
+      <div className="flex h-full min-h-0 flex-col">
+      <div className="shrink-0 border-b border-gray-200 px-5 py-4">
         <h2 className="text-lg font-semibold text-gray-900">
           {copy.drawer.newTitle}
         </h2>
       </div>
-      <div className="space-y-4 px-5 py-4">
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
         <label className="block space-y-1">
           <span className={ADMIN_LABEL}>{copy.drawer.amount}</span>
           <input
@@ -120,18 +141,30 @@ export function GiftCardDrawer({
         </label>
         <fieldset className="space-y-2">
           <legend className={ADMIN_LABEL}>{copy.drawer.paymentMethod}</legend>
-          <div className="space-y-2">
-            {paymentOptions.map((option) => (
-              <CheckoutPaymentMethodOption
-                key={option.id}
-                option={option}
-                selected={paymentMethod === option.id}
-                disabled={isPending}
-                cardDescriptionBelowIcons={option.id === "arca"}
-                onSelect={(method) =>
-                  setPaymentMethod(method as GiftCardPaymentMethod)
-                }
+          <div ref={paymentListRef} className="relative min-w-0 space-y-2">
+            {paymentFrame ? (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 z-[3] rounded-[15px] border border-brand-forest transition-[top,height] duration-300 ease-out motion-reduce:transition-none"
+                style={{ top: paymentFrame.top, height: paymentFrame.height }}
               />
+            ) : null}
+            {paymentOptions.map((option) => (
+              <div
+                key={option.id}
+                data-payment-selected={paymentMethod === option.id}
+              >
+                <CheckoutPaymentMethodOption
+                  option={option}
+                  selected={paymentMethod === option.id}
+                  disabled={isPending}
+                  compact
+                  persistentBorder
+                  onSelect={(method) =>
+                    setPaymentMethod(method as GiftCardPaymentMethod)
+                  }
+                />
+              </div>
             ))}
           </div>
         </fieldset>
@@ -207,6 +240,7 @@ export function GiftCardDrawer({
             {isPending ? copy.common.creating : copy.common.create}
           </Button>
         </div>
+      </div>
       </div>
     </SideSheet>
   );

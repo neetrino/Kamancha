@@ -71,13 +71,23 @@ type CheckoutPaymentMethodIconsProps = {
   methodId: CheckoutPaymentMethod;
   /** Use checkout desktop badge sizing at all breakpoints (group-order pay). */
   cardBadgeSize?: "mobile" | "desktop";
+  /** Keep mobile icon sizes even on wide viewports. */
+  compact?: boolean;
 };
 
 export function CheckoutPaymentMethodIcons({
   methodId,
   cardBadgeSize = "mobile",
+  compact = false,
 }: CheckoutPaymentMethodIconsProps) {
   if (methodId === "cash_on_delivery") {
+    if (compact) {
+      return (
+        <div className="flex shrink-0 items-center justify-center">
+          <CheckoutCashIcon sizePx={CHECKOUT_PAYMENT_CASH_ICON_SIZE_MOBILE_PX} />
+        </div>
+      );
+    }
     return (
       <>
         <div className="flex shrink-0 items-center justify-center xl:hidden">
@@ -150,7 +160,13 @@ export function CheckoutPaymentMethodIcons({
 
   return (
     <CheckoutCardPaymentBadges
-      size={cardBadgeSize === "desktop" ? "desktop" : "responsive"}
+      size={
+        compact
+          ? "compact"
+          : cardBadgeSize === "desktop"
+            ? "desktop"
+            : "responsive"
+      }
     />
   );
 }
@@ -158,7 +174,7 @@ export function CheckoutPaymentMethodIcons({
 function CheckoutCardPaymentBadges({
   size = "responsive",
 }: {
-  size?: "responsive" | "desktop";
+  size?: "responsive" | "desktop" | "mobile" | "compact";
 }) {
   const badges = getCheckoutCardBadges();
   const desktopBadges = (
@@ -189,25 +205,37 @@ function CheckoutCardPaymentBadges({
     return desktopBadges;
   }
 
-  return (
-    <>
-      <div
-        className="flex min-w-0 max-w-full flex-nowrap items-center justify-start xl:hidden"
-        style={{ gap: CHECKOUT_PAYMENT_CARD_BADGES_GAP_MOBILE_PX }}
-      >
+  const badgeHeightPx =
+    size === "compact" ? 28 : CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX;
+  const mobileBadges = (
+    <div
+      className={
+        size === "mobile" || size === "compact"
+          ? "flex min-w-0 max-w-full flex-nowrap items-center justify-start"
+          : "flex min-w-0 max-w-full flex-nowrap items-center justify-start xl:hidden"
+      }
+      style={{ gap: CHECKOUT_PAYMENT_CARD_BADGES_GAP_MOBILE_PX }}
+    >
         {badges.map((badge) => (
           <CheckoutPaymentBadge
             key={badge.alt}
             badge={badge}
-            logoHeightPx={CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX}
+            logoHeightPx={badgeHeightPx}
             radiusPx={CHECKOUT_PAYMENT_CARD_BADGE_RADIUS_MOBILE_PX}
             paddingPx={0}
-            boxSize={getCheckoutCardBadgeUniformBoxSize(
-              CHECKOUT_PAYMENT_CARD_ART_HEIGHT_MOBILE_PX,
-            )}
+            boxSize={getCheckoutCardBadgeUniformBoxSize(badgeHeightPx)}
           />
         ))}
-      </div>
+    </div>
+  );
+
+  if (size === "mobile" || size === "compact") {
+    return mobileBadges;
+  }
+
+  return (
+    <>
+      {mobileBadges}
       {desktopBadges}
     </>
   );

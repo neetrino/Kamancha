@@ -208,6 +208,7 @@
       "status": "Կարգավիճակ",
       "payment": "Վճարում",
       "paymentMethod": "Վճարման եղանակ",
+      "bonus": "Բոնուս",
       "total": "Ընդամենը",
       "delivery": "Առաքում",
       "placed": "Տեղադրված",
@@ -365,7 +366,7 @@
       "inStock": "Առկա է",
       "outOfStock": "Առկա չէ",
       "lowStock": "Քիչ է մնացել",
-      "draft": "Սևագիր"
+      "draft": "Stop product"
     },
     "table": {
       "deleteSelected": "Ջնջել ընտրվածները",
@@ -679,8 +680,8 @@
       "editTitle": "Խմբագրել կուպոնը",
       "newAria": "Նոր կուպոն",
       "editAria": "Խմբագրել կուպոնը",
-      "name": "Անուն",
-      "namePlaceholder": "Անուն",
+      "name": "Անվանում",
+      "namePlaceholder": "Անվանում",
       "code": "Կոդ",
       "codePlaceholder": "Կոդ",
       "codeRequired": "Կոդը պարտադիր է։",
@@ -759,6 +760,18 @@
           "REVERSAL_REDEEM": "Օգտագործման վերադարձ",
           "EXPIRE": "Ժամկետի ավարտ"
         }
+      },
+      "tabs": {
+        "aria": "Հաճախորդի պատմություն",
+        "orders": "Պատվերների պատմություն",
+        "bonuses": "Բոնուս",
+        "gifts": "Gift",
+        "coupons": "Կտրոններ"
+      },
+      "coupons": {
+        "title": "Կտրոններ",
+        "empty": "Կտրոն դեռ չի օգտագործվել։",
+        "order": "Պատվեր"
       },
       "giftCards": {
         "title": "Gift Card-եր",

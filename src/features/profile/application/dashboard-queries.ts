@@ -10,6 +10,7 @@ import {
   customerOrderItemsCountSql,
   customerOrdersVisibilitySql,
 } from "@/features/orders/application/customer-group-order-share";
+import { getStoreBonusSettings } from "@/features/settings/application/queries";
 
 const RECENT_ORDERS_LIMIT = 6;
 
@@ -74,13 +75,17 @@ export async function listRecentProfileOrders(
   userId: string,
   limit: number = RECENT_ORDERS_LIMIT,
 ): Promise<ProfileRecentOrder[]> {
+  const bonusSettings = await getStoreBonusSettings();
   const rows = await getDb()
     .select({
       id: orders.id,
       orderNumber: orders.orderNumber,
       status: orders.status,
       totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
-      bonusEarnedAmount: customerOrderBonusEarnedSql(userId).mapWith(Number),
+      bonusEarnedAmount: customerOrderBonusEarnedSql(
+        userId,
+        bonusSettings.accrualPercent,
+      ).mapWith(Number),
       placedAt: orders.placedAt,
       itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
       groupOrderId: orders.groupOrderId,

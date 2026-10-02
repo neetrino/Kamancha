@@ -92,7 +92,6 @@ function RecentOrdersBody({
             )}
             placedOnLine={`${dictionary.placedOn} ${formatShortDate(order.placedAt, locale)}`}
             orderNumberLabel={dictionary.orderNumber}
-            viewDetailsLabel={dictionary.viewDetails}
             groupOrderBadgeLabel={dictionary.groupOrderBadge}
             isGroupOrder={order.isGroupOrder}
             onViewDetails={() => onOpenOrder(order.orderNumber)}

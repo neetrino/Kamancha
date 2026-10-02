@@ -208,6 +208,7 @@
       "status": "Статус",
       "payment": "Оплата",
       "paymentMethod": "Способ оплаты",
+      "bonus": "Бонус",
       "total": "Итого",
       "delivery": "Доставка",
       "placed": "Размещён",
@@ -365,7 +366,7 @@
       "inStock": "В наличии",
       "outOfStock": "Нет в наличии",
       "lowStock": "Мало на складе",
-      "draft": "Черновик"
+      "draft": "Stop product"
     },
     "table": {
       "deleteSelected": "Удалить выбранные",
@@ -759,6 +760,18 @@
           "REVERSAL_REDEEM": "Возврат списания",
           "EXPIRE": "Истечение"
         }
+      },
+      "tabs": {
+        "aria": "История клиента",
+        "orders": "История заказов",
+        "bonuses": "Бонус",
+        "gifts": "Gift",
+        "coupons": "Купоны"
+      },
+      "coupons": {
+        "title": "Купоны",
+        "empty": "Купоны ещё не использовались.",
+        "order": "Заказ"
       },
       "giftCards": {
         "title": "Подарочные карты",

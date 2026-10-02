@@ -34,7 +34,10 @@ import {
 import type { OrderStatus } from "@/features/orders/domain/order-status";
 import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import type { AdminOrdersFilter } from "@/features/orders/schemas/change-status";
-import { getStoreRevenue } from "@/features/settings/application/queries";
+import {
+  getStoreBonusSettings,
+  getStoreRevenue,
+} from "@/features/settings/application/queries";
 
 const PAGE_SIZE = 20;
 
@@ -83,6 +86,8 @@ export type AdminOrderListItem = {
   scheduledDeliveryStart: string | null;
   /** Slot end `HH:mm`, when set. */
   scheduledDeliveryEnd: string | null;
+  /** Posted earn, or the expected accrual while the order is still open. */
+  bonusEarnedAmount: number;
 };
 
 export type CustomerOrderListItem = Omit<
@@ -181,6 +186,29 @@ export async function listAdminOrders(
           : undefined;
   const where = and(buildOrderFilters(filters), kindWhere);
   const offset = (filters.page - 1) * PAGE_SIZE;
+  const bonusSettings = await getStoreBonusSettings();
+  const accrualPercent = Math.max(
+    0,
+    Math.min(100, Math.trunc(bonusSettings.accrualPercent)),
+  );
+  const bonusEarnedAmount = sql<number>`
+    case
+      when ${orders.status}::text in ('CANCELLED', 'REFUNDED')
+        then ${orders.bonusEarnedAmount}
+      when ${orders.bonusEarnedAmount} > 0
+        then ${orders.bonusEarnedAmount}
+      else floor(
+        greatest(
+          0,
+          greatest(0, ${orders.subtotalAmount} - ${orders.discountAmount})
+          - least(
+              ${orders.giftCardAmount},
+              greatest(0, ${orders.subtotalAmount} - ${orders.discountAmount})
+            )
+        ) * ${accrualPercent} / 100
+      )
+    end
+  `.mapWith(Number);
 
   const [rows, [totalRow]] = await Promise.all([
     getDb()
@@ -202,15 +230,12 @@ export async function listAdminOrders(
         scheduledDeliveryDate: scheduledDeliveryDateSql,
         scheduledDeliveryStart: scheduledDeliveryStartSql,
         scheduledDeliveryEnd: scheduledDeliveryEndSql,
+        bonusEarnedAmount,
       })
       .from(orders)
       .leftJoin(users, eq(orders.userId, users.id))
       .where(where)
-      .orderBy(
-        sql`${orders.shippingAddress}->>'scheduledDeliveryDate' asc nulls last`,
-        sql`${orders.shippingAddress}->>'scheduledDeliveryStart' asc nulls last`,
-        desc(orders.placedAt),
-      )
+      .orderBy(desc(orders.placedAt))
       .limit(PAGE_SIZE)
       .offset(offset),
     getDb().select({ value: count() }).from(orders).where(where),
@@ -269,6 +294,11 @@ export async function listCustomerOrders(
         : undefined;
   const where = and(visibility, baseWhere, kindWhere);
   const offset = (filters.page - 1) * PAGE_SIZE;
+  const bonusSettings = await getStoreBonusSettings();
+  const bonusEarnedAmount = customerOrderBonusEarnedSql(
+    userId,
+    bonusSettings.accrualPercent,
+  ).mapWith(Number);
 
   const [rows, [totalRow]] = await Promise.all([
     getDb()
@@ -285,7 +315,7 @@ export async function listCustomerOrders(
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
         itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
-        bonusEarnedAmount: customerOrderBonusEarnedSql(userId).mapWith(Number),
+        bonusEarnedAmount,
         groupOrderId: orders.groupOrderId,
       })
       .from(orders)
@@ -494,6 +524,7 @@ export async function getAdminDashboardMetrics(input: {
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
         adminSeenAt: orders.adminSeenAt,
+        bonusEarnedAmount: orders.bonusEarnedAmount,
       })
       .from(orders)
       .where(and(eq(orders.isArchived, false), isNull(orders.groupOrderId)))

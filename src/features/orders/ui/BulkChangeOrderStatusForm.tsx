@@ -46,6 +46,7 @@ type BulkOrderRow = {
   scheduledDeliveryDate: string | null;
   scheduledDeliveryStart: string | null;
   scheduledDeliveryEnd: string | null;
+  bonusEarnedAmount: number;
 };
 
 function deliveryGroupTitle(
@@ -193,6 +194,9 @@ export function BulkChangeOrderStatusForm({
                   {copy.orders.table.total}
                 </th>
                 <th className={ADMIN_TABLE_TH_CENTER}>
+                  {copy.orders.table.bonus}
+                </th>
+                <th className={ADMIN_TABLE_TH_CENTER}>
                   {copy.orders.table.delivery}
                 </th>
                 <th className={ADMIN_TABLE_TH_CENTER}>
@@ -204,8 +208,12 @@ export function BulkChangeOrderStatusForm({
                 <th className={ADMIN_TABLE_TH_CENTER}>
                   {copy.orders.table.payment}
                 </th>
-                <th className={ADMIN_TABLE_TH_CENTER}>
-                  {copy.orders.table.paymentMethod}
+                <th className={`${ADMIN_TABLE_TH_CENTER} whitespace-normal leading-tight`}>
+                  {copy.orders.table.paymentMethod.split(" ").map((word) => (
+                    <span key={word} className="block">
+                      {word}
+                    </span>
+                  ))}
                 </th>
               </tr>
             </thead>

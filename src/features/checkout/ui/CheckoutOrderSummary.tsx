@@ -16,6 +16,10 @@ const SUMMARY_ALERT_PILL_CLASS =
 const CHECKOUT_CODE_GLASS_CLASS =
   "relative z-[2] mb-6 isolate overflow-hidden rounded-xl border border-white/20 bg-white/[0.1] p-4 xl:mb-3 xl:px-2 xl:py-2";
 
+/** Same bar height as the loyalty row: one line, less vertical padding. */
+const CHECKOUT_CODE_ROW_CLASS =
+  "relative z-[2] mb-3 isolate overflow-hidden rounded-xl border border-white/20 bg-white/[0.1] px-3 py-2 xl:mb-3 xl:px-2 xl:py-2";
+
 type GiftCardPreviewView = {
   initialAmount: number;
   redeemAmount: number;
@@ -136,7 +140,7 @@ export function CheckoutOrderSummary({
           {title}
         </h2>
 
-        <div className={CHECKOUT_CODE_GLASS_CLASS}>
+        <div className={CHECKOUT_CODE_ROW_CLASS}>
           <CheckoutCodeApplyField
             title={couponTitle}
             name="couponCodeDraft"
@@ -152,7 +156,7 @@ export function CheckoutOrderSummary({
           />
         </div>
 
-        <div className={CHECKOUT_CODE_GLASS_CLASS}>
+        <div className={CHECKOUT_CODE_ROW_CLASS}>
           <CheckoutCodeApplyField
             title={giftCardTitle}
             name="giftCardCodeDraft"
@@ -204,18 +208,22 @@ export function CheckoutOrderSummary({
         >
           <div className="flex justify-between text-white">
             <span>{subtotalLabel}</span>
-            <span>{subtotalFormatted}</span>
+            <span className="flex items-center gap-2">
+              <span>{subtotalFormatted}</span>
+              {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
+                <span
+                  title={bonusAppliedLabel}
+                  className="rounded-full bg-white px-2.5 py-0.5 text-sm font-semibold tabular-nums text-red-600"
+                >
+                  −{formatMoney(bonus.redeemAmount)}
+                </span>
+              ) : null}
+            </span>
           </div>
           {discountFormatted ? (
             <div className="flex justify-between text-white">
               <span>{discountLabel}</span>
               <span className="text-emerald-200">-{discountFormatted}</span>
-            </div>
-          ) : null}
-          {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
-            <div className="flex justify-between text-red-300">
-              <span>{bonusAppliedLabel}</span>
-              <span>-{formatMoney(bonus.redeemAmount)}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (

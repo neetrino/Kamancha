@@ -1,13 +1,9 @@
 "use client";
 
-import { CircleCheckBig, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { SegmentedControl } from "@/components/ui/SegmentedControl";
-import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { updateUserStatusAction } from "@/features/users/application/update-user";
 import {
   USER_STATUSES,
@@ -24,6 +20,24 @@ type UpdateUserStatusFormProps = {
   copy: Dictionary["admin"];
 };
 
+function statusPillClass(status: string): string {
+  const normalized = status.toUpperCase();
+  if (normalized === "ACTIVE") {
+    return "bg-green-100 text-green-800";
+  }
+  if (normalized === "PENDING" || normalized === "INVITED") {
+    return "bg-yellow-100 text-yellow-800";
+  }
+  if (
+    normalized === "SUSPENDED" ||
+    normalized === "BANNED" ||
+    normalized === "ANONYMIZED"
+  ) {
+    return "bg-red-100 text-red-800";
+  }
+  return "bg-gray-100 text-gray-800";
+}
+
 export function UpdateUserStatusForm({
   locale,
   userId,
@@ -33,13 +47,14 @@ export function UpdateUserStatusForm({
 }: UpdateUserStatusFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState<UserStatus>(currentStatus);
   const [isPending, startTransition] = useTransition();
   const labels = copy.users.statusLabels;
 
   if (eligibleStatuses.length === 0) {
     return (
-      <p className="text-sm text-gray-600">{copy.users.statusForm.terminal}</p>
+      <span className={`inline-flex rounded-full px-3.5 py-1.5 text-sm font-medium ${statusPillClass(currentStatus)}`}>
+        {userStatusLabel(currentStatus, labels)}
+      </span>
     );
   }
 
@@ -50,54 +65,37 @@ export function UpdateUserStatusForm({
     label: userStatusLabel(item, labels),
   }));
 
+  function changeStatus(next: string): void {
+    if (next === currentStatus) {
+      return;
+    }
+    startTransition(async () => {
+      setError(null);
+      const result = await updateUserStatusAction(locale, {
+        userId,
+        status: next as UserStatus,
+      });
+      if (!result.ok) {
+        setError(result.error.message);
+        return;
+      }
+      router.refresh();
+    });
+  }
+
   return (
-    <Card className="min-w-0 flex-1 p-5 sm:p-6">
-      <div className="flex items-center gap-4">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
-          <CircleCheckBig className="h-5 w-5" aria-hidden />
-        </span>
-        <h2 className={ADMIN_SECTION_TITLE}>{copy.users.statusForm.title}</h2>
-      </div>
-      <form
-        className="mt-4 flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          startTransition(async () => {
-            setError(null);
-            const result = await updateUserStatusAction(locale, {
-              userId,
-              status,
-            });
-            if (!result.ok) {
-              setError(result.error.message);
-              return;
-            }
-            router.refresh();
-          });
-        }}
-      >
-        <div className="flex flex-wrap items-center gap-3">
-          <SegmentedControl
-            aria-label={copy.users.statusForm.newStatusAria}
-            value={status}
-            options={statusOptions}
-            disabled={isPending}
-            onSelect={setStatus}
-          />
-          <Button
-            type="submit"
-            size="field"
-            disabled={isPending || status === currentStatus}
-            className="gap-2"
-          >
-            <Send className="h-4 w-4" aria-hidden />
-            {isPending
-              ? copy.common.updating
-              : copy.users.statusForm.updateStatus}
-          </Button>
-        </div>
-        {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      </form>
-    </Card>
+    <div className="min-w-0">
+      <SelectDropdown
+        ariaLabel={copy.users.statusForm.newStatusAria}
+        value={currentStatus}
+        options={statusOptions}
+        disabled={isPending}
+        fitContent
+        deferChange={false}
+        triggerClassName={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium outline-none disabled:cursor-not-allowed disabled:opacity-50 ${statusPillClass(currentStatus)}`}
+        onValueChange={changeStatus}
+      />
+      {error ? <p className="mt-1 text-sm text-red-700">{error}</p> : null}
+    </div>
   );
 }

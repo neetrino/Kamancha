@@ -18,6 +18,7 @@ export type CheckoutBonusRedeemState = {
   onToggle: (enabled: boolean) => void;
   onAmountChange: (amount: number) => void;
   onUseMax: () => void;
+  invalid?: boolean;
   labels: {
     title: string;
     available: string;
@@ -92,7 +93,9 @@ export function CheckoutBonusRedeemField({
           />
           <span className="truncate font-semibold">{bonus.labels.title}</span>
         </label>
-        <p className="shrink-0 text-sm text-white/70">{availableText}</p>
+        {bonus.useBonuses ? null : (
+          <p className="shrink-0 text-sm text-white/70">{availableText}</p>
+        )}
       </div>
       {bonus.useBonuses ? (
         <div className="flex gap-2">
@@ -114,8 +117,13 @@ export function CheckoutBonusRedeemField({
             }}
             disabled={isSubmitting}
             aria-label={bonus.labels.amount}
-            placeholder={bonus.labels.amount}
-            className={INPUT_CLASS}
+            aria-invalid={bonus.invalid || undefined}
+            data-checkout-field="bonusRedeem"
+            className={`${INPUT_CLASS}${
+              bonus.invalid
+                ? " border-red-500 animate-checkout-field-shake focus:border-red-500 focus:ring-red-200"
+                : ""
+            }`}
           />
           <Button
             type="button"
@@ -128,7 +136,7 @@ export function CheckoutBonusRedeemField({
               setDraft(String(maxAllowed));
             }}
           >
-            {bonus.labels.useMax}
+            {availableText}
           </Button>
         </div>
       ) : null}

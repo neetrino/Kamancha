@@ -6,7 +6,6 @@ import type { AdminOrderDetailView } from "@/features/orders/application/order-d
 import { getCustomerOrderDetailAction } from "@/features/orders/application/get-customer-order-detail";
 import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import { CustomerOrdersCards } from "@/features/orders/ui/CustomerOrdersCards";
-import { CustomerOrdersTable } from "@/features/orders/ui/CustomerOrdersTable";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
@@ -33,7 +32,6 @@ type CustomerOrdersViewProps = {
     | "itemCountOne"
     | "itemCountOther"
     | "placedOn"
-    | "viewDetails"
     | "noOrders"
     | "startShopping"
     | "groupOrderBadge"
@@ -41,7 +39,7 @@ type CustomerOrdersViewProps = {
 };
 
 /**
- * Orders list — cards on mobile (dashboard style), table from `lg` up.
+ * Orders list — same compact cards on mobile and desktop.
  */
 export function CustomerOrdersView({
   locale,
@@ -78,26 +76,15 @@ export function CustomerOrdersView({
 
   return (
     <>
-      <div className="xl:hidden">
-        <CustomerOrdersCards
-          locale={locale as Locale}
-          orders={orders}
-          labels={{
-            ...profileCopy,
-            statusLabels: copy.orders.statusLabels,
-          }}
-          onOpenOrder={openOrder}
-        />
-      </div>
-      <div className="hidden xl:block">
-        <CustomerOrdersTable
-          orders={orders}
-          emptyLabel={profileCopy.noOrders}
-          groupOrderBadgeLabel={profileCopy.groupOrderBadge}
-          statusLabels={copy.orders.statusLabels}
-          onOpenOrder={openOrder}
-        />
-      </div>
+      <CustomerOrdersCards
+        locale={locale as Locale}
+        orders={orders}
+        labels={{
+          ...profileCopy,
+          statusLabels: copy.orders.statusLabels,
+        }}
+        onOpenOrder={openOrder}
+      />
       <CustomerOrderDetailsSheet
         open={drawerOpen}
         onClose={closeDrawer}

@@ -12,7 +12,6 @@ import {
 import { Card } from "@/components/ui/Card";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   getEligibleUserStatuses,
@@ -20,12 +19,13 @@ import {
   isUserStatus,
 } from "@/features/users/domain/user-lifecycle";
 import { AdminUserBonuses } from "@/features/users/ui/AdminUserBonuses";
+import { AdminUserCoupons } from "@/features/users/ui/AdminUserCoupons";
 import { AdminUserGiftCards } from "@/features/users/ui/AdminUserGiftCards";
+import { AdminUserHistoryTabs } from "@/features/users/ui/AdminUserHistoryTabs";
 import { AdminUserNoteForm } from "@/features/users/ui/AdminUserNoteForm";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
-import { userRoleLabel, userStatusLabel } from "@/features/users/ui/user-labels";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -33,29 +33,7 @@ type AdminUserDetailPageProps = {
   params: Promise<{ locale: string; id: string }>;
 };
 
-function userStatusBadgeClass(status: string): string {
-  const normalized = status.toUpperCase();
-  if (normalized === "ACTIVE") return "bg-green-100 text-green-800";
-  if (normalized === "PENDING" || normalized === "INVITED") {
-    return "bg-yellow-100 text-yellow-800";
-  }
-  if (
-    normalized === "SUSPENDED" ||
-    normalized === "BANNED" ||
-    normalized === "ANONYMIZED"
-  ) {
-    return "bg-red-100 text-red-800";
-  }
-  return "bg-gray-100 text-gray-800";
-}
-
 const FIELD_ICON_CLASS = "h-4 w-4";
-
-function userRoleBadgeClass(role: string): string {
-  return role.toUpperCase() === "ADMIN"
-    ? "bg-blue-100 text-blue-800"
-    : "bg-gray-100 text-gray-800";
-}
 
 export default async function AdminUserDetailPage({
   params,
@@ -73,7 +51,7 @@ export default async function AdminUserDetailPage({
     notFound();
   }
 
-  const { user, recentOrders, bonusSummary, giftCards } = detail;
+  const { user, recentOrders, bonusSummary, giftCards, coupons } = detail;
   const role = isUserRole(user.role) ? user.role : null;
   const status = isUserStatus(user.status) ? user.status : null;
   const eligibleStatuses = status ? getEligibleUserStatuses(status) : [];
@@ -94,17 +72,26 @@ export default async function AdminUserDetailPage({
         </h1>
       </div>
 
-      <Card className="mb-4 p-5 sm:p-6">
-        <div className="grid gap-4 md:grid-cols-3 md:gap-x-8">
+      <div className="mb-4 grid gap-4 xl:grid-cols-2">
+      <Card className="h-full p-5 sm:p-6">
+        <div className="grid gap-4">
           <AdminDetailField
             icon={<Shield className={FIELD_ICON_CLASS} />}
             label={t.users.detail.roleLabel}
           >
-            <span
-              className={`${ADMIN_BADGE} ${userRoleBadgeClass(user.role)}`}
-            >
-              {userRoleLabel(user.role, t.users.roleLabels)}
-            </span>
+            {role ? (
+              <UpdateUserRoleForm
+                locale={locale}
+                userId={user.id}
+                currentRole={role}
+                disabled={isAnonymized}
+                copy={t}
+              />
+            ) : (
+              <span className="text-sm text-red-700">
+                {t.users.detail.unknownRole}
+              </span>
+            )}
           </AdminDetailField>
           <AdminDetailField
             icon={<Phone className={FIELD_ICON_CLASS} />}
@@ -113,56 +100,37 @@ export default async function AdminUserDetailPage({
             {user.phone ?? t.common.none}
           </AdminDetailField>
           <AdminDetailField
+            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
+            label={t.common.status}
+          >
+            {status ? (
+              <UpdateUserStatusForm
+                locale={locale}
+                userId={user.id}
+                currentStatus={status}
+                eligibleStatuses={eligibleStatuses}
+                copy={t}
+              />
+            ) : (
+              <span className="text-sm text-red-700">
+                {t.users.detail.unknownStatus}
+              </span>
+            )}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<Mail className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.emailLabel}
+          >
+            {user.email}
+          </AdminDetailField>
+          <AdminDetailField
             icon={<CalendarDays className={FIELD_ICON_CLASS} />}
             label={t.users.detail.createdLabel}
           >
             {user.createdAt.toISOString().slice(0, 10)}
           </AdminDetailField>
-          <AdminDetailField
-            icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
-            label={t.common.status}
-          >
-            <span
-              className={`${ADMIN_BADGE} ${userStatusBadgeClass(user.status)}`}
-            >
-              {userStatusLabel(user.status, t.users.statusLabels)}
-            </span>
-          </AdminDetailField>
-          <div className="md:col-span-2">
-            <AdminDetailField
-              icon={<Mail className={FIELD_ICON_CLASS} />}
-              label={t.users.detail.emailLabel}
-            >
-              {user.email}
-            </AdminDetailField>
-          </div>
         </div>
       </Card>
-
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-stretch">
-        {role ? (
-          <UpdateUserRoleForm
-            locale={locale}
-            userId={user.id}
-            currentRole={role}
-            disabled={isAnonymized}
-            copy={t}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{t.users.detail.unknownRole}</p>
-        )}
-        {status ? (
-          <UpdateUserStatusForm
-            locale={locale}
-            userId={user.id}
-            currentStatus={status}
-            eligibleStatuses={eligibleStatuses}
-            copy={t}
-          />
-        ) : (
-          <p className="text-sm text-red-700">{t.users.detail.unknownStatus}</p>
-        )}
-      </div>
 
       <AdminUserNoteForm
         locale={locale}
@@ -171,24 +139,52 @@ export default async function AdminUserDetailPage({
         disabled={isAnonymized}
         copy={t}
       />
+      </div>
 
-      <AdminUserBonuses
-        locale={locale}
-        summary={bonusSummary}
-        copy={t.users.detail.bonuses}
-        adminCopy={t}
+      <AdminUserHistoryTabs
+        ariaLabel={t.users.detail.tabs.aria}
+        labels={{
+          orders: t.users.detail.tabs.orders,
+          bonuses: t.users.detail.tabs.bonuses,
+          gifts: t.users.detail.tabs.gifts,
+          coupons: t.users.detail.tabs.coupons,
+        }}
+        panels={{
+          orders: (
+            <AdminUserRecentOrders
+              locale={locale}
+              orders={recentOrders}
+              copy={t}
+            />
+          ),
+          bonuses: (
+            <AdminUserBonuses
+              locale={locale}
+              summary={bonusSummary}
+              copy={t.users.detail.bonuses}
+              adminCopy={t}
+            />
+          ),
+          gifts: (
+            <AdminUserGiftCards
+              locale={locale}
+              userId={user.id}
+              userEmail={user.email}
+              cards={giftCards}
+              copy={t.users.detail.giftCards}
+              adminCopy={t}
+            />
+          ),
+          coupons: (
+            <AdminUserCoupons
+              locale={locale}
+              coupons={coupons}
+              copy={t.users.detail.coupons}
+              adminCopy={t}
+            />
+          ),
+        }}
       />
-
-      <AdminUserGiftCards
-        locale={locale}
-        userId={user.id}
-        userEmail={user.email}
-        cards={giftCards}
-        copy={t.users.detail.giftCards}
-        adminCopy={t}
-      />
-
-      <AdminUserRecentOrders locale={locale} orders={recentOrders} copy={t} />
     </section>
   );
 }

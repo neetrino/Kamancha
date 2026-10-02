@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin } from "lucide-react";
+import { CreditCard, MapPin, Package } from "lucide-react";
 
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
@@ -18,6 +18,9 @@ import { OrderScheduledDeliveryBanner } from "@/features/orders/ui/OrderSchedule
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
+
+/** Admin order sheet — half the viewport, same as the orders list. */
+export const ADMIN_ORDER_SHEET_PANEL = "w-[92%] max-w-none sm:w-1/2";
 
 const PARTICIPANT_STAT_CELL = "w-max shrink-0 text-left whitespace-nowrap";
 const PARTICIPANT_STAT_CELL_DIVIDED = `${PARTICIPANT_STAT_CELL} sm:border-l sm:border-gray-200 sm:pl-4`;
@@ -73,7 +76,7 @@ export function CustomerOrderDetailsSheet({
                 {groupOrderBadgeLabel}
               </span>
             ) : null}
-            {detail.scheduledDeliveryDate ? (
+            {includeAdminDetails && detail.scheduledDeliveryDate ? (
               <OrderScheduledDeliveryBanner
                 variant="chip"
                 scheduledDeliveryDate={detail.scheduledDeliveryDate}
@@ -88,13 +91,15 @@ export function CustomerOrderDetailsSheet({
               />
             ) : null}
             <span
-              className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
             >
+              <Package className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {localizeOrderStatus(detail.status, copy.orders.statusLabels)}
             </span>
             <span
-              className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(detail.paymentStatus)}`}
+              className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(detail.paymentStatus)}`}
             >
+              <CreditCard className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {localizePaymentStatus(
                 detail.paymentStatus,
                 copy.orders.statusLabels,
@@ -147,84 +152,113 @@ function CustomerOrderSheetBody({
   return (
     <div className="space-y-4">
       {includeAdminDetails ? (
-        <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
+        <div
+          className={
+            detail.customerNote ? "grid grid-cols-2 items-stretch gap-3" : undefined
+          }
+        >
+          <section className={`${PROFILE_INNER_CARD} h-full space-y-3 p-4`}>
+            <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+              {labels.customer}
+            </h3>
+            <div className="space-y-1.5 text-sm">
+              <p className="flex flex-wrap items-baseline gap-x-1.5">
+                <span className="text-gray-500">{labels.name}</span>
+                <span className="font-medium text-gray-900">{detail.contactName}</span>
+              </p>
+              <p className="flex flex-wrap items-baseline gap-x-1.5">
+                <span className="text-gray-500">{labels.phoneNumber}</span>
+                <span className="font-medium text-gray-900">{detail.contactPhone}</span>
+              </p>
+              <p className="flex flex-wrap items-baseline gap-x-1.5">
+                <span className="text-gray-500">{labels.email}</span>
+                <span className="font-medium text-gray-900">{detail.contactEmail}</span>
+              </p>
+            </div>
+          </section>
+          {detail.customerNote ? (
+            <section className={`${PROFILE_INNER_CARD} h-full space-y-2 p-4`}>
+              <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+                {labels.orderNote.replace(/[՝:]\s*$/, "")}
+              </h3>
+              <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
+                {detail.customerNote}
+              </p>
+            </section>
+          ) : null}
+        </div>
+      ) : detail.customerNote ? (
+        <section className={`${PROFILE_INNER_CARD} space-y-2 p-4`}>
           <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-            {labels.customer}
+            {labels.orderNote.replace(/[՝:]\s*$/, "")}
           </h3>
-          <div className="space-y-1.5 text-sm">
-            <p className="flex flex-wrap items-baseline gap-x-1.5">
-              <span className="text-gray-500">{labels.name}</span>
-              <span className="font-medium text-gray-900">{detail.contactName}</span>
-            </p>
-            <p className="flex flex-wrap items-baseline gap-x-1.5">
-              <span className="text-gray-500">{labels.phoneNumber}</span>
-              <span className="font-medium text-gray-900">{detail.contactPhone}</span>
-            </p>
-            <p className="flex flex-wrap items-baseline gap-x-1.5">
-              <span className="text-gray-500">{labels.email}</span>
-              <span className="font-medium text-gray-900">{detail.contactEmail}</span>
-            </p>
-          </div>
+          <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
+            {detail.customerNote}
+          </p>
         </section>
       ) : null}
 
       <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
+        <div
+          className={
+            detail.scheduledDeliveryDate
+              ? "flex items-stretch gap-3"
+              : "space-y-3"
+          }
+        >
+          <div className="min-w-0 flex-1 space-y-3">
         <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
           {labels.shippingAddress}
         </h3>
-        <div className="flex items-start gap-2 text-sm text-gray-700">
-          <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
-            <MapPin className="h-3.5 w-3.5" aria-hidden />
-          </span>
-          <div className="min-w-0 space-y-1">
-            <p className="font-medium text-gray-900">{detail.addressLine}</p>
-            <p className="text-xs text-gray-500 capitalize">
-              {detail.isPickup
-                ? detail.storeName
-                  ? `${labels.pickupStore} ${detail.storeName}`
-                  : detail.shippingMethod
-                : labels.delivery}
-            </p>
-            {includeAdminDetails && !detail.isPickup && detail.floor ? (
-              <p className="text-xs text-gray-500">
-                {labels.floor} {detail.floor}
-              </p>
-            ) : null}
-            {includeAdminDetails && !detail.isPickup && detail.intercomCode ? (
-              <p className="text-xs text-gray-500">
-                {labels.intercomCode} {detail.intercomCode}
-              </p>
-            ) : null}
-            {detail.customerNote ? (
-              <p className="text-xs text-gray-500 whitespace-pre-wrap">
-                {labels.orderNote} {detail.customerNote}
-              </p>
-            ) : null}
-            {detail.addressHint ? (
-              <p className="text-xs text-gray-500">{detail.addressHint}</p>
-            ) : null}
+          <div className="flex min-w-0 items-start gap-2 text-sm text-gray-700">
+            <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
+              <MapPin className="h-3.5 w-3.5" aria-hidden />
+            </span>
+            <div className="min-w-0 space-y-1">
+              <p className="font-medium text-gray-900">{detail.addressLine}</p>
+              {detail.isPickup ? (
+                <p className="text-xs text-gray-500 capitalize">
+                  {detail.storeName
+                    ? `${labels.pickupStore} ${detail.storeName}`
+                    : detail.shippingMethod}
+                </p>
+              ) : null}
+              {includeAdminDetails && !detail.isPickup && detail.floor ? (
+                <p className="text-xs text-gray-500">
+                  {labels.floor} {detail.floor}
+                </p>
+              ) : null}
+              {includeAdminDetails && !detail.isPickup && detail.intercomCode ? (
+                <p className="text-xs text-gray-500">
+                  {labels.intercomCode} {detail.intercomCode}
+                </p>
+              ) : null}
+              {detail.addressHint ? (
+                <p className="text-xs text-gray-500">{detail.addressHint}</p>
+              ) : null}
+            </div>
           </div>
+          </div>
+          {detail.scheduledDeliveryDate ? (
+            <OrderScheduledDeliveryBanner
+              scheduledDeliveryDate={detail.scheduledDeliveryDate}
+              scheduledDeliveryStart={detail.scheduledDeliveryStart}
+              scheduledDeliveryEnd={detail.scheduledDeliveryEnd}
+              labels={{
+                today: labels.deliveryDayToday,
+                tomorrow: labels.deliveryDayTomorrow,
+                later: labels.deliveryDayLater,
+                title: labels.deliverySlot,
+              }}
+            />
+          ) : null}
         </div>
-        {detail.scheduledDeliveryDate ? (
-          <OrderScheduledDeliveryBanner
-            scheduledDeliveryDate={detail.scheduledDeliveryDate}
-            scheduledDeliveryStart={detail.scheduledDeliveryStart}
-            scheduledDeliveryEnd={detail.scheduledDeliveryEnd}
-            labels={{
-              today: labels.deliveryDayToday,
-              tomorrow: labels.deliveryDayTomorrow,
-              later: labels.deliveryDayLater,
-              title: labels.deliverySlot,
-            }}
-          />
-        ) : null}
         <CustomerOrderSheetPayment
           detail={detail}
           labels={labels}
           hideMethod={detail.groupPaymentMode === "SPLIT_PER_PARTICIPANT"}
         />
       </section>
-
 
       {showGroupParticipants ? (
         <section className="space-y-3">
@@ -279,14 +313,17 @@ function CustomerOrderSheetBody({
                     </div>
                     <div className={PARTICIPANT_STAT_CELL_DIVIDED}>
                       <dt>{labels.participantBonus}</dt>
-                      <dd className="font-semibold text-brand-forest">
+                      <dd className="font-bold text-brand-forest">
                         +{participant.bonusEarnedAmount}
                       </dd>
                     </div>
                   </dl>
                 </div>
                 {participant.items.length > 0 ? (
-                  <OrderItemsList items={participant.items} />
+                  <OrderItemsList
+                    items={participant.items}
+                    stacked={!includeAdminDetails}
+                  />
                 ) : (
                   <p className="text-xs text-gray-500">
                     {labels.participantNoItems}
@@ -301,16 +338,22 @@ function CustomerOrderSheetBody({
           <h3 className="px-1 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
             {labels.items}
           </h3>
-          <OrderItemsList items={detail.items} />
+          <OrderItemsList items={detail.items} stacked={!includeAdminDetails} />
         </section>
       )}
     </div>
   );
 }
 
-function OrderItemsList({ items }: { items: DrawerOrderItem[] }) {
+function OrderItemsList({
+  items,
+  stacked = false,
+}: {
+  items: DrawerOrderItem[];
+  stacked?: boolean;
+}) {
   return (
-    <ul className="space-y-3">
+    <ul className={stacked ? "space-y-3" : "grid grid-cols-2 gap-3"}>
       {items.map((item) => {
         const imageSrc = storefrontProductImageSrc(item.imageUrl);
         const modifierSummary =
@@ -327,7 +370,7 @@ function OrderItemsList({ items }: { items: DrawerOrderItem[] }) {
         return (
           <li
             key={item.id}
-            className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-white px-3 py-3.5"
+            className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-gray-50 px-3 py-3.5 shadow-sm"
           >
             <div className="relative z-[2] flex items-stretch gap-3">
               {/* Order/R2 hosts vary — native img avoids brittle next/image allowlists. */}
@@ -365,7 +408,7 @@ function OrderItemsList({ items }: { items: DrawerOrderItem[] }) {
                         item.currency,
                       )}
                     </p>
-                    <div className="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-sky-50/70 px-2.5 py-0.5">
+                    <div className="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-white px-2.5 py-0.5">
                       <span className="min-w-5 text-center text-[11px] font-semibold tabular-nums text-gray-900">
                         {item.quantity}
                       </span>

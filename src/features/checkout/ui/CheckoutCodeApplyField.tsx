@@ -4,17 +4,11 @@ import type { KeyboardEvent, ReactNode } from "react";
 
 import { Button } from "@/components/ui/Button";
 
-const INPUT_MOBILE_CLASS =
-  "h-11 w-full rounded-[15px] border border-gray-200 bg-white px-4 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:bg-gray-50";
+const INPUT_CLASS =
+  "h-9 min-w-0 flex-1 border-0 bg-transparent px-1 text-sm text-white placeholder:text-white/70 focus:outline-none focus:ring-0 disabled:opacity-60";
 
-const APPLY_MOBILE_CLASS =
-  "h-9 shrink-0 rounded-[15px] border-0 bg-[#d4e5c8] px-4 text-sm font-medium text-[#222] hover:bg-[#c8dcb8] disabled:cursor-not-allowed disabled:opacity-50";
-
-const INPUT_DESKTOP_CLASS =
-  "h-9 min-w-0 flex-1 rounded-[10px] border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-500 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-200";
-
-const APPLY_DESKTOP_CLASS =
-  "h-9 shrink-0 rounded-[10px]! border-gray-200 bg-white px-4 py-0 text-sm text-gray-900 hover:bg-gray-50";
+const APPLY_CLASS =
+  "h-9 shrink-0 rounded-[15px] border-gray-200 bg-white px-4 py-0 text-sm text-gray-900 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 xl:rounded-lg";
 
 const ALERT_PILL_CLASS =
   "relative z-[2] mt-2 mb-0 w-full rounded-full bg-white px-4 py-3 text-center text-sm font-medium leading-snug text-red-600";
@@ -40,7 +34,6 @@ export function CheckoutCodeApplyField({
   draft,
   onDraftChange,
   onApply,
-  placeholder,
   applyLabel,
   applyingLabel,
   error,
@@ -61,59 +54,29 @@ export function CheckoutCodeApplyField({
 
   return (
     <>
-      <div className="relative z-[2] xl:hidden">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <p className="text-[15px] font-semibold text-white">{title}</p>
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            className={APPLY_MOBILE_CLASS}
-            disabled={applyDisabled}
-            onClick={onApply}
-          >
-            {applyText}
-          </Button>
-        </div>
+      <div className="relative z-[2] flex gap-2">
         <input
           type="text"
           name={name}
           value={draft}
           onChange={(event) => onDraftChange(event.target.value)}
           onKeyDown={onKeyDown}
-          placeholder={placeholder}
+          placeholder={title}
           aria-label={title}
           autoComplete="off"
           disabled={disabled}
-          className={INPUT_MOBILE_CLASS}
+          className={INPUT_CLASS}
         />
-      </div>
-
-      <div className="relative z-[2] hidden xl:block">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            name={name}
-            value={draft}
-            onChange={(event) => onDraftChange(event.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder={title}
-            aria-label={title}
-            autoComplete="off"
-            disabled={disabled}
-            className={INPUT_DESKTOP_CLASS}
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            className={APPLY_DESKTOP_CLASS}
-            disabled={applyDisabled}
-            onClick={onApply}
-          >
-            {applyText}
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
+          className={APPLY_CLASS}
+          disabled={applyDisabled}
+          onClick={onApply}
+        >
+          {applyText}
+        </Button>
       </div>
 
       {error ? (

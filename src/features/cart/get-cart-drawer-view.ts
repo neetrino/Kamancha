@@ -1,5 +1,6 @@
 import "server-only";
 
+import { calculateBonusEarnAmount } from "@/features/bonuses/domain/bonus-rules";
 import { isQuickAddLine } from "@/features/cart/domain/plain-line";
 import {
   getStorefrontCart,
@@ -11,6 +12,7 @@ import { variantLabel } from "@/features/products/application/load-variant-snaps
 import { loadPrimaryProductImageUrls } from "@/features/products/application/product-primary-images";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 import type { Locale } from "@/lib/i18n/config";
+import { getStoreBonusSettings } from "@/features/settings/application/queries";
 import { getCheckoutRateSnapshot } from "@/lib/fx/service";
 import { convertAmount } from "@/lib/money/convert";
 import type { Currency } from "@/lib/money/currency";
@@ -37,6 +39,8 @@ export type CartDrawerView = {
   subtotalFormatted: string;
   shippingFormatted: string;
   totalFormatted: string;
+  /** Points this bag will earn, or null when the accrual is zero. */
+  bonusEarnFormatted: string | null;
   checkoutHref: string;
   canEdit: boolean;
   source: "personal" | "group";
@@ -63,13 +67,14 @@ export async function getCartDrawerView(
   currency: Currency,
 ): Promise<CartDrawerView> {
   const bag = await getStorefrontCart();
-  const [images, quote, attributeTitles] = await Promise.all([
+  const [images, quote, attributeTitles, bonusSettings] = await Promise.all([
     loadPrimaryProductImageUrls(bag.items.map((line) => line.product.id)),
     getCheckoutRateSnapshot(currency),
     loadAttributeTitles(
       bag.items.flatMap((line) => (line.attributeId ? [line.attributeId] : [])),
       locale,
     ),
+    getStoreBonusSettings(),
   ]);
 
   const items: CartDrawerItemView[] = [];
@@ -81,6 +86,15 @@ export async function getCartDrawerView(
     );
     subtotalBase += line.quantity * line.unitAmount;
   }
+
+  const bonusEarnAmount = calculateBonusEarnAmount(
+    subtotalBase,
+    bonusSettings.accrualPercent,
+  );
+  const bonusEarnFormatted =
+    bonusEarnAmount > 0
+      ? `+${formatConvertedAmount(bonusEarnAmount, quote.rate, currency, locale)}`
+      : null;
 
   const subtotalFormatted = formatConvertedAmount(
     subtotalBase,
@@ -98,6 +112,7 @@ export async function getCartDrawerView(
     subtotalFormatted,
     shippingFormatted: formatMoneyAmount(0, currency, locale),
     totalFormatted: subtotalFormatted,
+    bonusEarnFormatted,
     checkoutHref,
     canEdit: bag.canEdit,
     source: bag.source,

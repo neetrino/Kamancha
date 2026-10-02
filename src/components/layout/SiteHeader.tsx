@@ -18,7 +18,7 @@ type SiteHeaderProps = {
 function buildNavItems(locale: Locale, dictionary: Dictionary) {
   return [
     { href: `/${locale}`, label: dictionary.nav.home },
-    { href: `/${locale}/products`, label: dictionary.nav.products },
+    { href: `/${locale}/products`, label: dictionary.nav.restaurant },
     { href: `/${locale}/about`, label: dictionary.nav.about },
     { href: `/${locale}/contact`, label: dictionary.nav.contact },
   ] as const;

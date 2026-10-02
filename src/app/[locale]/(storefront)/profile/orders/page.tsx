@@ -160,7 +160,6 @@ export default async function OrdersPage({
           itemCountOne: dictionary.profile.itemCountOne,
           itemCountOther: dictionary.profile.itemCountOther,
           placedOn: dictionary.profile.placedOn,
-          viewDetails: dictionary.profile.viewDetails,
           noOrders: dictionary.profile.noOrders,
           startShopping: dictionary.profile.startShopping,
           groupOrderBadge: dictionary.profile.groupOrderBadge,
@@ -174,18 +173,20 @@ export default async function OrdersPage({
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page - 1)}`}
               className="transition-opacity hover:opacity-80"
             >
-              Previous
+              {dictionary.admin.common.previous}
             </Link>
           ) : null}
           <span>
-            Page {filters.page} / {totalPages}
+            {dictionary.admin.common.pageOf
+              .replace("{page}", String(filters.page))
+              .replace("{totalPages}", String(totalPages))}
           </span>
           {filters.page < totalPages ? (
             <Link
               href={`/${locale}/profile/orders?${buildOrdersQuery(filters, filters.page + 1)}`}
               className="transition-opacity hover:opacity-80"
             >
-              Next
+              {dictionary.admin.common.next}
             </Link>
           ) : null}
         </nav>

@@ -90,7 +90,7 @@ function DetailRow({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5 text-sm">
+    <div className="flex items-center gap-2 text-sm">
       <span className="flex size-5 shrink-0 items-center justify-center text-brand-forest">
         {icon}
       </span>
@@ -172,14 +172,14 @@ export function MyGiftCardItem({
     <li
       className={`${PROFILE_INNER_CARD} h-full overflow-hidden rounded-3xl border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)]`}
     >
-      <div className="space-y-5 px-5 py-5 sm:px-6 sm:py-6">
-        <div className="flex items-center gap-3">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-forest text-white">
-            <Gift className="size-5" aria-hidden />
+      <div className="space-y-3 px-4 py-3.5">
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-forest text-white">
+            <Gift className="size-4" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <p className="min-w-0 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-gray-900 uppercase sm:text-xl">
+            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+              <p className="min-w-0 font-big-fat-boii text-base leading-none font-normal tracking-wide text-gray-900 uppercase">
                 {card.code}
               </p>
               <span
@@ -197,14 +197,14 @@ export function MyGiftCardItem({
 
         {showBalance ? (
           <div>
-            <p className="text-sm text-gray-500">{copy.balance}</p>
-            <p className="mt-1 font-big-fat-boii text-3xl leading-none font-normal tracking-wide text-brand-forest sm:text-4xl">
+            <p className="text-xs text-gray-500">{copy.balance}</p>
+            <p className="mt-0.5 font-big-fat-boii text-2xl leading-none font-normal tracking-wide text-brand-forest">
               {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
             </p>
           </div>
         ) : null}
 
-        <div className="space-y-3 border-t border-dashed border-gray-200 pt-4">
+        <div className="space-y-2 border-t border-dashed border-gray-200 pt-3">
           <DetailRow
             icon={<Tag className="size-4" aria-hidden />}
             label={copy.initial}
@@ -225,7 +225,7 @@ export function MyGiftCardItem({
         </div>
 
         {transactions.length > 0 ? (
-          <div className="border-t border-gray-100 pt-4">
+          <div className="border-t border-gray-100 pt-3">
             <button
               type="button"
               className="flex w-full items-center gap-2 text-left"

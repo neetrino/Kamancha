@@ -37,11 +37,15 @@ type SelectDropdownProps = {
   deferChange?: boolean;
   /** Grow the trigger to the selected label instead of truncating. */
   fitContent?: boolean;
+  /** With `fitContent`, stay full width below the `sm` breakpoint. */
+  fitContentFromSm?: boolean;
   /**
    * Replaces the selected label in the trigger (e.g. an inline input).
    * The chevron still opens the menu.
    */
   triggerContent?: ReactNode;
+  /** Replaces the default field trigger. Use for a pill or other compact control. */
+  triggerClassName?: string;
 };
 
 function DropdownChevron({ open }: { open: boolean }) {
@@ -73,7 +77,9 @@ export function SelectDropdown({
   onValueChange,
   deferChange = true,
   fitContent = false,
+  fitContentFromSm = false,
   triggerContent,
+  triggerClassName,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -187,12 +193,12 @@ export function SelectDropdown({
   return (
     <div
       ref={rootRef}
-      className={`relative ${fitContent ? "w-max" : ""} ${className}`}
+      className={`relative ${fitContent ? (fitContentFromSm ? "w-full sm:w-max" : "w-max") : ""} ${className}`}
     >
       {name ? <input type="hidden" name={name} value={value} /> : null}
       {triggerContent ? (
         <div
-          className={`flex h-11 items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-sm text-gray-900 shadow-sm transition-colors hover:border-gray-300 ${fitContent ? "w-auto" : "w-full"} ${disabled ? "pointer-events-none opacity-50" : ""}`}
+          className={`flex h-11 items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-sm text-gray-900 shadow-sm transition-colors hover:border-gray-300 ${fitContent ? (fitContentFromSm ? "w-full sm:w-auto" : "w-auto") : "w-full"} ${disabled ? "pointer-events-none opacity-50" : ""}`}
         >
           <div className="min-w-0 flex-1">{triggerContent}</div>
           <button
@@ -212,7 +218,10 @@ export function SelectDropdown({
         <button
           type="button"
           disabled={disabled}
-          className={`flex h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 ${fitContent ? "w-auto" : "w-full"}`}
+          className={
+            triggerClassName ??
+            `flex h-11 items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 pr-3 text-left text-sm text-gray-900 shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 ${fitContent ? (fitContentFromSm ? "w-full sm:w-auto" : "w-auto") : "w-full"}`
+          }
           aria-label={ariaLabel}
           aria-haspopup="listbox"
           aria-expanded={open}

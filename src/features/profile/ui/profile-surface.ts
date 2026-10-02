@@ -55,9 +55,9 @@ export const PROFILE_STATUS_BADGE =
 export const PROFILE_CARD_GRID =
   "grid grid-cols-1 gap-4 min-[744px]:max-[833px]:grid-cols-2 min-[834px]:max-xl:grid-cols-3 min-[744px]:max-xl:gap-[15px] xl:grid-cols-3 xl:gap-[15px]";
 
-/** Same as above without desktop-only overrides (mobile/tablet orders list). */
+/** Order list cards — same columns as the dashboard recent-orders grid. */
 export const PROFILE_ORDERS_CARD_GRID =
-  "grid grid-cols-1 gap-4 min-[744px]:max-[833px]:grid-cols-2 min-[834px]:max-xl:grid-cols-3 min-[744px]:max-xl:gap-[15px]";
+  "grid grid-cols-1 gap-4 min-[744px]:max-[833px]:grid-cols-2 min-[834px]:max-xl:grid-cols-3 min-[744px]:max-xl:gap-[15px] xl:grid-cols-3 xl:gap-[15px]";
 
 /** Stat summary tiles — 1 col phone, 2 col Mini/Air, 3 col iPad Pro + desktop. */
 export const PROFILE_STAT_GRID_THREE =

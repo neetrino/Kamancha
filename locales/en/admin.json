@@ -208,6 +208,7 @@
       "status": "Status",
       "payment": "Payment",
       "paymentMethod": "Payment method",
+      "bonus": "Bonus",
       "total": "Total",
       "delivery": "Delivery",
       "placed": "Placed",
@@ -365,7 +366,7 @@
       "inStock": "In stock",
       "outOfStock": "Out of stock",
       "lowStock": "Low stock",
-      "draft": "Draft"
+      "draft": "Stop product"
     },
     "table": {
       "deleteSelected": "Delete Selected",
@@ -759,6 +760,18 @@
           "REVERSAL_REDEEM": "Redeem reversed",
           "EXPIRE": "Expired"
         }
+      },
+      "tabs": {
+        "aria": "Customer history",
+        "orders": "Order history",
+        "bonuses": "Bonus",
+        "gifts": "Gift",
+        "coupons": "Coupons"
+      },
+      "coupons": {
+        "title": "Coupons",
+        "empty": "No coupons used yet.",
+        "order": "Order"
       },
       "giftCards": {
         "title": "Gift cards",

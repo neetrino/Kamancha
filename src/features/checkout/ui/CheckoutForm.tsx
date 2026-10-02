@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   useTransition,
   type FormEvent,
 } from "react";
@@ -37,7 +38,9 @@ import {
 import { CHECKOUT_INVALID_FEEDBACK_MS } from "@/features/checkout/ui/checkout-ui";
 import {
   clearCheckoutDeliveryRuleId,
-  readCheckoutDeliveryRuleId,
+  getCheckoutDeliveryRuleServerSnapshot,
+  getCheckoutDeliveryRuleSnapshot,
+  subscribeCheckoutDeliveryRule,
   writeCheckoutDeliveryRuleId,
 } from "@/features/checkout/ui/checkout-delivery-zone-storage";
 import {
@@ -129,7 +132,15 @@ export function CheckoutForm({
   const router = useRouter();
   const idempotencyKey = useMemo(() => createClientId(), []);
   const [line1, setLine1] = useState(defaultLine1);
+  const storedDeliveryRuleId = useSyncExternalStore(
+    subscribeCheckoutDeliveryRule,
+    getCheckoutDeliveryRuleSnapshot,
+    getCheckoutDeliveryRuleServerSnapshot,
+  );
   const [deliveryRuleId, setDeliveryRuleId] = useState("");
+  const [hydratedDeliveryKey, setHydratedDeliveryKey] = useState<string | null>(
+    null,
+  );
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
     null,
   );
@@ -158,13 +169,20 @@ export function CheckoutForm({
   const [applyingCoupon, startApplyCoupon] = useTransition();
   const [applyingGiftCard, startApplyGiftCard] = useTransition();
 
-  useEffect(() => {
-    if (lockedDeliveryAmount != null) return;
-    const stored = readCheckoutDeliveryRuleId();
-    if (!stored) return;
-    if (!deliveryZones.some((zone) => zone.id === stored)) return;
-    setDeliveryRuleId(stored);
-  }, [deliveryZones, lockedDeliveryAmount]);
+  if (lockedDeliveryAmount == null) {
+    const deliveryKey = `${storedDeliveryRuleId}\0${deliveryZones
+      .map((zone) => zone.id)
+      .join("\0")}`;
+    if (deliveryKey !== hydratedDeliveryKey) {
+      setHydratedDeliveryKey(deliveryKey);
+      if (
+        storedDeliveryRuleId &&
+        deliveryZones.some((zone) => zone.id === storedDeliveryRuleId)
+      ) {
+        setDeliveryRuleId(storedDeliveryRuleId);
+      }
+    }
+  }
 
   useEffect(() => {
     return () => {
@@ -426,6 +444,8 @@ export function CheckoutForm({
       hasDeliveryZone: lockedDeliveryAmount != null || Boolean(deliveryRuleId),
       hasDeliverySlot: deliverySlot != null,
       hasPaymentMethod: paymentMethod != null,
+      bonusRedeemRequired: useBonuses,
+      bonusRedeemAmount: appliedBonus,
     });
 
     if (firstCheckoutInvalidField(nextInvalid)) {
@@ -646,13 +666,12 @@ export function CheckoutForm({
                       setGiftCardPreview(null);
                       if (!enabled) {
                         setBonusRedeemAmount(0);
-                      } else if (bonusRedeemAmount <= 0) {
-                        setBonusRedeemAmount(maxBonusRedeem);
                       }
                     },
                     onAmountChange: (amount) => {
                       setBonusRedeemAmount(amount);
                       setGiftCardPreview(null);
+                      clearInvalidField("bonusRedeem");
                     },
                     onUseMax: () => {
                       setBonusRedeemAmount(maxBonusRedeem);
@@ -666,6 +685,7 @@ export function CheckoutForm({
                       useMax: labels.bonusUseMax,
                     },
                     formatMoney,
+                    invalid: Boolean(invalidFields.bonusRedeem),
                   }
             }
             formatMoney={formatMoney}

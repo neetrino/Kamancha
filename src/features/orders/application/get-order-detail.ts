@@ -1,5 +1,9 @@
 "use server";
 
+import { and, eq, isNull } from "drizzle-orm";
+
+import { getDb } from "@/db/client";
+import { orders } from "@/db/schema";
 import { getAdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { requireAdmin } from "@/lib/auth/policies";
@@ -28,6 +32,11 @@ export async function getAdminOrderDetailAction(
   if (!detail) {
     return err("NOT_FOUND", "Order not found.");
   }
+
+  await getDb()
+    .update(orders)
+    .set({ adminSeenAt: new Date() })
+    .where(and(eq(orders.orderNumber, trimmed), isNull(orders.adminSeenAt)));
 
   return ok(detail);
 }

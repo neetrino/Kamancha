@@ -59,11 +59,16 @@ export function customerOrderDisplayAmountSql(userId: string) {
 }
 
 /**
- * SQL: net bonuses this customer earned on the order (EARN + REVERSAL_EARN).
- * Works for solo and group (ledger is per userId).
+ * SQL: bonuses this customer gets for the order.
+ * Uses the ledger once points are posted. Until then, shows the expected
+ * accrual so pending orders are not blank.
  */
-export function customerOrderBonusEarnedSql(userId: string) {
-  return sql`
+export function customerOrderBonusEarnedSql(
+  userId: string,
+  accrualPercent: number,
+) {
+  const percent = Math.max(0, Math.min(100, Math.trunc(accrualPercent)));
+  const ledger = sql`
     coalesce(
       (
         select sum(${sql.raw(`"bonus_transactions"."delta"`)})
@@ -77,6 +82,46 @@ export function customerOrderBonusEarnedSql(userId: string) {
       ),
       0
     )
+  `;
+  const soloEligible = sql`
+    greatest(
+      0,
+      greatest(
+        0,
+        ${sql.raw(`"orders"."subtotal_amount"`)} - ${sql.raw(`"orders"."discount_amount"`)}
+      ) - least(
+        ${sql.raw(`"orders"."gift_card_amount"`)},
+        greatest(
+          0,
+          ${sql.raw(`"orders"."subtotal_amount"`)} - ${sql.raw(`"orders"."discount_amount"`)}
+        )
+      )
+    )
+  `;
+
+  return sql`
+    case
+      when ${sql.raw(`"orders"."status"`)}::text in ('CANCELLED', 'REFUNDED')
+        then (${ledger})
+      when (${ledger}) <> 0
+        then (${ledger})
+      when ${sql.raw(`"orders"."group_order_id"`)} is not null
+        then coalesce(
+          (
+            select floor(
+              ${sql.raw(`"group_order_participants"."subtotal_amount"`)} * ${percent} / 100
+            )
+            from ${groupOrderParticipants}
+            where ${sql.raw(
+              `"group_order_participants"."group_order_id" = "orders"."group_order_id"`,
+            )}
+              and ${sql.raw(`"group_order_participants"."user_id"`)} = ${userId}
+              and ${sql.raw(`"group_order_participants"."status"`)} = 'ACTIVE'
+          ),
+          0
+        )
+      else floor((${soloEligible}) * ${percent} / 100)
+    end
   `;
 }
 

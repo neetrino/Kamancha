@@ -4,6 +4,21 @@ function canUseSessionStorage(): boolean {
   return typeof window !== "undefined" && typeof sessionStorage !== "undefined";
 }
 
+/** Stable subscribe for `useSyncExternalStore` (session storage has no events). */
+export function subscribeCheckoutDeliveryRule(): () => void {
+  return () => {};
+}
+
+/** Client snapshot of the stored delivery rule id. */
+export function getCheckoutDeliveryRuleSnapshot(): string {
+  return readCheckoutDeliveryRuleId() ?? "";
+}
+
+/** Server snapshot; storage is unavailable during SSR. */
+export function getCheckoutDeliveryRuleServerSnapshot(): string {
+  return "";
+}
+
 /** Restores the selected checkout delivery zone across locale navigations. */
 export function readCheckoutDeliveryRuleId(): string | null {
   if (!canUseSessionStorage()) return null;

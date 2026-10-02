@@ -7,6 +7,7 @@ import {
   eq,
   ilike,
   inArray,
+  isNotNull,
   ne,
   or,
   sql,
@@ -23,9 +24,20 @@ import {
   customerOrderDisplayAmountSql,
   customerOrdersVisibilitySql,
 } from "@/features/orders/application/customer-group-order-share";
+import { getStoreBonusSettings } from "@/features/settings/application/queries";
 import type { AdminUsersFilter } from "@/features/users/schemas/admin-users";
 
 const PAGE_SIZE = 20;
+const USER_HISTORY_LIMIT = 50;
+
+export type AdminUserCouponUse = {
+  id: string;
+  orderNumber: string;
+  status: string;
+  code: string;
+  discountAmount: number;
+  placedAt: Date;
+};
 
 export type AdminUserListItem = {
   id: string;
@@ -74,6 +86,7 @@ export type AdminUserDetail = {
   }>;
   bonusSummary: CustomerBonusSummary;
   giftCards: AdminUserGiftCard[];
+  coupons: AdminUserCouponUse[];
 };
 
 /** Lists users for the admin surface with optional search/role/status filters. */
@@ -193,7 +206,9 @@ export async function getAdminUserById(
 
   const email = user.email.trim().toLowerCase();
 
-  const [recentOrders, bonusSummary, giftCardRows] = await Promise.all([
+  const bonusSettings = await getStoreBonusSettings();
+  const [recentOrders, bonusSummary, giftCardRows, couponRows] =
+    await Promise.all([
     getDb()
       .select({
         id: orders.id,
@@ -202,14 +217,17 @@ export async function getAdminUserById(
         paymentStatus: orders.paymentStatus,
         totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
         baseCurrency: orders.baseCurrency,
-        bonusEarnedAmount: customerOrderBonusEarnedSql(userId).mapWith(Number),
+        bonusEarnedAmount: customerOrderBonusEarnedSql(
+          userId,
+          bonusSettings.accrualPercent,
+        ).mapWith(Number),
         placedAt: orders.placedAt,
       })
       .from(orders)
       .where(customerOrdersVisibilitySql(userId))
       .orderBy(desc(orders.placedAt))
-      .limit(10),
-    getCustomerBonusSummary(userId, { limit: 20 }),
+      .limit(USER_HISTORY_LIMIT),
+    getCustomerBonusSummary(userId, { limit: USER_HISTORY_LIMIT }),
     getDb()
       .select({
         id: giftCards.id,
@@ -240,8 +258,43 @@ export async function getAdminUserById(
           email ? eq(giftCards.recipientEmail, email) : sql`false`,
         ),
       )
-      .orderBy(desc(giftCards.createdAt)),
+      .orderBy(desc(giftCards.createdAt))
+      .limit(USER_HISTORY_LIMIT),
+    getDb()
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        status: orders.status,
+        code: orders.promotionCodeSnapshot,
+        discountAmount: orders.promotionDiscountAmount,
+        placedAt: orders.placedAt,
+      })
+      .from(orders)
+      .where(
+        and(
+          customerOrdersVisibilitySql(userId),
+          isNotNull(orders.promotionCodeSnapshot),
+        ),
+      )
+      .orderBy(desc(orders.placedAt))
+      .limit(USER_HISTORY_LIMIT),
   ]);
 
-  return { user, recentOrders, bonusSummary, giftCards: giftCardRows };
+  const coupons: AdminUserCouponUse[] = couponRows.flatMap((row) => {
+    if (!row.code) {
+      return [];
+    }
+    return [
+      {
+        id: row.id,
+        orderNumber: row.orderNumber,
+        status: row.status,
+        code: row.code,
+        discountAmount: row.discountAmount ?? 0,
+        placedAt: row.placedAt,
+      },
+    ];
+  });
+
+  return { user, recentOrders, bonusSummary, giftCards: giftCardRows, coupons };
 }
