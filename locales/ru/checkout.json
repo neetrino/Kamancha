@@ -21,8 +21,8 @@
     "intercomCode": "Код домофона",
     "note": "Комментарий к заказу",
     "city": "Город",
-    "deliveryLocation": "Место доставки",
-    "selectLocation": "Выберите место"
+    "deliveryLocation": "Община",
+    "selectLocation": "Выберите общину"
   },
   "placeholders": {
     "phone": "+374XXXXXXXX",
@@ -41,7 +41,11 @@
     "resolving": "Определяем адрес…"
   },
   "schedule": {
-    "title": "День доставки",
+    "title": "Дата и время",
+    "deliverTo": "Доставим",
+    "approximatelyOneHour": "примерно через 1 час",
+    "change": "Изменить",
+    "asapOption": "Как можно скорее (≈1 час)",
     "pickDate": "Выберите день",
     "pickTime": "Интервал доставки",
     "noSlots": "Сейчас нет доступных слотов доставки.",
@@ -61,10 +65,10 @@
     "storePickup": "Самовывоз",
     "storePickupDescription": "Заберите заказ в магазине (Бесплатно)",
     "delivery": "Доставка",
-    "deliveryDescription": "Доставим заказ по вашему адресу. Выберите зону доставки с фиксированной ценой.",
+    "deliveryDescription": "Доставим заказ по вашему адресу. Выберите общину с фиксированной ценой.",
     "freePickup": "Бесплатно (Самовывоз)",
     "enterCity": "Укажите город",
-    "selectDeliveryLocation": "Выберите зону доставки",
+    "selectDeliveryLocation": "Выберите общину",
     "enterDeliveryAddress": "Введите адрес доставки",
     "calculatingDelivery": "Расчёт доставки…"
   },
@@ -112,7 +116,9 @@
     "amount": "Количество бонусов",
     "useMax": "Максимум",
     "applied": "Бонусы",
-    "earn": "Бонусные баллы"
+    "earn": "Бонусные баллы",
+    "guestMissed": "Без аккаунта вы потеряете {amount} бонусных баллов за этот заказ",
+    "guestRegister": "Зарегистрироваться"
   },
   "summary": {
     "subtotal": "Подытог",

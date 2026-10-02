@@ -4,8 +4,10 @@ import {
   DEFAULT_DELIVERY_SCHEDULE,
   buildSlotsForDate,
   isDeliverySlotAvailable,
+  isSameDeliverySlot,
   listAvailableDeliveryDays,
   parseDeliverySchedule,
+  resolveEarliestDeliverySlot,
 } from "@/features/delivery/domain/delivery-schedule";
 
 describe("parseDeliverySchedule", () => {
@@ -103,5 +105,32 @@ describe("listAvailableDeliveryDays / isDeliverySlotAvailable", () => {
         now,
       ),
     ).toBe(false);
+  });
+
+  it("resolves the earliest bookable slot for ASAP checkout", () => {
+    const schedule = {
+      ...DEFAULT_DELIVERY_SCHEDULE,
+      maxDaysAhead: 3,
+      weekly: {
+        ...DEFAULT_DELIVERY_SCHEDULE.weekly,
+        5: { isOpen: true, openTime: "10:00", closeTime: "12:00" },
+        6: { isOpen: false, openTime: "10:00", closeTime: "22:00" },
+        7: { isOpen: false, openTime: "10:00", closeTime: "22:00" },
+      },
+    };
+    const now = new Date("2026-07-24T04:00:00.000Z");
+    const earliest = resolveEarliestDeliverySlot(schedule, now);
+    expect(earliest).toEqual({
+      date: "2026-07-24",
+      startTime: "10:00",
+      endTime: "11:00",
+    });
+    expect(
+      isSameDeliverySlot(earliest, {
+        date: "2026-07-24",
+        startTime: "10:00",
+        endTime: "11:00",
+      }),
+    ).toBe(true);
   });
 });

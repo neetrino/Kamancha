@@ -167,6 +167,20 @@ export function ProfileRecentOrders({
         isLoading={isPending}
         copy={adminCopy}
         groupOrderBadgeLabel={dictionary.groupOrderBadge}
+        locale={locale}
+        feedbackLabels={dictionary.orderFeedback}
+        onFeedbackSubmitted={(value) => {
+          setDetail((current) =>
+            current
+              ? {
+                  ...current,
+                  customerRating: value.rating,
+                  customerFeedback: value.comment,
+                  canSubmitFeedback: false,
+                }
+              : current,
+          );
+        }}
       />
     </>
   );

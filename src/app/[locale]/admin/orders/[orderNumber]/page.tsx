@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
@@ -218,6 +219,37 @@ export default async function AdminOrderDetailPage({
                 </div>
               ) : null}
             </dl>
+          ) : null}
+          {order.customerRating != null ? (
+            <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
+              <h3 className="text-sm font-medium text-gray-900">
+                {d.customerFeedback}
+              </h3>
+              <div
+                className="flex items-center gap-1"
+                aria-label={`${order.customerRating}/5`}
+              >
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const filled = star <= order.customerRating!;
+                  return (
+                    <Star
+                      key={star}
+                      className={`h-5 w-5 ${
+                        filled
+                          ? "fill-amber-400 text-amber-400"
+                          : "fill-gray-200 text-gray-300"
+                      }`}
+                      aria-hidden
+                    />
+                  );
+                })}
+              </div>
+              {order.customerFeedback ? (
+                <p className="text-sm whitespace-pre-wrap text-gray-800">
+                  {order.customerFeedback}
+                </p>
+              ) : null}
+            </div>
           ) : null}
         </Card>
 

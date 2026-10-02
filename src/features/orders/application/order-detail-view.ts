@@ -59,8 +59,14 @@ export type AdminOrderDetailView = {
   addressHint: string | null;
   floor: string | null;
   intercomCode: string | null;
-  /** Note left by the customer at checkout, when provided. */
+  /** Note left by the customer at checkout, when provided (legacy). */
   customerNote: string | null;
+  /** Customer 1–5 rating after admin confirmation. */
+  customerRating: number | null;
+  /** Comment submitted with the customer rating. */
+  customerFeedback: string | null;
+  /** Whether the signed-in order owner may still submit feedback. */
+  canSubmitFeedback: boolean;
   /** Formatted slot label for display, when scheduled. */
   scheduledDelivery: string | null;
   /** Raw scheduled delivery date `YYYY-MM-DD`, when set. */
@@ -171,6 +177,9 @@ export async function toAdminOrderDetailView(
     floor: order.shippingAddress.floor?.trim() || null,
     intercomCode: order.shippingAddress.intercomCode?.trim() || null,
     customerNote: order.shippingAddress.customerNote?.trim() || null,
+    customerRating: order.customerRating ?? null,
+    customerFeedback: order.customerFeedback?.trim() || null,
+    canSubmitFeedback: false,
     scheduledDeliveryDate:
       order.shippingAddress.scheduledDeliveryDate?.trim() || null,
     scheduledDeliveryStart:

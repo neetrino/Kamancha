@@ -8,6 +8,8 @@ type StarRatingInputProps = {
   onChange: (rating: number) => void;
   label: string;
   disabled?: boolean;
+  /** `onDark` for storefront glass; `onLight` for white profile cards. */
+  tone?: "onDark" | "onLight";
 };
 
 export function StarRatingInput({
@@ -15,13 +17,20 @@ export function StarRatingInput({
   onChange,
   label,
   disabled = false,
+  tone = "onDark",
 }: StarRatingInputProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const active = hovered ?? value;
+  const labelClass =
+    tone === "onLight" ? "text-sm font-medium text-gray-900" : "text-sm font-medium text-white";
+  const emptyStarClass =
+    tone === "onLight"
+      ? "fill-gray-200 text-gray-300"
+      : "fill-white text-white";
 
   return (
     <fieldset className="flex flex-col gap-2" disabled={disabled}>
-      <legend className="text-sm font-medium text-white">{label}</legend>
+      <legend className={labelClass}>{label}</legend>
       <div
         className="flex items-center gap-1"
         onMouseLeave={() => setHovered(null)}
@@ -48,7 +57,7 @@ export function StarRatingInput({
                 className={`h-8 w-8 ${
                   isFilled
                     ? "fill-amber-400 text-amber-400"
-                    : "fill-white text-white"
+                    : emptyStarClass
                 }`}
                 aria-hidden
               />

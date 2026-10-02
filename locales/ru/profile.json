@@ -98,6 +98,16 @@
   "ordersKindGroup": "Групповые",
   "groupOrderBadge": "Групповой",
   "orderNumber": "Заказ",
+  "orderFeedback": {
+    "title": "Оцените заказ",
+    "ratingLabel": "Оценка",
+    "commentLabel": "Комментарий",
+    "commentPlaceholder": "Расскажите о вашем опыте (необязательно)",
+    "submit": "Отправить",
+    "submitting": "Отправка…",
+    "thanks": "Спасибо! Ваш отзыв отправлен в ресторан.",
+    "lockedHint": "Оценить заказ можно после подтверждения рестораном."
+  },
   "status": "Статус",
   "total": "Итого",
   "save": "Сохранить",

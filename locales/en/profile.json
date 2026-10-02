@@ -98,6 +98,16 @@
   "ordersKindGroup": "Group",
   "groupOrderBadge": "Group",
   "orderNumber": "Order",
+  "orderFeedback": {
+    "title": "Rate your order",
+    "ratingLabel": "Rating",
+    "commentLabel": "Comment",
+    "commentPlaceholder": "Tell us about your experience (optional)",
+    "submit": "Submit",
+    "submitting": "Submitting…",
+    "thanks": "Thank you! Your feedback was sent to the restaurant.",
+    "lockedHint": "You can rate this order after the restaurant confirms it."
+  },
   "status": "Status",
   "total": "Total",
   "save": "Save",

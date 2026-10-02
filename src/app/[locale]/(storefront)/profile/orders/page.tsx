@@ -163,6 +163,7 @@ export default async function OrdersPage({
           noOrders: dictionary.profile.noOrders,
           startShopping: dictionary.profile.startShopping,
           groupOrderBadge: dictionary.profile.groupOrderBadge,
+          orderFeedback: dictionary.profile.orderFeedback,
         }}
       />
 

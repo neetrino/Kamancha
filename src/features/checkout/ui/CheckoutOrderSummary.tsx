@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { LiquidGlassPanel } from "@/components/ui/LiquidGlassPanel";
 import {
@@ -8,6 +10,12 @@ import {
 } from "@/features/checkout/ui/CheckoutBonusRedeemField";
 import { CheckoutCodeApplyField } from "@/features/checkout/ui/CheckoutCodeApplyField";
 import { useCheckoutSummaryStickyTop } from "@/features/checkout/ui/use-checkout-summary-sticky-top";
+
+type GuestMissedBonusNotice = {
+  message: string;
+  registerLabel: string;
+  registerHref: string;
+};
 
 const SUMMARY_ALERT_PILL_CLASS =
   "mb-4 w-full rounded-full bg-white px-4 py-3 text-center text-sm font-medium leading-snug text-red-600";
@@ -45,6 +53,7 @@ type CheckoutOrderSummaryProps = {
   bonusAppliedLabel: string;
   bonusEarnLabel: string | null;
   bonusEarnAmount: number | null;
+  guestMissedBonus?: GuestMissedBonusNotice | null;
   discountLabel: string;
   subtotalLabel: string;
   shippingLabel: string;
@@ -95,6 +104,7 @@ export function CheckoutOrderSummary({
   bonusAppliedLabel,
   bonusEarnLabel,
   bonusEarnAmount,
+  guestMissedBonus = null,
   discountLabel,
   subtotalLabel,
   shippingLabel,
@@ -196,6 +206,20 @@ export function CheckoutOrderSummary({
         {bonus ? (
           <div className={CHECKOUT_CODE_GLASS_CLASS}>
             <CheckoutBonusRedeemField bonus={bonus} isSubmitting={isSubmitting} />
+          </div>
+        ) : null}
+
+        {guestMissedBonus ? (
+          <div className={CHECKOUT_CODE_GLASS_CLASS}>
+            <p className="relative z-[2] text-sm font-medium leading-snug text-[#f3e5a8]">
+              {guestMissedBonus.message}
+            </p>
+            <Link
+              href={guestMissedBonus.registerHref}
+              className="relative z-[2] mt-3 inline-flex text-sm font-semibold text-white underline underline-offset-4 hover:text-[#f3e5a8]"
+            >
+              {guestMissedBonus.registerLabel}
+            </Link>
           </div>
         ) : null}
 

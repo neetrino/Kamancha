@@ -138,6 +138,15 @@ export const orders = pgTable(
       withTimezone: true,
       mode: "date",
     }),
+    /** Customer 1–5 rating after the order is confirmed by admin. */
+    customerRating: integer("customer_rating"),
+    /** Optional comment submitted with the customer rating. */
+    customerFeedback: text("customer_feedback"),
+    /** When the customer submitted rating / feedback. */
+    customerFeedbackAt: timestamp("customer_feedback_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
     createdAt: createdAtColumn(),
     updatedAt: updatedAtColumn(),
   },
@@ -181,6 +190,10 @@ export const orders = pgTable(
     check(
       "orders_payment_split_sum_chk",
       sql`${table.onlineAmount} + ${table.cashAmount} = ${table.totalAmount}`,
+    ),
+    check(
+      "orders_customer_rating_chk",
+      sql`${table.customerRating} IS NULL OR (${table.customerRating} BETWEEN 1 AND 5)`,
     ),
   ],
 );

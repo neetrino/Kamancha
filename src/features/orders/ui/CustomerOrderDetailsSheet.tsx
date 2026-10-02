@@ -14,8 +14,14 @@ import {
   localizePaymentStatus,
 } from "@/features/orders/ui/localize-order-status";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
+import { OrderAdminFeedbackCard } from "@/features/orders/ui/OrderAdminFeedbackCard";
+import {
+  OrderFeedbackForm,
+  type OrderFeedbackFormLabels,
+} from "@/features/orders/ui/OrderFeedbackForm";
 import { OrderScheduledDeliveryBanner } from "@/features/orders/ui/OrderScheduledDeliveryBanner";
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
+import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 
@@ -36,6 +42,12 @@ type CustomerOrderDetailsSheetProps = {
   groupOrderBadgeLabel?: string;
   /** SideSheet panel width classes (default: narrow profile drawer). */
   panelClassName?: string;
+  locale?: Locale;
+  feedbackLabels?: OrderFeedbackFormLabels;
+  onFeedbackSubmitted?: (value: {
+    rating: number;
+    comment: string | null;
+  }) => void;
 };
 
 /**
@@ -51,6 +63,9 @@ export function CustomerOrderDetailsSheet({
   includeAdminDetails = false,
   groupOrderBadgeLabel,
   panelClassName = "w-[87%] max-w-[420px]",
+  locale,
+  feedbackLabels,
+  onFeedbackSubmitted,
 }: CustomerOrderDetailsSheetProps) {
   const d = copy.orders.drawer;
 
@@ -123,6 +138,9 @@ export function CustomerOrderDetailsSheet({
             detail={detail}
             labels={d}
             includeAdminDetails={includeAdminDetails}
+            locale={locale}
+            feedbackLabels={feedbackLabels}
+            onFeedbackSubmitted={onFeedbackSubmitted}
           />
         ) : null}
       </div>
@@ -141,20 +159,34 @@ function CustomerOrderSheetBody({
   detail,
   labels,
   includeAdminDetails,
+  locale,
+  feedbackLabels,
+  onFeedbackSubmitted,
 }: {
   detail: AdminOrderDetailView;
   labels: DrawerLabels;
   includeAdminDetails: boolean;
+  locale?: Locale;
+  feedbackLabels?: OrderFeedbackFormLabels;
+  onFeedbackSubmitted?: (value: {
+    rating: number;
+    comment: string | null;
+  }) => void;
 }) {
   const showGroupParticipants =
     detail.isGroupOrder && detail.groupParticipants.length > 0;
+  const showAdminFeedbackSide =
+    includeAdminDetails &&
+    (detail.customerNote != null || detail.customerRating != null);
 
   return (
     <div className="space-y-4">
       {includeAdminDetails ? (
         <div
           className={
-            detail.customerNote ? "grid grid-cols-2 items-stretch gap-3" : undefined
+            showAdminFeedbackSide
+              ? "grid grid-cols-2 items-stretch gap-3"
+              : undefined
           }
         >
           <section className={`${PROFILE_INNER_CARD} h-full space-y-3 p-4`}>
@@ -176,26 +208,35 @@ function CustomerOrderSheetBody({
               </p>
             </div>
           </section>
-          {detail.customerNote ? (
-            <section className={`${PROFILE_INNER_CARD} h-full space-y-2 p-4`}>
-              <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-                {labels.orderNote.replace(/[՝:]\s*$/, "")}
-              </h3>
-              <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
-                {detail.customerNote}
-              </p>
-            </section>
+          {showAdminFeedbackSide ? (
+            <div className="flex h-full min-w-0 flex-col gap-3">
+              <OrderAdminFeedbackCard
+                detail={detail}
+                title={labels.customerFeedback}
+              />
+              {detail.customerNote ? (
+                <section className={`${PROFILE_INNER_CARD} space-y-2 p-4`}>
+                  <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+                    {labels.orderNote.replace(/[՝:]\s*$/, "")}
+                  </h3>
+                  <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
+                    {detail.customerNote}
+                  </p>
+                </section>
+              ) : null}
+            </div>
           ) : null}
         </div>
-      ) : detail.customerNote ? (
-        <section className={`${PROFILE_INNER_CARD} space-y-2 p-4`}>
-          <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-            {labels.orderNote.replace(/[՝:]\s*$/, "")}
-          </h3>
-          <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
-            {detail.customerNote}
-          </p>
-        </section>
+      ) : locale && feedbackLabels ? (
+        <OrderFeedbackForm
+          locale={locale}
+          orderNumber={detail.orderNumber}
+          labels={feedbackLabels}
+          canSubmit={detail.canSubmitFeedback}
+          initialRating={detail.customerRating}
+          initialComment={detail.customerFeedback}
+          onSubmitted={onFeedbackSubmitted}
+        />
       ) : null}
 
       <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>

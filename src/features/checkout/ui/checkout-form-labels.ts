@@ -21,21 +21,17 @@ export type CheckoutLabels = {
   selectDeliveryZone: string;
   floor: string;
   intercomCode: string;
-  note: string;
   phonePlaceholder: string;
   addressPlaceholder: string;
   floorPlaceholder: string;
   intercomCodePlaceholder: string;
-  notePlaceholder: string;
-  openMap: string;
-  mapTitle: string;
-  mapHint: string;
-  mapConfirm: string;
-  mapCancel: string;
-  mapResolving: string;
   enterDeliveryAddress: string;
   selectDeliveryZoneError: string;
   scheduleTitle: string;
+  scheduleDeliverTo: string;
+  scheduleApproximatelyOneHour: string;
+  scheduleChange: string;
+  scheduleAsapOption: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
@@ -77,6 +73,8 @@ export type CheckoutLabels = {
   bonusUseMax: string;
   bonusApplied: string;
   bonusEarn: string;
+  bonusGuestMissed: string;
+  bonusGuestRegister: string;
   discount: string;
   subtotal: string;
   shipping: string;
@@ -117,21 +115,17 @@ export function checkoutFormLabels(
     selectDeliveryZone: copy.form.selectLocation,
     floor: copy.form.floor,
     intercomCode: copy.form.intercomCode,
-    note: copy.form.note,
     phonePlaceholder: copy.placeholders.phone,
     addressPlaceholder: copy.placeholders.address,
     floorPlaceholder: copy.placeholders.floor,
     intercomCodePlaceholder: copy.placeholders.intercomCode,
-    notePlaceholder: copy.placeholders.note,
-    openMap: copy.map.openMap,
-    mapTitle: copy.map.title,
-    mapHint: copy.map.hint,
-    mapConfirm: copy.map.confirm,
-    mapCancel: copy.map.cancel,
-    mapResolving: copy.map.resolving,
     enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
     selectDeliveryZoneError: copy.shipping.selectDeliveryLocation,
     scheduleTitle: copy.schedule.title,
+    scheduleDeliverTo: copy.schedule.deliverTo,
+    scheduleApproximatelyOneHour: copy.schedule.approximatelyOneHour,
+    scheduleChange: copy.schedule.change,
+    scheduleAsapOption: copy.schedule.asapOption,
     schedulePickDate: copy.schedule.pickDate,
     schedulePickTime: copy.schedule.pickTime,
     scheduleNoSlots: copy.schedule.noSlots,
@@ -173,6 +167,8 @@ export function checkoutFormLabels(
     bonusUseMax: copy.bonus.useMax,
     bonusApplied: copy.bonus.applied,
     bonusEarn: copy.bonus.earn,
+    bonusGuestMissed: copy.bonus.guestMissed,
+    bonusGuestRegister: copy.bonus.guestRegister,
     discount: copy.summary.discount,
     subtotal: copy.summary.subtotal,
     shipping: copy.summary.shipping,
