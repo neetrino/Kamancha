@@ -13,7 +13,10 @@ import {
 } from "@/features/admin/ui/status-badge";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
-import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
+import {
+  ADMIN_ORDER_SHEET_PANEL,
+  CustomerOrderDetailsSheet,
+} from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
 
@@ -101,6 +104,7 @@ export function AdminUserRecentOrders({
         isLoading={isPending}
         copy={copy}
         includeAdminDetails
+        panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>
   );

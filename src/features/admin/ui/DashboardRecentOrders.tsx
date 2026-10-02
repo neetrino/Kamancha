@@ -13,7 +13,10 @@ import {
 } from "@/features/admin/ui/admin-ui";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
-import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
+import {
+  ADMIN_ORDER_SHEET_PANEL,
+  CustomerOrderDetailsSheet,
+} from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import { localizeOrderStatus } from "@/features/orders/ui/localize-order-status";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { formatMoneyAmount } from "@/lib/money/format";
@@ -130,6 +133,7 @@ export function DashboardRecentOrders({
         isLoading={isPending}
         copy={copy}
         includeAdminDetails
+        panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>
   );

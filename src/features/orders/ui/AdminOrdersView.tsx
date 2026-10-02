@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
 import { BulkChangeOrderStatusForm } from "@/features/orders/ui/BulkChangeOrderStatusForm";
-import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
+import {
+  ADMIN_ORDER_SHEET_PANEL,
+  CustomerOrderDetailsSheet,
+} from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminOrdersViewOrder = {
@@ -93,7 +96,7 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         copy={copy}
         includeAdminDetails
         groupOrderBadgeLabel={copy.orders.table.groupOrderBadge}
-        panelClassName="w-[92%] max-w-none sm:w-1/2"
+        panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>
   );

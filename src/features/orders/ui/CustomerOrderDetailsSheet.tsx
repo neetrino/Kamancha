@@ -19,6 +19,9 @@ import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 
+/** Admin order sheet — half the viewport, same as the orders list. */
+export const ADMIN_ORDER_SHEET_PANEL = "w-[92%] max-w-none sm:w-1/2";
+
 const PARTICIPANT_STAT_CELL = "w-max shrink-0 text-left whitespace-nowrap";
 const PARTICIPANT_STAT_CELL_DIVIDED = `${PARTICIPANT_STAT_CELL} sm:border-l sm:border-gray-200 sm:pl-4`;
 

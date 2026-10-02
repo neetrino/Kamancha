@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { updateUserStatusAction } from "@/features/users/application/update-user";
 import {
   USER_STATUSES,
@@ -53,7 +52,7 @@ export function UpdateUserStatusForm({
 
   if (eligibleStatuses.length === 0) {
     return (
-      <span className={`${ADMIN_BADGE} ${statusPillClass(currentStatus)}`}>
+      <span className={`inline-flex rounded-full px-3.5 py-1.5 text-sm font-medium ${statusPillClass(currentStatus)}`}>
         {userStatusLabel(currentStatus, labels)}
       </span>
     );
@@ -93,7 +92,7 @@ export function UpdateUserStatusForm({
         disabled={isPending}
         fitContent
         deferChange={false}
-        triggerClassName={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium outline-none disabled:cursor-not-allowed disabled:opacity-50 ${statusPillClass(currentStatus)}`}
+        triggerClassName={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium outline-none disabled:cursor-not-allowed disabled:opacity-50 ${statusPillClass(currentStatus)}`}
         onValueChange={changeStatus}
       />
       {error ? <p className="mt-1 text-sm text-red-700">{error}</p> : null}

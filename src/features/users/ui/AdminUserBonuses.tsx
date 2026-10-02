@@ -8,7 +8,10 @@ import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
 import type { CustomerBonusSummary } from "@/features/bonuses/application/queries";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
-import { CustomerOrderDetailsSheet } from "@/features/orders/ui/CustomerOrderDetailsSheet";
+import {
+  ADMIN_ORDER_SHEET_PANEL,
+  CustomerOrderDetailsSheet,
+} from "@/features/orders/ui/CustomerOrderDetailsSheet";
 import { ProfileStatCard } from "@/features/profile/ui/ProfileStatCard";
 import { PROFILE_STAT_GRID_THREE } from "@/features/profile/ui/profile-surface";
 import type { Locale } from "@/lib/i18n/config";
@@ -150,6 +153,7 @@ export function AdminUserBonuses({
         isLoading={isPending}
         copy={adminCopy}
         includeAdminDetails
+        panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>
   );

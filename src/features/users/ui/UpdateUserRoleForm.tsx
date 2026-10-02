@@ -69,7 +69,7 @@ export function UpdateUserRoleForm({
         disabled={disabled || isPending}
         fitContent
         deferChange={false}
-        triggerClassName={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium outline-none disabled:cursor-not-allowed disabled:opacity-50 ${rolePillClass(currentRole)}`}
+        triggerClassName={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium outline-none disabled:cursor-not-allowed disabled:opacity-50 ${rolePillClass(currentRole)}`}
         onValueChange={changeRole}
       />
       {error ? <p className="mt-1 text-sm text-red-700">{error}</p> : null}
