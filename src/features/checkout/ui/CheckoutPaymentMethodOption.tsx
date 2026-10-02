@@ -24,16 +24,26 @@ type CheckoutPaymentMethodOptionProps = {
   cardBadgeSize?: "mobile" | "desktop";
   /** Stack card description under payment icons (group-order pay). */
   cardDescriptionBelowIcons?: boolean;
+  /** Always use the mobile checkout row, even on wide viewports. */
+  compact?: boolean;
+  /** Keep the selected ring visible even when the option is not selected. */
+  persistentBorder?: boolean;
 };
 
-function optionClass(selected: boolean, matchFirstField: boolean): string {
+function optionClass(
+  selected: boolean,
+  matchFirstField: boolean,
+  persistentBorder: boolean,
+): string {
+  const showBorder = selected || persistentBorder;
+  const ringClass = persistentBorder
+    ? "ring-0"
+    : showBorder
+      ? CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS
+      : CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS;
   return `${CHECKOUT_PAYMENT_OPTION_BASE_CLASS} ${
     matchFirstField ? "min-h-16 xl:min-h-0" : ""
-  } ${
-    selected
-      ? CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS
-      : CHECKOUT_PAYMENT_OPTION_DEFAULT_CLASS
-  }`;
+  } ${ringClass}`;
 }
 
 function descriptionClass(selected: boolean): string {
@@ -47,13 +57,19 @@ export function CheckoutPaymentMethodOption({
   onSelect,
   cardBadgeSize = "mobile",
   cardDescriptionBelowIcons = false,
+  compact = false,
+  persistentBorder = false,
 }: CheckoutPaymentMethodOptionProps) {
   const isCardMethod = option.id === "arca";
   const matchFirstField =
     option.id === "cash_on_delivery" ||
     option.id === "idram" ||
     option.id === "arca";
-  const fieldClass = optionClass(selected, matchFirstField);
+  const fieldClass = `${optionClass(selected, matchFirstField, persistentBorder)} ${
+    compact ? "xl:p-2.5 xl:text-sm" : ""
+  } ${
+    persistentBorder ? "border border-[#dcecc6] focus-within:border-[#dcecc6]" : ""
+  }`;
   const useExpandedCardLayout = isCardMethod && cardBadgeSize === "desktop";
   const useStackedCardDescription =
     isCardMethod && cardDescriptionBelowIcons;
@@ -61,6 +77,7 @@ export function CheckoutPaymentMethodOption({
     <CheckoutPaymentMethodIcons
       methodId={option.id}
       cardBadgeSize={cardBadgeSize}
+      compact={compact}
     />
   );
 
@@ -77,10 +94,10 @@ export function CheckoutPaymentMethodOption({
           className="relative z-[2] self-center"
         />
         {useStackedCardDescription ? (
-          <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-1.5">
-            <span className="font-medium text-gray-900">{option.shortName}</span>
+          <div className="relative z-[2] flex w-full min-w-0 flex-1 flex-col items-start gap-1">
+            <span className="text-sm font-medium text-gray-900">{option.shortName}</span>
             {icons}
-            <div className={`hidden xl:block ${descriptionClass(selected)}`}>
+            <div className={compact ? "text-xs text-gray-600" : `hidden xl:block ${descriptionClass(selected)}`}>
               {option.description}
             </div>
           </div>
@@ -91,13 +108,25 @@ export function CheckoutPaymentMethodOption({
           </div>
         ) : (
           <>
-            <div className="relative z-[2] flex w-full min-w-0 flex-1 items-center gap-2 xl:hidden">
+            <div
+              className={`relative z-[2] flex w-full min-w-0 flex-1 items-center gap-2 ${
+                compact ? "" : "xl:hidden"
+              }`}
+            >
               {icons}
-              <span className="ml-0.5 shrink-0 text-[15px] font-medium text-gray-900 xl:ml-0 xl:text-base">
+              <span
+                className={`shrink-0 text-[15px] font-medium text-gray-900 xl:text-base ${
+                  compact ? "ml-[6px]" : "ml-0.5 xl:ml-0"
+                }`}
+              >
                 {option.shortName}
               </span>
             </div>
-            <div className="relative z-[2] hidden min-w-0 flex-1 items-center gap-3 xl:flex xl:gap-4">
+            <div
+              className={`relative z-[2] hidden min-w-0 flex-1 items-center gap-3 xl:gap-4 ${
+                compact ? "" : "xl:flex"
+              }`}
+            >
               <div className="flex shrink-0 items-center">{icons}</div>
               <div className="min-w-0">
                 <div className="font-medium text-gray-900">{option.name}</div>
@@ -136,7 +165,9 @@ export function CheckoutPaymentMethodOption({
           ) : option.id === "cash_on_delivery" ? (
             <>
               <div className="text-[15px] font-medium text-gray-900 xl:text-base">{option.name}</div>
-              <div className={`hidden xl:block ${descriptionClass(selected)}`}>
+              <div
+                className={`${compact ? "hidden" : "hidden xl:block"} ${descriptionClass(selected)}`}
+              >
                 {option.description}
               </div>
             </>

@@ -1,6 +1,13 @@
 "use client";
 
-import { useMemo, useState, useTransition, type FormEvent } from "react";
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type FormEvent,
+} from "react";
 import { useRouter } from "next/navigation";
 
 import { DateTimePickerField } from "@/components/ui/DateTimePickerField";
@@ -84,6 +91,11 @@ export function BuyGiftCardForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const paymentListRef = useRef<HTMLDivElement>(null);
+  const [paymentFrame, setPaymentFrame] = useState<{
+    top: number;
+    height: number;
+  } | null>(null);
   const minSendDate = formatYerevanDate(new Date());
   const useCustom = selectedAmount === "custom";
 
@@ -115,6 +127,18 @@ export function BuyGiftCardForm({
     ],
     [settings.presets, locale, copy.customAmount],
   );
+
+  useLayoutEffect(() => {
+    const list = paymentListRef.current;
+    const selected = list?.querySelector<HTMLElement>("[data-payment-selected='true']");
+    if (!list || !selected) {
+      return;
+    }
+    setPaymentFrame({
+      top: selected.offsetTop,
+      height: selected.offsetHeight,
+    });
+  }, [paymentMethod]);
 
   const resolvedAmount = useMemo(() => {
     if (!useCustom) {
@@ -262,18 +286,30 @@ export function BuyGiftCardForm({
         <legend className="text-sm font-medium text-gray-900">
           {copy.paymentMethod}
         </legend>
-        <div className="space-y-2">
-          {paymentOptions.map((option) => (
-            <CheckoutPaymentMethodOption
-              key={option.id}
-              option={option}
-              selected={paymentMethod === option.id}
-              disabled={pending}
-              cardDescriptionBelowIcons={option.id === "arca"}
-              onSelect={(method) =>
-                setPaymentMethod(method as GiftCardPaymentMethod)
-              }
+        <div ref={paymentListRef} className="relative space-y-2">
+          {paymentFrame ? (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 z-[3] rounded-[15px] border border-brand-forest transition-[top,height] duration-300 ease-out motion-reduce:transition-none"
+              style={{ top: paymentFrame.top, height: paymentFrame.height }}
             />
+          ) : null}
+          {paymentOptions.map((option) => (
+            <div
+              key={option.id}
+              data-payment-selected={paymentMethod === option.id}
+            >
+              <CheckoutPaymentMethodOption
+                option={option}
+                selected={paymentMethod === option.id}
+                disabled={pending}
+                compact
+                persistentBorder
+                onSelect={(method) =>
+                  setPaymentMethod(method as GiftCardPaymentMethod)
+                }
+              />
+            </div>
           ))}
         </div>
       </fieldset>
