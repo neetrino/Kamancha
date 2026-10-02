@@ -59,7 +59,16 @@ export type AdminOrderDetailView = {
   addressHint: string | null;
   floor: string | null;
   intercomCode: string | null;
+  /** Note left by the customer at checkout, when provided. */
+  customerNote: string | null;
+  /** Formatted slot label for display, when scheduled. */
   scheduledDelivery: string | null;
+  /** Raw scheduled delivery date `YYYY-MM-DD`, when set. */
+  scheduledDeliveryDate: string | null;
+  /** Slot start `HH:mm`, when set. */
+  scheduledDeliveryStart: string | null;
+  /** Slot end `HH:mm`, when set. */
+  scheduledDeliveryEnd: string | null;
   cashChangeAmount: number | null;
   paymentMethod: string;
   paymentAmount: number;
@@ -73,12 +82,13 @@ function withoutPostalCode(segment: string): string {
 }
 
 /**
- * Displayed as "street, city". `line1` holds the geocoder's formatted address
- * for map-picked checkouts, so only its street segment is used; postal code,
- * region and country are not displayed.
+ * Displayed as "street, delivery zone". `line1` holds the geocoder formatted
+ * address; only the street segment is kept. The selected delivery zone is
+ * always appended when available so district context is not lost.
  */
 function formatAddressLine(
   address: AdminOrderDetail["order"]["shippingAddress"],
+  deliveryZoneLabel: string | null,
 ): string {
   const lineSegments = (address.line1 ?? "")
     .split(",")
@@ -88,23 +98,49 @@ function formatAddressLine(
   const street = [lineSegments[0], address.line2?.trim()]
     .filter((part): part is string => Boolean(part))
     .join(", ");
-  const city = withoutPostalCode(address.city ?? "") || lineSegments[1] || "";
+  const zone =
+    deliveryZoneLabel?.trim() || withoutPostalCode(address.city ?? "") || "";
 
-  if (!city || street.toLowerCase().includes(city.toLowerCase())) {
+  if (!zone) {
     return street;
   }
+  if (!street) {
+    return zone;
+  }
+  if (street.toLowerCase().includes(zone.toLowerCase())) {
+    return street;
+  }
+  return `${street}, ${zone}`;
+}
 
-  return street ? `${street}, ${city}` : city;
+async function resolveDeliveryZoneLabel(
+  order: AdminOrderDetail["order"],
+  locale: Locale,
+): Promise<string | null> {
+  if (order.deliveryRuleId) {
+    const { resolveZoneDelivery } = await import(
+      "@/features/delivery/application/resolve-zone-delivery"
+    );
+    const resolved = await resolveZoneDelivery(order.deliveryRuleId, locale);
+    if (resolved.ok) {
+      return resolved.quote.zoneName;
+    }
+  }
+  return order.deliveryLabelSnapshot;
 }
 
 /** Maps a loaded order into a serializable admin drawer view. */
-export function toAdminOrderDetailView(
+export async function toAdminOrderDetailView(
   detail: AdminOrderDetail,
   storeName: string,
-): AdminOrderDetailView {
+  locale: Locale,
+): Promise<AdminOrderDetailView> {
   const { order, items, payments } = detail;
   const isPickup = order.deliveryLabelSnapshot === "Store pickup";
   const latestPayment = payments[0] ?? null;
+  const deliveryZoneLabel = isPickup
+    ? null
+    : await resolveDeliveryZoneLabel(order, locale);
 
   return {
     orderNumber: order.orderNumber,
@@ -119,7 +155,7 @@ export function toAdminOrderDetailView(
     discountAmount: order.discountAmount,
     bonusEarnedAmount: order.bonusEarnedAmount,
     totalAmount: order.totalAmount,
-    deliveryLabel: order.deliveryLabelSnapshot,
+    deliveryLabel: deliveryZoneLabel,
     couponCode: order.promotionCodeSnapshot,
     isPickup,
     isGroupOrder: order.groupOrderId != null,
@@ -127,13 +163,20 @@ export function toAdminOrderDetailView(
     storeName,
     shippingMethod: isPickup
       ? "pickup"
-      : (order.deliveryLabelSnapshot ?? "delivery"),
-    addressLine: formatAddressLine(order.shippingAddress),
+      : (deliveryZoneLabel ?? "delivery"),
+    addressLine: formatAddressLine(order.shippingAddress, deliveryZoneLabel),
     addressHint: isPickup
       ? "You can pick up your order at this store"
       : null,
     floor: order.shippingAddress.floor?.trim() || null,
     intercomCode: order.shippingAddress.intercomCode?.trim() || null,
+    customerNote: order.shippingAddress.customerNote?.trim() || null,
+    scheduledDeliveryDate:
+      order.shippingAddress.scheduledDeliveryDate?.trim() || null,
+    scheduledDeliveryStart:
+      order.shippingAddress.scheduledDeliveryStart?.trim() || null,
+    scheduledDeliveryEnd:
+      order.shippingAddress.scheduledDeliveryEnd?.trim() || null,
     scheduledDelivery:
       order.shippingAddress.scheduledDeliveryDate &&
       order.shippingAddress.scheduledDeliveryStart &&
@@ -190,7 +233,7 @@ export async function getAdminOrderDetailView(
   }
 
   const identity = await getStoreIdentity();
-  const view = toAdminOrderDetailView(detail, identity.name);
+  const view = await toAdminOrderDetailView(detail, identity.name, locale);
 
   if (!detail.order.groupOrderId) {
     return view;

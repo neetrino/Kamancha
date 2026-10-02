@@ -41,9 +41,9 @@ import {
   type GroupOrderCheckoutContext,
 } from "@/features/checkout/application/group-order-checkout-context";
 import {
-  quoteDistanceDelivery,
-  type DistanceDeliveryQuote,
-} from "@/features/delivery/application/quote-distance-delivery";
+  resolveZoneDelivery,
+  type ZoneDeliveryQuote,
+} from "@/features/delivery/application/resolve-zone-delivery";
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
 import {
   computeCashChangeDue,
@@ -53,6 +53,7 @@ import {
   formatDeliverySlotSnapshot,
   isDeliverySlotAvailable,
 } from "@/features/delivery/domain/delivery-schedule";
+import { applyAutoReplenish } from "@/features/products/domain/auto-replenish-stock";
 import {
   ORDER_NUMBER_LOCK_KEY,
   formatOrderNumber,
@@ -96,16 +97,13 @@ function hashValue(value: string): string {
 }
 
 function lockedGroupDeliveryQuote(
-  address: string,
   deliveryAmount: number,
-): DistanceDeliveryQuote {
+  zoneLabel: string | null,
+): ZoneDeliveryQuote {
   return {
-    distanceMeters: 0,
-    distanceLabel: "",
-    pricePerKmAmount: 0,
+    deliveryRuleId: "",
+    zoneName: zoneLabel?.trim() || "Delivery",
     deliveryAmount,
-    destinationFormattedAddress: address,
-    city: null,
     countryCode: "AM",
   };
 }
@@ -152,22 +150,35 @@ export async function createOrderAction(
     return { ok: false, error: "Exchange rate unavailable. Try again shortly." };
   }
 
-  let deliveryQuote: DistanceDeliveryQuote | null = null;
+  let deliveryQuote: ZoneDeliveryQuote | null = null;
   let deliverySlotSnapshot: string | null = null;
   let cashChangeAmount: number | undefined;
   let cashChangeImageKey: string | undefined;
   const deliverySettings = await getDeliverySettings();
   const groupCheckout = await resolveGroupOrderCheckoutContext();
 
+  if (
+    groupCheckout.active &&
+    input.paymentMethod === "cash_on_delivery"
+  ) {
+    return {
+      ok: false,
+      error: "Cash on delivery is not available for group orders.",
+    };
+  }
+
   if (input.shippingMethod === "delivery") {
     if (groupCheckout.active && groupCheckout.deliveryAddress) {
       deliveryQuote = lockedGroupDeliveryQuote(
-        groupCheckout.deliveryAddress,
         groupCheckout.deliveryAmount,
+        groupCheckout.deliveryZoneLabel,
       );
     } else {
-      const quoted = await quoteDistanceDelivery(
-        input.line1 ?? "",
+      if (!input.deliveryRuleId) {
+        return { ok: false, error: "Select a delivery zone." };
+      }
+      const quoted = await resolveZoneDelivery(
+        input.deliveryRuleId,
         input.locale,
       );
       if (!quoted.ok) {
@@ -225,7 +236,7 @@ export async function createOrderAction(
       paymentMethod: input.paymentMethod,
       line1: input.shippingMethod === "delivery" ? input.line1?.trim() : null,
       deliveryAmount: deliveryQuote?.deliveryAmount ?? 0,
-      distanceMeters: deliveryQuote?.distanceMeters ?? null,
+      deliveryRuleId: deliveryQuote?.deliveryRuleId || null,
       scheduledDeliveryDate:
         input.shippingMethod === "delivery"
           ? input.scheduledDeliveryDate
@@ -272,21 +283,18 @@ export async function createOrderAction(
         recipientFirstName: input.firstName,
         recipientLastName: input.lastName,
         phone: input.contactPhone,
-        countryCode:
-          deliveryQuote?.countryCode?.trim().toUpperCase().slice(0, 2) || "AM",
+        countryCode: deliveryQuote?.countryCode || "AM",
         region: input.region,
         city:
-          deliveryQuote?.city?.trim() || input.city?.trim() || "Yerevan",
-        line1:
-          deliveryQuote?.destinationFormattedAddress ||
-          input.line1?.trim() ||
-          "",
+          deliveryQuote?.zoneName?.trim() || input.city?.trim() || "Yerevan",
+        line1: input.line1?.trim() || "",
         line2: input.line2,
         postalCode: input.postalCode,
         ...(input.shippingMethod === "delivery"
           ? {
               floor: input.floor?.trim() || undefined,
               intercomCode: input.intercomCode?.trim() || undefined,
+              customerNote: input.customerNote?.trim() || undefined,
               scheduledDeliveryDate: input.scheduledDeliveryDate,
               scheduledDeliveryStart: input.scheduledDeliveryStart,
               scheduledDeliveryEnd: input.scheduledDeliveryEnd,
@@ -616,14 +624,14 @@ export async function createOrderAction(
         giftCardId: giftCard.giftCardId,
         giftCardCodeSnapshot: giftCard.giftCardCodeSnapshot,
         giftCardAmount: giftCard.giftCardAmount,
-        deliveryRuleId: null,
+        deliveryRuleId: deliveryQuote?.deliveryRuleId || null,
         deliveryLabelSnapshot: deliveryQuote
-          ? `Distance delivery (${deliveryQuote.distanceLabel})`
+          ? deliveryQuote.zoneName
           : "Delivery",
         deliveryEstimateSnapshot:
           [
             deliveryQuote
-              ? `${deliveryQuote.pricePerKmAmount} AMD/km × ${deliveryQuote.distanceLabel}`
+              ? `${deliveryQuote.zoneName}: ${deliveryQuote.deliveryAmount} AMD`
               : null,
             deliverySlotSnapshot,
           ]
@@ -689,7 +697,8 @@ export async function createOrderAction(
         }
       }
 
-      for (const [productId, nextStock] of stockAfterOrder) {
+      for (const [productId, depletedStock] of stockAfterOrder) {
+        const nextStock = applyAutoReplenish(depletedStock);
         await tx
           .update(products)
           .set({
@@ -706,12 +715,25 @@ export async function createOrderAction(
           delta: -orderedQty,
           reason: "ORDER",
           orderId,
-          resultingBalance: nextStock,
+          resultingBalance: depletedStock,
           correlationId: number,
         });
+
+        if (nextStock !== depletedStock) {
+          await tx.insert(stockMovements).values({
+            id: createId(),
+            productId,
+            delta: nextStock - depletedStock,
+            reason: "ADMIN_ADJUSTMENT",
+            orderId,
+            resultingBalance: nextStock,
+            correlationId: number,
+          });
+        }
       }
 
-      for (const [variantId, nextStock] of remainingVariantStock) {
+      for (const [variantId, depletedStock] of remainingVariantStock) {
+        const nextStock = applyAutoReplenish(depletedStock);
         await tx
           .update(productVariants)
           .set({ stockOnHand: nextStock, updatedAt: now })
@@ -739,6 +761,10 @@ export async function createOrderAction(
         for (const productId of variableProductIds) {
           const nextStock = stockByProduct.get(productId) ?? 0;
           const previous = lockedById.get(productId)?.stockOnHand ?? nextStock;
+          const orderedQty = [...variantQty.values()]
+            .filter((row) => row.productId === productId)
+            .reduce((sum, row) => sum + row.qty, 0);
+          const depletedStock = previous - orderedQty;
           await tx
             .update(products)
             .set({
@@ -750,12 +776,23 @@ export async function createOrderAction(
           await tx.insert(stockMovements).values({
             id: createId(),
             productId,
-            delta: nextStock - previous,
+            delta: -orderedQty,
             reason: "ORDER",
             orderId,
-            resultingBalance: nextStock,
+            resultingBalance: depletedStock,
             correlationId: number,
           });
+          if (nextStock !== depletedStock) {
+            await tx.insert(stockMovements).values({
+              id: createId(),
+              productId,
+              delta: nextStock - depletedStock,
+              reason: "ADMIN_ADJUSTMENT",
+              orderId,
+              resultingBalance: nextStock,
+              correlationId: number,
+            });
+          }
         }
       }
 

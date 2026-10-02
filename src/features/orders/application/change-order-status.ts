@@ -87,7 +87,12 @@ export async function changeOrderStatusAction(
 
       await tx
         .update(orders)
-        .set({ status: toStatus, updatedAt: now })
+        .set({
+          status: toStatus,
+          updatedAt: now,
+          // Clearing "new" happens when admin changes fulfillment status.
+          adminSeenAt: locked.adminSeenAt ?? now,
+        })
         .where(eq(orders.id, locked.id));
 
       await tx.insert(orderEvents).values({

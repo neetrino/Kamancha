@@ -24,6 +24,7 @@ import {
 } from "@/features/admin/ui/status-badge";
 import { splitOrderItemTitle } from "@/features/orders/domain/order-item-label";
 import { getAdminOrderByNumber } from "@/features/orders/application/queries";
+import { OrderScheduledDeliveryBanner } from "@/features/orders/ui/OrderScheduledDeliveryBanner";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -77,9 +78,20 @@ export default async function AdminOrderDetailPage({
 
   const d = copy.orders.detail;
 
-  const deliveryLabel = order.deliveryLabelSnapshot
+  let deliveryZoneLabel = order.deliveryLabelSnapshot;
+  if (order.deliveryRuleId) {
+    const { resolveZoneDelivery } = await import(
+      "@/features/delivery/application/resolve-zone-delivery"
+    );
+    const resolved = await resolveZoneDelivery(order.deliveryRuleId, locale);
+    if (resolved.ok) {
+      deliveryZoneLabel = resolved.quote.zoneName;
+    }
+  }
+
+  const deliveryLabel = deliveryZoneLabel
     ? d.deliveryWithLabel
-        .replace("{label}", order.deliveryLabelSnapshot)
+        .replace("{label}", deliveryZoneLabel)
         .replace("{amount}", formatMoney(order.deliveryAmount, order.baseCurrency))
     : d.delivery.replace("{amount}", formatMoney(order.deliveryAmount, order.baseCurrency));
 
@@ -106,6 +118,20 @@ export default async function AdminOrderDetailPage({
           </p>
           <h1 className={ADMIN_PAGE_TITLE}>{order.orderNumber}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
+            {address.scheduledDeliveryDate ? (
+              <OrderScheduledDeliveryBanner
+                variant="chip"
+                scheduledDeliveryDate={address.scheduledDeliveryDate}
+                scheduledDeliveryStart={address.scheduledDeliveryStart ?? null}
+                scheduledDeliveryEnd={address.scheduledDeliveryEnd ?? null}
+                labels={{
+                  today: d.deliveryDayToday,
+                  tomorrow: d.deliveryDayTomorrow,
+                  later: d.deliveryDayLater,
+                  title: d.deliverySlot,
+                }}
+              />
+            ) : null}
             <span
               className={`${ADMIN_BADGE} ${orderStatusBadgeClass(order.status)}`}
             >
@@ -135,15 +161,30 @@ export default async function AdminOrderDetailPage({
             {address.line1}
             {address.line2 ? `, ${address.line2}` : ""}
             <br />
-            {address.city}
+            {deliveryZoneLabel ?? address.city}
             {address.region ? `, ${address.region}` : ""}
             <br />
             {address.countryCode}
             {address.postalCode ? ` ${address.postalCode}` : ""}
           </p>
+          {address.scheduledDeliveryDate ? (
+            <div className="mt-4">
+              <OrderScheduledDeliveryBanner
+                scheduledDeliveryDate={address.scheduledDeliveryDate}
+                scheduledDeliveryStart={address.scheduledDeliveryStart ?? null}
+                scheduledDeliveryEnd={address.scheduledDeliveryEnd ?? null}
+                labels={{
+                  today: d.deliveryDayToday,
+                  tomorrow: d.deliveryDayTomorrow,
+                  later: d.deliveryDayLater,
+                  title: d.deliverySlot,
+                }}
+              />
+            </div>
+          ) : null}
           {address.floor ||
           address.intercomCode ||
-          address.scheduledDeliveryDate ||
+          address.customerNote ||
           address.cashChangeAmount != null ? (
             <dl className="mt-3 space-y-1 text-sm text-gray-600">
               {address.floor ? (
@@ -160,15 +201,11 @@ export default async function AdminOrderDetailPage({
                   </dd>
                 </div>
               ) : null}
-              {address.scheduledDeliveryDate &&
-              address.scheduledDeliveryStart &&
-              address.scheduledDeliveryEnd ? (
+              {address.customerNote ? (
                 <div className="flex gap-2">
-                  <dt className="text-gray-500">{d.deliverySlot}</dt>
-                  <dd className="font-medium text-gray-900">
-                    {address.scheduledDeliveryDate}{" "}
-                    {address.scheduledDeliveryStart}–
-                    {address.scheduledDeliveryEnd}
+                  <dt className="shrink-0 text-gray-500">{d.orderNote}</dt>
+                  <dd className="font-medium whitespace-pre-wrap text-gray-900">
+                    {address.customerNote}
                   </dd>
                 </div>
               ) : null}

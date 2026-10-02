@@ -1,18 +1,20 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
-  ADMIN_INPUT,
   ADMIN_LABEL,
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
+import { deleteDeliveryLocationAction } from "@/features/delivery/application/manage-delivery";
+import type { AdminDeliveryLocation } from "@/features/delivery/application/queries";
 import { saveDeliverySettingsAction } from "@/features/delivery/application/save-delivery-settings";
 import type { CashChangeDenomination } from "@/features/delivery/domain/cash-change";
 import type { StoreDeliverySettings } from "@/features/delivery/domain/delivery-settings";
@@ -20,21 +22,20 @@ import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delive
 import { timeToMinutes } from "@/features/delivery/domain/delivery-schedule";
 import { AdminCashChangeEditor } from "@/features/delivery/ui/AdminCashChangeEditor";
 import { AdminDeliveryScheduleEditor } from "@/features/delivery/ui/AdminDeliveryScheduleEditor";
+import { DeliveryLocationDrawer } from "@/features/delivery/ui/DeliveryLocationDrawer";
 import { formatMoneyAmount } from "@/lib/money/format";
-import type { Locale } from "@/lib/i18n/config";
-import { isLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminDeliveryViewCopy = {
   delivery: Dictionary["admin"]["delivery"];
   common: Dictionary["admin"]["common"];
   confirm: Dictionary["admin"]["confirm"];
-  map: Dictionary["checkout"]["map"];
 };
 
 type AdminDeliveryViewProps = {
   locale: string;
   settings: StoreDeliverySettings;
+  zones: AdminDeliveryLocation[];
   initialImageUrls: Record<string, string>;
   copy: AdminDeliveryViewCopy;
 };
@@ -70,15 +71,11 @@ function normalizeScheduleForSave(
 export function AdminDeliveryView({
   locale,
   settings,
+  zones,
   initialImageUrls,
   copy,
 }: AdminDeliveryViewProps) {
-  const [originAddress, setOriginAddress] = useState(settings.originAddress);
-  const [originLat, setOriginLat] = useState(settings.originLat);
-  const [originLng, setOriginLng] = useState(settings.originLng);
-  const [pricePerKmAmount, setPricePerKmAmount] = useState(
-    settings.pricePerKmAmount > 0 ? String(settings.pricePerKmAmount) : "",
-  );
+  const router = useRouter();
   const [isActive, setIsActive] = useState(settings.isActive);
   const [schedule, setSchedule] = useState<DeliveryScheduleSettings>(
     settings.schedule,
@@ -90,15 +87,16 @@ export function AdminDeliveryView({
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const languageCode: Locale = isLocale(locale) ? locale : "hy";
   const { collapsed } = useAdminSidebarCollapse();
   const stickyBarOffsetClass = collapsed ? "lg:left-16" : "lg:left-64";
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editingZone, setEditingZone] = useState<AdminDeliveryLocation | null>(
+    null,
+  );
+  const [pendingDelete, setPendingDelete] = useState<AdminDeliveryLocation | null>(
+    null,
+  );
   const [savedSnapshot, setSavedSnapshot] = useState(() => ({
-    originAddress: settings.originAddress,
-    originLat: settings.originLat,
-    originLng: settings.originLng,
-    pricePerKmAmount:
-      settings.pricePerKmAmount > 0 ? String(settings.pricePerKmAmount) : "",
     isActive: settings.isActive,
     schedule: settings.schedule,
     cashChangeDenominations: settings.cashChangeDenominations,
@@ -114,10 +112,6 @@ export function AdminDeliveryView({
   );
 
   const isDirty = useMemo(() => {
-    if (originAddress !== savedSnapshot.originAddress) return true;
-    if (originLat !== savedSnapshot.originLat) return true;
-    if (originLng !== savedSnapshot.originLng) return true;
-    if (pricePerKmAmount !== savedSnapshot.pricePerKmAmount) return true;
     if (isActive !== savedSnapshot.isActive) return true;
     if (JSON.stringify(schedule) !== JSON.stringify(savedSnapshot.schedule)) {
       return true;
@@ -136,32 +130,7 @@ export function AdminDeliveryView({
       return true;
     }
     return false;
-  }, [
-    imageUrls,
-    isActive,
-    originAddress,
-    originLat,
-    originLng,
-    pricePerKmAmount,
-    savedSnapshot,
-    schedule,
-    sortedDenominations,
-  ]);
-
-  function onOriginAddressChange(nextAddress: string): void {
-    setOriginAddress(nextAddress);
-    setOriginLat(null);
-    setOriginLng(null);
-  }
-
-  function onOriginAddressMapSelected(
-    nextAddress: string,
-    point?: { lat: number; lng: number },
-  ): void {
-    setOriginAddress(nextAddress);
-    setOriginLat(point?.lat ?? null);
-    setOriginLng(point?.lng ?? null);
-  }
+  }, [imageUrls, isActive, savedSnapshot, schedule, sortedDenominations]);
 
   function onSave(): void {
     if (!isDirty) return;
@@ -176,10 +145,6 @@ export function AdminDeliveryView({
         sortOrder: index,
       }));
       const result = await saveDeliverySettingsAction(locale, {
-        originAddress,
-        originLat,
-        originLng,
-        pricePerKmAmount: Number(pricePerKmAmount),
         isActive,
         schedule: {
           slotMinutes: nextSchedule.slotMinutes,
@@ -193,15 +158,8 @@ export function AdminDeliveryView({
         setError(result.error.message);
         return;
       }
-      setOriginAddress(result.value.originAddress);
-      setOriginLat(result.value.originLat);
-      setOriginLng(result.value.originLng);
       setCashChangeDenominations(nextDenominations);
       setSavedSnapshot({
-        originAddress: result.value.originAddress,
-        originLat: result.value.originLat,
-        originLng: result.value.originLng,
-        pricePerKmAmount,
         isActive,
         schedule: nextSchedule,
         cashChangeDenominations: nextDenominations,
@@ -212,16 +170,37 @@ export function AdminDeliveryView({
   }
 
   function onCancel(): void {
-    setOriginAddress(savedSnapshot.originAddress);
-    setOriginLat(savedSnapshot.originLat);
-    setOriginLng(savedSnapshot.originLng);
-    setPricePerKmAmount(savedSnapshot.pricePerKmAmount);
     setIsActive(savedSnapshot.isActive);
     setSchedule(savedSnapshot.schedule);
     setCashChangeDenominations(savedSnapshot.cashChangeDenominations);
     setImageUrls(savedSnapshot.imageUrls);
     setError(null);
     setMessage(null);
+  }
+
+  function openCreateZone(): void {
+    setEditingZone(null);
+    setDrawerOpen(true);
+  }
+
+  function openEditZone(zone: AdminDeliveryLocation): void {
+    setEditingZone(zone);
+    setDrawerOpen(true);
+  }
+
+  function confirmDeleteZone(): void {
+    if (!pendingDelete) return;
+    const zoneId = pendingDelete.id;
+    startTransition(async () => {
+      setError(null);
+      const result = await deleteDeliveryLocationAction(locale, zoneId);
+      if (!result.ok) {
+        setError(result.error.message);
+        return;
+      }
+      setPendingDelete(null);
+      router.refresh();
+    });
   }
 
   return (
@@ -243,84 +222,67 @@ export function AdminDeliveryView({
       >
         <Card className="p-6">
           <div className="flex flex-col gap-4">
-            <div>
-              <h2 className="text-base font-semibold text-gray-900">
-                {copy.delivery.storeAndPricing}
-              </h2>
-              <p className="mt-1 text-sm text-gray-600">
-                {copy.delivery.storeAndPricingHint}
-              </p>
-            </div>
-
-            <div>
-              <span className={ADMIN_LABEL}>{copy.delivery.storeAddress}</span>
-              <div className="mt-1 flex items-center gap-2 sm:gap-3">
-                <div className="min-w-0 flex-1">
-                  <AddressAutocomplete
-                    value={originAddress}
-                    onValueChange={onOriginAddressChange}
-                    placeholder={copy.delivery.storeAddressPlaceholder}
-                    required
-                    className={ADMIN_INPUT}
-                    disabled={isPending}
-                    languageCode={languageCode}
-                  />
-                </div>
-                <AddressMapPicker
-                  addressValue={originAddress}
-                  disabled={isPending}
-                  onAddressSelected={onOriginAddressMapSelected}
-                  labels={{
-                    openMap: copy.delivery.pickOnMap,
-                    title: copy.map.title,
-                    hint: copy.map.hint,
-                    confirm: copy.map.confirm,
-                    cancel: copy.map.cancel,
-                    resolving: copy.map.resolving,
-                  }}
-                />
-              </div>
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <span className="mt-1 block text-xs text-gray-500">
-                  {copy.delivery.storeAddressHint}
-                </span>
-                {originLat != null && originLng != null ? (
-                  <span className="mt-1 block text-xs text-gray-500">
-                    {copy.delivery.geocoded
-                      .replace("{lat}", originLat.toFixed(5))
-                      .replace("{lng}", originLng.toFixed(5))}
-                  </span>
-                ) : null}
+                <h2 className="text-base font-semibold text-gray-900">
+                  {copy.delivery.zonesTitle}
+                </h2>
+                <p className="mt-1 text-sm text-gray-600">
+                  {copy.delivery.zonesHint}
+                </p>
               </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={openCreateZone}
+                className="shrink-0 gap-1.5"
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+                {copy.delivery.addZone}
+              </Button>
             </div>
 
-            <label>
-              <span className={ADMIN_LABEL}>{copy.delivery.pricePerKm}</span>
-              <input
-                type="number"
-                min={0}
-                step={1}
-                required
-                value={pricePerKmAmount}
-                onChange={(event) => setPricePerKmAmount(event.target.value)}
-                placeholder={copy.delivery.pricePerKmPlaceholder}
-                className={ADMIN_INPUT}
-                disabled={isPending}
-              />
-              {pricePerKmAmount !== "" &&
-              Number.isFinite(Number(pricePerKmAmount)) ? (
-                <span className="mt-1 block text-xs text-gray-500">
-                  {copy.delivery.pricePerKmExample.replace(
-                    "{amount}",
-                    formatMoneyAmount(
-                      Math.round((1101 * Number(pricePerKmAmount)) / 1000),
-                      "AMD",
-                      locale,
-                    ),
-                  )}
-                </span>
-              ) : null}
-            </label>
+            {zones.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-600">
+                {copy.delivery.zonesEmpty}
+              </p>
+            ) : (
+              <ul className="divide-y divide-gray-100 overflow-hidden rounded-xl border border-gray-200">
+                {zones.map((zone) => (
+                  <li
+                    key={zone.id}
+                    className="flex items-center justify-between gap-3 px-4 py-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-900">
+                        {zone.label}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {formatMoneyAmount(zone.priceAmount, "AMD", locale)}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => openEditZone(zone)}
+                        className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                        aria-label={copy.delivery.locationDrawer.editAria}
+                      >
+                        <Pencil className="h-4 w-4" aria-hidden />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPendingDelete(zone)}
+                        className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-700"
+                        aria-label={copy.common.delete}
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
 
             <label className="inline-flex items-center gap-2 text-sm text-gray-800">
               <input
@@ -330,7 +292,7 @@ export function AdminDeliveryView({
                 disabled={isPending}
                 className="h-4 w-4 rounded border-gray-300"
               />
-              {copy.delivery.offerDelivery}
+              <span className={ADMIN_LABEL}>{copy.delivery.offerDelivery}</span>
             </label>
           </div>
         </Card>
@@ -385,6 +347,38 @@ export function AdminDeliveryView({
           </div>
         </div>
       </form>
+
+      <DeliveryLocationDrawer
+        locale={locale}
+        open={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+          setEditingZone(null);
+        }}
+        location={editingZone}
+        copy={{
+          locationDrawer: copy.delivery.locationDrawer,
+          common: copy.common,
+        }}
+      />
+
+      <ConfirmDialog
+        open={pendingDelete != null}
+        title={copy.delivery.deleteZoneTitle}
+        description={
+          pendingDelete
+            ? copy.delivery.deleteZoneDescription.replace(
+                "{name}",
+                pendingDelete.label,
+              )
+            : ""
+        }
+        confirmLabel={copy.common.delete}
+        cancelLabel={copy.common.cancel}
+        onConfirm={confirmDeleteZone}
+        onClose={() => setPendingDelete(null)}
+        isPending={isPending}
+      />
     </section>
   );
 }

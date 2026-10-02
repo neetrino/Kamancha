@@ -16,6 +16,7 @@ import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { Toast } from "@/components/ui/Toast";
 import { GroupOrderSummary } from "@/features/group-orders/ui/GroupOrderSummary";
 import {
@@ -34,6 +35,7 @@ import type {
   GroupOrderDetailView,
   GroupOrderItemView,
 } from "@/features/group-orders/application/queries";
+import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import {
   GROUP_ORDER_SPEND_LIMIT_MAX,
   parseSpendLimitInput,
@@ -81,6 +83,7 @@ type GroupOrderPageClientProps = {
   initialView: GroupOrderDetailView | null;
   inviteToken: string;
   needsJoin: boolean;
+  deliveryZones: CheckoutDeliveryOption[];
 };
 
 function absoluteInviteUrl(invitePath: string): string {
@@ -117,6 +120,7 @@ export function GroupOrderPageClient({
   initialView,
   inviteToken,
   needsJoin,
+  deliveryZones,
 }: GroupOrderPageClientProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -132,17 +136,23 @@ export function GroupOrderPageClient({
   const [deliveryAddress, setDeliveryAddress] = useState(
     initialView?.deliveryAddress ?? "",
   );
-  const [deliveryPoint, setDeliveryPoint] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [deliveryRuleId, setDeliveryRuleId] = useState(() => {
+    const zoneLabel = initialView?.deliveryDistanceLabel?.trim();
+    if (!zoneLabel) return "";
+    return (
+      deliveryZones.find((zone) => zone.label === zoneLabel)?.id ?? ""
+    );
+  });
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(
     null,
   );
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [deliveryQuotePending, setDeliveryQuotePending] = useState(false);
-  const lastQuotedAddressRef = useRef(
-    (initialView?.deliveryAddress ?? "").trim(),
+  const lastQuotedKeyRef = useRef(
+    [
+      (initialView?.deliveryAddress ?? "").trim(),
+      deliveryRuleId,
+    ].join("|"),
   );
 
   useEffect(() => {
@@ -151,8 +161,9 @@ export function GroupOrderPageClient({
     if (initialView.status !== "OPEN") return;
 
     const trimmed = deliveryAddress.trim();
-    if (trimmed.length < 3) return;
-    if (trimmed === lastQuotedAddressRef.current) return;
+    if (!deliveryRuleId || trimmed.length < 3) return;
+    const quoteKey = `${trimmed}|${deliveryRuleId}`;
+    if (quoteKey === lastQuotedKeyRef.current) return;
 
     let cancelled = false;
     const timer = window.setTimeout(() => {
@@ -160,9 +171,8 @@ export function GroupOrderPageClient({
       void setDeliveryAddressAction({
         inviteToken,
         deliveryAddress: trimmed,
+        deliveryRuleId,
         locale,
-        deliveryLat: deliveryPoint?.lat,
-        deliveryLng: deliveryPoint?.lng,
       }).then((result) => {
         if (cancelled) return;
         setDeliveryQuotePending(false);
@@ -170,7 +180,7 @@ export function GroupOrderPageClient({
           setError(result.error ?? labels.errorGeneric);
           return;
         }
-        lastQuotedAddressRef.current = trimmed;
+        lastQuotedKeyRef.current = quoteKey;
         setError(null);
         router.refresh();
       });
@@ -182,7 +192,7 @@ export function GroupOrderPageClient({
     };
   }, [
     deliveryAddress,
-    deliveryPoint,
+    deliveryRuleId,
     initialView,
     inviteToken,
     labels.errorGeneric,
@@ -467,14 +477,25 @@ export function GroupOrderPageClient({
                 {labels.deliveryFieldHint}
               </span>
             </label>
+            <div data-checkout-field="deliveryRuleId">
+              <SelectDropdown
+                ariaLabel={labels.deliveryZoneLabel}
+                value={deliveryRuleId}
+                allLabel={labels.selectDeliveryZone}
+                options={deliveryZones.map((zone) => ({
+                  value: zone.id,
+                  label: zone.label,
+                }))}
+                disabled={pending}
+                onValueChange={setDeliveryRuleId}
+                className="w-full"
+              />
+            </div>
             <div className="flex items-start gap-2">
               <div className="min-w-0 flex-1">
                 <AddressAutocomplete
                   value={deliveryAddress}
-                  onValueChange={(value) => {
-                    setDeliveryAddress(value);
-                    setDeliveryPoint(null);
-                  }}
+                  onValueChange={setDeliveryAddress}
                   placeholder={labels.deliveryAddressPlaceholder}
                   languageCode={locale}
                   className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-gray-400"
@@ -483,10 +504,7 @@ export function GroupOrderPageClient({
               <AddressMapPicker
                 addressValue={deliveryAddress}
                 disabled={pending}
-                onAddressSelected={(address) => {
-                  setDeliveryAddress(address);
-                  setDeliveryPoint(null);
-                }}
+                onAddressSelected={setDeliveryAddress}
                 labels={{
                   openMap: labels.openMap,
                   title: labels.mapTitle,

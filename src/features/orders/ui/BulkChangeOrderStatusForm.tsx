@@ -12,21 +12,20 @@ import {
   ADMIN_TABLE_CHECKBOX,
   ADMIN_TABLE_FOOTER_ROUNDED_B,
   ADMIN_TABLE_OUTER_SCROLL,
-  ADMIN_TABLE_ROW,
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
-  ADMIN_TABLE_TD,
-  ADMIN_TABLE_TD_CENTER,
-  ADMIN_TABLE_TD_CHECK,
   ADMIN_TABLE_TH,
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_TH_CHECK,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
-import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
-import { AdminInlineStatusSelect } from "@/features/orders/ui/AdminInlineStatusSelect";
-import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
+import {
+  classifyAdminDeliveryDay,
+  formatYmdDisplay,
+  groupOrdersByDeliveryDate,
+} from "@/features/orders/domain/admin-delivery-day";
+import { AdminOrderDeliveryGroupRows } from "@/features/orders/ui/AdminOrderDeliveryGroupRows";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type BulkOrderRow = {
@@ -36,13 +35,34 @@ type BulkOrderRow = {
   paymentStatus: string;
   paymentMethod: string | null;
   contactName: string;
-  contactEmail: string;
+  contactPhone: string;
   totalAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;
   isGroupOrder: boolean;
+  isNew: boolean;
+  customerAdminNote: string | null;
+  scheduledDeliveryDate: string | null;
+  scheduledDeliveryStart: string | null;
+  scheduledDeliveryEnd: string | null;
 };
+
+function deliveryGroupTitle(
+  date: string | null,
+  copy: Dictionary["admin"]["orders"]["table"],
+): string {
+  if (!date) return copy.deliveryGroupNone;
+  const kind = classifyAdminDeliveryDay(date);
+  const formatted = formatYmdDisplay(date);
+  if (kind === "today") {
+    return copy.deliveryGroupToday.replace("{date}", formatted);
+  }
+  if (kind === "tomorrow") {
+    return copy.deliveryGroupTomorrow.replace("{date}", formatted);
+  }
+  return copy.deliveryGroupDate.replace("{date}", formatted);
+}
 
 type BulkChangeOrderStatusFormProps = {
   locale: string;
@@ -126,6 +146,9 @@ export function BulkChangeOrderStatusForm({
         : copy.common.entitySingular.orders,
     );
 
+  const deliveryGroups = groupOrdersByDeliveryDate(orders);
+  const showDeliveryGroups = deliveryGroups.length > 1;
+
   return (
     <div className="flex flex-col gap-4">
       {selected.size > 0 ? (
@@ -170,6 +193,9 @@ export function BulkChangeOrderStatusForm({
                   {copy.orders.table.total}
                 </th>
                 <th className={ADMIN_TABLE_TH_CENTER}>
+                  {copy.orders.table.delivery}
+                </th>
+                <th className={ADMIN_TABLE_TH_CENTER}>
                   {copy.orders.table.placed}
                 </th>
                 <th className={ADMIN_TABLE_TH_CENTER}>
@@ -184,107 +210,28 @@ export function BulkChangeOrderStatusForm({
               </tr>
             </thead>
             <tbody className={ADMIN_TABLE_TBODY}>
-              {orders.map((order) => {
-                const placed = formatAdminPlacedParts(order.placedAt);
+              {deliveryGroups.map((group) => {
+                const headerKey = group.date ?? "none";
                 return (
-                  <tr
-                    key={order.id}
-                    className={`${ADMIN_TABLE_ROW} cursor-pointer`}
-                    onClick={() => onOpenOrder(order.orderNumber)}
-                  >
-                    <td
-                      className={ADMIN_TABLE_TD_CHECK}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <input
-                        type="checkbox"
-                        className={ADMIN_TABLE_CHECKBOX}
-                        checked={selected.has(order.orderNumber)}
-                        onChange={() => toggleOne(order.orderNumber)}
-                        disabled={isPending || order.isArchived}
-                        aria-label={copy.orders.bulk.selectOneAria.replace(
-                          "{orderNumber}",
-                          order.orderNumber,
-                        )}
-                      />
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <div className="flex flex-col items-start gap-1">
-                        <span className="font-medium text-gray-900">
-                          {order.orderNumber}
-                        </span>
-                        {order.isGroupOrder || order.isArchived ? (
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            {order.isGroupOrder ? (
-                              <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium uppercase text-indigo-700">
-                                {copy.orders.table.groupOrderBadge}
-                              </span>
-                            ) : null}
-                            {order.isArchived ? (
-                              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase text-gray-600">
-                                {copy.orders.table.archivedBadge}
-                              </span>
-                            ) : null}
-                          </div>
-                        ) : null}
-                      </div>
-                    </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <p className="font-medium text-gray-900">
-                        {order.contactName}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {order.contactEmail}
-                      </p>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span className="font-semibold text-gray-900">
-                        {formatOrderDrawerMoney(
-                          order.totalAmount,
-                          order.baseCurrency,
-                        )}
-                      </span>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <p className="text-sm text-gray-700">{placed.time}</p>
-                      <p className="text-xs text-gray-500">{placed.date}</p>
-                    </td>
-                    <td
-                      className={ADMIN_TABLE_TD_CENTER}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <div className="inline-flex justify-center">
-                        <AdminInlineStatusSelect
-                          locale={locale}
-                          orderNumber={order.orderNumber}
-                          kind="order"
-                          value={order.status}
-                          disabled={isPending || order.isArchived}
-                          copy={copy}
-                        />
-                      </div>
-                    </td>
-                    <td
-                      className={ADMIN_TABLE_TD_CENTER}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      <div className="inline-flex justify-center">
-                        <AdminInlineStatusSelect
-                          locale={locale}
-                          orderNumber={order.orderNumber}
-                          kind="payment"
-                          value={order.paymentStatus}
-                          disabled={isPending || order.isArchived}
-                          copy={copy}
-                        />
-                      </div>
-                    </td>
-                    <td className={ADMIN_TABLE_TD_CENTER}>
-                      <span className="text-sm text-gray-700">
-                        {order.paymentMethod ?? copy.common.none}
-                      </span>
-                    </td>
-                  </tr>
+                  <AdminOrderDeliveryGroupRows
+                    key={headerKey}
+                    title={
+                      showDeliveryGroups
+                        ? deliveryGroupTitle(group.date, copy.orders.table)
+                        : null
+                    }
+                    countLabel={copy.orders.table.deliveryGroupCount.replace(
+                      "{count}",
+                      String(group.orders.length),
+                    )}
+                    orders={group.orders}
+                    locale={locale}
+                    selected={selected}
+                    isPending={isPending}
+                    copy={copy}
+                    onOpenOrder={onOpenOrder}
+                    onToggleOne={toggleOne}
+                  />
                 );
               })}
             </tbody>

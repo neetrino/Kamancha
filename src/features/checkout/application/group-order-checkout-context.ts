@@ -29,6 +29,7 @@ export type GroupOrderCheckoutContext =
       othersPrepaidAmount: number;
       deliveryAddress: string | null;
       deliveryAmount: number;
+      deliveryZoneLabel: string | null;
       participants: GroupOrderCheckoutParticipant[];
     }
   | { active: false };
@@ -86,6 +87,7 @@ export async function resolveGroupOrderCheckoutContext(): Promise<GroupOrderChec
     othersPrepaidAmount,
     deliveryAddress: access.groupOrder.deliveryAddress,
     deliveryAmount: access.groupOrder.deliveryAmount,
+    deliveryZoneLabel: access.groupOrder.deliveryDistanceLabel,
     participants,
   };
 }
@@ -97,6 +99,7 @@ export async function getGroupOrderCheckoutUiFlags(): Promise<{
   organizerPayableAmount: number;
   othersPrepaidAmount: number;
   lockedDeliveryAmount: number | null;
+  lockedDeliveryZoneLabel: string | null;
   defaultDeliveryAddress: string | null;
 }> {
   const ctx = await resolveGroupOrderCheckoutContext();
@@ -107,6 +110,7 @@ export async function getGroupOrderCheckoutUiFlags(): Promise<{
       organizerPayableAmount: 0,
       othersPrepaidAmount: 0,
       lockedDeliveryAmount: null,
+      lockedDeliveryZoneLabel: null,
       defaultDeliveryAddress: null,
     };
   }
@@ -116,6 +120,7 @@ export async function getGroupOrderCheckoutUiFlags(): Promise<{
     organizerPayableAmount: ctx.organizerPayableAmount,
     othersPrepaidAmount: ctx.othersPrepaidAmount,
     lockedDeliveryAmount: ctx.deliveryAddress ? ctx.deliveryAmount : null,
+    lockedDeliveryZoneLabel: ctx.deliveryZoneLabel,
     defaultDeliveryAddress: ctx.deliveryAddress,
   };
 }

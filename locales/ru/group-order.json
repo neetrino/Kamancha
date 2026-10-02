@@ -61,7 +61,7 @@
   "saveLimit": "Сохранить",
   "editLimit": "Изменить",
   "deliveryFieldLabel": "Адрес доставки",
-  "deliveryFieldHint": "Сначала укажите адрес — так мы посчитаем доставку и разделим её между участниками.",
+  "deliveryFieldHint": "Выберите зону с фиксированной ценой, затем укажите адрес улицы.",
   "deliveryPlaceholder": "напр. 1000",
   "lockAndContinue": "Завершить сбор товаров",
   "goToCheckout": "Перейти к оформлению и оплате",
@@ -82,7 +82,7 @@
   "browseMenu": "Смотреть меню",
   "deliveryAddressPlaceholder": "Улица, дом, город…",
   "calculateDelivery": "Рассчитать доставку",
-  "calculatingDelivery": "Расчёт доставки…",
+  "calculatingDelivery": "Сохранение доставки…",
   "deliveryQuoteReady": "Доставка: {amount} ({distance})",
   "deliverySplitHint": "Доставка делится между участниками с товарами. Остаток идёт организатору.",
   "deliveryOrganizerPaysHint": "Если вы платите за всех — всю доставку оплачиваете вы.",
@@ -119,5 +119,7 @@
     "removeItem": "Удалить «{name}» из этого группового заказа?",
     "cancelOrder": "Отменить этот групповой заказ? Это действие нельзя отменить.",
     "cancelOrderConfirm": "Отменить заказ"
-  }
+  },
+  "deliveryZoneLabel": "Зона доставки",
+  "selectDeliveryZone": "Выберите зону доставки"
 }

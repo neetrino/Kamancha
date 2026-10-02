@@ -22,7 +22,7 @@ export type DashboardRecentOrderItem = {
   id: string;
   orderNumber: string;
   status: string;
-  contactEmail: string;
+  contactPhone: string;
   totalAmount: number;
 };
 
@@ -106,7 +106,7 @@ export function DashboardRecentOrders({
                     </span>
                   </div>
                   <p className="truncate text-[11px] text-gray-500">
-                    {order.contactEmail}
+                    {order.contactPhone}
                   </p>
                 </div>
                 <p className="shrink-0 text-sm font-semibold text-gray-900">

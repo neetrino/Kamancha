@@ -19,9 +19,15 @@ type AdminSidebarProps = {
   locale: Locale;
   shell: Dictionary["admin"]["shell"];
   nav: Dictionary["admin"]["nav"];
+  ordersBadgeAria: string;
 };
 
-export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
+export function AdminSidebar({
+  locale,
+  shell,
+  nav,
+  ordersBadgeAria,
+}: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
   const { collapsed } = useAdminSidebarCollapse();
   const asideWidthClass = collapsed ? "lg:w-16" : "lg:w-64";
@@ -42,6 +48,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
             pathname={pathname}
             shell={shell}
             nav={nav}
+            ordersBadgeAria={ordersBadgeAria}
           />
         </div>
       </div>
@@ -52,6 +59,7 @@ export function AdminSidebar({ locale, shell, nav }: AdminSidebarProps) {
           pathname={pathname}
           shell={shell}
           nav={nav}
+          ordersBadgeAria={ordersBadgeAria}
         />
       </aside>
     </>

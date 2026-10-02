@@ -47,8 +47,7 @@ export default async function AdminGiftCardDetailPage({ params }: PageProps) {
         <div>
           <dt className="text-xs text-gray-500">{copy.table.balance}</dt>
           <dd className="text-sm font-medium text-gray-900">
-            {formatMoneyAmount(card.balanceAmount, "AMD", locale)} /{" "}
-            {formatMoneyAmount(card.initialAmount, "AMD", locale)}
+            {formatMoneyAmount(card.balanceAmount, "AMD", locale)}
           </dd>
         </div>
         <div>

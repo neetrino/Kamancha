@@ -10,25 +10,24 @@ import {
 } from "@/features/delivery/domain/delivery-schedule";
 
 export type StoreDeliverySettings = {
-  originAddress: string;
-  originLat: number | null;
-  originLng: number | null;
-  /** Whole AMD charged per kilometer (fractional km kept in fee math). */
-  pricePerKmAmount: number;
   isActive: boolean;
   schedule: DeliveryScheduleSettings;
   /** COD banknote options customers can select for change. */
   cashChangeDenominations: CashChangeDenomination[];
+  /**
+   * Optional map center from legacy origin settings (not edited in admin).
+   * Used only as a fallback for the address map picker.
+   */
+  mapCenterLat: number | null;
+  mapCenterLng: number | null;
 };
 
 export const DEFAULT_DELIVERY_SETTINGS: StoreDeliverySettings = {
-  originAddress: "",
-  originLat: null,
-  originLng: null,
-  pricePerKmAmount: 0,
   isActive: false,
   schedule: structuredClone(DEFAULT_DELIVERY_SCHEDULE),
   cashChangeDenominations: createDefaultCashChangeDenominations(),
+  mapCenterLat: null,
+  mapCenterLng: null,
 };
 
 function isFiniteNumber(value: unknown): value is number {
@@ -42,45 +41,23 @@ export function parseDeliverySettings(value: unknown): StoreDeliverySettings {
   }
 
   const record = value as Record<string, unknown>;
-  const originAddress =
-    typeof record.originAddress === "string"
-      ? record.originAddress.trim().slice(0, 300)
-      : "";
-  const priceRaw = record.pricePerKmAmount;
-  const pricePerKmAmount =
-    typeof priceRaw === "number"
-      ? priceRaw
-      : typeof priceRaw === "string"
-        ? Number(priceRaw)
-        : 0;
   const originLat = isFiniteNumber(record.originLat) ? record.originLat : null;
   const originLng = isFiniteNumber(record.originLng) ? record.originLng : null;
 
   return {
-    originAddress,
-    originLat,
-    originLng,
-    pricePerKmAmount:
-      Number.isInteger(pricePerKmAmount) && pricePerKmAmount >= 0
-        ? pricePerKmAmount
-        : 0,
     isActive: record.isActive === true,
     schedule: parseDeliverySchedule(record.schedule),
     cashChangeDenominations: parseCashChangeDenominations(
       record.cashChangeDenominations,
     ),
+    mapCenterLat: originLat,
+    mapCenterLng: originLng,
   };
 }
 
-/** True when checkout can offer distance-based delivery. */
-export function isDistanceDeliveryReady(
+/** True when the storefront may offer delivery (zones configured separately). */
+export function isDeliveryOfferingEnabled(
   settings: StoreDeliverySettings,
 ): boolean {
-  return (
-    settings.isActive &&
-    settings.originAddress.trim().length > 0 &&
-    settings.originLat != null &&
-    settings.originLng != null &&
-    settings.pricePerKmAmount >= 0
-  );
+  return settings.isActive;
 }

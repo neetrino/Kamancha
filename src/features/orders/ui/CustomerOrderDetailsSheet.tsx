@@ -14,6 +14,7 @@ import {
   localizePaymentStatus,
 } from "@/features/orders/ui/localize-order-status";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
+import { OrderScheduledDeliveryBanner } from "@/features/orders/ui/OrderScheduledDeliveryBanner";
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
@@ -71,6 +72,20 @@ export function CustomerOrderDetailsSheet({
               <span className="inline-flex rounded-full bg-brand-forest/10 px-3 py-1 text-xs font-medium text-brand-forest">
                 {groupOrderBadgeLabel}
               </span>
+            ) : null}
+            {detail.scheduledDeliveryDate ? (
+              <OrderScheduledDeliveryBanner
+                variant="chip"
+                scheduledDeliveryDate={detail.scheduledDeliveryDate}
+                scheduledDeliveryStart={detail.scheduledDeliveryStart}
+                scheduledDeliveryEnd={detail.scheduledDeliveryEnd}
+                labels={{
+                  today: d.deliveryDayToday,
+                  tomorrow: d.deliveryDayTomorrow,
+                  later: d.deliveryDayLater,
+                  title: d.deliverySlot,
+                }}
+              />
             ) : null}
             <span
               className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
@@ -168,9 +183,7 @@ function CustomerOrderSheetBody({
                 ? detail.storeName
                   ? `${labels.pickupStore} ${detail.storeName}`
                   : detail.shippingMethod
-                : detail.scheduledDelivery
-                  ? `${labels.delivery} · ${detail.scheduledDelivery}`
-                  : labels.delivery}
+                : labels.delivery}
             </p>
             {includeAdminDetails && !detail.isPickup && detail.floor ? (
               <p className="text-xs text-gray-500">
@@ -182,11 +195,29 @@ function CustomerOrderSheetBody({
                 {labels.intercomCode} {detail.intercomCode}
               </p>
             ) : null}
+            {detail.customerNote ? (
+              <p className="text-xs text-gray-500 whitespace-pre-wrap">
+                {labels.orderNote} {detail.customerNote}
+              </p>
+            ) : null}
             {detail.addressHint ? (
               <p className="text-xs text-gray-500">{detail.addressHint}</p>
             ) : null}
           </div>
         </div>
+        {detail.scheduledDeliveryDate ? (
+          <OrderScheduledDeliveryBanner
+            scheduledDeliveryDate={detail.scheduledDeliveryDate}
+            scheduledDeliveryStart={detail.scheduledDeliveryStart}
+            scheduledDeliveryEnd={detail.scheduledDeliveryEnd}
+            labels={{
+              today: labels.deliveryDayToday,
+              tomorrow: labels.deliveryDayTomorrow,
+              later: labels.deliveryDayLater,
+              title: labels.deliverySlot,
+            }}
+          />
+        ) : null}
         <CustomerOrderSheetPayment
           detail={detail}
           labels={labels}

@@ -55,6 +55,7 @@ export type AdminUserDetail = {
     phone: string | null;
     role: string;
     status: string;
+    adminNote: string | null;
     emailVerifiedAt: Date | null;
     lastLoginAt: Date | null;
     anonymizedAt: Date | null;
@@ -175,6 +176,7 @@ export async function getAdminUserById(
       phone: users.phone,
       role: users.role,
       status: users.status,
+      adminNote: users.adminNote,
       emailVerifiedAt: users.emailVerifiedAt,
       lastLoginAt: users.lastLoginAt,
       anonymizedAt: users.anonymizedAt,

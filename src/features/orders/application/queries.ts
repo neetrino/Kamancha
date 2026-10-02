@@ -38,14 +38,26 @@ import { getStoreRevenue } from "@/features/settings/application/queries";
 
 const PAGE_SIZE = 20;
 
+/** Latest payment method; `${orders}.id` keeps the outer orders.id qualified. */
 const latestPaymentMethodSql = sql<string | null>`
   (
     select ${payments.method}
     from ${payments}
-    where ${payments.orderId} = ${orders.id}
+    where ${payments.orderId} = ${orders}.id
     order by ${payments.createdAt} desc
     limit 1
   )
+`;
+
+/** Scheduled delivery fields from `shipping_address` JSON (null when pickup / missing). */
+const scheduledDeliveryDateSql = sql<string | null>`
+  ${orders.shippingAddress}->>'scheduledDeliveryDate'
+`;
+const scheduledDeliveryStartSql = sql<string | null>`
+  ${orders.shippingAddress}->>'scheduledDeliveryStart'
+`;
+const scheduledDeliveryEndSql = sql<string | null>`
+  ${orders.shippingAddress}->>'scheduledDeliveryEnd'
 `;
 
 export type AdminOrderListItem = {
@@ -55,17 +67,35 @@ export type AdminOrderListItem = {
   paymentStatus: string;
   paymentMethod: string | null;
   contactName: string;
-  contactEmail: string;
+  contactPhone: string;
   totalAmount: number;
   baseCurrency: string;
   placedAt: Date;
   isArchived: boolean;
   isGroupOrder: boolean;
+  /** True when admin has not acknowledged / opened this order yet. */
+  isNew: boolean;
+  /** Linked customer's operator note; null when absent or guest order. */
+  customerAdminNote: string | null;
+  /** Scheduled delivery date `YYYY-MM-DD` (Asia/Yerevan), when set. */
+  scheduledDeliveryDate: string | null;
+  /** Slot start `HH:mm`, when set. */
+  scheduledDeliveryStart: string | null;
+  /** Slot end `HH:mm`, when set. */
+  scheduledDeliveryEnd: string | null;
 };
 
-export type CustomerOrderListItem = AdminOrderListItem & {
+export type CustomerOrderListItem = Omit<
+  AdminOrderListItem,
+  | "customerAdminNote"
+  | "isNew"
+  | "scheduledDeliveryDate"
+  | "scheduledDeliveryStart"
+  | "scheduledDeliveryEnd"
+> & {
   itemsCount: number;
   bonusEarnedAmount: number;
+  isNew?: boolean;
 };
 
 export type OrderItemModifierSnapshot = {
@@ -115,6 +145,12 @@ function buildOrderFilters(filters: AdminOrdersFilter): SQL | undefined {
     );
   }
 
+  if (filters.deliveryDate) {
+    conditions.push(
+      sql`${orders.shippingAddress}->>'scheduledDeliveryDate' = ${filters.deliveryDate}`,
+    );
+  }
+
   if (filters.q) {
     const pattern = `%${filters.q}%`;
     conditions.push(
@@ -140,7 +176,9 @@ export async function listAdminOrders(
       ? isNull(orders.groupOrderId)
       : kind === "group"
         ? sql`${orders.groupOrderId} is not null`
-        : undefined;
+        : kind === "new"
+          ? isNull(orders.adminSeenAt)
+          : undefined;
   const where = and(buildOrderFilters(filters), kindWhere);
   const offset = (filters.page - 1) * PAGE_SIZE;
 
@@ -153,29 +191,52 @@ export async function listAdminOrders(
         paymentStatus: orders.paymentStatus,
         paymentMethodRaw: latestPaymentMethodSql,
         contactName: orders.contactName,
-        contactEmail: orders.contactEmail,
+        contactPhone: orders.contactPhone,
         totalAmount: orders.totalAmount,
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        adminSeenAt: orders.adminSeenAt,
         groupOrderId: orders.groupOrderId,
+        customerAdminNote: users.adminNote,
+        scheduledDeliveryDate: scheduledDeliveryDateSql,
+        scheduledDeliveryStart: scheduledDeliveryStartSql,
+        scheduledDeliveryEnd: scheduledDeliveryEndSql,
       })
       .from(orders)
+      .leftJoin(users, eq(orders.userId, users.id))
       .where(where)
-      .orderBy(desc(orders.placedAt))
+      .orderBy(
+        sql`${orders.shippingAddress}->>'scheduledDeliveryDate' asc nulls last`,
+        sql`${orders.shippingAddress}->>'scheduledDeliveryStart' asc nulls last`,
+        desc(orders.placedAt),
+      )
       .limit(PAGE_SIZE)
       .offset(offset),
     getDb().select({ value: count() }).from(orders).where(where),
   ]);
 
   return {
-    rows: rows.map(({ paymentMethodRaw, groupOrderId, ...row }) => ({
-      ...row,
-      paymentMethod: paymentMethodRaw
-        ? paymentMethodLabel(paymentMethodRaw)
-        : null,
-      isGroupOrder: groupOrderId != null,
-    })),
+    rows: rows.map(
+      ({
+        paymentMethodRaw,
+        groupOrderId,
+        adminSeenAt,
+        customerAdminNote,
+        ...row
+      }) => ({
+        ...row,
+        paymentMethod: paymentMethodRaw
+          ? paymentMethodLabel(paymentMethodRaw)
+          : null,
+        isGroupOrder: groupOrderId != null,
+        isNew: adminSeenAt == null,
+        customerAdminNote:
+          customerAdminNote != null && customerAdminNote.trim().length > 0
+            ? customerAdminNote.trim()
+            : null,
+      }),
+    ),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
   };
@@ -196,10 +257,14 @@ export async function listCustomerOrders(
 }> {
   const baseWhere = buildOrderFilters(filters);
   const visibility = customerOrdersVisibilitySql(userId);
+  const customerKind =
+    filters.kind === "personal" || filters.kind === "group"
+      ? filters.kind
+      : "all";
   const kindWhere =
-    filters.kind === "personal"
+    customerKind === "personal"
       ? sql`${orders.groupOrderId} is null`
-      : filters.kind === "group"
+      : customerKind === "group"
         ? sql`${orders.groupOrderId} is not null`
         : undefined;
   const where = and(visibility, baseWhere, kindWhere);
@@ -214,7 +279,7 @@ export async function listCustomerOrders(
         paymentStatus: orders.paymentStatus,
         paymentMethodRaw: latestPaymentMethodSql,
         contactName: orders.contactName,
-        contactEmail: orders.contactEmail,
+        contactPhone: orders.contactPhone,
         totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
@@ -238,6 +303,7 @@ export async function listCustomerOrders(
         ? paymentMethodLabel(paymentMethodRaw)
         : null,
       isGroupOrder: groupOrderId != null,
+      isNew: false,
     })),
     total: totalRow?.value ?? 0,
     pageSize: PAGE_SIZE,
@@ -422,11 +488,12 @@ export async function getAdminDashboardMetrics(input: {
         paymentStatus: orders.paymentStatus,
         paymentMethodRaw: latestPaymentMethodSql,
         contactName: orders.contactName,
-        contactEmail: orders.contactEmail,
+        contactPhone: orders.contactPhone,
         totalAmount: orders.totalAmount,
         baseCurrency: orders.baseCurrency,
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
+        adminSeenAt: orders.adminSeenAt,
       })
       .from(orders)
       .where(and(eq(orders.isArchived, false), isNull(orders.groupOrderId)))
@@ -461,13 +528,20 @@ export async function getAdminDashboardMetrics(input: {
     orders: ordersRow?.value ?? 0,
     revenueAmount: revenueRow?.value ?? 0,
     previousRevenueAmount: previousRevenueRow?.value ?? 0,
-    recentOrders: recentOrders.map(({ paymentMethodRaw, ...row }) => ({
-      ...row,
-      paymentMethod: paymentMethodRaw
-        ? paymentMethodLabel(paymentMethodRaw)
-        : null,
-      isGroupOrder: false,
-    })),
+    recentOrders: recentOrders.map(
+      ({ paymentMethodRaw, adminSeenAt, ...row }) => ({
+        ...row,
+        paymentMethod: paymentMethodRaw
+          ? paymentMethodLabel(paymentMethodRaw)
+          : null,
+        isGroupOrder: false,
+        isNew: adminSeenAt == null,
+        customerAdminNote: null,
+        scheduledDeliveryDate: null,
+        scheduledDeliveryStart: null,
+        scheduledDeliveryEnd: null,
+      }),
+    ),
     topProducts: topProductRows.map((row) => ({
       productId: row.productId ?? "unknown",
       title: row.title,

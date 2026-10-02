@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/Button";
@@ -10,12 +10,19 @@ import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
+import {
+  CheckoutPaymentMethodOption,
+  type CheckoutPaymentOption,
+} from "@/features/checkout/ui/CheckoutPaymentMethodOption";
 import { adminCreateGiftCardAction } from "@/features/gift-cards/application/admin-actions";
+import type { GiftCardPaymentMethod } from "@/features/gift-cards/domain/gift-card-payment-method";
+import type { GiftCardPaymentLabels } from "@/features/gift-cards/ui/BuyGiftCardForm";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type GiftCardDrawerCopy = {
   drawer: Dictionary["admin"]["giftCards"]["drawer"];
   common: Dictionary["admin"]["common"];
+  payment: GiftCardPaymentLabels;
 };
 
 type GiftCardDrawerProps = {
@@ -41,9 +48,29 @@ export function GiftCardDrawer({
   const [purchaserName, setPurchaserName] = useState("White Shop");
   const [message, setMessage] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
+  const [paymentMethod, setPaymentMethod] =
+    useState<GiftCardPaymentMethod>("cash_on_delivery");
   const [sendEmail, setSendEmail] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const paymentOptions = useMemo<CheckoutPaymentOption[]>(
+    () => [
+      {
+        id: "cash_on_delivery",
+        name: copy.payment.cashOnDelivery,
+        shortName: copy.payment.cashShort,
+        description: copy.payment.cashOnDeliveryDescription,
+      },
+      {
+        id: "arca",
+        name: copy.payment.card,
+        shortName: copy.payment.card,
+        description: copy.payment.cardDescription,
+      },
+    ],
+    [copy.payment],
+  );
 
   function onSubmit(): void {
     setError(null);
@@ -56,6 +83,7 @@ export function GiftCardDrawer({
         purchaserName,
         message: message || undefined,
         expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
+        paymentMethod,
         sendEmail,
         activateImmediately: true,
       });
@@ -90,6 +118,23 @@ export function GiftCardDrawer({
             onChange={(event) => setAmount(event.target.value)}
           />
         </label>
+        <fieldset className="space-y-2">
+          <legend className={ADMIN_LABEL}>{copy.drawer.paymentMethod}</legend>
+          <div className="space-y-2">
+            {paymentOptions.map((option) => (
+              <CheckoutPaymentMethodOption
+                key={option.id}
+                option={option}
+                selected={paymentMethod === option.id}
+                disabled={isPending}
+                cardDescriptionBelowIcons={option.id === "arca"}
+                onSelect={(method) =>
+                  setPaymentMethod(method as GiftCardPaymentMethod)
+                }
+              />
+            ))}
+          </div>
+        </fieldset>
         <label className="block space-y-1">
           <span className={ADMIN_LABEL}>{copy.drawer.recipientName}</span>
           <input

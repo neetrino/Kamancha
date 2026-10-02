@@ -85,6 +85,27 @@
       "when": 1788270000000,
       "tag": "0011_cart_attribute",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788280000000,
+      "tag": "0012_delivery_zone_translations",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1788290000000,
+      "tag": "0013_admin_order_seen",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1788300000000,
+      "tag": "0014_user_admin_note",
+      "breakpoints": true
     }
   ]
 }

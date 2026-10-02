@@ -67,10 +67,10 @@
       "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     },
     "paymentMethod": "Payment method",
-    "cashOnDelivery": "Cash on delivery",
     "submit": "Place purchase",
     "submitting": "Submitting…",
-    "successPending": "Purchase created. The gift card is active and the code was emailed to the recipient."
+    "successActive": "Purchase created. The gift card is active and the code was emailed to the recipient.",
+    "successPendingPayment": "Purchase created. The gift card will activate after payment is confirmed."
   },
   "personal": "Personal information",
   "addresses": "Addresses",

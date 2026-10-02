@@ -2,6 +2,7 @@ export const CHECKOUT_INVALID_FIELDS = [
   "firstName",
   "contactEmail",
   "contactPhone",
+  "deliveryRuleId",
   "line1",
   "deliverySlot",
   "paymentMethod",
@@ -18,7 +19,7 @@ type CheckoutFieldValues = {
   contactEmail: string;
   contactPhone: string;
   line1: string;
-  line1QuoteOk: boolean;
+  hasDeliveryZone: boolean;
   hasDeliverySlot: boolean;
   hasPaymentMethod: boolean;
 };
@@ -36,9 +37,8 @@ export function collectCheckoutInvalidFields(
   if (!values.firstName.trim()) invalid.firstName = true;
   if (!isEmailValid(values.contactEmail.trim())) invalid.contactEmail = true;
   if (values.contactPhone.trim().length < 5) invalid.contactPhone = true;
-  if (values.line1.trim().length < 3 || !values.line1QuoteOk) {
-    invalid.line1 = true;
-  }
+  if (!values.hasDeliveryZone) invalid.deliveryRuleId = true;
+  if (values.line1.trim().length < 3) invalid.line1 = true;
   if (!values.hasDeliverySlot) invalid.deliverySlot = true;
   if (!values.hasPaymentMethod) invalid.paymentMethod = true;
 

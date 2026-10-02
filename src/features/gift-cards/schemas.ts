@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-import { CHECKOUT_PAYMENT_METHODS } from "@/features/checkout/domain/payment-methods";
+import {
+  GIFT_CARD_PAYMENT_METHODS,
+} from "@/features/gift-cards/domain/gift-card-payment-method";
 
 export const purchaseGiftCardSchema = z.object({
   amount: z.coerce.number().int().min(1).max(100_000_000),
@@ -10,7 +12,7 @@ export const purchaseGiftCardSchema = z.object({
   purchaserName: z.string().trim().min(1).max(120),
   message: z.string().trim().max(1000).optional(),
   scheduledSendAt: z.string().datetime().optional().nullable(),
-  paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS),
+  paymentMethod: z.enum(GIFT_CARD_PAYMENT_METHODS),
   locale: z.enum(["hy", "en", "ru"]),
 });
 
@@ -25,6 +27,7 @@ export const adminCreateGiftCardSchema = z.object({
   purchaserEmail: z.string().trim().email().max(254).optional(),
   message: z.string().trim().max(1000).optional(),
   expiresAt: z.string().datetime().optional().nullable(),
+  paymentMethod: z.enum(GIFT_CARD_PAYMENT_METHODS).default("cash_on_delivery"),
   sendEmail: z.boolean().default(true),
   activateImmediately: z.boolean().default(true),
 });

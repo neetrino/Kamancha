@@ -21,6 +21,7 @@ import {
 } from "@/features/users/domain/user-lifecycle";
 import { AdminUserBonuses } from "@/features/users/ui/AdminUserBonuses";
 import { AdminUserGiftCards } from "@/features/users/ui/AdminUserGiftCards";
+import { AdminUserNoteForm } from "@/features/users/ui/AdminUserNoteForm";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
@@ -162,6 +163,14 @@ export default async function AdminUserDetailPage({
           <p className="text-sm text-red-700">{t.users.detail.unknownStatus}</p>
         )}
       </div>
+
+      <AdminUserNoteForm
+        locale={locale}
+        userId={user.id}
+        initialNote={user.adminNote}
+        disabled={isAnonymized}
+        copy={t}
+      />
 
       <AdminUserBonuses
         locale={locale}

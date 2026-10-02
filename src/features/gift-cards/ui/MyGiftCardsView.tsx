@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { BuyGiftCardDrawer } from "@/features/gift-cards/ui/BuyGiftCardDrawer";
+import type { GiftCardPaymentLabels } from "@/features/gift-cards/ui/BuyGiftCardForm";
 import type {
   GiftCardDetail,
   GiftCardListItem,
@@ -60,10 +61,11 @@ type MyGiftCardsViewCopy = {
       weekdaysShort: readonly string[];
     };
     paymentMethod: string;
-    cashOnDelivery: string;
+    payment: GiftCardPaymentLabels;
     submit: string;
     submitting: string;
-    successPending: string;
+    successActive: string;
+    successPendingPayment: string;
   };
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
@@ -15,12 +15,17 @@ type AdminOrdersViewOrder = {
   paymentStatus: string;
   paymentMethod: string | null;
   contactName: string;
-  contactEmail: string;
+  contactPhone: string;
   totalAmount: number;
   baseCurrency: string;
   placedAt: string | Date;
   isArchived: boolean;
   isGroupOrder: boolean;
+  isNew: boolean;
+  customerAdminNote: string | null;
+  scheduledDeliveryDate: string | null;
+  scheduledDeliveryStart: string | null;
+  scheduledDeliveryEnd: string | null;
 };
 
 type AdminOrdersViewProps = {
@@ -30,10 +35,15 @@ type AdminOrdersViewProps = {
 };
 
 export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) {
+  const [rows, setRows] = useState(orders);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setRows(orders);
+  }, [orders]);
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
@@ -41,13 +51,13 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
     setError(null);
 
     startTransition(async () => {
-      const result = await getAdminOrderDetailAction(locale, orderNumber);
-      if (!result.ok) {
-        setError(result.error.message);
+      const detailResult = await getAdminOrderDetailAction(locale, orderNumber);
+      if (!detailResult.ok) {
+        setError(detailResult.error.message);
         setDetail(null);
         return;
       }
-      setDetail(result.value);
+      setDetail(detailResult.value);
     });
   }
 
@@ -61,7 +71,7 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
     <>
       <BulkChangeOrderStatusForm
         locale={locale}
-        orders={orders}
+        orders={rows}
         onOpenOrder={openOrder}
         copy={copy}
       />
@@ -74,6 +84,7 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         copy={copy}
         includeAdminDetails
         groupOrderBadgeLabel={copy.orders.table.groupOrderBadge}
+        panelClassName="w-[92%] max-w-none sm:w-1/2"
       />
     </>
   );

@@ -22,6 +22,7 @@ import {
 } from "@/features/admin/ui/status-badge";
 import { changeOrderStatusAction } from "@/features/orders/application/change-order-status";
 import { changePaymentStatusAction } from "@/features/orders/application/change-payment-status";
+import { useAdminOrderAlertsContext } from "@/features/orders/ui/AdminOrderAlertsContext";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import {
   ADMIN_ORDER_STATUS_OPTIONS,
@@ -59,6 +60,7 @@ export function AdminInlineStatusSelect({
   copy,
 }: AdminInlineStatusSelectProps) {
   const router = useRouter();
+  const { refresh: refreshAlerts } = useAdminOrderAlertsContext();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -220,6 +222,9 @@ export function AdminInlineStatusSelect({
         return;
       }
 
+      if (kind === "order") {
+        await refreshAlerts();
+      }
       router.refresh();
     });
   }

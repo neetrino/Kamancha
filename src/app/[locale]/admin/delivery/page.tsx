@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
+import { listAdminDeliveryLocations } from "@/features/delivery/application/queries";
 import { AdminDeliveryView } from "@/features/delivery/ui/AdminDeliveryView";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -18,8 +19,9 @@ export default async function AdminDeliveryPage({
     notFound();
   }
 
-  const [settings, dict] = await Promise.all([
+  const [settings, zones, dict] = await Promise.all([
     getDeliverySettings(),
+    listAdminDeliveryLocations(locale),
     getDictionary(locale),
   ]);
 
@@ -34,12 +36,12 @@ export default async function AdminDeliveryPage({
     <AdminDeliveryView
       locale={locale}
       settings={settings}
+      zones={zones}
       initialImageUrls={initialImageUrls}
       copy={{
         delivery: dict.admin.delivery,
         common: dict.admin.common,
         confirm: dict.admin.confirm,
-        map: dict.checkout.map,
       }}
     />
   );

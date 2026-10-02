@@ -33,3 +33,23 @@ export const bulkAnonymizeUsersSchema = z.object({
 });
 
 export type BulkAnonymizeUsersInput = z.infer<typeof bulkAnonymizeUsersSchema>;
+
+/** Max length for operator notes on a customer profile. */
+export const USER_ADMIN_NOTE_MAX_LENGTH = 2000;
+
+export const updateUserAdminNoteSchema = z.object({
+  userId: z.string().uuid(),
+  /** Trimmed empty string is stored as null (no call-icon on orders). */
+  adminNote: z.string().max(USER_ADMIN_NOTE_MAX_LENGTH),
+});
+
+export type UpdateUserAdminNoteInput = z.infer<typeof updateUserAdminNoteSchema>;
+
+/** Normalizes operator note text for persistence and UI presence checks. */
+export function normalizeUserAdminNote(
+  value: string | null | undefined,
+): string | null {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}

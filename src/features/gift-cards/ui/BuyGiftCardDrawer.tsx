@@ -2,6 +2,7 @@
 
 import { SideSheet } from "@/components/ui/SideSheet";
 import { BuyGiftCardForm } from "@/features/gift-cards/ui/BuyGiftCardForm";
+import type { GiftCardPaymentLabels } from "@/features/gift-cards/ui/BuyGiftCardForm";
 import type { GiftCardSettings } from "@/features/gift-cards/domain/gift-card-rules";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -24,10 +25,11 @@ type BuyGiftCardDrawerCopy = {
     weekdaysShort: readonly string[];
   };
   paymentMethod: string;
-  cashOnDelivery: string;
+  payment: GiftCardPaymentLabels;
   submit: string;
   submitting: string;
-  successPending: string;
+  successActive: string;
+  successPendingPayment: string;
 };
 
 type BuyGiftCardDrawerProps = {
@@ -84,10 +86,11 @@ export function BuyGiftCardDrawer({
               sendDate: copy.sendDate,
               datePicker: copy.datePicker,
               paymentMethod: copy.paymentMethod,
-              cashOnDelivery: copy.cashOnDelivery,
+              payment: copy.payment,
               submit: copy.submit,
               submitting: copy.submitting,
-              successPending: copy.successPending,
+              successActive: copy.successActive,
+              successPendingPayment: copy.successPendingPayment,
             }}
           />
         </div>

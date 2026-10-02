@@ -74,8 +74,14 @@ export default async function OrdersPage({
     page: firstParam(raw.page) ?? "1",
   });
 
+  const rawKind = parsed.success
+    ? (parsed.data.kind ?? ("all" as const))
+    : ("all" as const);
+  const kind: CustomerOrderKind =
+    rawKind === "personal" || rawKind === "group" ? rawKind : "all";
+
   const filters = parsed.success
-    ? { ...parsed.data, kind: parsed.data.kind ?? ("all" as const) }
+    ? { ...parsed.data, kind }
     : {
         page: 1 as const,
         archived: "active" as const,
@@ -84,7 +90,7 @@ export default async function OrdersPage({
         dateFrom: undefined,
         dateTo: undefined,
         q: undefined,
-        kind: "all" as const,
+        kind,
       };
 
   const { rows, total, pageSize } = await listCustomerOrders(user.id, filters);

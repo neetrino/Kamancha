@@ -1,16 +1,18 @@
 export {
   getDeliverySettings,
+  isCheckoutDeliveryEnabled,
   isCheckoutDistanceDeliveryEnabled,
 } from "@/features/delivery/application/get-delivery-settings";
 export { saveDeliverySettingsAction } from "@/features/delivery/application/save-delivery-settings";
 export { autocompleteAddressAction } from "@/features/delivery/application/autocomplete-address";
+export { resolveZoneDelivery } from "@/features/delivery/application/resolve-zone-delivery";
 export {
-  quoteDistanceDelivery,
-  quoteDistanceDeliveryAction,
-} from "@/features/delivery/application/quote-distance-delivery";
+  listCheckoutDeliveryOptions,
+  listAdminDeliveryLocations,
+} from "@/features/delivery/application/queries";
 export {
   deliverySettingsSchema,
-  quoteDistanceDeliverySchema,
+  deliveryLocationSchema,
   type DeliverySettingsInput,
-  type QuoteDistanceDeliveryInput,
+  type DeliveryLocationInput,
 } from "@/features/delivery/schemas";

@@ -7,6 +7,8 @@ import { getCheckoutOrderProducts } from "@/features/checkout/application/get-ch
 import { getGroupOrderCheckoutUiFlags } from "@/features/checkout/application/group-order-checkout-context";
 import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order-product";
 import { getDeliverySettings } from "@/features/delivery/application/get-delivery-settings";
+import { listCheckoutDeliveryOptions } from "@/features/delivery/application/queries";
+import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
 import {
   listActiveCashChangeDenominations,
   type CashChangeDenominationView,
@@ -35,13 +37,16 @@ export type CheckoutFormView = {
   defaultLine1: string;
   subtotalAmount: number;
   deliverySchedule: DeliveryScheduleSettings;
+  deliveryZones: CheckoutDeliveryOption[];
   cashChangeOptions: CashChangeDenominationView[];
   bonusAvailableBalance: number | null;
   bonusMaxRedeemPercent: number;
   bonusAccrualPercent: number;
+  isGroupOrderCheckout: boolean;
   splitOthersPrepaid: boolean;
   othersPrepaidAmount: number;
   lockedDeliveryAmount: number | null;
+  lockedDeliveryZoneLabel: string | null;
 };
 
 export type GetCheckoutFormViewResult =
@@ -60,11 +65,12 @@ export async function getCheckoutFormView(
     };
   }
 
-  const [user, { items }, deliverySettings, bonusSettings, groupCheckoutFlags] =
+  const [user, { items }, deliverySettings, deliveryZones, bonusSettings, groupCheckoutFlags] =
     await Promise.all([
       getCurrentUser(),
       getCartWithItems(),
       getDeliverySettings(),
+      listCheckoutDeliveryOptions(locale),
       getStoreBonusSettings(),
       getGroupOrderCheckoutUiFlags(),
     ]);
@@ -122,13 +128,16 @@ export async function getCheckoutFormView(
         "",
       subtotalAmount: subtotal,
       deliverySchedule: deliverySettings.schedule,
+      deliveryZones,
       cashChangeOptions,
       bonusAvailableBalance: bonusBalance,
       bonusMaxRedeemPercent: bonusSettings.maxRedeemPercent,
       bonusAccrualPercent: bonusSettings.accrualPercent,
+      isGroupOrderCheckout: groupCheckoutFlags.isGroupOrderCheckout,
       splitOthersPrepaid: groupCheckoutFlags.splitOthersPrepaid,
       othersPrepaidAmount: groupCheckoutFlags.othersPrepaidAmount,
       lockedDeliveryAmount: groupCheckoutFlags.lockedDeliveryAmount,
+      lockedDeliveryZoneLabel: groupCheckoutFlags.lockedDeliveryZoneLabel,
     },
   };
 }
