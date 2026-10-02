@@ -208,6 +208,7 @@
       "status": "Status",
       "payment": "Payment",
       "paymentMethod": "Payment method",
+      "bonus": "Bonus",
       "total": "Total",
       "delivery": "Delivery",
       "placed": "Placed",

@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+
 import { useAdminOrderAlertsContext } from "@/features/orders/ui/AdminOrderAlertsContext";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -29,7 +32,13 @@ export function AdminNewOrderAlert({ locale, copy }: AdminNewOrderAlertProps) {
   const { unseenCount, latest, popupOpen, dismissPopup } =
     useAdminOrderAlertsContext();
 
-  if (!popupOpen || !latest || unseenCount <= 0) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || !popupOpen || !latest || unseenCount <= 0) {
     return null;
   }
 
@@ -46,9 +55,9 @@ export function AdminNewOrderAlert({ locale, copy }: AdminNewOrderAlertProps) {
     },
   ];
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/35 p-4"
+      className="fixed inset-0 z-[400] flex items-center justify-center bg-black/35 p-4"
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="admin-new-order-alert-title"
@@ -88,6 +97,7 @@ export function AdminNewOrderAlert({ locale, copy }: AdminNewOrderAlertProps) {
           {copy.acknowledge.replace("{count}", String(unseenCount))}
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

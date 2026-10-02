@@ -6,6 +6,7 @@ export const CHECKOUT_INVALID_FIELDS = [
   "line1",
   "deliverySlot",
   "paymentMethod",
+  "bonusRedeem",
 ] as const;
 
 export type CheckoutInvalidField = (typeof CHECKOUT_INVALID_FIELDS)[number];
@@ -22,6 +23,9 @@ type CheckoutFieldValues = {
   hasDeliveryZone: boolean;
   hasDeliverySlot: boolean;
   hasPaymentMethod: boolean;
+  /** When bonuses are enabled, an amount must be entered. */
+  bonusRedeemRequired: boolean;
+  bonusRedeemAmount: number;
 };
 
 function isEmailValid(value: string): boolean {
@@ -41,6 +45,9 @@ export function collectCheckoutInvalidFields(
   if (values.line1.trim().length < 3) invalid.line1 = true;
   if (!values.hasDeliverySlot) invalid.deliverySlot = true;
   if (!values.hasPaymentMethod) invalid.paymentMethod = true;
+  if (values.bonusRedeemRequired && values.bonusRedeemAmount <= 0) {
+    invalid.bonusRedeem = true;
+  }
 
   return invalid;
 }

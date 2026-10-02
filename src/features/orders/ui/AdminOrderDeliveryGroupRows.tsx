@@ -32,6 +32,7 @@ type BulkOrderRow = {
   scheduledDeliveryDate: string | null;
   scheduledDeliveryStart: string | null;
   scheduledDeliveryEnd: string | null;
+  bonusEarnedAmount: number;
 };
 
 type AdminOrderDeliveryGroupRowsProps = {
@@ -46,7 +47,7 @@ type AdminOrderDeliveryGroupRowsProps = {
   onToggleOne: (orderNumber: string) => void;
 };
 
-const DELIVERY_GROUP_COLSPAN = 9;
+const DELIVERY_GROUP_COLSPAN = 10;
 
 /**
  * Optional day header + order rows for one scheduled delivery date group.
@@ -156,6 +157,13 @@ export function AdminOrderDeliveryGroupRows({
             <td className={ADMIN_TABLE_TD_CENTER}>
               <span className="font-semibold text-gray-900">
                 {formatOrderDrawerMoney(order.totalAmount, order.baseCurrency)}
+              </span>
+            </td>
+            <td className={ADMIN_TABLE_TD_CENTER}>
+              <span className="text-sm font-bold text-brand-forest tabular-nums">
+                {order.bonusEarnedAmount > 0
+                  ? `+${formatOrderDrawerMoney(order.bonusEarnedAmount, order.baseCurrency)}`
+                  : copy.common.none}
               </span>
             </td>
             <td className={ADMIN_TABLE_TD_CENTER}>

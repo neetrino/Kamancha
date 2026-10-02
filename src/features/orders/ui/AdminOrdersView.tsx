@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
 import { getAdminOrderDetailAction } from "@/features/orders/application/get-order-detail";
@@ -26,6 +27,7 @@ type AdminOrdersViewOrder = {
   scheduledDeliveryDate: string | null;
   scheduledDeliveryStart: string | null;
   scheduledDeliveryEnd: string | null;
+  bonusEarnedAmount: number;
 };
 
 type AdminOrdersViewProps = {
@@ -35,6 +37,7 @@ type AdminOrdersViewProps = {
 };
 
 export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) {
+  const router = useRouter();
   const [rows, setRows] = useState(orders);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
@@ -49,6 +52,11 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
     setDrawerOpen(true);
     setDetail(null);
     setError(null);
+    setRows((current) =>
+      current.map((row) =>
+        row.orderNumber === orderNumber ? { ...row, isNew: false } : row,
+      ),
+    );
 
     startTransition(async () => {
       const detailResult = await getAdminOrderDetailAction(locale, orderNumber);
@@ -58,6 +66,7 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         return;
       }
       setDetail(detailResult.value);
+      router.refresh();
     });
   }
 

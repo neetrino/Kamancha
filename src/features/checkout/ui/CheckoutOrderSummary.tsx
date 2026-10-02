@@ -204,18 +204,22 @@ export function CheckoutOrderSummary({
         >
           <div className="flex justify-between text-white">
             <span>{subtotalLabel}</span>
-            <span>{subtotalFormatted}</span>
+            <span className="flex items-center gap-2">
+              <span>{subtotalFormatted}</span>
+              {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
+                <span
+                  title={bonusAppliedLabel}
+                  className="rounded-full bg-white px-2.5 py-0.5 text-sm font-semibold tabular-nums text-red-600"
+                >
+                  −{formatMoney(bonus.redeemAmount)}
+                </span>
+              ) : null}
+            </span>
           </div>
           {discountFormatted ? (
             <div className="flex justify-between text-white">
               <span>{discountLabel}</span>
               <span className="text-emerald-200">-{discountFormatted}</span>
-            </div>
-          ) : null}
-          {bonus?.useBonuses && bonus.redeemAmount > 0 ? (
-            <div className="flex justify-between text-red-300">
-              <span>{bonusAppliedLabel}</span>
-              <span>-{formatMoney(bonus.redeemAmount)}</span>
             </div>
           ) : null}
           {giftCardPreview && giftCardPreview.redeemAmount > 0 ? (

@@ -23,6 +23,7 @@ import {
   customerOrderDisplayAmountSql,
   customerOrdersVisibilitySql,
 } from "@/features/orders/application/customer-group-order-share";
+import { getStoreBonusSettings } from "@/features/settings/application/queries";
 import type { AdminUsersFilter } from "@/features/users/schemas/admin-users";
 
 const PAGE_SIZE = 20;
@@ -193,6 +194,7 @@ export async function getAdminUserById(
 
   const email = user.email.trim().toLowerCase();
 
+  const bonusSettings = await getStoreBonusSettings();
   const [recentOrders, bonusSummary, giftCardRows] = await Promise.all([
     getDb()
       .select({
@@ -202,7 +204,10 @@ export async function getAdminUserById(
         paymentStatus: orders.paymentStatus,
         totalAmount: customerOrderDisplayAmountSql(userId).mapWith(Number),
         baseCurrency: orders.baseCurrency,
-        bonusEarnedAmount: customerOrderBonusEarnedSql(userId).mapWith(Number),
+        bonusEarnedAmount: customerOrderBonusEarnedSql(
+          userId,
+          bonusSettings.accrualPercent,
+        ).mapWith(Number),
         placedAt: orders.placedAt,
       })
       .from(orders)

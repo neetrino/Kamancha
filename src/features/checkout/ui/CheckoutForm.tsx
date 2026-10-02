@@ -426,6 +426,8 @@ export function CheckoutForm({
       hasDeliveryZone: lockedDeliveryAmount != null || Boolean(deliveryRuleId),
       hasDeliverySlot: deliverySlot != null,
       hasPaymentMethod: paymentMethod != null,
+      bonusRedeemRequired: useBonuses,
+      bonusRedeemAmount: appliedBonus,
     });
 
     if (firstCheckoutInvalidField(nextInvalid)) {
@@ -646,13 +648,12 @@ export function CheckoutForm({
                       setGiftCardPreview(null);
                       if (!enabled) {
                         setBonusRedeemAmount(0);
-                      } else if (bonusRedeemAmount <= 0) {
-                        setBonusRedeemAmount(maxBonusRedeem);
                       }
                     },
                     onAmountChange: (amount) => {
                       setBonusRedeemAmount(amount);
                       setGiftCardPreview(null);
+                      clearInvalidField("bonusRedeem");
                     },
                     onUseMax: () => {
                       setBonusRedeemAmount(maxBonusRedeem);
@@ -666,6 +667,7 @@ export function CheckoutForm({
                       useMax: labels.bonusUseMax,
                     },
                     formatMoney,
+                    invalid: Boolean(invalidFields.bonusRedeem),
                   }
             }
             formatMoney={formatMoney}

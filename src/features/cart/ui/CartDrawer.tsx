@@ -476,9 +476,9 @@ export function CartDrawer({
               <dd className="tabular-nums">{view?.totalFormatted ?? "—"}</dd>
             </div>
             {view?.bonusEarnFormatted ? (
-              <div className="mt-2 flex items-center justify-between text-sm font-medium">
-                <dt className="text-gray-900">{labels.bonusEarn}</dt>
-                <dd className="font-bold tabular-nums text-orange-500">{view.bonusEarnFormatted}</dd>
+              <div className="mt-2 flex items-center justify-between text-sm font-bold text-brand-forest">
+                <dt>{labels.bonusEarn}</dt>
+                <dd className="tabular-nums">{view.bonusEarnFormatted}</dd>
               </div>
             ) : null}
           </dl>
