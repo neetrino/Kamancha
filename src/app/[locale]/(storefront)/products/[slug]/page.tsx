@@ -6,8 +6,6 @@ import { getEnv } from "@/config/env";
 import { getProductDetailBySlug } from "@/features/products/queries";
 import { ProductDetailView } from "@/features/products/ui/ProductDetailView";
 import { ProductRelatedSection } from "@/features/products/ui/ProductRelatedSection";
-import { ProductReviewsIsland } from "@/features/products/ui/ProductReviewsIsland";
-import { getProductRatingSummary } from "@/features/reviews/application/queries";
 import { isProductInWishlist } from "@/features/wishlist/queries";
 import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -108,11 +106,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const [user, currency, inWishlist, ratingSummary] = await Promise.all([
+  const [user, currency, inWishlist] = await Promise.all([
     getCurrentUser(),
     getSelectedCurrency(),
     isProductInWishlist(product.id),
-    getProductRatingSummary(product.id),
   ]);
   const formatPrice = await createDisplayPriceFormatter(locale, currency);
   const price = formatPrice(product.priceAmount);
@@ -143,8 +140,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
       compareAtFormatted={compareAt?.formatted ?? null}
       currency={currency}
       fxRate={price.rate}
-      ratingAverage={ratingSummary?.average ?? null}
-      ratingCount={ratingSummary?.count ?? 0}
       isSignedIn={isSignedIn}
       inWishlist={inWishlist}
       dictionary={dictionary}
@@ -155,18 +150,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             locale={locale}
             productId={product.id}
             currency={currency}
-            isSignedIn={isSignedIn}
-            dictionary={dictionary}
-          />
-        </Suspense>
-      }
-      reviewsSlot={
-        <Suspense fallback={<SectionFallback />}>
-          <ProductReviewsIsland
-            locale={locale}
-            productId={product.id}
-            productSlug={product.translation.slug}
-            userId={user?.id}
             isSignedIn={isSignedIn}
             dictionary={dictionary}
           />
