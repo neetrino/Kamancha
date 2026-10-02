@@ -264,17 +264,19 @@ export function CheckoutForm({
   const afterGiftCard = Math.max(0, payableBeforeGiftCard - giftCardRedeem);
   const prepaidApplied = splitOthersPrepaid ? othersPrepaidAmount : 0;
   const totalAmount = Math.max(0, afterGiftCard - prepaidApplied);
+  const potentialBonusEarn = calculateBonusEarnAmount(
+    bonusEligibleAfterGiftCard({
+      subtotalAmount,
+      discountAmount,
+      giftCardAmount: giftCardRedeem,
+    }),
+    bonusAccrualPercent,
+  );
+  const isGuestCheckout = bonusAvailableBalance == null;
   const bonusEarnAmount =
-    bonusAvailableBalance == null
-      ? null
-      : calculateBonusEarnAmount(
-          bonusEligibleAfterGiftCard({
-            subtotalAmount,
-            discountAmount,
-            giftCardAmount: giftCardRedeem,
-          }),
-          bonusAccrualPercent,
-        );
+    !isGuestCheckout && potentialBonusEarn > 0 ? potentialBonusEarn : null;
+  const guestMissedBonusAmount =
+    isGuestCheckout && potentialBonusEarn > 0 ? potentialBonusEarn : null;
   const selectedCashChange: CashChangeSelection =
     cashChangeAmount !== CASH_CHANGE_NONE &&
     computeCashChangeDue(cashChangeAmount, totalAmount) != null
@@ -609,13 +611,19 @@ export function CheckoutForm({
             giftCardAppliedLabel={labels.giftCardApplied}
             bonusAppliedLabel={labels.bonusApplied}
             bonusEarnLabel={
-              bonusEarnAmount != null && bonusEarnAmount > 0
-                ? labels.bonusEarn
-                : null
+              bonusEarnAmount != null ? labels.bonusEarn : null
             }
-            bonusEarnAmount={
-              bonusEarnAmount != null && bonusEarnAmount > 0
-                ? bonusEarnAmount
+            bonusEarnAmount={bonusEarnAmount}
+            guestMissedBonus={
+              guestMissedBonusAmount != null
+                ? {
+                    message: labels.bonusGuestMissed.replace(
+                      "{amount}",
+                      String(guestMissedBonusAmount),
+                    ),
+                    registerLabel: labels.bonusGuestRegister,
+                    registerHref: `/${locale}/register?next=${encodeURIComponent(`/${locale}/checkout`)}`,
+                  }
                 : null
             }
             discountLabel={labels.discount}

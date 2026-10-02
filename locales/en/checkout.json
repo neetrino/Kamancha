@@ -116,7 +116,9 @@
     "amount": "Bonus points to use",
     "useMax": "Use max",
     "applied": "Bonuses",
-    "earn": "Loyalty points"
+    "earn": "Loyalty points",
+    "guestMissed": "As a guest you’ll miss {amount} bonus points on this order",
+    "guestRegister": "Create an account"
   },
   "summary": {
     "subtotal": "Subtotal",

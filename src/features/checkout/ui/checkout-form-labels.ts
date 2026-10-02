@@ -73,6 +73,8 @@ export type CheckoutLabels = {
   bonusUseMax: string;
   bonusApplied: string;
   bonusEarn: string;
+  bonusGuestMissed: string;
+  bonusGuestRegister: string;
   discount: string;
   subtotal: string;
   shipping: string;
@@ -165,6 +167,8 @@ export function checkoutFormLabels(
     bonusUseMax: copy.bonus.useMax,
     bonusApplied: copy.bonus.applied,
     bonusEarn: copy.bonus.earn,
+    bonusGuestMissed: copy.bonus.guestMissed,
+    bonusGuestRegister: copy.bonus.guestRegister,
     discount: copy.summary.discount,
     subtotal: copy.summary.subtotal,
     shipping: copy.summary.shipping,
