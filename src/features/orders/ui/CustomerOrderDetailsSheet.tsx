@@ -73,7 +73,7 @@ export function CustomerOrderDetailsSheet({
                 {groupOrderBadgeLabel}
               </span>
             ) : null}
-            {detail.scheduledDeliveryDate ? (
+            {includeAdminDetails && detail.scheduledDeliveryDate ? (
               <OrderScheduledDeliveryBanner
                 variant="chip"
                 scheduledDeliveryDate={detail.scheduledDeliveryDate}
