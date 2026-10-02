@@ -118,16 +118,16 @@ export default async function AdminUserDetailPage({
             )}
           </AdminDetailField>
           <AdminDetailField
-            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
-            label={t.users.detail.createdLabel}
-          >
-            {user.createdAt.toISOString().slice(0, 10)}
-          </AdminDetailField>
-          <AdminDetailField
             icon={<Mail className={FIELD_ICON_CLASS} />}
             label={t.users.detail.emailLabel}
           >
             {user.email}
+          </AdminDetailField>
+          <AdminDetailField
+            icon={<CalendarDays className={FIELD_ICON_CLASS} />}
+            label={t.users.detail.createdLabel}
+          >
+            {user.createdAt.toISOString().slice(0, 10)}
           </AdminDetailField>
         </div>
       </Card>
