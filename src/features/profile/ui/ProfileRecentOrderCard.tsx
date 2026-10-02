@@ -1,7 +1,7 @@
 "use client";
 
 import type { KeyboardEvent } from "react";
-import { ArrowRight, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 
 import {
   PROFILE_INNER_CARD,
@@ -16,7 +16,6 @@ type ProfileRecentOrderCardProps = {
   metaLine: string;
   placedOnLine: string;
   orderNumberLabel: string;
-  viewDetailsLabel: string;
   groupOrderBadgeLabel?: string;
   isGroupOrder?: boolean;
   onViewDetails: () => void;
@@ -40,7 +39,6 @@ export function ProfileRecentOrderCard({
   metaLine,
   placedOnLine,
   orderNumberLabel,
-  viewDetailsLabel,
   groupOrderBadgeLabel,
   isGroupOrder = false,
   onViewDetails,
@@ -51,23 +49,15 @@ export function ProfileRecentOrderCard({
       tabIndex={0}
       onClick={onViewDetails}
       onKeyDown={(event) => handleCardKeyDown(event, onViewDetails)}
-      className={`profile-order-card flex h-full w-full min-w-0 cursor-pointer flex-col items-stretch p-4 text-left transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-5 ${PROFILE_INNER_CARD}`}
+      className={`profile-order-card flex h-full w-full min-w-0 cursor-pointer flex-col items-stretch p-4 text-left transition-transform duration-200 ease-out hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${PROFILE_INNER_CARD}`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
             {orderNumberLabel} {orderNumber}
           </h3>
-          <p className="mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest sm:text-xl">
+          <p className="mt-2 font-big-fat-boii text-lg leading-none font-normal tracking-wide text-brand-forest">
             {totalLabel}
-          </p>
-          <p
-            className={`mt-1.5 hidden text-sm font-medium xl:block ${
-              bonusEarnedLabel ? "text-brand-forest" : "invisible"
-            }`}
-            aria-hidden={!bonusEarnedLabel}
-          >
-            {bonusEarnedLabel ?? "+0 ֏"}
           </p>
         </div>
         <div className="inline-flex shrink-0 flex-col items-end gap-1.5">
@@ -76,7 +66,7 @@ export function ProfileRecentOrderCard({
           </span>
           <div className="flex min-h-6 flex-wrap items-center justify-end gap-1.5">
             {bonusEarnedLabel ? (
-              <p className="text-sm font-medium text-brand-forest xl:hidden">
+              <p className="inline-flex items-center rounded-full bg-brand-forest px-2.5 py-1 text-xs font-bold text-white">
                 {bonusEarnedLabel}
               </p>
             ) : null}
@@ -99,20 +89,6 @@ export function ProfileRecentOrderCard({
           <div className="min-w-0 pt-0.5 text-sm leading-snug text-gray-700">
             <p>{metaLine}</p>
             <p className="whitespace-nowrap">{placedOnLine}</p>
-          </div>
-        </div>
-
-        <div className="hidden w-full self-stretch pt-5 sm:block">
-          <div
-            className="profile-order-card-cta box-border flex w-full min-w-0 items-center gap-2 rounded-full bg-brand-forest py-0.5 pr-0.5 pl-3 font-big-fat-boii text-xs font-normal tracking-wide text-white uppercase"
-            aria-hidden
-          >
-            <span className="min-w-0 flex-1 truncate text-center">
-              {viewDetailsLabel}
-            </span>
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-brand-forest">
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-            </span>
           </div>
         </div>
       </div>

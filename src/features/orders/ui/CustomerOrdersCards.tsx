@@ -32,7 +32,6 @@ type CustomerOrdersCardsLabels = {
   itemCountOne: string;
   itemCountOther: string;
   placedOn: string;
-  viewDetails: string;
   noOrders: string;
   startShopping: string;
   groupOrderBadge: string;
@@ -100,7 +99,6 @@ export function CustomerOrdersCards({
             )}
             placedOnLine={`${labels.placedOn} ${formatShortDate(order.placedAt, locale)}`}
             orderNumberLabel={labels.orderNumber}
-            viewDetailsLabel={labels.viewDetails}
             groupOrderBadgeLabel={labels.groupOrderBadge}
             isGroupOrder={order.isGroupOrder}
             onViewDetails={() => onOpenOrder(order.orderNumber)}

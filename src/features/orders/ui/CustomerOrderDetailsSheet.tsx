@@ -279,7 +279,7 @@ function CustomerOrderSheetBody({
                     </div>
                     <div className={PARTICIPANT_STAT_CELL_DIVIDED}>
                       <dt>{labels.participantBonus}</dt>
-                      <dd className="font-semibold text-brand-forest">
+                      <dd className="font-bold text-orange-500">
                         +{participant.bonusEarnedAmount}
                       </dd>
                     </div>
@@ -421,9 +421,9 @@ function CustomerOrderSheetTotals({
             </dd>
           </div>
         ) : null}
-        <div className="flex items-center justify-between font-bold text-brand-forest">
-          <dt>{labels.bonusEarned}</dt>
-          <dd className="tabular-nums">
+        <div className="flex items-center justify-between font-bold">
+          <dt className="text-gray-900">{labels.bonusEarned}</dt>
+          <dd className="tabular-nums text-orange-500">
             +{detail.bonusEarnedAmount}
           </dd>
         </div>
