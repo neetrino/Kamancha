@@ -93,17 +93,13 @@ export function CustomerOrderDetailsSheet({
             <span
               className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${orderStatusBadgeClass(detail.status)}`}
             >
-              {includeAdminDetails ? null : (
-                <Package className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              )}
+              <Package className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {localizeOrderStatus(detail.status, copy.orders.statusLabels)}
             </span>
             <span
               className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${paymentStatusBadgeClass(detail.paymentStatus)}`}
             >
-              {includeAdminDetails ? null : (
-                <CreditCard className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              )}
+              <CreditCard className="h-3.5 w-3.5 shrink-0" aria-hidden />
               {localizePaymentStatus(
                 detail.paymentStatus,
                 copy.orders.statusLabels,
