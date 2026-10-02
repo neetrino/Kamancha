@@ -92,9 +92,7 @@ export async function getCartDrawerView(
     bonusSettings.accrualPercent,
   );
   const bonusEarnFormatted =
-    bonusEarnAmount > 0
-      ? `+${formatConvertedAmount(bonusEarnAmount, quote.rate, currency, locale)}`
-      : null;
+    bonusEarnAmount > 0 ? `+${bonusEarnAmount}` : null;
 
   const subtotalFormatted = formatConvertedAmount(
     subtotalBase,

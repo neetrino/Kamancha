@@ -19,10 +19,14 @@ export type SelectDropdownOption = {
   value: string;
 };
 
+type MenuPlacement = "below" | "above";
+
 type MenuPosition = {
-  top: number;
+  top: number | undefined;
+  bottom: number | undefined;
   left: number;
   width: number;
+  placement: MenuPlacement;
 };
 
 type SelectDropdownProps = {
@@ -57,12 +61,37 @@ function DropdownChevron({ open }: { open: boolean }) {
   );
 }
 
-function measureMenuPosition(trigger: HTMLElement): MenuPosition {
+const MENU_GAP_PX = 8;
+const MENU_VIEWPORT_EDGE_PX = 8;
+const MENU_MAX_HEIGHT_PX = 288;
+const MENU_ROW_HEIGHT_PX = 40;
+const MENU_CHROME_PX = 16;
+
+function estimatedMenuHeight(optionCount: number): number {
+  return Math.min(
+    MENU_MAX_HEIGHT_PX,
+    optionCount * MENU_ROW_HEIGHT_PX + MENU_CHROME_PX,
+  );
+}
+
+function measureMenuPosition(
+  trigger: HTMLElement,
+  menuHeight: number,
+): MenuPosition {
   const rect = trigger.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - rect.bottom - MENU_VIEWPORT_EDGE_PX;
+  const spaceAbove = rect.top - MENU_VIEWPORT_EDGE_PX;
+  const placeAbove =
+    menuHeight + MENU_GAP_PX > spaceBelow && spaceAbove > spaceBelow;
+
   return {
-    top: rect.bottom + 8,
     left: rect.left,
     width: rect.width,
+    placement: placeAbove ? "above" : "below",
+    top: placeAbove ? undefined : rect.bottom + MENU_GAP_PX,
+    bottom: placeAbove
+      ? window.innerHeight - rect.top + MENU_GAP_PX
+      : undefined,
   };
 }
 
@@ -101,9 +130,15 @@ export function SelectDropdown({
     setOpen(false);
   }, []);
 
+  const optionCount = options.length + (allLabel !== undefined ? 1 : 0);
+
+  function placeMenu(trigger: HTMLElement, menuHeight: number): void {
+    setPosition(measureMenuPosition(trigger, menuHeight));
+  }
+
   function openMenu(): void {
     const trigger = rootRef.current;
-    if (trigger) setPosition(measureMenuPosition(trigger));
+    if (trigger) placeMenu(trigger, estimatedMenuHeight(optionCount));
     wantOpenRef.current = true;
     setMounted(true);
   }
@@ -159,7 +194,11 @@ export function SelectDropdown({
 
     function handleReposition(): void {
       const trigger = rootRef.current;
-      if (trigger) setPosition(measureMenuPosition(trigger));
+      if (!trigger) return;
+      const menuHeight =
+        menuRef.current?.querySelector("[role='listbox']")?.scrollHeight ??
+        estimatedMenuHeight(optionCount);
+      placeMenu(trigger, menuHeight);
     }
 
     document.addEventListener("mousedown", handlePointerDown);
@@ -173,7 +212,15 @@ export function SelectDropdown({
       window.removeEventListener("resize", handleReposition);
       window.removeEventListener("scroll", handleReposition, true);
     };
-  }, [open, closeMenu]);
+  }, [open, closeMenu, optionCount]);
+
+  useEffect(() => {
+    if (!open) return;
+    const trigger = rootRef.current;
+    const list = menuRef.current?.querySelector("[role='listbox']");
+    if (!trigger || !(list instanceof HTMLElement)) return;
+    placeMenu(trigger, Math.min(list.scrollHeight, MENU_MAX_HEIGHT_PX));
+  }, [open, optionCount]);
 
   function selectValue(next: string): void {
     closeMenu();
@@ -280,13 +327,18 @@ function SelectDropdownMenu({
   return (
     <div
       ref={menuRef}
-      className={`fixed z-[200] origin-top grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+      className={`fixed z-[320] grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        position.placement === "above" ? "origin-bottom" : "origin-top"
+      } ${
         open
           ? "translate-y-0 grid-rows-[1fr] opacity-100"
-          : "pointer-events-none -translate-y-2 grid-rows-[0fr] opacity-0"
+          : position.placement === "above"
+            ? "pointer-events-none translate-y-2 grid-rows-[0fr] opacity-0"
+            : "pointer-events-none -translate-y-2 grid-rows-[0fr] opacity-0"
       }`}
       style={{
         top: position.top,
+        bottom: position.bottom,
         left: position.left,
         minWidth: position.width,
         width: "max-content",
