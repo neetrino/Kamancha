@@ -547,6 +547,24 @@ body {
   }
 }
 
+.kamancha-pill-button--guest-cta {
+  min-height: 2.75rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.kamancha-pill-button--guest-cta .kamancha-pill-ornament {
+  height: 38px;
+  width: 48px;
+}
+
+.kamancha-pill-button--guest-cta .kamancha-pill-ornament--left,
+.kamancha-pill-button--guest-cta .kamancha-pill-ornament--right {
+  transform: translateY(-50%) scale(0.78);
+}
+
 .kamancha-pill-button--sheet-cta,
 .kamancha-pill-button--order-cta {
   min-height: 3.5rem;

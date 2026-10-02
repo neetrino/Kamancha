@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { LiquidGlassPanel } from "@/components/ui/LiquidGlassPanel";
 import {
@@ -210,16 +208,16 @@ export function CheckoutOrderSummary({
         ) : null}
 
         {guestMissedBonus ? (
-          <div className={CHECKOUT_CODE_GLASS_CLASS}>
-            <p className="relative z-[2] text-sm font-medium leading-snug text-[#f3e5a8]">
+          <div className={`${CHECKOUT_CODE_GLASS_CLASS} flex flex-col items-center gap-2 !py-3 text-center`}>
+            <p className="relative z-[2] text-sm font-medium leading-snug whitespace-pre-line text-[#f3e5a8]">
               {guestMissedBonus.message}
             </p>
-            <Link
+            <KamanchaPillButton
               href={guestMissedBonus.registerHref}
-              className="relative z-[2] mt-3 inline-flex text-sm font-semibold text-white underline underline-offset-4 hover:text-[#f3e5a8]"
-            >
-              {guestMissedBonus.registerLabel}
-            </Link>
+              variant="light"
+              label={guestMissedBonus.registerLabel}
+              className="kamancha-pill-button--guest-cta pointer-events-auto relative z-[2] !min-h-11 max-w-none !py-0.5"
+            />
           </div>
         ) : null}
 
