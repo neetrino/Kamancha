@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
@@ -42,14 +42,15 @@ type AdminOrdersViewProps = {
 export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) {
   const router = useRouter();
   const [rows, setRows] = useState(orders);
+  const [syncedOrders, setSyncedOrders] = useState(orders);
+  if (orders !== syncedOrders) {
+    setSyncedOrders(orders);
+    setRows(orders);
+  }
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setRows(orders);
-  }, [orders]);
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);

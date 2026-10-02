@@ -2,7 +2,7 @@
 
 import { MessageSquareText, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -40,13 +40,15 @@ export function AdminUserNoteForm({
   const router = useRouter();
   const labels = copy.users.noteForm;
   const [note, setNote] = useState(initialNote ?? "");
+  const [syncedInitialNote, setSyncedInitialNote] = useState(initialNote);
   const [error, setError] = useState<string | null>(null);
   const [savedMessage, setSavedMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
+  if (initialNote !== syncedInitialNote) {
+    setSyncedInitialNote(initialNote);
     setNote(initialNote ?? "");
-  }, [initialNote]);
+  }
 
   const normalizedInitial = normalizeUserAdminNote(initialNote) ?? "";
   const normalizedCurrent = normalizeUserAdminNote(note) ?? "";

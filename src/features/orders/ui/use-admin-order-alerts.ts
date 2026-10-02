@@ -79,8 +79,11 @@ export function useAdminOrderAlerts({
   const hydratedRef = useRef(false);
   const playSoundRef = useRef(playSoundOnArrival);
   const popupOpenRef = useRef(popupOpen);
-  playSoundRef.current = playSoundOnArrival;
-  popupOpenRef.current = popupOpen;
+
+  useEffect(() => {
+    playSoundRef.current = playSoundOnArrival;
+    popupOpenRef.current = popupOpen;
+  }, [playSoundOnArrival, popupOpen]);
 
   useEffect(() => {
     dismissedLatestRef.current = readDismissedLatest();

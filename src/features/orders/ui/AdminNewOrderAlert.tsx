@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { useAdminOrderAlertsContext } from "@/features/orders/ui/AdminOrderAlertsContext";
@@ -32,13 +31,12 @@ export function AdminNewOrderAlert({ locale, copy }: AdminNewOrderAlertProps) {
   const { unseenCount, latest, popupOpen, dismissPopup } =
     useAdminOrderAlertsContext();
 
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !popupOpen || !latest || unseenCount <= 0) {
+  if (
+    typeof document === "undefined" ||
+    !popupOpen ||
+    !latest ||
+    unseenCount <= 0
+  ) {
     return null;
   }
 
