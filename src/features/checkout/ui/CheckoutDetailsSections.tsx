@@ -228,12 +228,13 @@ export function CheckoutDetailsSections({
           {labels.shippingAddress}
         </h2>
         <div className="relative z-[2] space-y-4">
-          <div className="space-y-1.5" data-checkout-field="deliveryRuleId">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+          <div className="w-full shrink-0 space-y-1.5 sm:w-auto" data-checkout-field="deliveryRuleId">
             <span className="text-sm font-medium text-white/80">
               {labels.deliveryZone}
             </span>
             {zoneLocked ? (
-              <p className="rounded-2xl border border-gray-200 bg-white/90 px-4 py-3 text-sm font-medium text-gray-900">
+              <p className="w-full rounded-2xl border border-gray-200 bg-white/90 px-4 py-3 text-sm font-medium text-gray-900 sm:w-fit sm:max-w-full">
                 {lockedZoneLabel ?? labels.selectDeliveryZone}
               </p>
             ) : (
@@ -243,15 +244,16 @@ export function CheckoutDetailsSections({
                 allLabel={labels.selectDeliveryZone}
                 options={zoneOptions}
                 disabled={pending}
+                fitContent
+                fitContentFromSm
                 onValueChange={(value) => {
                   clearField("deliveryRuleId");
                   onDeliveryRuleIdChange(value);
                 }}
-                className="w-full"
               />
             )}
           </div>
-          <div className="space-y-1.5">
+          <div className="min-w-0 flex-1 space-y-1.5">
             <span className="text-sm font-medium text-white/80">
               {labels.address}
             </span>
@@ -291,7 +293,8 @@ export function CheckoutDetailsSections({
               )}
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <label className={FIELD_LABEL_CLASS}>
               {labels.floor}
               <input

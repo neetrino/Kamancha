@@ -147,24 +147,49 @@ function CustomerOrderSheetBody({
   return (
     <div className="space-y-4">
       {includeAdminDetails ? (
-        <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
+        <div
+          className={
+            detail.customerNote ? "grid grid-cols-2 items-stretch gap-3" : undefined
+          }
+        >
+          <section className={`${PROFILE_INNER_CARD} h-full space-y-3 p-4`}>
+            <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+              {labels.customer}
+            </h3>
+            <div className="space-y-1.5 text-sm">
+              <p className="flex flex-wrap items-baseline gap-x-1.5">
+                <span className="text-gray-500">{labels.name}</span>
+                <span className="font-medium text-gray-900">{detail.contactName}</span>
+              </p>
+              <p className="flex flex-wrap items-baseline gap-x-1.5">
+                <span className="text-gray-500">{labels.phoneNumber}</span>
+                <span className="font-medium text-gray-900">{detail.contactPhone}</span>
+              </p>
+              <p className="flex flex-wrap items-baseline gap-x-1.5">
+                <span className="text-gray-500">{labels.email}</span>
+                <span className="font-medium text-gray-900">{detail.contactEmail}</span>
+              </p>
+            </div>
+          </section>
+          {detail.customerNote ? (
+            <section className={`${PROFILE_INNER_CARD} h-full space-y-2 p-4`}>
+              <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+                {labels.orderNote.replace(/[՝:]\s*$/, "")}
+              </h3>
+              <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
+                {detail.customerNote}
+              </p>
+            </section>
+          ) : null}
+        </div>
+      ) : detail.customerNote ? (
+        <section className={`${PROFILE_INNER_CARD} space-y-2 p-4`}>
           <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-            {labels.customer}
+            {labels.orderNote.replace(/[՝:]\s*$/, "")}
           </h3>
-          <div className="space-y-1.5 text-sm">
-            <p className="flex flex-wrap items-baseline gap-x-1.5">
-              <span className="text-gray-500">{labels.name}</span>
-              <span className="font-medium text-gray-900">{detail.contactName}</span>
-            </p>
-            <p className="flex flex-wrap items-baseline gap-x-1.5">
-              <span className="text-gray-500">{labels.phoneNumber}</span>
-              <span className="font-medium text-gray-900">{detail.contactPhone}</span>
-            </p>
-            <p className="flex flex-wrap items-baseline gap-x-1.5">
-              <span className="text-gray-500">{labels.email}</span>
-              <span className="font-medium text-gray-900">{detail.contactEmail}</span>
-            </p>
-          </div>
+          <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
+            {detail.customerNote}
+          </p>
         </section>
       ) : null}
 
@@ -195,11 +220,6 @@ function CustomerOrderSheetBody({
                 {labels.intercomCode} {detail.intercomCode}
               </p>
             ) : null}
-            {detail.customerNote ? (
-              <p className="text-xs text-gray-500 whitespace-pre-wrap">
-                {labels.orderNote} {detail.customerNote}
-              </p>
-            ) : null}
             {detail.addressHint ? (
               <p className="text-xs text-gray-500">{detail.addressHint}</p>
             ) : null}
@@ -224,7 +244,6 @@ function CustomerOrderSheetBody({
           hideMethod={detail.groupPaymentMode === "SPLIT_PER_PARTICIPANT"}
         />
       </section>
-
 
       {showGroupParticipants ? (
         <section className="space-y-3">
