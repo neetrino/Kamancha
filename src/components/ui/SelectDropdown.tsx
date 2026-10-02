@@ -214,6 +214,14 @@ export function SelectDropdown({
     };
   }, [open, closeMenu, optionCount]);
 
+  useEffect(() => {
+    if (!open) return;
+    const trigger = rootRef.current;
+    const list = menuRef.current?.querySelector("[role='listbox']");
+    if (!trigger || !(list instanceof HTMLElement)) return;
+    placeMenu(trigger, Math.min(list.scrollHeight, MENU_MAX_HEIGHT_PX));
+  }, [open, optionCount]);
+
   function selectValue(next: string): void {
     closeMenu();
     if (!deferChange) {
