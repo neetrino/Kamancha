@@ -16,6 +16,10 @@ const SUMMARY_ALERT_PILL_CLASS =
 const CHECKOUT_CODE_GLASS_CLASS =
   "relative z-[2] mb-6 isolate overflow-hidden rounded-xl border border-white/20 bg-white/[0.1] p-4 xl:mb-3 xl:px-2 xl:py-2";
 
+/** Same bar height as the loyalty row: one line, less vertical padding. */
+const CHECKOUT_CODE_ROW_CLASS =
+  "relative z-[2] mb-3 isolate overflow-hidden rounded-xl border border-white/20 bg-white/[0.1] px-3 py-2 xl:mb-3 xl:px-2 xl:py-2";
+
 type GiftCardPreviewView = {
   initialAmount: number;
   redeemAmount: number;
@@ -136,7 +140,7 @@ export function CheckoutOrderSummary({
           {title}
         </h2>
 
-        <div className={CHECKOUT_CODE_GLASS_CLASS}>
+        <div className={CHECKOUT_CODE_ROW_CLASS}>
           <CheckoutCodeApplyField
             title={couponTitle}
             name="couponCodeDraft"
@@ -152,7 +156,7 @@ export function CheckoutOrderSummary({
           />
         </div>
 
-        <div className={CHECKOUT_CODE_GLASS_CLASS}>
+        <div className={CHECKOUT_CODE_ROW_CLASS}>
           <CheckoutCodeApplyField
             title={giftCardTitle}
             name="giftCardCodeDraft"
