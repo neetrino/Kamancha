@@ -51,20 +51,3 @@ export function invalidateProductsCache(input?: {
     }
   }
 }
-
-/** Invalidates blog list caches and optional per-post / per-slug detail caches. */
-export function invalidateBlogCache(input?: {
-  postId?: string;
-  slug?: string;
-  translations?: TranslationsJson;
-}): void {
-  updateTag(CACHE_TAGS.blog);
-  if (input?.postId) {
-    updateTag(CACHE_TAGS.blogPost(input.postId));
-  }
-  for (const slug of collectTranslationSlugs(input?.translations, input?.slug)) {
-    for (const locale of locales) {
-      updateTag(CACHE_TAGS.blogPostSlug(locale, slug));
-    }
-  }
-}

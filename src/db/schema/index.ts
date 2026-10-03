@@ -26,10 +26,7 @@ export {
   users,
 } from "@/db/schema/identity";
 export {
-  blogPosts,
   heroSlides,
-  type BlogTranslation,
-  type BlogTranslationsJson,
   type HeroTranslation,
   type HeroTranslationsJson,
 } from "@/db/schema/content";

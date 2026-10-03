@@ -12,7 +12,6 @@ import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveGroupOrderBanner } from "@/features/group-orders/application/active-banner";
 import { ActiveGroupOrderBanner } from "@/features/group-orders/ui/ActiveGroupOrderBanner";
 import { PromoPopupIsland } from "@/features/popups/ui/PromoPopupIsland";
-import { getStoreBlogSettings } from "@/features/settings/application/queries";
 import { CartProductLinesHydrator } from "@/features/cart/ui/CartProductLinesHydrator";
 import { ProductCardCartCopyProvider } from "@/features/products/ui/product-card-cart-copy";
 import { StorefrontAlertHost } from "@/features/storefront-chrome/StorefrontAlertHost";
@@ -44,10 +43,7 @@ export default async function StorefrontLayout({
   const currency = parseCurrencyCookie(
     cookieStore.get(CURRENCY_COOKIE_NAME)?.value,
   );
-  const [groupBanner, blogSettings] = await Promise.all([
-    getActiveGroupOrderBanner(),
-    getStoreBlogSettings(),
-  ]);
+  const groupBanner = await getActiveGroupOrderBanner();
 
   return (
     <div className="storefront-shell relative flex min-h-dvh flex-1 flex-col overflow-x-clip overflow-y-visible bg-brand-forest text-white">
@@ -80,11 +76,7 @@ export default async function StorefrontLayout({
         <main className="storefront-main mx-auto w-full max-w-7xl flex-1 px-4 py-10 pb-3 sm:px-6 xl:px-8 xl:pb-10">
           <MaintenanceGate>{children}</MaintenanceGate>
         </main>
-        <SiteFooter
-          dictionary={dictionary}
-          locale={locale}
-          showBlog={blogSettings.enabled}
-        />
+        <SiteFooter dictionary={dictionary} locale={locale} />
         <MobileBottomNavIsland
           locale={locale}
           currency={currency}

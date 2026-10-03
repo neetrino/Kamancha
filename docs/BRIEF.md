@@ -35,7 +35,7 @@ White Shop-ը բազմալեզու, բազմարժույթ, production-ready e-c
 5. Customer-ը դիտում է order detail-ը և միայն կատարված գնումից հետո ստեղծում մեկ review տվյալ product-ի համար։
 6. Admin-ը ստեղծում է product՝ locale selector-ով մեկ դաշտերի հավաքածուով (ցանկալի լեզուներով), upload է անում պատկերներ, կառավարում stock/discount/status-ը և հրապարակում այն։
 7. Admin-ը մշակում է order status/payment status-ը՝ history և audit trail-ով։
-8. Admin-ը կառավարում է hero, categories, coupons, delivery rules, blog, messages և store settings։
+8. Admin-ը կառավարում է hero, categories, coupons, delivery rules, messages և store settings։
 
 ## Scope և առաջնայնություններ
 
@@ -56,7 +56,7 @@ White Shop-ը բազմալեզու, բազմարժույթ, production-ready e-c
 - Wishlist, verified-purchase reviews և moderation
 - Coupons, category/product discounts և stacking policy
 - Delivery rules ըստ location specificity-ի
-- Home hero CMS, blog CMS, contact/messages
+- Home hero CMS, contact/messages
 - Currency conversion abstraction և rate snapshot
 - Admin users, analytics, CSV export և settings
 - Policy pages, sitemap, hreflang և structured data

@@ -23,7 +23,7 @@
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| NAV-001 | Header-ը ցույց է տալիս Home, Products, About, Contact, Blog, locale, currency, wishlist, cart count և account control։ |
+| NAV-001 | Header-ը ցույց է տալիս Home, Products, About, Contact, locale, currency, wishlist, cart count և account control։ |
 | NAV-002 | Guest account click-ը տանում է login; Customer menu-ն ունի Profile/Logout; Admin menu-ն՝ Admin/Profile/Logout։ |
 | NAV-003 | Locale switch-ը պահպանում է համարժեք route-ը և թույլատրելի query params-ը; fallback-ը locale home-ն է։ |
 | NAV-004 | Currency switch-ը փոխում է display preference-ը, ոչ base price-ը։ |
@@ -32,7 +32,7 @@
 
 ### 2.2 Footer և static pages
 
-- Footer-ը ներառում է About, Contact, Blog, Terms, Privacy, Shipping, Return/Refund, Cookie, social links և copyright։
+- Footer-ը ներառում է About, Contact, Terms, Privacy, Shipping, Return/Refund, Cookie, social links և copyright։
 - Յուրաքանչյուր policy link ունի իրական locale route և publishable content։
 - Draft/unapproved legal text-ը production publish չի արվում (`OPEN-014`)։
 
@@ -183,7 +183,7 @@
 
 ### 9.1 Shell
 
-- Responsive left sidebar՝ Home, Dashboard, Home Hero, Orders, Products, Categories, Coupons, Discounts, Users, Messages, Analytics, Delivery, Blog, Settings։
+- Responsive left sidebar՝ Home, Dashboard, Home Hero, Orders, Products, Categories, Coupons, Discounts, Users, Messages, Analytics, Delivery, Settings։
 - Home-ը locale-aware storefront home link է։
 - Desktop sidebar-ը collapsible է, mobile-ը focus-managed drawer։
 
@@ -316,11 +316,7 @@
 
 ## 19. Blog և content
 
-- Admin create/edit/publish/archive՝ multilingual title/excerpt/content, locale slug, cover, author, status/date, SEO, tags։
-- Public routes՝ `/{locale}/blog` և `/{locale}/blog/{slug}`՝ pagination-ով։
-- Միայն published և publish-date-ով հասանելի posts են public։
-- Rich text-ը server-side sanitized է; stored/rendered canonical format-ը `OPEN-010`-ով է։
-- BlogPosting JSON-LD, canonical, hreflang և OG metadata կան։
+Blog feature-ը հանված է scope-ից (`0016_drop_blog`)։
 
 ## 20. Settings
 
@@ -335,7 +331,7 @@ Store settings-ը ներառում են store name/email/phone/address, default/
 
 | ID | Պահանջ / acceptance criteria |
 |---|---|
-| MED-001 | Product/category/hero/blog/branding media-ն R2-ում է, DB-ում՝ object key + metadata + alt text։ |
+| MED-001 | Product/category/hero/branding media-ն R2-ում է, DB-ում՝ object key + metadata + alt text։ |
 | MED-002 | Upload-ը presigned է և purpose/MIME/size/authorization սահմանափակումներ ունի։ |
 | MED-003 | Object key-ը unique, unguessable և environment/purpose namespaced է։ |
 | MED-004 | Full CDN URL-ը entity table-ում hardcode չի արվում; URL-ը config-ից է կառուցվում։ |

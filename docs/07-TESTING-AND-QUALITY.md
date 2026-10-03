@@ -60,7 +60,7 @@ Boundary values և invalid inputs յուրաքանչյուր pure function-ի te
 - Category parent cycle/self/descendant rejection and reassign/archive behavior։
 - Media primary uniqueness/reorder/finalization authorization։
 - Stock adjustment writes movement atomically։
-- Hero/blog publish status and cache-tag invalidation events։
+- Hero publish status and cache-tag invalidation events։
 
 ### Cart/checkout/orders
 
@@ -124,11 +124,11 @@ Online payment provider-ի ավելացման դեպքում առանձին sand
 
 ## 8. Performance և SEO QA
 
-- Representative home/catalog/product/blog pages Lighthouse/lab check։
+- Representative home/catalog/product pages Lighthouse/lab check։
 - Production-like RUM-ից CWV՝ LCP/CLS/INP targets։
 - Bundle analysis route groups-ի համար; unexpected client component/vendor growth blocks review մինչև explanation։
 - Database query plan review catalog/admin analytics/checkout hot queries-ի համար։
-- Canonical, hreflang, sitemap, robots, Product/Breadcrumb/BlogPosting JSON-LD automated assertions։
+- Canonical, hreflang, sitemap, robots, Product/Breadcrumb JSON-LD automated assertions։
 - `next/image` dimensions/sizes, hero art direction, font glyph coverage և no-layout-shift checks։
 
 ## 9. Security QA

@@ -12,7 +12,6 @@ import { staticAssetUrl } from "@/lib/media/static-asset-url";
 type SiteFooterProps = {
   dictionary: Dictionary;
   locale: Locale;
-  showBlog?: boolean;
 };
 
 type FooterLink = {
@@ -138,19 +137,12 @@ function FooterCopyright() {
  * Storefront footer — Figma 22:337 / container 22:338.
  * Full columns: desktop only. Copyright also at the end on mobile.
  */
-export function SiteFooter({
-  dictionary,
-  locale,
-  showBlog = true,
-}: SiteFooterProps) {
+export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const { footer, contact } = dictionary;
 
   const navigationLinks: FooterLink[] = [
     { href: `/${locale}/products`, label: footer.menu },
     { href: `/${locale}/about`, label: footer.about },
-    ...(showBlog
-      ? [{ href: `/${locale}/blog`, label: footer.blog } satisfies FooterLink]
-      : []),
     { href: `/${locale}/contact`, label: footer.contact },
   ];
 

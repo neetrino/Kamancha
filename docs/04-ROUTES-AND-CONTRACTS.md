@@ -22,8 +22,6 @@
 | `/[locale]/products/[slug]` | Public | Product detail; locale slug lookup; 404 unpublished/missing |
 | `/[locale]/about` | Public | Locale content |
 | `/[locale]/contact` | Public | Contact form + rate limit |
-| `/[locale]/blog` | Public | Published posts, pagination |
-| `/[locale]/blog/[slug]` | Public | Published locale post |
 | `/[locale]/policies/terms` | Public | Versioned approved content |
 | `/[locale]/policies/privacy` | Public | Versioned approved content |
 | `/[locale]/policies/shipping` | Public | Approved content |
@@ -79,7 +77,6 @@
 | `/[locale]/admin/messages` | Contact inbox |
 | `/[locale]/admin/analytics` | Metrics + CSV export |
 | `/[locale]/admin/delivery` | Store origin + AMD/km delivery settings |
-| `/[locale]/admin/blog` | Blog CMS |
 | `/[locale]/admin/settings` | Typed store settings |
 
 ## 6. Non-page HTTP endpoints
@@ -181,7 +178,7 @@ Raw database constraint/provider error-ը client չի հասնում։ Expected 
 
 | Resource/action | Guest | Customer | Admin |
 |---|---:|---:|---:|
-| Public catalog/blog | Read | Read | Read |
+| Public catalog | Read | Read | Read |
 | Guest cart | Own token | Merge/own | Own as shopper only |
 | Wishlist | Optional guest policy | Own | Own as shopper only |
 | Checkout/order create | Own cart | Own cart | Own as shopper only |
@@ -202,7 +199,6 @@ Permission-ը ստուգվում է resource query-ի հետ միասին կամ
 | Category update | category ID/slugs, catalog, breadcrumbs | category/catalog namespaces |
 | Hero update/reorder | home/hero per locale | hero cache if used |
 | Review moderation | product detail/rating | rating aggregates |
-| Blog publish/update | blog list/post/sitemap | blog cache if used |
 | Promotion/settings update | catalog/product/checkout pricing contexts | promotion/settings namespaces |
 | Order/status update | owner order/profile dashboard/admin orders/analytics | analytics/order summary |
 | Exchange rate refresh | currency display contexts as designed | exchange-rate namespace |

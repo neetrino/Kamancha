@@ -3,7 +3,6 @@ import type { Locale } from "@/lib/i18n/config";
 import enAbout from "@/locales/en/about.json";
 import enAdmin from "@/locales/en/admin.json";
 import enAuth from "@/locales/en/auth.json";
-import enBlog from "@/locales/en/blog.json";
 import enCart from "@/locales/en/cart.json";
 import enCatalog from "@/locales/en/catalog.json";
 import enCheckout from "@/locales/en/checkout.json";
@@ -19,7 +18,6 @@ import enWishlist from "@/locales/en/wishlist.json";
 import hyAbout from "@/locales/hy/about.json";
 import hyAdmin from "@/locales/hy/admin.json";
 import hyAuth from "@/locales/hy/auth.json";
-import hyBlog from "@/locales/hy/blog.json";
 import hyCart from "@/locales/hy/cart.json";
 import hyCatalog from "@/locales/hy/catalog.json";
 import hyCheckout from "@/locales/hy/checkout.json";
@@ -35,7 +33,6 @@ import hyWishlist from "@/locales/hy/wishlist.json";
 import ruAbout from "@/locales/ru/about.json";
 import ruAdmin from "@/locales/ru/admin.json";
 import ruAuth from "@/locales/ru/auth.json";
-import ruBlog from "@/locales/ru/blog.json";
 import ruCart from "@/locales/ru/cart.json";
 import ruCatalog from "@/locales/ru/catalog.json";
 import ruCheckout from "@/locales/ru/checkout.json";
@@ -60,7 +57,6 @@ type LocaleNamespaces = {
   groupOrder: typeof hyGroupOrder;
   cart: typeof hyCart;
   product: typeof hyProduct;
-  blog: typeof hyBlog;
   catalog: typeof hyCatalog;
   wishlist: typeof hyWishlist;
   legal: typeof hyLegal;
@@ -83,7 +79,6 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     groupOrder: namespaces.groupOrder,
     cartDrawer: namespaces.cart,
     product: namespaces.product,
-    blog: namespaces.blog,
     catalog: namespaces.catalog,
     wishlist: namespaces.wishlist,
     legal: namespaces.legal,
@@ -103,7 +98,6 @@ const dictionaries = {
     groupOrder: hyGroupOrder,
     cart: hyCart,
     product: hyProduct,
-    blog: hyBlog,
     catalog: hyCatalog,
     wishlist: hyWishlist,
     legal: hyLegal,
@@ -120,7 +114,6 @@ const dictionaries = {
     groupOrder: enGroupOrder,
     cart: enCart,
     product: enProduct,
-    blog: enBlog,
     catalog: enCatalog,
     wishlist: enWishlist,
     legal: enLegal,
@@ -137,7 +130,6 @@ const dictionaries = {
     groupOrder: ruGroupOrder,
     cart: ruCart,
     product: ruProduct,
-    blog: ruBlog,
     catalog: ruCatalog,
     wishlist: ruWishlist,
     legal: ruLegal,
