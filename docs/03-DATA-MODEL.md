@@ -45,23 +45,22 @@
 | 10 | `product_modifier_links` | Catalog | Product↔modifier availability |
 | 11 | `stock_movements` | Inventory | Immutable stock ledger |
 | 12 | `hero_slides` | Content | Hero configuration և translations |
-| 13 | `blog_posts` | Content | Blog content, translations և tags |
-| 14 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
-| 15 | `cart_items` | Commerce | Cart product quantities + selection key |
-| 16 | `cart_item_modifiers` | Commerce | Selected modifiers on a cart line |
-| 17 | `wishlist_items` | Commerce | Customer wishlist entries |
-| 18 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
-| 19 | `promotion_users` | Pricing | User-restricted promotion allowlist |
-| 20 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
-| 21 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
-| 22 | `order_items` | Orders | Immutable purchased-item snapshots |
-| 23 | `order_item_modifiers` | Orders | Immutable addition/exception snapshots |
-| 24 | `order_events` | Orders | Status, notes և payment provider events |
-| 25 | `payments` | Payments | Payment attempts/current provider state |
-| 26 | `reviews` | Engagement | Verified-purchase reviews/moderation |
-| 27 | `contact_messages` | Support | Contact inbox |
-| 28 | `audit_logs` | Security | Immutable admin/security audit |
-| 29 | `outbox_events` | Reliability | Reliable post-commit email/provider/cache work |
+| 13 | `carts` | Commerce | Guest/customer cart identity/lifecycle |
+| 14 | `cart_items` | Commerce | Cart product quantities + selection key |
+| 15 | `cart_item_modifiers` | Commerce | Selected modifiers on a cart line |
+| 16 | `wishlist_items` | Commerce | Customer wishlist entries |
+| 17 | `promotions` | Pricing | Coupons և automatic discounts մեկ rule model-ում |
+| 18 | `promotion_users` | Pricing | User-restricted promotion allowlist |
+| 19 | `delivery_rules` | Fulfillment | Location-based delivery pricing |
+| 20 | `orders` | Orders | Order, address/money/promotion snapshots, idempotency |
+| 21 | `order_items` | Orders | Immutable purchased-item snapshots |
+| 22 | `order_item_modifiers` | Orders | Immutable addition/exception snapshots |
+| 23 | `order_events` | Orders | Status, notes և payment provider events |
+| 24 | `payments` | Payments | Payment attempts/current provider state |
+| 25 | `reviews` | Engagement | Verified-purchase reviews/moderation |
+| 26 | `contact_messages` | Support | Contact inbox |
+| 27 | `audit_logs` | Security | Immutable admin/security audit |
+| 28 | `outbox_events` | Reliability | Reliable post-commit email/provider/cache work |
 
 ### Count assumptions
 
@@ -119,7 +118,6 @@ Entity ownership-ը պահվում է typed nullable FKs-ով՝
 - `product_id`
 - `category_id`
 - `hero_slide_id`
-- `blog_post_id`
 - `popup_id`
 
 `CHECK` constraint-ը պահանջում է՝ ready entity media-ի համար ճիշտ մեկ owner, pending upload-ի համար owner-ի ժամանակավոր բացակայություն, branding asset-ի համար explicit `purpose`։ Generic `owner_type + owner_id` polymorphic կապ չի օգտագործվում, որպեսզի foreign key protection-ը չկորչի։
@@ -128,7 +126,7 @@ Partial unique constraints՝
 
 - մեկ primary media per product,
 - մեկ desktop և մեկ mobile media role per hero slide,
-- մեկ cover media per blog post/category՝ ըստ role policy-ի,
+- մեկ cover media per category՝ ըստ role policy-ի,
 - մեկ `POPUP` media per store popup։
 
 Full CDN URL չի պահվում. URL-ը կառուցվում է config-ից։
@@ -196,12 +194,6 @@ Simple ապրանքը (`products.kind = SIMPLE`) մնում է մեկ գին/պ�
 ### 7.2 `store_popups`
 
 Admin title, optional click-through `link_url`, `is_active` և timestamps։ Միաժամանակ միայն մեկ ակտիվ popup (partial unique index)։ Պատկերը `media_assets.popup_id + role=POPUP`։
-
-### 7.3 `blog_posts`
-
-Author, status, publish timestamp, `translations JSONB` (title/slug/excerpt/sanitized content/SEO), `tags JSONB`/validated string array և timestamps/archive state։ Locale slug expression indexes-ը unique են։ Cover-ը `media_assets` relation է։
-
-Tags-ը standalone taxonomy չէ initial scope-ում, հետևաբար առանձին tag tables պետք չեն։
 
 ## 8. Cart և wishlist
 
@@ -346,7 +338,7 @@ Redis loss-ը չի կորցնում order/cart/product/user durable source of tr
 - Users՝ normalized email unique, role/status, created date։
 - Sessions՝ token unique, user/expiry։
 - Addresses՝ owner + partial default indexes։
-- Products/categories/blog/hero՝ status/date/sort + fixed-locale slug expression unique indexes։
+- Products/categories/hero՝ status/date/sort + fixed-locale slug expression unique indexes։
 - Media՝ object key unique, owner/role/sort և partial primary/cover/desktop/mobile uniqueness։
 - Product-category both lookup directions։
 - Products stock/low-stock և stock movements product/time/order։
@@ -392,6 +384,6 @@ Actual indexes-ը validate են արվում representative data-ի `EXPLAIN (AN
 - [ ] Money/range/exactly-one-owner/target constraints tested են։
 - [ ] Concurrent checkout/promotion usage/stock/last-admin tests անցնում են։
 - [ ] Redis token TTL և atomic single-use tests անցնում են։
-- [x] Seed-ը idempotent է և ստեղծում է admin/customers/catalog/hero/delivery/promotions/blog (sample orders՝ հետագա)։
+- [x] Seed-ը idempotent է և ստեղծում է admin/customers/catalog/hero/delivery/promotions (sample orders՝ հետագա)։
 - [x] Seed credentials-ը env-ից են; production default credential չկա։
 - [x] Production migration-ը application startup-ում auto-run չի արվում։

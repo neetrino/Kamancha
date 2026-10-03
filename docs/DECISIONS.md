@@ -29,13 +29,13 @@
 | DEC-008 | Durable cart | Approved by brief | PostgreSQL source of truth; guest session cart; login merge | Redis-ը optional accelerator է |
 | DEC-009 | Deletes | Approved by brief | Finance/audit hard delete չի արվում | Archive/soft delete/anonymize |
 | DEC-010 | Images | Approved by brief | R2 object key database-ում, public URL config-ից | Presigned upload, delayed old-object cleanup |
-| DEC-011 | Database footprint | Approved by user | Canonical lean schema՝ 38 PostgreSQL table (incl. gift cards, group orders, store popups) | Նոր table միայն migration rationale-ով |
-| DEC-012 | Dynamic translations | Approved by user | Product/category/hero/blog translations-ը parent table-ի validated JSONB-ում | UI copy-ն մնում է locale JSON files-ում |
+| DEC-011 | Database footprint | Approved by user | Canonical lean schema՝ PostgreSQL tables (incl. gift cards, group orders, store popups; blog removed) | Նոր table միայն migration rationale-ով |
+| DEC-012 | Dynamic translations | Approved by user | Product/category/hero translations-ը parent table-ի validated JSONB-ում | UI copy-ն մնում է locale JSON files-ում |
 | DEC-017 | Admin content locale UX | Approved by user | Admin create/edit forms-ը մեկ դաշտերի հավաքածու ունեն (Title/Slug/Description/…) + active locale selector; զուգահեռ `hy`/`en`/`ru` դաշտեր չեն ցուցադրվում | Լրացվում է միայն ընտրված locale-ը; publish-ին պարտադիր է առնվազն մեկ լրիվ locale, ոչ բոլոր երեքը |
 | DEC-013 | Promotions | Approved by user | Coupons և automatic discounts-ը մեկ `promotions` table-ում | User allowlist-ը `promotion_users` relation է |
 | DEC-014 | Auth tokens | Approved by user | Verification/reset tokens-ը hashed TTL records են Upstash Redis-ում | PostgreSQL sessions-ը պահվում են revoke-ի համար |
 | DEC-015 | Order model | Approved by user | Address snapshots-ը `orders` JSONB-ում, status/notes/provider events-ը `order_events`-ում | `order_items` և `payments` առանձին են մնում |
-| DEC-016 | Media ownership | Approved by user | Product/category/hero/blog/popup ownership-ը `media_assets` typed FKs/roles-ով | Generic polymorphic owner առանց FK չի օգտագործվում |
+| DEC-016 | Media ownership | Approved by user | Product/category/hero/popup ownership-ը `media_assets` typed FKs/roles-ով | Generic polymorphic owner առանց FK չի օգտագործվում |
 | DEC-025 | Storefront popups | Approved by implementation task | `store_popups` + `media_assets.popup_id`/`POPUP` role; one active at a time; show on all storefront pages; session dismiss | Optional link URL on image click |
 | OPEN-001 | Hosting/runtime | Open | Vercel, այլ Node hosting, region և runtime սահմաններ | Next.js Node runtime, deployment չի արվում մինչև approval |
 | OPEN-002 | Online payments | Open | Որ provider-ներն են launch scope-ում և ինչ webhook/refund flows են պետք | Միայն COD |
@@ -46,7 +46,7 @@
 | OPEN-007 | Variants | Open | Color/size variants launch-ին ակտիվ են, թե extension point | Schema extension point, UI deferred |
 | OPEN-008 | Coupon stacking | Open | Coupon-ը կարող է stack լինել automatic discount-ի հետ | Settings-ով, default՝ false |
 | OPEN-009 | Customer deletion | Open | Retention duration և legal/audit պահանջներ | PII anonymization, order snapshots retained |
-| OPEN-010 | Content editor | Open | Blog rich-text editor և canonical sanitized format | Sanitized HTML կամ structured JSON՝ adapter boundary-ով |
+| OPEN-010 | Content editor | Deferred | Blog removed from product scope | N/A |
 | OPEN-011 | Observability | Open | Sentry/այլ provider, log retention և PII policy | Structured server logs, provider adapter |
 | OPEN-012 | Analytics | Open | Vercel Analytics/PostHog/այլ և consent requirements | First-party aggregate order analytics only |
 | OPEN-013 | Design system | Open | Figma, brand tokens, dark mode և final breakpoints | shadcn/ui + Tailwind CSS variables, light theme first |

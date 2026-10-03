@@ -16,7 +16,7 @@
 | 6 | Cart and checkout | Done | Durable cart + COD + coupon apply |
 | 7 | Customer self-service | Done (minimal) | Profile, orders, personal info |
 | 8 | Admin commerce operations | Done | Dashboard, orders ops, users, promotions |
-| 9 | Content / analytics | Done | Hero, contact, blog, analytics, settings |
+| 9 | Content / analytics | Done | Hero, contact, analytics, settings |
 | 10 | Reviews / currency / payments | Done | Reviews, FX cache, COD + webhook guards |
 | 11 | Hardening / release | Done (docs) | Headers, legal stubs, release checklist |
 
@@ -30,7 +30,6 @@
 
 ### Phase 9
 - Hero CMS + contact spam/rate-limit + messages inbox
-- Blog CMS/public routes + HTML sanitizer + BlogPosting JSON-LD
 - Analytics dashboard + Redis cache + CSV export (formula-safe)
 - Store settings (identity, branding, social, stacking, revenue, maintenance)
 - Maintenance gate for non-admin storefront users

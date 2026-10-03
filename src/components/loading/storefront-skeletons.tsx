@@ -10,10 +10,6 @@ function Block({ className = '' }: SkeletonProps) {
   return <div className={`rounded-md bg-gray-200 ${className}`} />;
 }
 
-function ForestBlock({ className = '' }: SkeletonProps) {
-  return <div className={`rounded-[30px] bg-white/12 ${className}`} />;
-}
-
 export function CatalogGridSkeleton() {
   return (
     <div className={`${pulse} space-y-6`} aria-busy="true" aria-live="polite">
@@ -38,28 +34,6 @@ export function ProductDetailSkeleton() {
         <Block className="h-24 w-full" />
         <Block className="h-12 w-40 rounded-full" />
       </div>
-    </div>
-  );
-}
-
-export function BlogListSkeleton() {
-  return (
-    <div className={`${pulse} space-y-8`} aria-busy="true" aria-live="polite">
-      <ForestBlock className="h-14 w-40 rounded-md" />
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-        <ForestBlock className="h-80 w-full" />
-        <ForestBlock className="h-80 w-full" />
-      </div>
-    </div>
-  );
-}
-
-export function BlogPostSkeleton() {
-  return (
-    <div className={`${pulse} space-y-8`} aria-busy="true" aria-live="polite">
-      <ForestBlock className="h-4 w-32 rounded-md" />
-      <ForestBlock className="h-12 w-3/4 rounded-md" />
-      <ForestBlock className="aspect-[21/9] w-full" />
     </div>
   );
 }

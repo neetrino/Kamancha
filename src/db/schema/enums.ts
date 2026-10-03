@@ -68,12 +68,6 @@ export const giftCardTransactionTypeEnum = pgEnum("gift_card_transaction_type", 
   "ADJUST",
 ]);
 
-export const blogPostStatusEnum = pgEnum("blog_post_status", [
-  "DRAFT",
-  "PUBLISHED",
-  "ARCHIVED",
-]);
-
 export const cartStatusEnum = pgEnum("cart_status", [
   "ACTIVE",
   "MERGED",

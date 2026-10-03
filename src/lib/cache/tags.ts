@@ -9,10 +9,6 @@ export const CACHE_TAGS = {
   hero: "hero",
   popups: "popups",
   categories: "categories",
-  blog: "blog",
-  blogPost: (id: string) => `blog:${id}`,
-  blogPostSlug: (locale: string, slug: string) =>
-    `blog-slug:${locale}:${slug}`,
   settings: "settings",
 } as const;
 

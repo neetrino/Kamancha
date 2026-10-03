@@ -26,7 +26,6 @@ locales/
     checkout.json
     cart.json
     product.json
-    blog.json
     catalog.json
     wishlist.json
   en/
@@ -44,7 +43,7 @@ locales/
 
 ## 3. Database translation model
 
-- Product, category, hero և blog admin-managed translations-ը պահվում են համապատասխան parent table-ի versioned `translations JSONB` դաշտում։ Առանձին translation tables չկան canonical 25-table schema-ում։
+- Product, category և hero admin-managed translations-ը պահվում են համապատասխան parent table-ի versioned `translations JSONB` դաշտում։ Առանձին translation tables չկան canonical schema-ում։
 - JSON structure-ը entity-specific Zod schema ունի; `hy`/`en`/`ru` keys-ը optional են (partial translations թույլատրված են՝ `DEC-017`)։
 - Slug-ը unique է per locale/entity namespace՝ PostgreSQL expression unique indexes-ով (`translations->'hy'->>'slug'` և այլն) միայն առկա locale keys-ի համար։
 - Public publish command-ը ստուգում է առնվազն մեկ լրիվ locale-ի completeness-ը, ոչ բոլոր երեք locale-ները։
@@ -53,7 +52,7 @@ locales/
 
 ### 3.1 Admin content editing UX (`DEC-017`)
 
-- Admin create/edit forms-ը (product, category, hero, blog) ցուցադրում են **մեկ** դաշտերի հավաքածու՝ Title, Slug, Description և այլ locale-bound fields — ինչպես single-language Basic Information form։
+- Admin create/edit forms-ը (product, category, hero) ցուցադրում են **մեկ** դաշտերի հավաքածու՝ Title, Slug, Description և այլ locale-bound fields — ինչպես single-language Basic Information form։
 - Active locale-ը ընտրվում է selector/tabs control-ով; selector փոխելիս նույն դաշտերում բեռնվում/պահվում է այդ locale-ի JSONB entry-ն։
 - Զուգահեռ `hy` + `en` + `ru` դաշտեր նույն էջում չեն ցուցադրվում։
 - Admin-ը կարող է լրացնել միայն այն լեզուները, որոնք պետք են; մյուսները դատարկ են մնում մինչև հետագա edit։
@@ -107,7 +106,6 @@ interface ExchangeRateProvider {
 | Home | locale title/description, canonical, hreflang, OG |
 | Catalog | normalized filter canonical policy, optional noindex for low-value combinations |
 | Product | translated title/description, canonical locale slug, hreflang available translations, Product JSON-LD, OG image |
-| Blog list/post | canonical/hreflang, BlogPosting JSON-LD post-ի համար, OG |
 | Policies/About/Contact | canonical/hreflang և meaningful metadata |
 | Profile/Admin/Auth/Cart/Checkout | `noindex` where appropriate; sensitive routes sitemap-ում չկան |
 
@@ -122,18 +120,17 @@ interface ExchangeRateProvider {
 
 - `hy`, `en`, `ru` alternates միայն գոյություն ունեցող equivalent content-ի համար։
 - Optional `x-default`-ը կարող է ցույց տալ `/hy` կամ locale selector policy-ին։
-- Product/blog alternate URL-ը target locale slug-ն է, ոչ միայն segment replacement։
+- Product alternate URL-ը target locale slug-ն է, ոչ միայն segment replacement։
 
 ### 6.3 Structured data
 
 - Product JSON-LD՝ name, image, description, SKU, brand եթե կա, offers price/currency/availability, aggregateRating միայն approved data-ի դեպքում։
 - Breadcrumb JSON-LD՝ locale labels/URLs։
-- BlogPosting JSON-LD՝ headline, dates, author, image, canonical։
 - JSON-LD-ը render է արվում safe serialized data-ից և համապատասխանում է visible page content-ին։ Fake reviews/availability/prices արգելված են։
 
 ### 6.4 Sitemap և robots
 
-- Sitemap-ը ներառում է published canonical locale pages/products/blog posts և relevant last-modified timestamps։
+- Sitemap-ը ներառում է published canonical locale pages/products և relevant last-modified timestamps։
 - Draft/archived/auth/profile/admin/cart/checkout/search-combination pages-ը sitemap-ում չեն։
 - Preview/staging environments-ը crawler-blocked են և production canonical domain չեն գովազդում։
 - `robots.txt`-ը security boundary չէ. sensitive data-ն auth-ով է պաշտպանվում։

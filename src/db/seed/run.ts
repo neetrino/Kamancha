@@ -286,43 +286,6 @@ async function seed(): Promise<void> {
     });
 
   await db
-    .insert(schema.blogPosts)
-    .values({
-      id: seedIds.blogWelcome,
-      authorUserId: seedIds.adminUser,
-      status: "PUBLISHED",
-      publishedAt: now,
-      translations: {
-        hy: {
-          title: "Welcome to White Shop",
-          slug: "bari-galust",
-          excerpt: "Store launch",
-          content: "<p>White Shop is ready.</p>",
-        },
-        en: {
-          title: "Welcome to White Shop",
-          slug: "welcome",
-          excerpt: "Store launch note",
-          content: "<p>White Shop is ready.</p>",
-        },
-        ru: {
-          title: "Welcome to White Shop",
-          slug: "dobro-pozhalovat",
-          excerpt: "Store launch",
-          content: "<p>White Shop is ready.</p>",
-        },
-      },
-      tags: ["news", "launch"],
-    })
-    .onConflictDoUpdate({
-      target: schema.blogPosts.id,
-      set: {
-        status: "PUBLISHED",
-        updatedAt: now,
-      },
-    });
-
-  await db
     .insert(schema.storeSettings)
     .values([
       {

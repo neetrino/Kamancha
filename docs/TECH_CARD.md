@@ -36,7 +36,7 @@
 | Icons | Lucide React | ✅ | Icon-only control-ները ունեն accessible name |
 | Internal navigation | Next.js `Link` | ✅ | Selective prefetch, no plain `<a>` internal routes-ի համար |
 | i18n | Locale segment + translation dictionaries | ✅ | `hy`, `en`, `ru`; admin content՝ locale selector + մեկ դաշտերի հավաքածու (`DEC-017`) |
-| SEO | Metadata API, sitemap, robots, JSON-LD | ✅ | Product/Breadcrumb/BlogPosting schemas |
+| SEO | Metadata API, sitemap, robots, JSON-LD | ✅ | Product/Breadcrumb schemas |
 
 ## 3. Backend և application boundary
 

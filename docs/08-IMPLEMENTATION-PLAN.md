@@ -161,14 +161,13 @@
 
 - Hero CMS reorder/publish։
 - Contact form spam controls + Messages inbox։
-- Blog CMS/public routes, sanitizer, BlogPosting SEO։
 - Analytics dashboard/date comparison/cache/CSV։
 - Store settings/branding/social/maintenance mode։
 
 ### Exit criteria
 
 - XSS/CSV/rate-limit/cache invalidation tests pass։
-- Blog/contact/analytics representative E2E pass։
+- Contact/analytics representative E2E pass։
 
 ## 12. Reviews, currency and optional online payments — Phase 10
 

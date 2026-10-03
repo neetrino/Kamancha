@@ -69,7 +69,6 @@ src/
         products/
         about/
         contact/
-        blog/
         policies/
       (auth)/
         login/
@@ -105,7 +104,6 @@ src/
     wishlist/
     delivery/
     hero/
-    blog/
     contact/
     analytics/
     settings/
@@ -177,7 +175,7 @@ infrastructure adapters
 
 | Surface | Default | Cache behavior |
 |---|---|---|
-| Home/catalog/product/blog | Server Components | Tagged revalidation, locale/currency-aware derived display |
+| Home/catalog/product | Server Components | Tagged revalidation, locale/currency-aware derived display |
 | Search/filter/pagination | URL search params → server query | Shareable URL, deterministic parsing |
 | Cart | Server authoritative + small client interaction island | No public cache; refresh after mutation |
 | Checkout | Dynamic server flow | No shared cache; idempotent mutation |
@@ -242,9 +240,9 @@ sequenceDiagram
 
 ## 8. Cache architecture
 
-- **Next.js cache.** Public catalog/hero/blog read models՝ locale-aware tags-ով։
+- **Next.js cache.** Public catalog/hero read models՝ locale-aware tags-ով։
 - **Redis ephemeral/cache.** Exchange rates, analytics aggregates, selected hot queries, product view counters և hashed verification/reset tokens։
-- **Invalidation.** Product/category/hero/blog/settings mutation-ը invalid է դարձնում կոնկրետ Next tags և namespaced Redis keys։
+- **Invalidation.** Product/category/hero/settings mutation-ը invalid է դարձնում կոնկրետ Next tags և namespaced Redis keys։
 - **No durable commerce authority.** Cache miss կամ Redis outage-ը չի կորցնում cart/order/stock տվյալները։ Verification/reset tokens-ը reissuable ephemeral state են։
 - **Key shape.** Environment + feature + version + entity/query dimensions։ User PII-ն key-ում չի գրվում։
 

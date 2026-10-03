@@ -69,7 +69,6 @@
 ## 7. XSS և content security
 
 - React escaped rendering default է; `dangerouslySetInnerHTML` միայն centralized sanitized rich-content component-ում։
-- Blog rich text-ը sanitize է արվում server-side allowlist-ով ստեղծելիս/թարմացնելիս և ցանկալի է կրկին անվտանգ render boundary-ով։
 - User review/contact/admin notes-ը plain text է, ոչ HTML։
 - Image alt text-ը escaped text է։
 - CSP-ը սկսվում է report-only inventory-ից, ապա enforce է արվում hosting/provider allowlist-ով։ Inline script/style exceptions-ը նվազագույն են և documented։
@@ -152,7 +151,7 @@ Redis unavailable լինելու դեպքում high-risk endpoints-ը fail-clos
 Audit-required events՝
 
 - Admin login/security-relevant failure signals
-- Product/category/hero/blog publish/archive/delete
+- Product/category/hero publish/archive/delete
 - Stock adjustment
 - Order/payment/status/admin note changes
 - Coupon/discount/delivery/settings changes
@@ -195,7 +194,7 @@ Audit row-ը ներառում է actor, action, target, safe before/after diff, 
 | IDOR/BOLA | Cross-user profile/order/address tests |
 | RBAC | Customer-to-admin route/action denial tests |
 | CSRF/origin | Negative Route Handler/Action tests where applicable |
-| XSS | Sanitizer unit tests + payload E2E for blog/review/contact |
+| XSS | Payload E2E for review/contact |
 | SQL injection | Schema/allowlist tests; no interpolated identifiers from input |
 | Rate limiting | Boundary/retry-after tests and Redis failure policy |
 | Upload | MIME/size/purpose/ownership/finalize negative tests |
