@@ -1,5 +1,6 @@
 import { CalendarDays } from "lucide-react";
 
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { formatDeliverySlotDisplay } from "@/features/delivery/domain/delivery-schedule";
 import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
 
@@ -48,14 +49,15 @@ export function DeliverySlotSummary({
         <p className="text-sm text-gray-900">{labels.deliverTo}</p>
         <p className="truncate text-sm font-semibold text-gray-900">{detail}</p>
       </div>
-      <button
+      <KamanchaPillButton
         type="button"
+        variant="light"
+        size="compact"
+        label={labels.change}
         disabled={disabled}
         onClick={onChangeClick}
-        className="hidden shrink-0 text-sm font-medium text-red-500 transition-opacity hover:opacity-80 disabled:opacity-40 sm:inline"
-      >
-        {labels.change}
-      </button>
+        className="!hidden !min-h-10 !w-auto shrink-0 !bg-red-500 !px-6 !text-sm !text-white shadow-md hover:!bg-red-600 focus-visible:!bg-red-600 sm:!inline-flex"
+      />
     </div>
   );
 }

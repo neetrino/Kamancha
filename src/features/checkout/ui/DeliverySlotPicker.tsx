@@ -197,7 +197,7 @@ export function DeliverySlotPicker({
   if (availableDays.length === 0) {
     return (
       <div data-checkout-field="deliverySlot" className={SUMMARY_CARD_CLASS}>
-        <h3 className="mb-3 text-base font-semibold text-gray-900">
+        <h3 className="mb-3 font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
           {labels.title}
         </h3>
         <p className="text-sm text-red-700">{labels.noSlots}</p>
@@ -211,7 +211,9 @@ export function DeliverySlotPicker({
     <div data-checkout-field="deliverySlot" className="relative z-[2] space-y-6">
       <div className={SUMMARY_CARD_CLASS}>
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="text-base font-semibold text-gray-900">{labels.title}</h3>
+          <h3 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
+            {labels.title}
+          </h3>
           <button
             type="button"
             disabled={disabled}
