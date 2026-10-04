@@ -54,8 +54,11 @@ import {
   type GiftCardRedeemPreview,
 } from "@/features/gift-cards/domain/gift-card-rules";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
-import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
-import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
+import {
+  resolveEarliestDeliverySlot,
+  type DeliveryScheduleSettings,
+  type SelectedDeliverySlot,
+} from "@/features/delivery/domain/delivery-schedule";
 import {
   CASH_CHANGE_NONE,
   type CashChangeSelection,
@@ -143,7 +146,7 @@ export function CheckoutForm({
   );
   const [deliveryTimePending, setDeliveryTimePending] = useState(false);
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
-    null,
+    () => resolveEarliestDeliverySlot(deliverySchedule),
   );
   const [cashChangeAmount, setCashChangeAmount] =
     useState<CashChangeSelection>(CASH_CHANGE_NONE);

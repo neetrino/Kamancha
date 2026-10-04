@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { DeliverySlotCalendar } from "@/features/checkout/ui/DeliverySlotCalendar";
 import { DeliverySlotSummary } from "@/features/checkout/ui/DeliverySlotSummary";
@@ -162,14 +162,6 @@ export function DeliverySlotPicker({
     parseYmd(lastDate).monthIndex,
   );
   const viewMonthYmd = startOfMonthYmd(viewYear, viewMonth);
-
-  useEffect(() => {
-    if (disabled || !asapSlot) return;
-    if (selected == null) {
-      setUseAsap(true);
-      onChange(asapSlot);
-    }
-  }, [asapSlot, disabled, onChange, selected]);
 
   function shiftMonth(delta: number): void {
     const next = new Date(Date.UTC(viewYear, viewMonth + delta, 1));
