@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
+import { useLayoutEffect, useRef, useState, useTransition, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -131,14 +131,85 @@ export function AdminUsersView({
     });
   }
 
-  const rolePills = [
+  const roleTabs = [
     { label: copy.users.roleAll, value: undefined },
     { label: copy.users.roleAdmins, value: "ADMIN" },
     { label: copy.users.roleCustomers, value: "CUSTOMER" },
   ] as const;
+  const activeRole = role ?? undefined;
+  const listRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Partial<Record<string, HTMLButtonElement>>>({});
+  const [indicator, setIndicator] = useState({ x: 0, width: 0, ready: false });
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const button = tabRefs.current[activeRole ?? "all"];
+    if (!list || !button) return;
+
+    const update = (): void => {
+      const listRect = list.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      setIndicator({
+        x: buttonRect.left - listRect.left,
+        width: buttonRect.width,
+        ready: true,
+      });
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, [activeRole]);
 
   return (
     <section>
+      <div
+        ref={listRef}
+        role="tablist"
+        aria-label={copy.users.roleFilterLabel}
+        className="relative mb-4 flex gap-3 border-b border-gray-200"
+      >
+        {roleTabs.map((tab) => {
+          const selected = activeRole === tab.value;
+          const key = tab.value ?? "all";
+          return (
+            <button
+              key={key}
+              ref={(node) => {
+                if (node) tabRefs.current[key] = node;
+              }}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              className={`px-3 pt-2.5 pb-2.5 text-[15px] font-medium transition-colors duration-300 ease-out ${
+                selected
+                  ? "text-brand-forest"
+                  : "text-gray-500 hover:text-brand-forest"
+              }`}
+              onClick={() => {
+                if (!selected) {
+                  router.push(roleFilterHref(locale, tab.value, q));
+                }
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute bottom-0 h-0.5 bg-brand-forest"
+          style={{
+            width: indicator.width,
+            transform: `translateX(${indicator.x}px)`,
+            transition: indicator.ready
+              ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), width 320ms cubic-bezier(0.22, 1, 0.36, 1)"
+              : "none",
+          }}
+        />
+      </div>
+
       <form
         method="get"
         className="mb-4 flex flex-wrap gap-3"
@@ -159,30 +230,6 @@ export function AdminUsersView({
           {copy.users.search}
         </Button>
       </form>
-
-      <div className="mb-4">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-          {copy.users.roleFilterLabel}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {rolePills.map((pill) => {
-            const active = (role ?? undefined) === pill.value;
-            return (
-              <Link
-                key={pill.label}
-                href={roleFilterHref(locale, pill.value, q)}
-                className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-gray-200 text-gray-900"
-                    : "bg-white text-gray-600 ring-1 ring-gray-300 hover:bg-gray-50"
-                }`}
-              >
-                {pill.label}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
 
       <p className="mb-3 text-sm text-gray-600">
         {copy.users.totalUsers.replace("{total}", String(total))}
