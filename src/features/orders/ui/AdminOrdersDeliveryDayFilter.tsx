@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import { formatYerevanDate } from "@/features/delivery/domain/delivery-schedule";
 import { addCalendarDaysYmd } from "@/features/orders/domain/admin-delivery-day";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -109,16 +110,17 @@ export function AdminOrdersDeliveryDayFilter({
         onSelect={onPresetSelect}
       />
       {showDateInput ? (
-        <input
-          type="date"
-          aria-label={labels.pickDate}
+        <AdminDatePickerField
+          name="deliveryDate"
           value={preset === "custom" ? (deliveryDate ?? customDate) : customDate}
-          onChange={(event) => {
-            const next = event.target.value;
+          onChange={(next) => {
             setCustomDate(next);
             if (next) navigate(next);
           }}
-          className="h-10 rounded-full border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none focus:border-brand-forest"
+          locale={locale}
+          common={copy.common}
+          labels={{ placeholder: labels.datePlaceholder }}
+          inputClassName="!h-11 !w-auto !rounded-[15px] !px-4 !shadow-none"
         />
       ) : null}
     </div>
