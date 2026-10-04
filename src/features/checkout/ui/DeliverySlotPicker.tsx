@@ -213,9 +213,17 @@ export function DeliverySlotPicker({
       data-checkout-field="deliverySlot"
       className={`relative z-[2] ${SUMMARY_CARD_CLASS}`}
     >
-      <h3 className="mb-3 text-base font-semibold text-gray-900">
-        {labels.title}
-      </h3>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-base font-semibold text-gray-900">{labels.title}</h3>
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => setIsEditing((open) => !open)}
+          className="shrink-0 text-sm font-medium text-red-500 transition-opacity hover:opacity-80 disabled:opacity-40 sm:hidden"
+        >
+          {labels.change}
+        </button>
+      </div>
       <DeliverySlotSummary
         labels={labels}
         useAsap={useAsap}

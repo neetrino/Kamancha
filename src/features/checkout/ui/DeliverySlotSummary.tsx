@@ -52,7 +52,7 @@ export function DeliverySlotSummary({
         type="button"
         disabled={disabled}
         onClick={onChangeClick}
-        className="shrink-0 text-sm font-medium text-red-500 transition-opacity hover:opacity-80 disabled:opacity-40"
+        className="hidden shrink-0 text-sm font-medium text-red-500 transition-opacity hover:opacity-80 disabled:opacity-40 sm:inline"
       >
         {labels.change}
       </button>
