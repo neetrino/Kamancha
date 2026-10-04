@@ -96,7 +96,7 @@ export function OrderFeedbackForm({
         {labels.title}
       </h3>
       <form
-        className="space-y-3"
+        className="flex flex-col space-y-3"
         onSubmit={(event) => {
           event.preventDefault();
           if (rating < 1) return;
@@ -122,11 +122,12 @@ export function OrderFeedbackForm({
           value={rating}
           onChange={setRating}
           label={labels.ratingLabel}
+          hideLabel
           disabled={pending}
           tone="onLight"
         />
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-900">
-          {labels.commentLabel}
+          <span className="sr-only">{labels.commentLabel}</span>
           <textarea
             value={comment}
             onChange={(event) => setComment(event.target.value)}
@@ -141,7 +142,7 @@ export function OrderFeedbackForm({
         <button
           type="submit"
           disabled={pending || rating < 1}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-brand-forest px-5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="ml-auto inline-flex h-10 items-center justify-center rounded-full bg-brand-forest px-5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? labels.submitting : labels.submit}
         </button>
