@@ -141,6 +141,7 @@ export function CheckoutForm({
   const [hydratedDeliveryKey, setHydratedDeliveryKey] = useState<string | null>(
     null,
   );
+  const [deliveryTimePending, setDeliveryTimePending] = useState(false);
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
     null,
   );
@@ -444,7 +445,7 @@ export function CheckoutForm({
       contactPhone: String(data.get("contactPhone") ?? ""),
       line1,
       hasDeliveryZone: lockedDeliveryAmount != null || Boolean(deliveryRuleId),
-      hasDeliverySlot: deliverySlot != null,
+      hasDeliverySlot: deliverySlot != null && !deliveryTimePending,
       hasPaymentMethod: paymentMethod != null,
       bonusRedeemRequired: useBonuses,
       bonusRedeemAmount: appliedBonus,
@@ -549,7 +550,11 @@ export function CheckoutForm({
             pending={pending}
             deliverySchedule={deliverySchedule}
             deliverySlot={deliverySlot}
-            onDeliverySlotChange={setDeliverySlot}
+            onDeliverySlotChange={(value) => {
+              setDeliveryTimePending(false);
+              setDeliverySlot(value);
+            }}
+            onDeliveryTimePendingChange={setDeliveryTimePending}
             cashChangeOptions={cashChangeOptions}
             cashChangeAmount={selectedCashChange}
             onCashChangeAmountChange={setCashChangeAmount}

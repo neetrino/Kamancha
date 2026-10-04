@@ -73,6 +73,7 @@ type CheckoutDetailsSectionsProps = {
   deliverySchedule: DeliveryScheduleSettings;
   deliverySlot: SelectedDeliverySlot | null;
   onDeliverySlotChange: (value: SelectedDeliverySlot | null) => void;
+  onDeliveryTimePendingChange?: (pending: boolean) => void;
   cashChangeOptions: CashChangeDenominationView[];
   cashChangeAmount: CashChangeSelection;
   onCashChangeAmountChange: (value: CashChangeSelection) => void;
@@ -105,6 +106,7 @@ export function CheckoutDetailsSections({
   deliverySchedule,
   deliverySlot,
   onDeliverySlotChange,
+  onDeliveryTimePendingChange,
   cashChangeOptions,
   cashChangeAmount,
   onCashChangeAmountChange,
@@ -298,6 +300,8 @@ export function CheckoutDetailsSections({
             }}
             disabled={pending}
             locale={locale}
+            invalid={Boolean(invalidFields.deliverySlot)}
+            onTimePendingChange={onDeliveryTimePendingChange}
             labels={{
               title: labels.scheduleTitle,
               deliverTo: labels.scheduleDeliverTo,
