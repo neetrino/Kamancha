@@ -240,6 +240,9 @@ function CustomerOrderSheetBody({
       ) : null}
 
       <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
+        <h3 className="font-big-fat-boii text-sm font-normal tracking-wide whitespace-nowrap text-gray-900 uppercase sm:hidden">
+          {labels.shippingAddress}
+        </h3>
         <div
           className={
             detail.scheduledDeliveryDate
@@ -248,7 +251,7 @@ function CustomerOrderSheetBody({
           }
         >
           <div className="min-w-0 flex-1 space-y-3">
-        <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+        <h3 className="hidden font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase sm:block">
           {labels.shippingAddress}
         </h3>
           <div className="flex min-w-0 items-start gap-2 text-sm text-gray-700">
