@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
-import { AdminDatePickerField } from "@/features/admin/ui/AdminDatePickerField";
 import { formatYerevanDate } from "@/features/delivery/domain/delivery-schedule";
 import { addCalendarDaysYmd } from "@/features/orders/domain/admin-delivery-day";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -62,9 +61,11 @@ export function AdminOrdersDeliveryDayFilter({
   const today = formatYerevanDate(new Date());
   const tomorrow = addCalendarDaysYmd(today, 1);
   const preset = resolvePreset(deliveryDate, today, tomorrow);
+  const [pickingCustom, setPickingCustom] = useState(preset === "custom");
   const [customDate, setCustomDate] = useState(
     preset === "custom" && deliveryDate ? deliveryDate : "",
   );
+  const showDateInput = pickingCustom || preset === "custom";
 
   const options: Array<{ value: DeliveryDayPreset; label: string }> = [
     { value: "all", label: labels.all },
@@ -79,47 +80,46 @@ export function AdminOrdersDeliveryDayFilter({
 
   function onPresetSelect(next: DeliveryDayPreset): void {
     if (next === "all") {
+      setPickingCustom(false);
       setCustomDate("");
       navigate(undefined);
       return;
     }
     if (next === "today") {
+      setPickingCustom(false);
       setCustomDate("");
       navigate(today);
       return;
     }
     if (next === "tomorrow") {
+      setPickingCustom(false);
       setCustomDate("");
       navigate(tomorrow);
       return;
     }
-    if (customDate) {
-      navigate(customDate);
-    }
+    setPickingCustom(true);
   }
 
   return (
     <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       <SegmentedControl
         aria-label={labels.aria}
-        value={preset}
+        value={showDateInput ? "custom" : preset}
         options={options}
         onSelect={onPresetSelect}
       />
-      {preset === "custom" ? (
-        <div className="w-full max-w-[180px] sm:w-auto">
-          <AdminDatePickerField
-            name="deliveryDate"
-            value={customDate}
-            onChange={(value) => {
-              setCustomDate(value);
-              if (value) navigate(value);
-            }}
-            locale={locale}
-            common={copy.common}
-            labels={{ placeholder: labels.datePlaceholder }}
-          />
-        </div>
+      {showDateInput ? (
+        <input
+          type="date"
+          aria-label={labels.pickDate}
+          value={preset === "custom" ? (deliveryDate ?? customDate) : customDate}
+          onChange={(event) => {
+            const next = event.target.value;
+            setCustomDate(next);
+            if (next) navigate(next);
+          }}
+          className="h-10 rounded-full border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none focus:border-brand-forest"
+        />
       ) : null}
     </div>
   );

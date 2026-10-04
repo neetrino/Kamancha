@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useLayoutEffect, useRef, useState } from "react";
 
-import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import {
   ADMIN_ORDER_KINDS,
   type AdminOrderKind,
@@ -105,6 +105,31 @@ export function AdminOrderKindFilter({
     group: unseenGroupCount,
   };
 
+  const listRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<Partial<Record<AdminOrderKind, HTMLButtonElement>>>({});
+  const [indicator, setIndicator] = useState({ x: 0, width: 0, ready: false });
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const button = tabRefs.current[active];
+    if (!list || !button) return;
+
+    const update = (): void => {
+      const listRect = list.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      setIndicator({
+        x: buttonRect.left - listRect.left,
+        width: buttonRect.width,
+        ready: true,
+      });
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, [active, unseenCount, unseenPersonalCount, unseenGroupCount]);
+
   const options = ADMIN_ORDER_KINDS.map((kind) => ({
     value: kind,
     label: (
@@ -116,13 +141,47 @@ export function AdminOrderKindFilter({
   }));
 
   return (
-    <div className="mb-4">
-      <SegmentedControl
-        aria-label={labels.aria}
-        value={active}
-        options={options}
-        onSelect={(kind) => {
-          router.push(hrefForKind(locale, kind, baseQuery));
+    <div
+      ref={listRef}
+      role="tablist"
+      aria-label={labels.aria}
+      className="relative mb-4 flex gap-3 border-b border-gray-200"
+    >
+      {options.map((option) => {
+        const selected = option.value === active;
+        return (
+          <button
+            key={option.value}
+            ref={(node) => {
+              if (node) tabRefs.current[option.value] = node;
+            }}
+            type="button"
+            role="tab"
+            aria-selected={selected}
+            className={`px-3 pt-2.5 pb-2.5 text-[15px] font-medium transition-colors duration-300 ease-out ${
+              selected
+                ? "text-brand-forest"
+                : "text-gray-500 hover:text-brand-forest"
+            }`}
+            onClick={() => {
+              if (!selected) {
+                router.push(hrefForKind(locale, option.value, baseQuery));
+              }
+            }}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 h-0.5 bg-brand-forest"
+        style={{
+          width: indicator.width,
+          transform: `translateX(${indicator.x}px)`,
+          transition: indicator.ready
+            ? "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), width 320ms cubic-bezier(0.22, 1, 0.36, 1)"
+            : "none",
         }}
       />
     </div>

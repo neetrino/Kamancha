@@ -87,10 +87,7 @@ export function SegmentedControl<T extends string>({
   onSelect,
   renderOption,
 }: SegmentedControlProps<T>) {
-  const activeIndex = Math.max(
-    0,
-    options.findIndex((option) => option.value === value),
-  );
+  const activeIndex = options.findIndex((option) => option.value === value);
   const count = options.length;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -120,7 +117,10 @@ export function SegmentedControl<T extends string>({
     return () => observer.disconnect();
   }, [activeIndex, count, fullWidth, size]);
 
-  const indicatorStyle: CSSProperties | null = fullWidth
+  const indicatorStyle: CSSProperties | null =
+    activeIndex < 0
+      ? null
+      : fullWidth
     ? {
         width: `calc((100% - 0.5rem) / ${count})`,
         left: "0.25rem",
