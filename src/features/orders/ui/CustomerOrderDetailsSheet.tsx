@@ -215,7 +215,7 @@ function CustomerOrderSheetBody({
                 title={labels.customerFeedback}
               />
               {detail.customerNote ? (
-                <section className={`${PROFILE_INNER_CARD} space-y-2 p-4`}>
+                <section className={`${PROFILE_INNER_CARD} h-full min-h-0 flex-1 space-y-2 p-4`}>
                   <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
                     {labels.orderNote.replace(/[՝:]\s*$/, "")}
                   </h3>
