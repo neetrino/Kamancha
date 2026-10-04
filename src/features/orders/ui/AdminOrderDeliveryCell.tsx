@@ -33,7 +33,7 @@ export function AdminOrderDeliveryCell({
 
   const badge =
     kind === "today"
-      ? { label: copy.deliveryTodayBadge, className: "bg-brand-forest/10 text-brand-forest" }
+      ? { label: copy.deliveryTodayBadge, className: "bg-green-100 text-green-800" }
       : kind === "tomorrow"
         ? { label: copy.deliveryTomorrowBadge, className: "bg-amber-50 text-amber-800" }
         : {
@@ -44,7 +44,7 @@ export function AdminOrderDeliveryCell({
   return (
     <div className="flex flex-col items-center gap-1">
       <span
-        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${badge.className}`}
+        className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${badge.className}`}
       >
         {badge.label}
       </span>
