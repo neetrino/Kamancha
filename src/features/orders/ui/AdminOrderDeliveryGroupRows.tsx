@@ -85,7 +85,11 @@ export function AdminOrderDeliveryGroupRows({
         return (
           <tr
             key={order.id}
-            className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+            className={`cursor-pointer ${
+              order.isGroupOrder
+                ? "bg-indigo-50 hover:bg-indigo-100/80"
+                : ADMIN_TABLE_ROW
+            }`}
             onClick={() => onOpenOrder(order.orderNumber)}
           >
             <td
@@ -117,7 +121,7 @@ export function AdminOrderDeliveryGroupRows({
                       </span>
                     ) : null}
                     {order.isGroupOrder ? (
-                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-medium uppercase text-indigo-700">
+                      <span className="rounded-full bg-indigo-700 px-2.5 py-0.5 text-[10px] font-bold tracking-wide uppercase text-white shadow-sm">
                         {copy.orders.table.groupOrderBadge}
                       </span>
                     ) : null}

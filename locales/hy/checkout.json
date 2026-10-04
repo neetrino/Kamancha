@@ -43,7 +43,7 @@
   "schedule": {
     "title": "Ամսաթիվ և ժամ",
     "deliverTo": "Առաքում",
-    "approximatelyOneHour": "մոտավորապես 1 ժամում",
+    "approximatelyOneHour": "Մոտավորապես 1 ժամում",
     "change": "Փոխել",
     "asapOption": "Հնարավորինս շուտ (≈1 ժամ)",
     "pickDate": "Ընտրեք օրը",

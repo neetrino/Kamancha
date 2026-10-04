@@ -54,8 +54,11 @@ import {
   type GiftCardRedeemPreview,
 } from "@/features/gift-cards/domain/gift-card-rules";
 import type { CheckoutDeliveryOption } from "@/features/delivery/application/queries";
-import type { DeliveryScheduleSettings } from "@/features/delivery/domain/delivery-schedule";
-import type { SelectedDeliverySlot } from "@/features/delivery/domain/delivery-schedule";
+import {
+  resolveEarliestDeliverySlot,
+  type DeliveryScheduleSettings,
+  type SelectedDeliverySlot,
+} from "@/features/delivery/domain/delivery-schedule";
 import {
   CASH_CHANGE_NONE,
   type CashChangeSelection,
@@ -141,8 +144,9 @@ export function CheckoutForm({
   const [hydratedDeliveryKey, setHydratedDeliveryKey] = useState<string | null>(
     null,
   );
+  const [deliveryTimePending, setDeliveryTimePending] = useState(false);
   const [deliverySlot, setDeliverySlot] = useState<SelectedDeliverySlot | null>(
-    null,
+    () => resolveEarliestDeliverySlot(deliverySchedule),
   );
   const [cashChangeAmount, setCashChangeAmount] =
     useState<CashChangeSelection>(CASH_CHANGE_NONE);
@@ -444,7 +448,7 @@ export function CheckoutForm({
       contactPhone: String(data.get("contactPhone") ?? ""),
       line1,
       hasDeliveryZone: lockedDeliveryAmount != null || Boolean(deliveryRuleId),
-      hasDeliverySlot: deliverySlot != null,
+      hasDeliverySlot: deliverySlot != null && !deliveryTimePending,
       hasPaymentMethod: paymentMethod != null,
       bonusRedeemRequired: useBonuses,
       bonusRedeemAmount: appliedBonus,
@@ -549,7 +553,11 @@ export function CheckoutForm({
             pending={pending}
             deliverySchedule={deliverySchedule}
             deliverySlot={deliverySlot}
-            onDeliverySlotChange={setDeliverySlot}
+            onDeliverySlotChange={(value) => {
+              setDeliveryTimePending(false);
+              setDeliverySlot(value);
+            }}
+            onDeliveryTimePendingChange={setDeliveryTimePending}
             cashChangeOptions={cashChangeOptions}
             cashChangeAmount={selectedCashChange}
             onCashChangeAmountChange={setCashChangeAmount}

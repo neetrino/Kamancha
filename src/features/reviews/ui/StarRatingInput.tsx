@@ -10,6 +10,8 @@ type StarRatingInputProps = {
   disabled?: boolean;
   /** `onDark` for storefront glass; `onLight` for white profile cards. */
   tone?: "onDark" | "onLight";
+  /** Keep the label for assistive tech without showing it. */
+  hideLabel?: boolean;
 };
 
 export function StarRatingInput({
@@ -18,6 +20,7 @@ export function StarRatingInput({
   label,
   disabled = false,
   tone = "onDark",
+  hideLabel = false,
 }: StarRatingInputProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const active = hovered ?? value;
@@ -30,7 +33,7 @@ export function StarRatingInput({
 
   return (
     <fieldset className="flex flex-col gap-2" disabled={disabled}>
-      <legend className={labelClass}>{label}</legend>
+      <legend className={hideLabel ? "sr-only" : labelClass}>{label}</legend>
       <div
         className="flex items-center gap-1"
         onMouseLeave={() => setHovered(null)}

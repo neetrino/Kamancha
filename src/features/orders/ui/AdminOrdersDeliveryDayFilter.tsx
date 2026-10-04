@@ -62,9 +62,11 @@ export function AdminOrdersDeliveryDayFilter({
   const today = formatYerevanDate(new Date());
   const tomorrow = addCalendarDaysYmd(today, 1);
   const preset = resolvePreset(deliveryDate, today, tomorrow);
+  const [pickingCustom, setPickingCustom] = useState(preset === "custom");
   const [customDate, setCustomDate] = useState(
     preset === "custom" && deliveryDate ? deliveryDate : "",
   );
+  const showDateInput = pickingCustom || preset === "custom";
 
   const options: Array<{ value: DeliveryDayPreset; label: string }> = [
     { value: "all", label: labels.all },
@@ -79,47 +81,47 @@ export function AdminOrdersDeliveryDayFilter({
 
   function onPresetSelect(next: DeliveryDayPreset): void {
     if (next === "all") {
+      setPickingCustom(false);
       setCustomDate("");
       navigate(undefined);
       return;
     }
     if (next === "today") {
+      setPickingCustom(false);
       setCustomDate("");
       navigate(today);
       return;
     }
     if (next === "tomorrow") {
+      setPickingCustom(false);
       setCustomDate("");
       navigate(tomorrow);
       return;
     }
-    if (customDate) {
-      navigate(customDate);
-    }
+    setPickingCustom(true);
   }
 
   return (
     <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       <SegmentedControl
         aria-label={labels.aria}
-        value={preset}
+        value={showDateInput ? "custom" : preset}
         options={options}
         onSelect={onPresetSelect}
       />
-      {preset === "custom" ? (
-        <div className="w-full max-w-[180px] sm:w-auto">
-          <AdminDatePickerField
-            name="deliveryDate"
-            value={customDate}
-            onChange={(value) => {
-              setCustomDate(value);
-              if (value) navigate(value);
-            }}
-            locale={locale}
-            common={copy.common}
-            labels={{ placeholder: labels.datePlaceholder }}
-          />
-        </div>
+      {showDateInput ? (
+        <AdminDatePickerField
+          name="deliveryDate"
+          value={preset === "custom" ? (deliveryDate ?? customDate) : customDate}
+          onChange={(next) => {
+            setCustomDate(next);
+            if (next) navigate(next);
+          }}
+          locale={locale}
+          common={copy.common}
+          labels={{ placeholder: labels.datePlaceholder }}
+          inputClassName="!h-11 !w-auto !rounded-[15px] !px-4 !shadow-none"
+        />
       ) : null}
     </div>
   );

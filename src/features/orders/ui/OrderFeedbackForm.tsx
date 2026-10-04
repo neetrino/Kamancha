@@ -3,6 +3,7 @@
 import { Star } from "lucide-react";
 import { useState, useTransition } from "react";
 
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { submitOrderFeedbackAction } from "@/features/orders/application/submit-order-feedback";
 import { ORDER_FEEDBACK_COMMENT_MAX_LENGTH } from "@/features/orders/domain/order-feedback";
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
@@ -96,7 +97,7 @@ export function OrderFeedbackForm({
         {labels.title}
       </h3>
       <form
-        className="space-y-3"
+        className="flex flex-col space-y-3"
         onSubmit={(event) => {
           event.preventDefault();
           if (rating < 1) return;
@@ -122,11 +123,12 @@ export function OrderFeedbackForm({
           value={rating}
           onChange={setRating}
           label={labels.ratingLabel}
+          hideLabel
           disabled={pending}
           tone="onLight"
         />
         <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-900">
-          {labels.commentLabel}
+          <span className="sr-only">{labels.commentLabel}</span>
           <textarea
             value={comment}
             onChange={(event) => setComment(event.target.value)}
@@ -138,13 +140,13 @@ export function OrderFeedbackForm({
           />
         </label>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        <button
+        <KamanchaPillButton
           type="submit"
+          variant="dark"
+          label={pending ? labels.submitting : labels.submit}
           disabled={pending || rating < 1}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-brand-forest px-5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {pending ? labels.submitting : labels.submit}
-        </button>
+          className="kamancha-pill-button--guest-cta !min-h-11 !w-full !max-w-none !py-1"
+        />
       </form>
     </section>
   );
