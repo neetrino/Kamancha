@@ -101,7 +101,7 @@ export function AdminCustomerNoteButton({
     <>
       <button
         type="button"
-        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-700 transition-colors hover:bg-amber-100"
+        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-500 transition-colors hover:bg-orange-200"
         aria-label={openAriaLabel}
         title={openAriaLabel}
         onClick={(event) => {
@@ -141,7 +141,9 @@ export function AdminCustomerNoteButton({
                     >
                       {title}
                     </h2>
-                    <p className="mt-1 text-sm text-gray-500">{customerName}</p>
+                    <p className="mt-3 text-lg font-semibold text-brand-forest">
+                      {customerName}
+                    </p>
                   </div>
                   <button
                     type="button"
@@ -158,15 +160,6 @@ export function AdminCustomerNoteButton({
                 >
                   {note}
                 </p>
-                <div className="mt-8 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setOpen(false)}
-                    className="inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white px-5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-50"
-                  >
-                    {closeLabel}
-                  </button>
-                </div>
               </div>
             </div>,
             document.body,
