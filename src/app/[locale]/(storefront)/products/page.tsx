@@ -110,10 +110,16 @@ export default async function ProductsPage({
       <MobileCatalogSearch
         heading={catalogCopy.heading}
         locale={rawLocale}
+        currency={currency}
         filters={filters}
         label={catalogCopy.searchLabel}
         placeholder={catalogCopy.searchPlaceholder}
         clearLabel={catalogCopy.clearSearch}
+        suggestions={{
+          idle: dictionary.header.searchIdle,
+          empty: dictionary.header.searchEmpty,
+          viewAll: dictionary.header.searchViewAll,
+        }}
       />
       <div className="hidden xl:block">
         <CatalogPageHeader heading={catalogCopy.heading} />
