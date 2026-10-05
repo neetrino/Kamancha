@@ -18,6 +18,7 @@ import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { Toast } from "@/components/ui/Toast";
 import { GroupOrderSummary } from "@/features/group-orders/ui/GroupOrderSummary";
+import { LeaveGroupOrderDialog } from "@/features/group-orders/ui/LeaveGroupOrderDialog";
 import {
   cancelGroupOrderAction,
   joinGroupOrderAction,
@@ -882,21 +883,26 @@ export function GroupOrderPageClient({
       </div>
       </div>
       <ConfirmDialog
-        open={pendingConfirm !== null}
-        title={
-          pendingConfirm?.kind === "cancel"
-            ? labels.cancelOrder
-            : labels.confirm.deleteTitle
-        }
+        open={pendingConfirm !== null && pendingConfirm.kind !== "cancel"}
+        title={labels.confirm.deleteTitle}
         description={pendingConfirmDescription()}
-        confirmLabel={
-          pendingConfirm?.kind === "cancel"
-            ? labels.confirm.cancelOrderConfirm
-            : labels.confirm.confirmLabel
-        }
+        confirmLabel={labels.confirm.confirmLabel}
         cancelLabel={labels.confirm.cancelLabel}
         isPending={pending}
         onClose={() => {
+          if (!pending) setPendingConfirm(null);
+        }}
+        onConfirm={confirmPendingDelete}
+      />
+      <LeaveGroupOrderDialog
+        open={pendingConfirm?.kind === "cancel"}
+        title={labels.leaveConfirmTitle}
+        description={labels.leaveConfirmBody}
+        continueLabel={labels.leaveConfirmContinue}
+        confirmLabel={labels.leaveConfirmEveryone}
+        closeLabel={labels.close}
+        isPending={pending}
+        onContinue={() => {
           if (!pending) setPendingConfirm(null);
         }}
         onConfirm={confirmPendingDelete}

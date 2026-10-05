@@ -7,12 +7,20 @@ import {
   useState,
   useTransition,
   type ChangeEvent,
+  type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
 
 import { Reveal } from "@/components/ui/RevealMotion";
+import { HeaderSearchSuggestions } from "@/features/products/ui/HeaderSearchSuggestions";
 import { catalogHref } from "@/features/products/application/catalog-search-params";
+import {
+  searchHeaderProductsAction,
+  type HeaderSearchProduct,
+} from "@/features/products/application/search-header-products-action";
 import type { CatalogFilters } from "@/features/products/schemas/catalog-list";
+import type { Locale } from "@/lib/i18n/config";
+import type { Currency } from "@/lib/money/currency";
 import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -23,11 +31,17 @@ const PANEL_EASE =
 
 type MobileCatalogSearchProps = {
   heading: string;
-  locale: string;
+  locale: Locale;
+  currency: Currency;
   filters: CatalogFilters;
   label: string;
   placeholder: string;
   clearLabel: string;
+  suggestions: {
+    idle: string;
+    empty: string;
+    viewAll: string;
+  };
 };
 
 /**
@@ -36,10 +50,12 @@ type MobileCatalogSearchProps = {
 export function MobileCatalogSearch({
   heading,
   locale,
+  currency,
   filters,
   label,
   placeholder,
   clearLabel,
+  suggestions,
 }: MobileCatalogSearchProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
@@ -49,6 +65,11 @@ export function MobileCatalogSearch({
   const urlQuery = filters.q ?? "";
   const [value, setValue] = useState(urlQuery);
   const [open, setOpen] = useState(urlQuery.length > 0);
+  const [products, setProducts] = useState<HeaderSearchProduct[]>([]);
+  const [total, setTotal] = useState(0);
+  const [searchedQuery, setSearchedQuery] = useState("");
+  const [suggestPending, startSuggest] = useTransition();
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -121,6 +142,45 @@ export function MobileCatalogSearch({
     setOpen(true);
   }
 
+  useEffect(() => {
+    if (!open) return;
+    const trimmed = value.trim();
+    if (trimmed.length < 1) {
+      requestIdRef.current += 1;
+      return;
+    }
+    const requestId = ++requestIdRef.current;
+    const timer = window.setTimeout(() => {
+      startSuggest(async () => {
+        const result = await searchHeaderProductsAction(
+          locale,
+          currency,
+          trimmed,
+        );
+        if (requestId !== requestIdRef.current) return;
+        setProducts(result.products);
+        setTotal(result.total);
+        setSearchedQuery(result.query);
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [open, value, locale, currency]);
+
+  const trimmed = value.trim();
+  const suggestionProducts = trimmed.length < 1 ? [] : products;
+  const suggestionQuery = trimmed.length < 1 ? "" : searchedQuery;
+  const showIdle = suggestionQuery.length === 0 && !suggestPending;
+  const showEmpty =
+    suggestionQuery.length > 0 &&
+    suggestionProducts.length === 0 &&
+    !suggestPending;
+  const viewAllHref = catalogHref(locale, {
+    q: suggestionQuery || trimmed,
+    sort: "newest",
+    page: 1,
+    pageSize: 30,
+  });
+
   return (
     <div className="xl:hidden">
       <div className="flex items-center justify-between gap-3 pb-[9px] pt-0">
@@ -157,7 +217,16 @@ export function MobileCatalogSearch({
         aria-hidden={!open}
       >
         <div className="min-h-0 overflow-hidden">
-          <label className="mb-3 flex h-11 w-full items-center gap-2.5 rounded-full border border-white/25 bg-white/10 px-4 text-white transition-colors focus-within:border-white/45 focus-within:bg-white/15">
+          <form
+            role="search"
+            className="mb-3"
+            onSubmit={(event: FormEvent<HTMLFormElement>) => {
+              event.preventDefault();
+              focusedRef.current = false;
+              inputRef.current?.blur();
+            }}
+          >
+          <label className="flex h-11 w-full items-center gap-2.5 rounded-full border border-white/25 bg-white/10 px-4 text-white transition-colors focus-within:border-white/45 focus-within:bg-white/15">
             <span className="sr-only">{label}</span>
             <Search className="size-4 shrink-0 text-white/70" aria-hidden />
             <input
@@ -188,8 +257,27 @@ export function MobileCatalogSearch({
               </button>
             ) : null}
           </label>
+          </form>
         </div>
       </div>
+
+      {open && trimmed.length > 0 ? (
+        <HeaderSearchSuggestions
+          className="mb-3"
+          products={suggestionProducts}
+          pending={suggestPending}
+          showIdle={showIdle}
+          showEmpty={showEmpty}
+          idleLabel={suggestions.idle}
+          emptyLabel={suggestions.empty}
+          viewAllHref={
+            suggestionQuery && total > suggestionProducts.length
+              ? viewAllHref
+              : null
+          }
+          viewAllLabel={suggestions.viewAll}
+        />
+      ) : null}
     </div>
   );
 }

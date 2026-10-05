@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Users } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { leaveGroupOrderSessionAction } from "@/features/group-orders/actions";
 import { GroupOrderRemoteCancelWatcher } from "@/features/group-orders/ui/GroupOrderRemoteCancelWatcher";
+import { LeaveGroupOrderDialog } from "@/features/group-orders/ui/LeaveGroupOrderDialog";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -27,6 +28,16 @@ export function ActiveGroupOrderBanner({
 }: ActiveGroupOrderBannerProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  function leave(): void {
+    startTransition(async () => {
+      await leaveGroupOrderSessionAction();
+      setConfirmOpen(false);
+      router.push(`/${locale}`);
+      router.refresh();
+    });
+  }
 
   return (
     <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-3 sm:px-6 lg:px-8">
@@ -55,19 +66,34 @@ export function ActiveGroupOrderBanner({
               type="button"
               disabled={pending}
               className="rounded-full bg-red-500 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-600 disabled:opacity-50"
-              onClick={() => {
-                startTransition(async () => {
-                  await leaveGroupOrderSessionAction();
-                  router.push(`/${locale}`);
-                  router.refresh();
-                });
-              }}
+              onClick={() => setConfirmOpen(true)}
             >
               {labels.leaveSession}
             </button>
           </div>
         </div>
       </div>
+      <LeaveGroupOrderDialog
+        open={confirmOpen}
+        title={
+          isOrganizer ? labels.leaveConfirmTitle : labels.leaveConfirmSelfTitle
+        }
+        description={
+          isOrganizer ? labels.leaveConfirmBody : labels.leaveConfirmSelfBody
+        }
+        continueLabel={labels.leaveConfirmContinue}
+        confirmLabel={
+          isOrganizer
+            ? labels.leaveConfirmEveryone
+            : labels.leaveConfirmSelfAction
+        }
+        closeLabel={labels.close}
+        isPending={pending}
+        onContinue={() => {
+          if (!pending) setConfirmOpen(false);
+        }}
+        onConfirm={leave}
+      />
     </div>
   );
 }
