@@ -42,9 +42,7 @@ export function ProductDetailInfo({
 }: ProductDetailInfoProps) {
   const labels = dictionary.product;
   const inStock = stockOnHand > 0;
-  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(
-    product.options[0]?.id ?? null,
-  );
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const variantSet = product.variantSet;
   const primaryCategory = product.categories[0] ?? null;
   const [livePriceFormatted, setLivePriceFormatted] = useState(
@@ -54,7 +52,7 @@ export function ProductDetailInfo({
   return (
     <div className="flex min-w-0 flex-1 flex-col gap-[22px]">
       <div className="flex min-w-0 flex-wrap items-center gap-3">
-        <h1 className="font-big-fat-boii text-[clamp(32px,5vw,58px)] leading-[1.05] font-normal tracking-[0.5px] text-white uppercase">
+        <h1 className="font-big-fat-boii text-[clamp(28px,4.2vw,48px)] leading-[1.05] font-normal tracking-[0.5px] text-white uppercase">
           {product.translation.title}
         </h1>
         <span
@@ -114,9 +112,6 @@ export function ProductDetailInfo({
 
       {product.options.length > 0 ? (
         <div className="flex flex-col gap-3">
-          <h2 className="font-big-fat-boii text-lg leading-[22px] font-normal tracking-[0.3px] text-white uppercase">
-            {labels.attribute}
-          </h2>
           <div className="flex flex-wrap gap-2">
             {product.options.map((option) => {
               const selected = option.id === selectedOptionId;
@@ -126,7 +121,7 @@ export function ProductDetailInfo({
                   type="button"
                   aria-pressed={selected}
                   onClick={() => setSelectedOptionId(option.id)}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  className={`rounded-full px-5 py-2.5 text-base font-medium transition ${
                     selected
                       ? "bg-white text-brand-forest"
                       : "bg-white/10 text-white hover:bg-white/15"
@@ -146,6 +141,7 @@ export function ProductDetailInfo({
         productId={product.id}
         variantId={selectedVariantId}
         attributeId={selectedOptionId}
+        attributeRequired={product.options.length > 0}
         stockOnHand={stockOnHand}
         priceAmount={priceAmount}
         compareAtFormatted={compareAtFormatted}

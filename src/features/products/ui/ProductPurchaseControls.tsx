@@ -27,6 +27,8 @@ type ProductPurchaseControlsProps = {
   productId: string;
   variantId?: string | null;
   attributeId?: string | null;
+  /** Product has attributes; cart stays blocked until one is chosen. */
+  attributeRequired?: boolean;
   stockOnHand: number;
   /** Base unit price in AMD minor units (before additions). */
   priceAmount: number;
@@ -87,7 +89,7 @@ function ModifierCheckboxGrid({
         onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center justify-between gap-3 text-left xl:pointer-events-none"
       >
-        <h2 className="font-big-fat-boii text-lg leading-[22px] font-normal tracking-[0.3px] text-white uppercase">
+        <h2 className="font-big-fat-boii text-base leading-5 font-normal tracking-[0.3px] text-white uppercase">
           {title}
         </h2>
         <ChevronDown
@@ -150,6 +152,7 @@ export function ProductPurchaseControls({
   productId,
   variantId = null,
   attributeId = null,
+  attributeRequired = false,
   stockOnHand,
   priceAmount,
   compareAtFormatted,
@@ -174,7 +177,9 @@ export function ProductPurchaseControls({
     setQuantity(maxQty < 1 ? 0 : Math.min(Math.max(quantity, 1), maxQty));
   }
   const addButtonRef = useRef<HTMLButtonElement>(null);
-  const disabled = maxQty < 1;
+  const needsAttribute = attributeRequired && !attributeId;
+  const outOfStock = maxQty < 1;
+  const disabled = outOfStock || needsAttribute;
 
   const priceFormatted = useMemo(() => {
     const byId = new Map(additions.map((row) => [row.id, row.priceAmount]));
@@ -197,13 +202,13 @@ export function ProductPurchaseControls({
   }, [onPriceFormattedChange, priceFormatted]);
 
   function changeQuantity(next: number): void {
-    if (disabled) return;
+    if (outOfStock) return;
     setQuantity(Math.min(Math.max(1, next), maxQty));
     setError(null);
   }
 
   function handleAdd(): void {
-    if (disabled || quantity < 1) return;
+    if (disabled || needsAttribute || quantity < 1) return;
     setError(null);
     const origin = addButtonRef.current;
 
@@ -269,7 +274,7 @@ export function ProductPurchaseControls({
           title={labels.exceptions}
           options={exceptions}
           selectedIds={exceptionIds}
-          disabled={disabled}
+          disabled={outOfStock}
           onToggle={(id) => setExceptionIds((prev) => toggleId(prev, id))}
         />
 
@@ -277,7 +282,7 @@ export function ProductPurchaseControls({
           title={labels.additions}
           options={additions}
           selectedIds={additionIds}
-          disabled={disabled}
+          disabled={outOfStock}
           onToggle={(id) => setAdditionIds((prev) => toggleId(prev, id))}
         />
 
@@ -293,7 +298,7 @@ export function ProductPurchaseControls({
           <button
             type="button"
             aria-label={labels.decreaseQuantity}
-            disabled={disabled || quantity <= 1}
+            disabled={outOfStock || quantity <= 1}
             onClick={() => changeQuantity(quantity - 1)}
             className="flex size-[52px] items-center justify-center text-2xl font-light text-white transition hover:bg-white/10 disabled:opacity-40"
           >
@@ -308,7 +313,7 @@ export function ProductPurchaseControls({
           <button
             type="button"
             aria-label={labels.increaseQuantity}
-            disabled={disabled || quantity >= maxQty}
+            disabled={outOfStock || quantity >= maxQty}
             onClick={() => changeQuantity(quantity + 1)}
             className="flex size-[52px] items-center justify-center text-2xl font-light text-white transition hover:bg-white/10 disabled:opacity-40"
           >
@@ -332,10 +337,10 @@ export function ProductPurchaseControls({
             aria-hidden
           />
           <span className="truncate xl:hidden">
-            {disabled ? labels.outOfStock : labels.addToCartShort}
+            {outOfStock ? labels.outOfStock : labels.addToCartShort}
           </span>
           <span className="hidden truncate xl:inline">
-            {disabled ? labels.outOfStock : labels.addToCart}
+            {outOfStock ? labels.outOfStock : labels.addToCart}
           </span>
         </button>
       </div>

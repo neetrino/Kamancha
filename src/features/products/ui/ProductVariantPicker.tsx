@@ -32,7 +32,7 @@ export function ProductVariantPicker({
     <div className="flex flex-col gap-4">
       {axes.map((axis) => (
         <div key={axis.id} className="flex flex-col gap-2">
-          <h2 className="font-big-fat-boii text-lg leading-[22px] font-normal tracking-[0.3px] text-white uppercase">
+          <h2 className="font-big-fat-boii text-base leading-5 font-normal tracking-[0.3px] text-white uppercase">
             {axis.title}
           </h2>
           <div className="flex flex-wrap gap-2" role="group" aria-label={axis.title}>
@@ -52,7 +52,7 @@ export function ProductVariantPicker({
                     );
                     if (next) onSelect(next.id);
                   }}
-                  className={`rounded-full px-4 py-2 text-sm leading-5 transition ${
+                  className={`rounded-full px-5 py-2.5 text-base leading-5 transition ${
                     pressed
                       ? "bg-white font-semibold text-black"
                       : "bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/15"
