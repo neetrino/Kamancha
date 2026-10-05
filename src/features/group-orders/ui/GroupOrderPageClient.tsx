@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
@@ -477,20 +476,6 @@ export function GroupOrderPageClient({
                 {labels.deliveryFieldHint}
               </span>
             </label>
-            <div data-checkout-field="deliveryRuleId">
-              <SelectDropdown
-                ariaLabel={labels.deliveryZoneLabel}
-                value={deliveryRuleId}
-                allLabel={labels.selectDeliveryZone}
-                options={deliveryZones.map((zone) => ({
-                  value: zone.id,
-                  label: zone.label,
-                }))}
-                disabled={pending}
-                onValueChange={setDeliveryRuleId}
-                className="w-full"
-              />
-            </div>
             <div className="flex items-start gap-2">
               <div className="min-w-0 flex-1">
                 <AddressAutocomplete
@@ -501,19 +486,20 @@ export function GroupOrderPageClient({
                   className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-gray-400"
                 />
               </div>
-              <AddressMapPicker
-                addressValue={deliveryAddress}
-                disabled={pending}
-                onAddressSelected={setDeliveryAddress}
-                labels={{
-                  openMap: labels.openMap,
-                  title: labels.mapTitle,
-                  hint: labels.mapHint,
-                  confirm: labels.mapConfirm,
-                  cancel: labels.mapCancel,
-                  resolving: labels.mapResolving,
-                }}
-              />
+              <div data-checkout-field="deliveryRuleId" className="shrink-0">
+                <SelectDropdown
+                  ariaLabel={labels.deliveryZoneLabel}
+                  value={deliveryRuleId}
+                  allLabel={labels.selectDeliveryZone}
+                  options={deliveryZones.map((zone) => ({
+                    value: zone.id,
+                    label: zone.label,
+                  }))}
+                  disabled={pending}
+                  fitContent
+                  onValueChange={setDeliveryRuleId}
+                />
+              </div>
             </div>
             {(
               view.paymentMode === "SPLIT_PER_PARTICIPANT"

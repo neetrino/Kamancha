@@ -53,7 +53,7 @@ export function ActiveGroupOrderBanner({
             <button
               type="button"
               disabled={pending}
-              className="text-white hover:text-white/80 disabled:opacity-50"
+              className="rounded-full bg-white px-3.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm transition-colors hover:bg-red-50 disabled:opacity-50"
               onClick={() => {
                 startTransition(async () => {
                   await leaveGroupOrderSessionAction();
