@@ -248,7 +248,7 @@ function CustomerOrderSheetBody({
         <div
           className={
             detail.scheduledDeliveryDate
-              ? "flex items-stretch gap-3"
+              ? "flex flex-col gap-3 sm:flex-row sm:items-stretch"
               : "space-y-3"
           }
         >
