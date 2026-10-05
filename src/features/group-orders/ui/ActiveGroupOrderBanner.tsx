@@ -38,8 +38,9 @@ export function ActiveGroupOrderBanner({
       />
       <div className="rounded-2xl bg-white px-4 py-2.5 shadow-sm sm:rounded-full sm:px-5">
         <div className="flex flex-col gap-2 text-sm text-gray-900 sm:flex-row sm:items-center sm:justify-between">
-          <p className="inline-flex items-center gap-2 font-medium">
-            <Users className="h-6 w-6 shrink-0 text-brand-forest xl:h-4 xl:w-4" aria-hidden />
+          <p className="inline-flex items-center gap-2 font-medium sm:text-base">
+            <Users className="h-6 w-6 shrink-0 text-brand-forest sm:hidden" aria-hidden />
+            <Users className="hidden h-5 w-5 shrink-0 text-brand-forest sm:block" strokeWidth={2.75} aria-hidden />
             {labels.activeSessionBanner.replace("{name}", organizerDisplayName)}
           </p>
           <div className="flex items-center justify-end gap-2">
