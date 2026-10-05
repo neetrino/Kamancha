@@ -294,6 +294,7 @@ export async function createOrderAction(
           ? {
               floor: input.floor?.trim() || undefined,
               intercomCode: input.intercomCode?.trim() || undefined,
+              customerNote: input.customerNote?.trim() || undefined,
               scheduledDeliveryDate: input.scheduledDeliveryDate,
               scheduledDeliveryStart: input.scheduledDeliveryStart,
               scheduledDeliveryEnd: input.scheduledDeliveryEnd,

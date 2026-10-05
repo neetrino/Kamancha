@@ -26,7 +26,7 @@ import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 
 /** Admin order sheet — half the viewport, same as the orders list. */
-export const ADMIN_ORDER_SHEET_PANEL = "w-[92%] max-w-none sm:w-1/2";
+export const ADMIN_ORDER_SHEET_PANEL = "w-[92%] max-w-none sm:w-[47%]";
 
 const PARTICIPANT_STAT_CELL = "w-max shrink-0 text-left whitespace-nowrap";
 const PARTICIPANT_STAT_CELL_DIVIDED = `${PARTICIPANT_STAT_CELL} sm:border-l sm:border-gray-200 sm:pl-4`;
@@ -189,7 +189,7 @@ function CustomerOrderSheetBody({
               : undefined
           }
         >
-          <section className={`${PROFILE_INNER_CARD} h-full space-y-3 p-4`}>
+          <section className={`${PROFILE_INNER_CARD} h-full min-w-0 space-y-3 p-4`}>
             <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
               {labels.customer}
             </h3>
@@ -209,22 +209,24 @@ function CustomerOrderSheetBody({
             </div>
           </section>
           {showAdminFeedbackSide ? (
-            <div className="flex h-full min-w-0 flex-col gap-3">
-              <OrderAdminFeedbackCard
-                detail={detail}
-                title={labels.customerFeedback}
-              />
-              {detail.customerNote ? (
-                <section className={`${PROFILE_INNER_CARD} h-full min-h-0 flex-1 space-y-2 p-4`}>
-                  <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-                    {labels.orderNote.replace(/[՝:]\s*$/, "")}
-                  </h3>
-                  <p className="text-sm font-medium whitespace-pre-wrap text-gray-900">
-                    {detail.customerNote}
-                  </p>
-                </section>
-              ) : null}
-            </div>
+            <OrderAdminFeedbackCard
+              detail={detail}
+              title={labels.customerFeedback}
+            />
+          ) : null}
+          {detail.customerNote && includeAdminDetails ? (
+            <section
+              className={`${PROFILE_INNER_CARD} h-full min-w-0 space-y-2 overflow-hidden p-4 ${
+                detail.customerRating != null ? "col-span-2" : ""
+              }`}
+            >
+              <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+                {labels.orderNote.replace(/[՝:]\s*$/, "")}
+              </h3>
+              <p className="text-sm font-medium break-words whitespace-pre-wrap text-gray-900 [overflow-wrap:anywhere]">
+                {detail.customerNote}
+              </p>
+            </section>
           ) : null}
         </div>
       ) : locale && feedbackLabels ? (
@@ -246,7 +248,7 @@ function CustomerOrderSheetBody({
         <div
           className={
             detail.scheduledDeliveryDate
-              ? "flex items-stretch gap-3"
+              ? "flex flex-col gap-3 sm:flex-row sm:items-stretch"
               : "space-y-3"
           }
         >
@@ -301,6 +303,7 @@ function CustomerOrderSheetBody({
           detail={detail}
           labels={labels}
           hideMethod={detail.groupPaymentMode === "SPLIT_PER_PARTICIPANT"}
+          cards={includeAdminDetails}
         />
       </section>
 

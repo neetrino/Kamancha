@@ -66,7 +66,7 @@ export function ProductDetailView({
   return (
     <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2">
       <article
-        className={`${SITE_HEADER_INNER} ${STOREFRONT_TABLET_INSET_X} flex flex-col gap-12 md:gap-16`}
+        className={`${SITE_HEADER_INNER} ${STOREFRONT_TABLET_INSET_X} flex flex-col gap-12 pt-2 md:gap-16 md:pt-6`}
       >
         <div className="flex flex-col gap-[60px] xl:flex-row xl:items-start xl:justify-between">
           <ProductGallery

@@ -6,14 +6,12 @@ import {
   productCardLayout,
   type ProductCardLayout,
 } from "@/features/products/ui/product-card-layout";
-import { displayProductRating } from "@/features/products/ui/ProductReviewRating";
 import { WishlistButton } from "@/features/wishlist/ui/WishlistButton";
 import type { Locale } from "@/lib/i18n/config";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 const DIVIDER_SRC = staticAssetUrl("/assets/brand/home/product-card-divider.svg");
-const STAR_SRC = staticAssetUrl("/assets/brand/home/star.svg");
 
 type ProductCardProps = {
   href: string;
@@ -61,7 +59,6 @@ export function ProductCard({
   compareAtFormatted = null,
   discountPercent = null,
   categoryLabel = null,
-  rating = null,
   discountOffLabel = "{percent}% Off",
   imageUrl,
   inStock,
@@ -80,12 +77,10 @@ export function ProductCard({
   const showWishlist =
     locale != null && productId != null && wishlistLabel != null;
   const showAddToCart = productId != null && addToCartLabel != null;
-  const ratingLabel = displayProductRating(rating).toFixed(1);
   const ui = productCardLayout(layout);
   const fluid = layout === "fluid";
   const compact = layout === "compact";
   const catalog = layout === "catalog";
-  const starPx = fluid ? 12 : catalog ? 20 : 18;
   const imageSrc = storefrontProductImageSrc(imageUrl);
 
   return (
@@ -203,22 +198,6 @@ export function ProductCard({
         <div
           className={`flex shrink-0 flex-col items-end ${ui.metaCol}`}
         >
-          <div
-            data-node-id="22:242"
-            className={`flex shrink-0 items-center gap-0.5 ${ui.ratingRow}`}
-          >
-            <Image
-              src={STAR_SRC}
-              alt=""
-              width={starPx}
-              height={starPx}
-              className={ui.star}
-            />
-            <span className={`font-semibold text-[#222] ${ui.rating}`}>
-              {ratingLabel}
-            </span>
-          </div>
-
           {showAddToCart ? (
             <AddToCartButton
               productId={productId}

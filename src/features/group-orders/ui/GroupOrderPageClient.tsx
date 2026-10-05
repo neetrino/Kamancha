@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
@@ -335,11 +334,11 @@ export function GroupOrderPageClient({
 
   return (
     <div
-      className={`group-order-page mx-auto max-w-7xl px-0 pt-0 pb-8 xl:py-8 ${pending ? "opacity-70" : ""}`}
+      className={`group-order-page mx-auto max-w-7xl px-0 pt-4 pb-8 sm:pt-2 xl:py-8 ${pending ? "opacity-70" : ""}`}
     >
       <div className="mb-12 flex flex-col gap-8 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div>
-          <h1 className="font-big-fat-boii text-[40px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px]">
+          <h1 className="font-big-fat-boii text-[32px] leading-[1.1] font-normal tracking-wide text-white uppercase sm:text-[48px] md:text-[58px]">
             {labels.manageTitle}
           </h1>
         </div>
@@ -477,22 +476,8 @@ export function GroupOrderPageClient({
                 {labels.deliveryFieldHint}
               </span>
             </label>
-            <div data-checkout-field="deliveryRuleId">
-              <SelectDropdown
-                ariaLabel={labels.deliveryZoneLabel}
-                value={deliveryRuleId}
-                allLabel={labels.selectDeliveryZone}
-                options={deliveryZones.map((zone) => ({
-                  value: zone.id,
-                  label: zone.label,
-                }))}
-                disabled={pending}
-                onValueChange={setDeliveryRuleId}
-                className="w-full"
-              />
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="min-w-0 flex-1">
+            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-start">
+              <div className="min-w-0 sm:flex-1">
                 <AddressAutocomplete
                   value={deliveryAddress}
                   onValueChange={setDeliveryAddress}
@@ -501,19 +486,21 @@ export function GroupOrderPageClient({
                   className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-gray-400"
                 />
               </div>
-              <AddressMapPicker
-                addressValue={deliveryAddress}
-                disabled={pending}
-                onAddressSelected={setDeliveryAddress}
-                labels={{
-                  openMap: labels.openMap,
-                  title: labels.mapTitle,
-                  hint: labels.mapHint,
-                  confirm: labels.mapConfirm,
-                  cancel: labels.mapCancel,
-                  resolving: labels.mapResolving,
-                }}
-              />
+              <div data-checkout-field="deliveryRuleId" className="w-full sm:w-auto sm:shrink-0">
+                <SelectDropdown
+                  ariaLabel={labels.deliveryZoneLabel}
+                  value={deliveryRuleId}
+                  allLabel={labels.selectDeliveryZone}
+                  options={deliveryZones.map((zone) => ({
+                    value: zone.id,
+                    label: zone.label,
+                  }))}
+                  disabled={pending}
+                  fitContent
+                  fitContentFromSm
+                  onValueChange={setDeliveryRuleId}
+                />
+              </div>
             </div>
             {(
               view.paymentMode === "SPLIT_PER_PARTICIPANT"

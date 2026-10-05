@@ -77,13 +77,15 @@ export function OrderScheduledDeliveryBanner({
   }
 
   return (
-    <div className="h-full w-max max-w-[9.5rem] rounded-[16px] bg-gray-50 px-2.5 py-2 ring-1 ring-gray-100">
-      <p className="text-[11px] font-medium text-gray-500">{labels.title}</p>
-      <span
-        className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${badge.className}`}
-      >
-        {badge.label}
-      </span>
+    <div className="w-full rounded-[16px] bg-gray-50 px-2.5 py-2 ring-1 ring-gray-100 sm:h-full sm:w-max sm:max-w-[9.5rem]">
+      <div className="flex items-center justify-between gap-2 sm:block">
+        <p className="text-[11px] font-medium text-gray-500">{labels.title}</p>
+        <span
+          className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase sm:mt-1 ${badge.className}`}
+        >
+          {badge.label}
+        </span>
+      </div>
       <p className="mt-1 text-sm font-semibold text-gray-900">{dateLabel}</p>
       {slot ? <p className="text-xs text-gray-600">{slot}</p> : null}
     </div>

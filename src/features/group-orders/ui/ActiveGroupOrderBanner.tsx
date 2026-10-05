@@ -36,24 +36,25 @@ export function ActiveGroupOrderBanner({
         enabled={!isOrganizer}
         cancelledMessage={labels.organizerCancelledAlert}
       />
-      <div className="liquid-glass isolate overflow-hidden rounded-2xl px-4 py-2.5">
-        <div className="relative z-[2] flex flex-col gap-2 text-sm text-white sm:flex-row sm:items-center sm:justify-between">
-          <p className="inline-flex items-center gap-2 font-medium">
-            <Users className="h-6 w-6 shrink-0 xl:h-4 xl:w-4" aria-hidden />
+      <div className="rounded-2xl bg-white px-4 py-2.5 shadow-sm sm:rounded-full sm:px-5">
+        <div className="flex flex-col gap-2 text-sm text-gray-900 sm:flex-row sm:items-center sm:justify-between">
+          <p className="inline-flex items-center gap-2 font-medium sm:text-base">
+            <Users className="h-6 w-6 shrink-0 text-brand-forest sm:hidden" aria-hidden />
+            <Users className="hidden h-5 w-5 shrink-0 text-brand-forest sm:block" strokeWidth={2.75} aria-hidden />
             {labels.activeSessionBanner.replace("{name}", organizerDisplayName)}
           </p>
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex items-center justify-end gap-2">
             <AppLink
               href={`/${locale}/group-orders/${inviteToken}`}
               prefetchPolicy="intent"
-              className="font-semibold text-white underline-offset-2 hover:underline"
+              className="rounded-full bg-brand-forest px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#2c4823]"
             >
               {labels.viewGroupOrder}
             </AppLink>
             <button
               type="button"
               disabled={pending}
-              className="text-white hover:text-white/80 disabled:opacity-50"
+              className="rounded-full bg-red-500 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-600 disabled:opacity-50"
               onClick={() => {
                 startTransition(async () => {
                   await leaveGroupOrderSessionAction();
