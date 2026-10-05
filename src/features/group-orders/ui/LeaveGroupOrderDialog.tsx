@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { Users, X } from "lucide-react";
 import { useEffect, useState, type AnimationEvent } from "react";
 import { createPortal } from "react-dom";
 
@@ -107,15 +107,18 @@ export function LeaveGroupOrderDialog({
         aria-modal="true"
         aria-labelledby="leave-group-order-title"
         aria-describedby="leave-group-order-description"
-        className={`relative z-[1] w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-xl ${panelClass}`}
+        className={`relative z-[1] flex w-full max-w-[26rem] flex-col overflow-hidden rounded-[20px] bg-white shadow-xl ${panelClass}`}
         {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
         onAnimationEnd={handlePanelAnimationEnd}
       >
-        <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-5 py-4 sm:px-6 sm:py-5">
+        <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 sm:px-6 sm:py-5">
           <h2
             id="leave-group-order-title"
-            className="font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase"
+            className="flex min-w-0 items-center gap-3 font-big-fat-boii text-xl font-normal tracking-wide text-gray-900 uppercase"
           >
+            <span className="hidden size-10 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white sm:flex">
+              <Users className="h-5 w-5" aria-hidden />
+            </span>
             {title}
           </h2>
           <button
@@ -128,7 +131,7 @@ export function LeaveGroupOrderDialog({
             <X className="h-5 w-5" aria-hidden />
           </button>
         </div>
-        <div className="space-y-4 px-5 py-4 sm:px-6">
+        <div className="flex flex-col gap-4 px-5 py-4 sm:px-6">
           <p
             id="leave-group-order-description"
             className="text-sm leading-relaxed text-gray-600"
@@ -141,13 +144,13 @@ export function LeaveGroupOrderDialog({
             label={isPending ? "…" : continueLabel}
             disabled={isPending}
             onClick={onContinue}
-            className="max-w-none sm:max-w-none"
+            className="!h-14 !min-h-14 !max-h-14 !py-0 !pt-0 !pb-0 max-w-none sm:max-w-none"
           />
           <button
             type="button"
             disabled={isPending}
             onClick={onConfirm}
-            className="inline-flex h-12 w-full cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white px-5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-14 w-full cursor-pointer items-center justify-center rounded-full border border-red-200 bg-red-50 px-5 font-big-fat-boii text-sm font-normal tracking-wide text-red-600 uppercase transition-colors hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending ? "…" : confirmLabel}
           </button>
