@@ -478,6 +478,7 @@ export function CheckoutForm({
           lockedDeliveryAmount != null ? undefined : deliveryRuleId || undefined,
         floor: String(data.get("floor") ?? ""),
         intercomCode: String(data.get("intercomCode") ?? ""),
+        customerNote: String(data.get("customerNote") ?? ""),
         scheduledDeliveryDate: deliverySlot.date,
         scheduledDeliveryStart: deliverySlot.startTime,
         scheduledDeliveryEnd: deliverySlot.endTime,

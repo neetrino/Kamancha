@@ -21,10 +21,12 @@ export type CheckoutLabels = {
   selectDeliveryZone: string;
   floor: string;
   intercomCode: string;
+  note: string;
   phonePlaceholder: string;
   addressPlaceholder: string;
   floorPlaceholder: string;
   intercomCodePlaceholder: string;
+  notePlaceholder: string;
   enterDeliveryAddress: string;
   selectDeliveryZoneError: string;
   scheduleTitle: string;
@@ -115,10 +117,12 @@ export function checkoutFormLabels(
     selectDeliveryZone: copy.form.selectLocation,
     floor: copy.form.floor,
     intercomCode: copy.form.intercomCode,
+    note: copy.form.note,
     phonePlaceholder: copy.placeholders.phone,
     addressPlaceholder: copy.placeholders.address,
     floorPlaceholder: copy.placeholders.floor,
     intercomCodePlaceholder: copy.placeholders.intercomCode,
+    notePlaceholder: copy.placeholders.note,
     enterDeliveryAddress: copy.shipping.enterDeliveryAddress,
     selectDeliveryZoneError: copy.shipping.selectDeliveryLocation,
     scheduleTitle: copy.schedule.title,
