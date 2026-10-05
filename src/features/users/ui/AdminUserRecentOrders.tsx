@@ -86,7 +86,7 @@ export function AdminUserRecentOrders({
         .toLowerCase();
       return haystack.includes(needle);
     });
-  }, [orders, query]);
+  }, [orders, query, copy.orders.statusLabels]);
 
   return (
     <>
