@@ -14,7 +14,9 @@
     "navigation": "Навигация",
     "shopNow": "В магазин",
     "groupOrder": "Групповой заказ",
-    "policy": "Политика"
+    "policy": "Политика",
+    "chatPrompt": "Чем можем помочь?",
+    "openChat": "Открыть чат"
   },
   "header": {
     "language": "Язык",

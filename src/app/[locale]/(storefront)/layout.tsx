@@ -86,7 +86,11 @@ export default async function StorefrontLayout({
         <StorefrontAlertHost />
         <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
         <CartProductLinesHydrator />
-        <TidioChat locale={locale} />
+        <TidioChat
+          locale={locale}
+          prompt={dictionary.nav.chatPrompt}
+          openLabel={dictionary.nav.openChat}
+        />
       </div>
       </ProductCardCartCopyProvider>
     </div>

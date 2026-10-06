@@ -14,7 +14,9 @@
     "navigation": "Navigation",
     "shopNow": "Shop now",
     "groupOrder": "Group order",
-    "policy": "Policy"
+    "policy": "Policy",
+    "chatPrompt": "How can we help?",
+    "openChat": "Open chat"
   },
   "header": {
     "language": "Language",
