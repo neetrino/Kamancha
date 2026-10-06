@@ -23,6 +23,8 @@ function lanDevOrigins(): string[] {
   return [...hosts];
 }
 
+const TIDIO_ORIGINS = "https://*.tidio.co https://*.tidiochat.com";
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -36,11 +38,12 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       // Google Maps JS loads from maps.googleapis.com / maps.gstatic.com
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com ${TIDIO_ORIGINS}`,
+      `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com ${TIDIO_ORIGINS}`,
       "img-src 'self' data: blob: https:",
-      "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https:",
+      `font-src 'self' data: https://fonts.gstatic.com ${TIDIO_ORIGINS}`,
+      `media-src 'self' ${TIDIO_ORIGINS}`,
+      "connect-src 'self' https: wss://*.tidio.co",
       "worker-src 'self' blob:",
       "frame-src 'self' https://www.google.com https://maps.google.com https://maps.googleapis.com",
       "frame-ancestors 'none'",
