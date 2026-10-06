@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
@@ -12,7 +12,6 @@ import type { AdminProductsFilter } from "@/features/products/schemas/admin-list
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminProductsFiltersProps = {
-  total: number;
   q?: string;
   categoryId?: string;
   stock: AdminProductsFilter["stock"];
@@ -20,12 +19,9 @@ type AdminProductsFiltersProps = {
   sort: string;
   dir: string;
   copy: Dictionary["admin"]["products"]["filters"];
-  /** Shown next to the stock filter (e.g. add-product button). */
-  stockRowAction?: ReactNode;
 };
 
 export function AdminProductsFilters({
-  total,
   q,
   categoryId,
   stock,
@@ -33,7 +29,6 @@ export function AdminProductsFilters({
   sort,
   dir,
   copy,
-  stockRowAction,
 }: AdminProductsFiltersProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const navigateFilters = useAdminFilterNavigate();
@@ -45,13 +40,7 @@ export function AdminProductsFilters({
     value: category.id,
   }));
 
-  const stockOptions = [
-    { label: copy.allProducts, value: "all" as const },
-    { label: copy.inStock, value: "in_stock" as const },
-    { label: copy.outOfStock, value: "out_of_stock" as const },
-    { label: copy.lowStock, value: "low_stock" as const },
-    { label: copy.draft, value: "draft" as const },
-  ];
+  const stopped = stockValue === "draft";
 
   function applyCategory(next: string): void {
     flushSync(() => setCategoryValue(next));
@@ -74,18 +63,15 @@ export function AdminProductsFilters({
 
   return (
     <div className="mb-4">
-      <p className="mb-3 text-sm text-gray-600">
-        {copy.totalProducts.replace("{total}", String(total))}
-      </p>
       <form
         ref={formRef}
         method="get"
         onSubmit={onSubmit}
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
+        className="flex flex-col gap-4 xl:flex-row xl:items-end"
       >
         <input type="hidden" name="sort" value={sort} />
         <input type="hidden" name="dir" value={dir} />
-        <label>
+        <label className="min-w-0 xl:min-w-[220px] xl:flex-1">
           <span className={ADMIN_LABEL}>{copy.searchByTitleOrSlug}</span>
           <AdminSearchInput
             name="q"
@@ -95,7 +81,7 @@ export function AdminProductsFilters({
             aria-label={copy.searchByTitleOrSlugAria}
           />
         </label>
-        <div>
+        <div className="min-w-0 xl:min-w-[200px] xl:flex-1">
           <span className={ADMIN_LABEL}>{copy.filterByCategory}</span>
           <SelectDropdown
             name="categoryId"
@@ -107,27 +93,47 @@ export function AdminProductsFilters({
             onValueChange={applyCategory}
           />
         </div>
-        <div
-          className={
-            stockRowAction
-              ? "md:col-span-2 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-end"
-              : undefined
-          }
-        >
-          <div className={stockRowAction ? "min-w-0" : undefined}>
+        <div className="min-w-max xl:w-[360px] xl:shrink-0">
+          <div>
             <span className={ADMIN_LABEL}>{copy.filterByStock}</span>
-            <SelectDropdown
-              name="stock"
-              ariaLabel={copy.filterByStockAria}
-              value={stockValue}
-              options={stockOptions}
-              className="mt-1"
-              onValueChange={applyStock}
-            />
+            <input type="hidden" name="stock" value={stopped ? "draft" : "all"} />
+            <div
+              role="group"
+              aria-label={copy.filterByStockAria}
+              className="relative mt-1 flex h-11 rounded-2xl border border-gray-200 bg-white p-1 shadow-sm"
+            >
+              <span
+                aria-hidden
+                className={`pointer-events-none absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-xl bg-brand-forest transition-transform duration-300 ease-out motion-reduce:transition-none ${
+                  stopped ? "translate-x-full" : "translate-x-0"
+                }`}
+              />
+              <button
+                type="button"
+                aria-pressed={!stopped}
+                onClick={() => applyStock("all")}
+                className={`relative z-[1] min-w-0 flex-1 whitespace-nowrap rounded-xl px-3 text-sm font-medium transition-colors duration-300 ${
+                  stopped
+                    ? "text-gray-600 hover:text-brand-forest"
+                    : "text-white"
+                }`}
+              >
+                {copy.allProducts}
+              </button>
+              <button
+                type="button"
+                aria-pressed={stopped}
+                onClick={() => applyStock("draft")}
+                className={`relative z-[1] min-w-0 flex-1 whitespace-nowrap rounded-xl px-3 text-sm font-medium transition-colors duration-300 ${
+                  stopped
+                    ? "text-white"
+                    : "text-gray-600 hover:text-brand-forest"
+                }`}
+              >
+                {copy.draft}
+              </button>
+            </div>
           </div>
-          {stockRowAction ? (
-            <div className="min-w-0 sm:self-end">{stockRowAction}</div>
-          ) : null}
         </div>
       </form>
     </div>

@@ -367,7 +367,7 @@
       "inStock": "В наличии",
       "outOfStock": "Нет в наличии",
       "lowStock": "Мало на складе",
-      "draft": "Stop product"
+      "draft": "Stopped Products"
     },
     "table": {
       "deleteSelected": "Удалить выбранные",

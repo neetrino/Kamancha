@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
+
+import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 
 import type {
   AdminCategoryOption,
@@ -78,21 +80,26 @@ export function AdminProductsView({
     setEditingProduct(null);
   }
 
-  const addProductButton: ReactNode = (
-    <button
-      type="button"
-      onClick={openCreate}
-      className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-brand-forest px-4 text-sm font-medium whitespace-nowrap text-white shadow-sm transition-opacity hover:opacity-90"
-    >
-      <Plus className="h-4 w-4 shrink-0" aria-hidden />
-      {copy.products.addNewProduct}
-    </button>
-  );
-
   return (
     <>
+      <div className="mb-10 flex items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <h1 className={ADMIN_PAGE_TITLE}>{copy.products.title}</h1>
+          <span className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-full bg-brand-forest px-2.5 text-sm font-semibold text-white">
+            {total}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={openCreate}
+          className="flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl bg-brand-forest px-4 text-sm font-medium whitespace-nowrap text-white shadow-sm transition-opacity hover:opacity-90"
+        >
+          <Plus className="h-4 w-4 shrink-0" aria-hidden />
+          {copy.products.addNewProduct}
+        </button>
+      </div>
+
       <AdminProductsFilters
-        total={total}
         q={q}
         categoryId={categoryId}
         stock={stock}
@@ -100,7 +107,6 @@ export function AdminProductsView({
         sort={sort}
         dir={dir}
         copy={copy.products.filters}
-        stockRowAction={addProductButton}
       />
 
       <AdminProductsTable
