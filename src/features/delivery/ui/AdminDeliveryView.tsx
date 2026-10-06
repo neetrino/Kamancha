@@ -233,9 +233,10 @@ export function AdminDeliveryView({
               </div>
               <Button
                 type="button"
-                variant="outline"
+                variant="primary"
+                size="sm"
                 onClick={openCreateZone}
-                className="shrink-0 gap-1.5"
+                className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap"
               >
                 <Plus className="h-4 w-4" aria-hidden />
                 {copy.delivery.addZone}

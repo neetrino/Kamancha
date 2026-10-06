@@ -182,7 +182,7 @@ function DeliveryLocationForm({
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4">
           <label>
             <span className={ADMIN_LABEL}>
               {copy.locationDrawer.areaName}
@@ -271,7 +271,6 @@ export function DeliveryLocationDrawer({
           ? copy.locationDrawer.editAria
           : copy.locationDrawer.addAria
       }
-      panelClassName="w-[min(100%,56rem)] sm:w-[min(100%,52rem)]"
     >
       <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
         <h2 className="text-lg font-semibold text-gray-900">
