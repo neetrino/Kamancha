@@ -43,6 +43,8 @@ type ProductCardProps = {
    * `catalog` — Figma 103:3029 menu card (mobile below xl; 3-col from 744px on tablet).
    */
   layout?: ProductCardLayout;
+  /** Square photo frame, still cropped to fill like the other cards. */
+  squareImage?: boolean;
 };
 
 function formatDiscountOff(template: string, percent: number): string {
@@ -72,6 +74,7 @@ export function ProductCard({
   requiresCustomization = false,
   className = "",
   layout = "fixed",
+  squareImage = false,
 }: ProductCardProps) {
   const onSale = Boolean(compareAtFormatted);
   const showWishlist =
@@ -86,10 +89,17 @@ export function ProductCard({
   return (
     <article
       data-node-id={catalog ? "103:3029" : "22:230"}
-      className={`group relative flex flex-col overflow-hidden bg-white transition-[translate,box-shadow] duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:z-10 hover:-translate-y-2 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${ui.article} ${compact ? "has-[[data-qty-stacked]]:h-auto" : ""} ${className}`}
+      className={`group relative flex flex-col overflow-hidden bg-white transition-[translate,box-shadow] duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:z-10 hover:-translate-y-2 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${squareImage ? ui.article.replace("xl:h-[419px]", "xl:h-auto") : ui.article} ${compact ? "has-[[data-qty-stacked]]:h-auto" : ""} ${className}`}
     >
       <div
-        className={`relative z-[1] isolate shrink-0 bg-neutral-100 ${ui.image}`}
+        className={`relative z-[1] isolate shrink-0 bg-neutral-100 ${
+          squareImage
+            ? ui.image
+                .replace("aspect-[287/220]", "aspect-square")
+                .replace("xl:h-[220px]", "")
+                .replace("xl:aspect-auto", "xl:aspect-square")
+            : ui.image
+        }`}
       >
         <AppLink
           href={href}

@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 
 import { listAttributeOptions } from "@/features/attributes/application/library";
 import { AdminPagination } from "@/features/admin/ui/AdminPagination";
-import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import {
   listAdminCategoryOptions,
   listAdminProducts,
@@ -117,10 +116,6 @@ export default async function AdminProductsPage({
 
   return (
     <section>
-      <div className="mb-6">
-        <h1 className={ADMIN_PAGE_TITLE}>{adminCopy.products.title}</h1>
-      </div>
-
       <AdminProductsView
         locale={locale}
         products={rows}

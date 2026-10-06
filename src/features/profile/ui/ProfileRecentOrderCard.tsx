@@ -3,18 +3,20 @@
 import type { KeyboardEvent } from "react";
 import { ShoppingBag } from "lucide-react";
 
-import {
-  PROFILE_INNER_CARD,
-  PROFILE_STATUS_BADGE,
-} from "@/features/profile/ui/profile-surface";
+import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
+import { orderStatusBadgeClass } from "@/features/admin/ui/status-badge";
+import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 
 type ProfileRecentOrderCardProps = {
   orderNumber: string;
   status: string;
+  statusCode: string;
   totalLabel: string;
   bonusEarnedLabel?: string | null;
   metaLine: string;
   placedOnLine: string;
+  rateLabel: string;
+  rated?: boolean;
   orderNumberLabel: string;
   groupOrderBadgeLabel?: string;
   isGroupOrder?: boolean;
@@ -34,15 +36,20 @@ function handleCardKeyDown(
 export function ProfileRecentOrderCard({
   orderNumber,
   status,
+  statusCode,
   totalLabel,
   bonusEarnedLabel = null,
   metaLine,
   placedOnLine,
+  rateLabel,
+  rated = false,
   orderNumberLabel,
   groupOrderBadgeLabel,
   isGroupOrder = false,
   onViewDetails,
 }: ProfileRecentOrderCardProps) {
+  const showRate = statusCode === "DELIVERED" && !rated;
+
   return (
     <article
       role="button"
@@ -61,7 +68,9 @@ export function ProfileRecentOrderCard({
           </p>
         </div>
         <div className="inline-flex shrink-0 flex-col items-end gap-1.5">
-          <span className={`${PROFILE_STATUS_BADGE} justify-center`}>
+          <span
+            className={`inline-flex justify-center rounded-full px-3 py-1 text-xs font-medium capitalize ${orderStatusBadgeClass(statusCode)}`}
+          >
             {status}
           </span>
           <div className="flex min-h-6 flex-wrap items-center justify-end gap-1.5">
@@ -80,17 +89,35 @@ export function ProfileRecentOrderCard({
       </div>
 
       <div className="mt-auto flex flex-col">
-        <div className="my-4 h-px rounded-full bg-gray-200" aria-hidden />
+        <div
+          className={`h-px rounded-full bg-gray-200 ${showRate ? "mt-4" : "my-4"}`}
+          aria-hidden
+        />
 
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
-            <ShoppingBag className="h-5 w-5" aria-hidden />
+        {showRate ? (
+          <div className="-mb-4 flex h-[72px] items-center">
+            <KamanchaPillButton
+              type="button"
+              variant="dark"
+              label={rateLabel}
+              onClick={(event) => {
+                event.stopPropagation();
+                onViewDetails();
+              }}
+              className="kamancha-pill-button--guest-cta !h-12 !min-h-0 !max-h-12 !max-w-none !py-0 !text-lg !leading-none xl:!text-base [&>span]:w-full [&>span]:shrink-0 [&>span]:text-center [&>span]:text-white"
+            />
           </div>
-          <div className="min-w-0 pt-0.5 text-sm leading-snug text-gray-700">
-            <p>{metaLine}</p>
-            <p className="whitespace-nowrap">{placedOnLine}</p>
+        ) : (
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
+              <ShoppingBag className="h-5 w-5" aria-hidden />
+            </div>
+            <div className="min-w-0 pt-0.5 text-sm leading-snug text-gray-700">
+              <p>{metaLine}</p>
+              <p className="whitespace-nowrap">{placedOnLine}</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </article>
   );

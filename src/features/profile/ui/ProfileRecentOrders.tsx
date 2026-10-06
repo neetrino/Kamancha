@@ -28,6 +28,7 @@ type RecentOrder = {
   itemsCount: number;
   placedAt: string;
   isGroupOrder: boolean;
+  customerRating: number | null;
 };
 
 type ProfileRecentOrdersProps = {
@@ -48,12 +49,14 @@ function RecentOrdersBody({
   dictionary,
   statusLabels,
   onOpenOrder,
+  ratedOrderNumbers,
 }: {
   locale: Locale;
   orders: RecentOrder[];
   dictionary: Dictionary["profile"];
   statusLabels: Dictionary["admin"]["orders"]["statusLabels"];
   onOpenOrder: (orderNumber: string) => void;
+  ratedOrderNumbers: ReadonlySet<string>;
 }) {
   if (orders.length === 0) {
     return (
@@ -79,6 +82,7 @@ function RecentOrdersBody({
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
             status={localizeOrderStatus(order.status, statusLabels)}
+            statusCode={order.status}
             totalLabel={formatMoneyAmount(order.totalAmount, "AMD", locale)}
             bonusEarnedLabel={
               order.bonusEarnedAmount > 0
@@ -91,6 +95,11 @@ function RecentOrdersBody({
               dictionary.itemCountOther,
             )}
             placedOnLine={`${dictionary.placedOn} ${formatShortDate(order.placedAt, locale)}`}
+            rateLabel={dictionary.rateOrder}
+            rated={
+              order.customerRating != null ||
+              ratedOrderNumbers.has(order.orderNumber)
+            }
             orderNumberLabel={dictionary.orderNumber}
             groupOrderBadgeLabel={dictionary.groupOrderBadge}
             isGroupOrder={order.isGroupOrder}
@@ -112,6 +121,9 @@ export function ProfileRecentOrders({
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [ratedOrderNumbers, setRatedOrderNumbers] = useState<
+    ReadonlySet<string>
+  >(() => new Set());
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
@@ -157,6 +169,7 @@ export function ProfileRecentOrders({
           dictionary={dictionary}
           statusLabels={adminCopy.orders.statusLabels}
           onOpenOrder={openOrder}
+          ratedOrderNumbers={ratedOrderNumbers}
         />
       </div>
       <CustomerOrderDetailsSheet
@@ -170,6 +183,13 @@ export function ProfileRecentOrders({
         locale={locale}
         feedbackLabels={dictionary.orderFeedback}
         onFeedbackSubmitted={(value) => {
+          if (detail) {
+            setRatedOrderNumbers((current) => {
+              const next = new Set(current);
+              next.add(detail.orderNumber);
+              return next;
+            });
+          }
           setDetail((current) =>
             current
               ? {

@@ -160,6 +160,7 @@ export default async function OrdersPage({
           itemCountOne: dictionary.profile.itemCountOne,
           itemCountOther: dictionary.profile.itemCountOther,
           placedOn: dictionary.profile.placedOn,
+          rateOrder: dictionary.profile.rateOrder,
           noOrders: dictionary.profile.noOrders,
           startShopping: dictionary.profile.startShopping,
           groupOrderBadge: dictionary.profile.groupOrderBadge,

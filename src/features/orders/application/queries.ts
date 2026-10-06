@@ -100,6 +100,7 @@ export type CustomerOrderListItem = Omit<
 > & {
   itemsCount: number;
   bonusEarnedAmount: number;
+  customerRating: number | null;
   isNew?: boolean;
 };
 
@@ -315,6 +316,7 @@ export async function listCustomerOrders(
         placedAt: orders.placedAt,
         isArchived: orders.isArchived,
         itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
+        customerRating: orders.customerRating,
         bonusEarnedAmount,
         groupOrderId: orders.groupOrderId,
       })

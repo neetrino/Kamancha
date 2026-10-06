@@ -16,6 +16,8 @@ import type { Currency } from "@/lib/money/currency";
 const MOBILE_TWO_COL_MQ = "(max-width: 743px)";
 const CATALOG_MOBILE_COLUMNS = 2;
 const CATALOG_DESKTOP_COLUMNS = 3;
+/** Storefront slug for the Drinks category (hy/en/ru share one slug). */
+const DRINKS_CATEGORY_SLUG = "ըմպելիք";
 
 type CatalogProductGridProps = {
   locale: Locale;
@@ -74,6 +76,7 @@ export function CatalogProductGrid({
     return () => media.removeEventListener("change", sync);
   }, []);
 
+  const drinkPhotos = filters.category === DRINKS_CATEGORY_SLUG;
   const columnCount = isMobileTwoCol
     ? CATALOG_MOBILE_COLUMNS
     : CATALOG_DESKTOP_COLUMNS;
@@ -131,6 +134,7 @@ export function CatalogProductGrid({
               addToCartLabel={addToCartLabel}
               requiresCustomization={product.requiresCustomization}
               layout="catalog"
+              squareImage={drinkPhotos}
               className="h-full w-full"
             />
           </StaggerItem>

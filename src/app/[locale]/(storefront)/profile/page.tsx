@@ -60,6 +60,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
           itemsCount: order.itemsCount,
           placedAt: order.placedAt.toISOString(),
           isGroupOrder: order.isGroupOrder,
+          customerRating: order.customerRating,
         }))}
         dictionary={dictionary.profile}
         adminCopy={dictionary.admin}

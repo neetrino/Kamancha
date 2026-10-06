@@ -25,6 +25,7 @@ type CustomerOrdersCardItem = {
   itemsCount: number;
   bonusEarnedAmount?: number;
   isGroupOrder?: boolean;
+  customerRating?: number | null;
 };
 
 type CustomerOrdersCardsLabels = {
@@ -32,6 +33,7 @@ type CustomerOrdersCardsLabels = {
   itemCountOne: string;
   itemCountOther: string;
   placedOn: string;
+  rateOrder: string;
   noOrders: string;
   startShopping: string;
   groupOrderBadge: string;
@@ -43,6 +45,7 @@ type CustomerOrdersCardsProps = {
   orders: CustomerOrdersCardItem[];
   labels: CustomerOrdersCardsLabels;
   onOpenOrder: (orderNumber: string) => void;
+  ratedOrderNumbers?: ReadonlySet<string>;
 };
 
 function formatItemCount(count: number, one: string, other: string): string {
@@ -58,6 +61,7 @@ export function CustomerOrdersCards({
   orders,
   labels,
   onOpenOrder,
+  ratedOrderNumbers,
 }: CustomerOrdersCardsProps) {
   if (orders.length === 0) {
     return (
@@ -83,6 +87,7 @@ export function CustomerOrdersCards({
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
             status={localizeOrderStatus(order.status, labels.statusLabels)}
+            statusCode={order.status}
             totalLabel={formatOrderDrawerMoney(
               order.totalAmount,
               order.baseCurrency,
@@ -98,6 +103,11 @@ export function CustomerOrdersCards({
               labels.itemCountOther,
             )}
             placedOnLine={`${labels.placedOn} ${formatShortDate(order.placedAt, locale)}`}
+            rateLabel={labels.rateOrder}
+            rated={
+              order.customerRating != null ||
+              (ratedOrderNumbers?.has(order.orderNumber) ?? false)
+            }
             orderNumberLabel={labels.orderNumber}
             groupOrderBadgeLabel={labels.groupOrderBadge}
             isGroupOrder={order.isGroupOrder}

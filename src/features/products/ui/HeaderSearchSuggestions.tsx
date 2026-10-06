@@ -13,6 +13,7 @@ type HeaderSearchSuggestionsProps = {
   emptyLabel: string;
   viewAllHref: string | null;
   viewAllLabel: string;
+  onViewAll?: () => void;
   className?: string;
 };
 
@@ -26,6 +27,7 @@ export function HeaderSearchSuggestions({
   emptyLabel,
   viewAllHref,
   viewAllLabel,
+  onViewAll,
   className = "",
 }: HeaderSearchSuggestionsProps) {
   return (
@@ -90,6 +92,7 @@ export function HeaderSearchSuggestions({
           <AppLink
             href={viewAllHref}
             prefetchPolicy="intent"
+            onClick={onViewAll}
             className="block text-center text-sm font-medium text-gray-900"
           >
             {viewAllLabel}
