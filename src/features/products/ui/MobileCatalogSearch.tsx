@@ -69,6 +69,7 @@ export function MobileCatalogSearch({
   const [total, setTotal] = useState(0);
   const [searchedQuery, setSearchedQuery] = useState("");
   const [suggestPending, startSuggest] = useTransition();
+  const [suggestionsDismissed, setSuggestionsDismissed] = useState(false);
   const requestIdRef = useRef(0);
 
   useEffect(() => {
@@ -122,6 +123,7 @@ export function MobileCatalogSearch({
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>): void {
+    setSuggestionsDismissed(false);
     setValue(event.target.value);
   }
 
@@ -261,7 +263,7 @@ export function MobileCatalogSearch({
         </div>
       </div>
 
-      {open && trimmed.length > 0 ? (
+      {open && trimmed.length > 0 && !suggestionsDismissed ? (
         <HeaderSearchSuggestions
           className="mb-3"
           products={suggestionProducts}
@@ -276,6 +278,7 @@ export function MobileCatalogSearch({
               : null
           }
           viewAllLabel={suggestions.viewAll}
+          onViewAll={() => setSuggestionsDismissed(true)}
         />
       ) : null}
     </div>
