@@ -269,6 +269,33 @@ body {
   }
 }
 
+#tidio-chat-iframe:not(.tidio-chat-open) {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 1279px) {
+  #tidio-chat-iframe.tidio-bubble {
+    top: auto !important;
+    left: auto !important;
+    right: 1rem !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  #tidio-chat-iframe.tidio-desktop-panel {
+    top: auto !important;
+    left: auto !important;
+    right: 24px !important;
+    bottom: -64px !important;
+    width: 380px !important;
+    height: min(704px, calc(100dvh + 16px)) !important;
+    max-height: calc(100dvh + 16px) !important;
+    clip-path: inset(0 0 76px 0);
+  }
+}
+
 @keyframes toast-out {
   0% {
     opacity: 1;

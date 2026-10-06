@@ -31,6 +31,24 @@ declare global {
   }
 }
 
+const DESKTOP_CHAT_QUERY = "(min-width: 1280px)";
+
+function setDesktopChatFrame(open: boolean): void {
+  function apply(): void {
+    const frame = document.getElementById("tidio-chat-iframe");
+    if (!frame) {
+      return;
+    }
+
+    const desktop = window.matchMedia(DESKTOP_CHAT_QUERY).matches;
+    frame.classList.toggle("tidio-chat-open", open);
+    frame.classList.toggle("tidio-desktop-panel", open && desktop);
+  }
+
+  apply();
+  requestAnimationFrame(apply);
+}
+
 type TidioChatLoaderProps = {
   publicKey: string;
   locale: Locale;
@@ -89,16 +107,65 @@ export function TidioChatLoader({
 
     function markOpen() {
       setOpen(true);
+      setDesktopChatFrame(true);
     }
 
     function markClosed() {
+      setDesktopChatFrame(false);
       window.tidioChatApi?.hide();
       setOpen(false);
     }
 
+    let panelOpen = false;
+
+    function concealClosedBubble(frame: HTMLElement): void {
+      const closedBubble = frame.offsetWidth < 200 && frame.offsetHeight < 200;
+      if (!closedBubble) {
+        panelOpen = true;
+        frame.classList.remove("tidio-bubble");
+        frame.style.removeProperty("visibility");
+        frame.style.removeProperty("pointer-events");
+        return;
+      }
+
+      frame.classList.add("tidio-bubble");
+      const mobile = window.matchMedia("(max-width: 1279px)").matches;
+      if (!mobile) {
+        frame.style.setProperty("visibility", "hidden", "important");
+        frame.style.setProperty("pointer-events", "none", "important");
+      }
+      if (!panelOpen) {
+        return;
+      }
+
+      panelOpen = false;
+      frame.classList.remove("tidio-chat-open", "tidio-desktop-panel");
+      setOpen(false);
+    }
+
+    const frameObserver = new ResizeObserver((entries) => {
+      const frame = entries[0]?.target;
+      if (frame instanceof HTMLElement) {
+        concealClosedBubble(frame);
+      }
+    });
+
+    function watchFrame(): void {
+      const frame = document.getElementById("tidio-chat-iframe");
+      if (!frame) {
+        return;
+      }
+      frameObserver.observe(frame);
+      concealClosedBubble(frame);
+    }
+
+    const frameMountObserver = new MutationObserver(watchFrame);
+
     document.addEventListener("tidioChat-ready", hideDefaultBubble);
     document.addEventListener("tidioChat-open", markOpen);
     document.addEventListener("tidioChat-close", markClosed);
+    frameMountObserver.observe(document.body, { childList: true, subtree: true });
+    watchFrame();
 
     if (window.tidioChatApi) {
       hideDefaultBubble();
@@ -108,6 +175,8 @@ export function TidioChatLoader({
       document.removeEventListener("tidioChat-ready", hideDefaultBubble);
       document.removeEventListener("tidioChat-open", markOpen);
       document.removeEventListener("tidioChat-close", markClosed);
+      frameObserver.disconnect();
+      frameMountObserver.disconnect();
       window.tidioChatApi?.hide();
     };
   }, []);
