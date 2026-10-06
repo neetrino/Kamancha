@@ -11,9 +11,7 @@ import { CustomerOrderKindFilter } from "@/features/orders/ui/CustomerOrderKindF
 import { CustomerOrdersFilters } from "@/features/orders/ui/CustomerOrdersFilters";
 import { CustomerOrdersView } from "@/features/orders/ui/CustomerOrdersView";
 import { claimGuestGroupOrderParticipantsForUser } from "@/features/group-orders/application/claim-guest-participants";
-import {
-  PROFILE_PAGE_TITLE,
-} from "@/features/profile/ui/profile-surface";
+import { PROFILE_MOBILE_PAGE_TITLE } from "@/features/profile/ui/profile-surface";
 import { requireUser } from "@/lib/auth/policies";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -98,7 +96,9 @@ export default async function OrdersPage({
 
   return (
     <section className="profile-sheet-keep-frame space-y-6">
-      <h1 className={PROFILE_PAGE_TITLE}>{dictionary.profile.orders}</h1>
+      <h1 className={PROFILE_MOBILE_PAGE_TITLE}>
+        {dictionary.profile.orders}
+      </h1>
 
       <div className="xl:hidden">
         <CustomerOrderKindFilter

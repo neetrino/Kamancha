@@ -3,6 +3,10 @@
 export const PROFILE_PAGE_TITLE =
   "font-big-fat-boii text-[32px] leading-[1.1] font-normal tracking-wide text-gray-900 uppercase sm:text-[40px] md:text-[48px] xl:text-white";
 
+/** Dashboard and orders: a step above section titles on mobile, large on desktop. */
+export const PROFILE_MOBILE_PAGE_TITLE =
+  "relative z-[2] font-big-fat-boii text-2xl leading-[1.1] font-normal tracking-wide text-gray-900 uppercase xl:text-[48px] xl:text-white";
+
 export const PROFILE_PAGE_SUBTITLE =
   "mt-2 text-sm text-gray-600 xl:text-white/70";
 
