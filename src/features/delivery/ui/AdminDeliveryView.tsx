@@ -326,7 +326,7 @@ export function AdminDeliveryView({
         </Card>
 
         <div
-          className={`fixed inset-x-0 bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-4 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] sm:px-6 lg:px-8 ${stickyBarOffsetClass}`}
+          className={`fixed inset-x-0 bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-2.5 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] sm:px-6 lg:px-8 ${stickyBarOffsetClass}`}
         >
           <div className="flex items-center justify-end gap-3">
             <Button
