@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
 import { StorefrontBackground } from "@/components/layout/StorefrontBackground";
+import { TidioChat } from "@/components/layout/TidioChat";
 import { LiquidGlassOptics } from "@/components/ui/LiquidGlassOptics";
 import { MaintenanceGate } from "@/components/layout/MaintenanceGate";
 import { getActiveGroupOrderBanner } from "@/features/group-orders/application/active-banner";
@@ -85,6 +86,7 @@ export default async function StorefrontLayout({
         <StorefrontAlertHost />
         <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
         <CartProductLinesHydrator />
+        <TidioChat locale={locale} />
       </div>
       </ProductCardCartCopyProvider>
     </div>
