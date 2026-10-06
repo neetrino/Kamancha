@@ -68,7 +68,7 @@ export function AddOrderNoteForm({
           disabled={isPending}
         />
       </label>
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <Button
           type="submit"
           size="field"

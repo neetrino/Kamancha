@@ -322,7 +322,6 @@ export default async function AdminOrderDetailPage({
       <AdminOrderOperatorNotes
         locale={locale}
         orderNumber={order.orderNumber}
-        hasCustomer={order.userId != null}
         notes={operatorNotes}
         copy={copy}
       />

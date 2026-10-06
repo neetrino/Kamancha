@@ -31,8 +31,8 @@ import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo"
 /** Admin order sheet — half the viewport, same as the orders list. */
 export const ADMIN_ORDER_SHEET_PANEL = "w-[92%] max-w-none sm:w-[47%]";
 
-/** Profile order sheet — wider than other storefront drawers to fit notes. */
-const CUSTOMER_ORDER_SHEET_PANEL = "w-[92%] max-w-[560px]";
+/** Profile order sheet — same width as the other storefront drawers. */
+const CUSTOMER_ORDER_SHEET_PANEL = "w-[87%] max-w-[420px]";
 
 const PARTICIPANT_STAT_CELL = "w-max shrink-0 text-left whitespace-nowrap";
 const PARTICIPANT_STAT_CELL_DIVIDED = `${PARTICIPANT_STAT_CELL} sm:border-l sm:border-gray-200 sm:pl-4`;
@@ -46,7 +46,7 @@ type CustomerOrderDetailsSheetProps = {
   copy: Dictionary["admin"];
   includeAdminDetails?: boolean;
   groupOrderBadgeLabel?: string;
-  /** SideSheet panel width classes (default: narrow profile drawer). */
+  /** SideSheet panel width classes (default: storefront drawer width). */
   panelClassName?: string;
   locale?: string;
   feedbackLabels?: OrderFeedbackFormLabels;
@@ -156,7 +156,6 @@ export function CustomerOrderDetailsSheet({
                 <CustomerOrderSheetNotes
                   notes={detail.customerNotes}
                   title={d.operatorNotes}
-                  utcLabel={copy.common.utc}
                 />
               ) : null
             }

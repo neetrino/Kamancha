@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -27,6 +28,7 @@ export function AdminOrderSheetNotes({
   const loadFailedLabel = labels.loadFailed;
   const [data, setData] = useState<OrderOperatorNotesResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const applyResult = useCallback(
     (result: Awaited<ReturnType<typeof listOrderOperatorNotesAction>>): void => {
@@ -64,29 +66,50 @@ export function AdminOrderSheetNotes({
 
   return (
     <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
-      <div>
-        <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className="flex w-full items-start gap-3 text-left"
+      >
+        <span className="min-w-0 flex-1 font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
           {labels.title}
-        </h3>
-        {data ? (
-          <p className="mt-1 text-xs text-gray-500">
-            {data.hasCustomer ? labels.hint : labels.guestHint}
-          </p>
-        ) : null}
-      </div>
-      <AddOrderNoteForm
-        locale={locale}
-        orderNumber={orderNumber}
-        copy={copy}
-        onAdded={reload}
-      />
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      {data ? (
-        <OrderOperatorNotesList
-          notes={data.notes}
-          emptyLabel={labels.empty}
-          utcLabel={copy.common.utc}
+        </span>
+        <ChevronDown
+          className={`mt-0.5 h-4 w-4 shrink-0 text-gray-500 transition-transform ${open ? "" : "-rotate-90"}`}
+          aria-hidden
         />
+      </button>
+      {open ? (
+        <>
+          <AddOrderNoteForm
+            locale={locale}
+            orderNumber={orderNumber}
+            copy={copy}
+            onAdded={reload}
+          />
+          {error ? <p className="text-sm text-red-700">{error}</p> : null}
+          {data ? (
+            <OrderOperatorNotesList
+              notes={data.notes}
+              emptyLabel=""
+              locale={locale}
+              deleteLabel={copy.common.delete}
+              deleteFailedLabel={labels.deleteFailed}
+              confirm={copy.confirm}
+              onDeleted={(noteId) =>
+                setData((current) =>
+                  current
+                    ? {
+                        ...current,
+                        notes: current.notes.filter((note) => note.id !== noteId),
+                      }
+                    : current,
+                )
+              }
+            />
+          ) : null}
+        </>
       ) : null}
     </section>
   );

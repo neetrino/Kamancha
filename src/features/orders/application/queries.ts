@@ -19,12 +19,14 @@ import { getDb } from "@/db/client";
 import {
   orderEvents,
   orderItemModifiers,
+  mediaAssets,
   orderItems,
   orders,
   payments,
   products,
   users,
 } from "@/db/schema";
+import { mediaPublicUrl } from "@/lib/media/public-url";
 import {
   customerOrderBonusEarnedSql,
   customerOrderDisplayAmountSql,
@@ -418,7 +420,12 @@ export type DashboardMetrics = {
   revenueAmount: number;
   previousRevenueAmount: number;
   recentOrders: AdminOrderListItem[];
-  topProducts: Array<{ productId: string; title: string; quantity: number }>;
+  topProducts: Array<{
+    productId: string;
+    title: string;
+    quantity: number;
+    imageUrl: string | null;
+  }>;
   from: string;
   to: string;
   previousFrom: string;
@@ -555,6 +562,39 @@ export async function getAdminDashboardMetrics(input: {
       .limit(5),
   ]);
 
+  const productIds = topProductRows.flatMap((row) =>
+    row.productId ? [row.productId] : [],
+  );
+  const imageRows =
+    productIds.length === 0
+      ? []
+      : await getDb()
+          .select({
+            productId: mediaAssets.productId,
+            objectKey: mediaAssets.objectKey,
+            isPrimary: mediaAssets.isPrimary,
+            sortOrder: mediaAssets.sortOrder,
+          })
+          .from(mediaAssets)
+          .where(
+            and(
+              inArray(mediaAssets.productId, productIds),
+              eq(mediaAssets.uploadStatus, "READY"),
+            ),
+          );
+  const imageByProduct = new Map<string, string>();
+  const rankedImages = [...imageRows].sort((left, right) => {
+    if (left.isPrimary !== right.isPrimary) {
+      return left.isPrimary ? -1 : 1;
+    }
+    return left.sortOrder - right.sortOrder;
+  });
+  for (const image of rankedImages) {
+    if (image.productId && !imageByProduct.has(image.productId)) {
+      imageByProduct.set(image.productId, mediaPublicUrl(image.objectKey));
+    }
+  }
+
   return {
     users: usersRow?.value ?? 0,
     products: productsRow?.value ?? 0,
@@ -579,6 +619,9 @@ export async function getAdminDashboardMetrics(input: {
       productId: row.productId ?? "unknown",
       title: row.title,
       quantity: row.quantity,
+      imageUrl: row.productId
+        ? (imageByProduct.get(row.productId) ?? null)
+        : null,
     })),
     from: input.from,
     to: input.to,

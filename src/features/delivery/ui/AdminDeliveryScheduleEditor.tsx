@@ -178,9 +178,9 @@ export function AdminDeliveryScheduleEditor({
           <thead className="bg-gray-50 text-left text-gray-600">
             <tr>
               <th className="px-3 py-2 font-medium">{copy.day}</th>
-              <th className="px-3 py-2 font-medium">{copy.open}</th>
-              <th className="px-3 py-2 font-medium">{copy.from}</th>
-              <th className="px-3 py-2 font-medium">{copy.to}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.open}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.from}</th>
+              <th className="px-3 py-2 text-center font-medium">{copy.to}</th>
             </tr>
           </thead>
           <tbody>
@@ -191,7 +191,7 @@ export function AdminDeliveryScheduleEditor({
                   <td className="px-3 py-2 font-medium text-gray-900">
                     {weekdayLabels[day]}
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="px-3 py-2 text-center">
                     <input
                       type="checkbox"
                       checked={hours.isOpen}
@@ -207,7 +207,7 @@ export function AdminDeliveryScheduleEditor({
                       value={hours.openTime}
                       max={hours.closeTime}
                       disabled={disabled || !hours.isOpen}
-                      inputClassName={ADMIN_INPUT}
+                      inputClassName={`${ADMIN_INPUT} justify-center text-center`}
                       aria-label={`${weekdayLabels[day]} ${copy.from}`}
                       onChange={(openTime) =>
                         updateWeekly(day, { openTime: toHHmm(openTime) })
@@ -219,7 +219,7 @@ export function AdminDeliveryScheduleEditor({
                       value={hours.closeTime}
                       min={hours.openTime}
                       disabled={disabled || !hours.isOpen}
-                      inputClassName={ADMIN_INPUT}
+                      inputClassName={`${ADMIN_INPUT} justify-center text-center`}
                       aria-label={`${weekdayLabels[day]} ${copy.to}`}
                       onChange={(closeTime) =>
                         updateWeekly(day, { closeTime: toHHmm(closeTime) })
