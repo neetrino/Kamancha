@@ -104,7 +104,7 @@ export function ProfileRecentOrderCard({
                 event.stopPropagation();
                 onViewDetails();
               }}
-              className="kamancha-pill-button--guest-cta !h-12 !min-h-0 !max-h-12 !max-w-none !py-0 !text-base !leading-none [&>span]:w-full [&>span]:shrink-0 [&>span]:text-center [&>span]:text-white"
+              className="kamancha-pill-button--guest-cta !h-12 !min-h-0 !max-h-12 !max-w-none !py-0 !text-lg !leading-none xl:!text-base [&>span]:w-full [&>span]:shrink-0 [&>span]:text-center [&>span]:text-white"
             />
           </div>
         ) : (
