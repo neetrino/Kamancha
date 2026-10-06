@@ -96,6 +96,7 @@ export function AdminOrdersView({ locale, orders, copy }: AdminOrdersViewProps) 
         isLoading={isPending}
         copy={copy}
         includeAdminDetails
+        locale={locale}
         groupOrderBadgeLabel={copy.orders.table.groupOrderBadge}
         panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />

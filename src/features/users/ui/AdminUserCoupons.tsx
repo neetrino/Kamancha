@@ -117,6 +117,7 @@ export function AdminUserCoupons({
         isLoading={isPending}
         copy={adminCopy}
         includeAdminDetails
+        locale={locale}
         panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>

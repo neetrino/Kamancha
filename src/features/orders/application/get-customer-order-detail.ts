@@ -5,6 +5,7 @@ import {
   findCustomerGroupOrderShare,
 } from "@/features/orders/application/customer-group-order-share";
 import { loadAdminGroupOrderParticipantsView } from "@/features/orders/application/group-order-participants-view";
+import { listOrderOperatorNotes } from "@/features/orders/application/operator-notes";
 import {
   toAdminOrderDetailView,
   type AdminOrderDetailView,
@@ -55,12 +56,19 @@ export async function getCustomerOrderDetailAction(
     return err("NOT_FOUND", "Order not found.");
   }
 
-  const identity = await getStoreIdentity();
-  const view = await toAdminOrderDetailView(
+  const [identity, ownerNotes] = await Promise.all([
+    getStoreIdentity(),
+    ownsOrder ? listOrderOperatorNotes(loaded.order.id) : Promise.resolve([]),
+  ]);
+  const baseView = await toAdminOrderDetailView(
     loaded,
     identity.name,
     locale as Locale,
   );
+  const view = {
+    ...baseView,
+    customerNotes: ownerNotes.map((note) => ({ ...note, authorName: null })),
+  };
   const canSubmitFeedback =
     ownsOrder &&
     canSubmitOrderFeedback({

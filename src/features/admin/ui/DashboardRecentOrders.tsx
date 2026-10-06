@@ -133,6 +133,7 @@ export function DashboardRecentOrders({
         isLoading={isPending}
         copy={copy}
         includeAdminDetails
+        locale={locale}
         panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>

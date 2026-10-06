@@ -14,7 +14,8 @@
     "messages": "Сообщения",
     "settings": "Настройки",
     "giftCards": "Подарочные карты",
-    "popups": "Popup"
+    "popups": "Popup",
+    "reviews": "Отзывы"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -292,7 +293,8 @@
       "participantTotal": "Итого",
       "participantBonus": "Бонус",
       "participantNoItems": "У этого участника нет товаров.",
-      "paymentMethodNone": "—"
+      "paymentMethodNone": "—",
+      "operatorNotes": "Заметки"
     },
     "detail": {
       "customer": "Клиент",
@@ -345,9 +347,15 @@
       "restoreOrder": "Восстановить заказ"
     },
     "notes": {
-      "title": "Добавить внутреннее примечание",
-      "note": "Примечание",
-      "addNote": "Добавить примечание"
+      "title": "Заметки оператора",
+      "hint": "Относится к этому заказу и видна в Users и в личном кабинете клиента. Клиент её увидит.",
+      "guestHint": "Гостевой заказ: заметка останется только на этом заказе.",
+      "note": "Новая заметка",
+      "placeholder": "напр. Клиент просил позвонить перед доставкой…",
+      "addNote": "Добавить заметку",
+      "saved": "Заметка добавлена.",
+      "empty": "У этого заказа пока нет заметок.",
+      "loadFailed": "Не удалось загрузить заметки."
     }
   },
   "products": {
@@ -783,6 +791,11 @@
         "rolePurchaser": "Покупатель",
         "roleRecipient": "Получатель",
         "roleBoth": "Покупатель и получатель"
+      },
+      "orderNotes": {
+        "title": "Заметки к заказам",
+        "hint": "Заметки операторов по заказам этого клиента.",
+        "empty": "Заметок к заказам пока нет."
       }
     },
     "roleLabels": {
@@ -1049,6 +1062,26 @@
       "rubPerAmd": "RUB за 1 AMD",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Сохранить курсы валют"
+    }
+  },
+  "reviews": {
+    "title": "Отзывы",
+    "count": "Товаров с отзывами: {total}",
+    "countPlural": "Товаров с отзывами: {total}",
+    "empty": "Пока нет товаров с отзывами.",
+    "ratingAria": "Оценка {rating} из 5",
+    "table": {
+      "product": "Товар",
+      "rating": "Средняя оценка",
+      "reviews": "Отзывы",
+      "lastReview": "Последний отзыв"
+    },
+    "detail": {
+      "order": "Заказ {orderNumber}",
+      "count": "Отзывов: {total}",
+      "countPlural": "Отзывов: {total}",
+      "empty": "У этого товара нет отзывов.",
+      "noComment": "Без комментария."
     }
   },
   "giftCards": {

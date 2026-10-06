@@ -12,6 +12,7 @@ import {
 import { Card } from "@/components/ui/Card";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
+import { listUserOrderOperatorNotes } from "@/features/orders/application/operator-notes";
 import { getAdminUserById } from "@/features/users/application/queries";
 import {
   getEligibleUserStatuses,
@@ -23,6 +24,7 @@ import { AdminUserCoupons } from "@/features/users/ui/AdminUserCoupons";
 import { AdminUserGiftCards } from "@/features/users/ui/AdminUserGiftCards";
 import { AdminUserHistoryTabs } from "@/features/users/ui/AdminUserHistoryTabs";
 import { AdminUserNoteForm } from "@/features/users/ui/AdminUserNoteForm";
+import { AdminUserOrderNotes } from "@/features/users/ui/AdminUserOrderNotes";
 import { AdminUserRecentOrders } from "@/features/users/ui/AdminUserRecentOrders";
 import { UpdateUserRoleForm } from "@/features/users/ui/UpdateUserRoleForm";
 import { UpdateUserStatusForm } from "@/features/users/ui/UpdateUserStatusForm";
@@ -50,6 +52,7 @@ export default async function AdminUserDetailPage({
   if (!detail) {
     notFound();
   }
+  const orderNotes = await listUserOrderOperatorNotes(detail.user.id);
 
   const { user, recentOrders, bonusSummary, giftCards, coupons } = detail;
   const role = isUserRole(user.role) ? user.role : null;
@@ -140,6 +143,8 @@ export default async function AdminUserDetailPage({
         copy={t}
       />
       </div>
+
+      <AdminUserOrderNotes locale={locale} notes={orderNotes} copy={t} />
 
       <AdminUserHistoryTabs
         ariaLabel={t.users.detail.tabs.aria}
