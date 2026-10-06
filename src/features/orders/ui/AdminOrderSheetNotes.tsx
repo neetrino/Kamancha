@@ -28,7 +28,7 @@ export function AdminOrderSheetNotes({
   const loadFailedLabel = labels.loadFailed;
   const [data, setData] = useState<OrderOperatorNotesResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const applyResult = useCallback(
     (result: Awaited<ReturnType<typeof listOrderOperatorNotesAction>>): void => {

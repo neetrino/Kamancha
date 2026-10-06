@@ -1,5 +1,7 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { ImageIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { AdminPageTitle } from "@/features/admin/ui/AdminPageTitle";
@@ -187,13 +189,25 @@ export default async function AdminPage({
             </Link>
           </div>
           <div className="space-y-2">
-            {metrics.topProducts.map((product, index) => (
+            {metrics.topProducts.map((product) => (
               <div
                 key={product.productId}
                 className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-forest/10 text-[11px] font-bold text-brand-forest">
-                  {index + 1}
+                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                  {product.imageUrl ? (
+                    <Image
+                      src={product.imageUrl}
+                      alt=""
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span className="grid h-full w-full place-items-center text-gray-400">
+                      <ImageIcon className="h-4 w-4" aria-hidden />
+                    </span>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-gray-900">
