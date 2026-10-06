@@ -30,6 +30,7 @@ export type ProfileRecentOrder = {
   placedAt: Date;
   itemsCount: number;
   isGroupOrder: boolean;
+  customerRating: number | null;
 };
 
 /** Aggregated order stats for the profile dashboard (SQL, not full-row scan). */
@@ -88,6 +89,7 @@ export async function listRecentProfileOrders(
       ).mapWith(Number),
       placedAt: orders.placedAt,
       itemsCount: customerOrderItemsCountSql(userId).mapWith(Number),
+      customerRating: orders.customerRating,
       groupOrderId: orders.groupOrderId,
     })
     .from(orders)

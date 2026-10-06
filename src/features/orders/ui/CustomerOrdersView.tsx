@@ -20,6 +20,7 @@ type CustomerOrdersViewOrder = {
   itemsCount: number;
   bonusEarnedAmount: number;
   isGroupOrder: boolean;
+  customerRating: number | null;
 };
 
 type CustomerOrdersViewProps = {
@@ -32,6 +33,7 @@ type CustomerOrdersViewProps = {
     | "itemCountOne"
     | "itemCountOther"
     | "placedOn"
+    | "rateOrder"
     | "noOrders"
     | "startShopping"
     | "groupOrderBadge"
@@ -52,6 +54,9 @@ export function CustomerOrdersView({
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [ratedOrderNumbers, setRatedOrderNumbers] = useState<
+    ReadonlySet<string>
+  >(() => new Set());
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
@@ -85,6 +90,7 @@ export function CustomerOrdersView({
           statusLabels: copy.orders.statusLabels,
         }}
         onOpenOrder={openOrder}
+        ratedOrderNumbers={ratedOrderNumbers}
       />
       <CustomerOrderDetailsSheet
         open={drawerOpen}
@@ -97,6 +103,13 @@ export function CustomerOrdersView({
         locale={locale as Locale}
         feedbackLabels={profileCopy.orderFeedback}
         onFeedbackSubmitted={(value) => {
+          if (detail) {
+            setRatedOrderNumbers((current) => {
+              const next = new Set(current);
+              next.add(detail.orderNumber);
+              return next;
+            });
+          }
           setDetail((current) =>
             current
               ? {
