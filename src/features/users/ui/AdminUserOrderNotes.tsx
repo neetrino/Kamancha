@@ -30,8 +30,11 @@ export function AdminUserOrderNotes({ locale, notes, copy }: AdminUserOrderNotes
       <OrderOperatorNotesList
         notes={notes}
         emptyLabel={labels.empty}
-        utcLabel={copy.common.utc}
         orderHrefPrefix={`/${locale}/admin/orders`}
+        locale={locale}
+        deleteLabel={copy.common.delete}
+        deleteFailedLabel={copy.orders.notes.deleteFailed}
+        confirm={copy.confirm}
       />
     </Card>
   );

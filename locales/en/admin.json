@@ -102,6 +102,7 @@
       "post": "post",
       "denomination": "denomination",
       "closedDate": "closed date",
+      "note": "note",
       "modifier": "modifier",
       "popup": "popup"
     },
@@ -347,15 +348,16 @@
       "restoreOrder": "Restore order"
     },
     "notes": {
-      "title": "Operator notes",
-      "hint": "Applies to this order and is shown in Users and in the customer’s profile. The customer will see it.",
+      "title": "Operator notes to the customer",
+      "hint": "Tied to this order and visible to the customer in Users and on their profile.",
       "guestHint": "Guest order: the note stays on this order only.",
       "note": "New note",
       "placeholder": "e.g. Customer asked to call before delivery…",
       "addNote": "Add note",
       "saved": "Note added.",
       "empty": "No notes on this order yet.",
-      "loadFailed": "Unable to load notes."
+      "loadFailed": "Unable to load notes.",
+      "deleteFailed": "Unable to delete the note."
     }
   },
   "products": {

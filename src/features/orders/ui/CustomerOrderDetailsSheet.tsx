@@ -156,7 +156,6 @@ export function CustomerOrderDetailsSheet({
                 <CustomerOrderSheetNotes
                   notes={detail.customerNotes}
                   title={d.operatorNotes}
-                  utcLabel={copy.common.utc}
                 />
               ) : null
             }

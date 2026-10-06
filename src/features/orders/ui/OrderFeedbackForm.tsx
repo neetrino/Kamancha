@@ -71,9 +71,6 @@ export function OrderFeedbackForm({
     const shownRating = initialRating ?? rating;
     return (
       <section className={`${PROFILE_INNER_CARD} space-y-2 p-4`}>
-        <h3 className="font-big-fat-boii text-sm font-normal tracking-wide text-gray-900 uppercase">
-          {labels.title}
-        </h3>
         <FeedbackStars rating={shownRating} />
         <p className="text-sm text-gray-600">{labels.thanks}</p>
       </section>

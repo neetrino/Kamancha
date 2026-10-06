@@ -57,6 +57,12 @@ export const addOrderNoteSchema = z.object({
 
 export type AddOrderNoteInput = z.infer<typeof addOrderNoteSchema>;
 
+export const deleteOrderNoteSchema = z.object({
+  noteId: z.string().uuid(),
+});
+
+export type DeleteOrderNoteInput = z.infer<typeof deleteOrderNoteSchema>;
+
 export const bulkChangeOrderStatusSchema = z.object({
   orderNumbers: z.array(z.string().trim().min(1).max(64)).min(1).max(50),
   toStatus: z.enum(ORDER_STATUSES),

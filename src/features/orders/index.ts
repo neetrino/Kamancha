@@ -1,4 +1,5 @@
 export { addOrderNoteAction } from "@/features/orders/application/add-order-note";
+export { deleteOrderNoteAction } from "@/features/orders/application/delete-order-note";
 export { archiveOrderAction } from "@/features/orders/application/archive-order";
 export { bulkArchiveOrdersAction } from "@/features/orders/application/bulk-archive-orders";
 export { bulkChangeOrderStatusAction } from "@/features/orders/application/bulk-change-status";
@@ -47,7 +48,9 @@ export {
   changeOrderStatusSchema,
   ADMIN_ORDER_KINDS,
   CUSTOMER_ORDER_KINDS,
+  deleteOrderNoteSchema,
   type AddOrderNoteInput,
+  type DeleteOrderNoteInput,
   type AdminOrderKind,
   type AdminOrdersFilter,
   type ArchiveOrderInput,
