@@ -3,14 +3,13 @@
 import type { KeyboardEvent } from "react";
 import { ShoppingBag } from "lucide-react";
 
-import {
-  PROFILE_INNER_CARD,
-  PROFILE_STATUS_BADGE,
-} from "@/features/profile/ui/profile-surface";
+import { orderStatusBadgeClass } from "@/features/admin/ui/status-badge";
+import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
 
 type ProfileRecentOrderCardProps = {
   orderNumber: string;
   status: string;
+  statusCode: string;
   totalLabel: string;
   bonusEarnedLabel?: string | null;
   metaLine: string;
@@ -34,6 +33,7 @@ function handleCardKeyDown(
 export function ProfileRecentOrderCard({
   orderNumber,
   status,
+  statusCode,
   totalLabel,
   bonusEarnedLabel = null,
   metaLine,
@@ -61,7 +61,9 @@ export function ProfileRecentOrderCard({
           </p>
         </div>
         <div className="inline-flex shrink-0 flex-col items-end gap-1.5">
-          <span className={`${PROFILE_STATUS_BADGE} justify-center`}>
+          <span
+            className={`inline-flex justify-center rounded-full px-3 py-1 text-xs font-medium capitalize ${orderStatusBadgeClass(statusCode)}`}
+          >
             {status}
           </span>
           <div className="flex min-h-6 flex-wrap items-center justify-end gap-1.5">

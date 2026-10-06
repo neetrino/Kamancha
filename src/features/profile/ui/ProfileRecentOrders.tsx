@@ -79,6 +79,7 @@ function RecentOrdersBody({
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
             status={localizeOrderStatus(order.status, statusLabels)}
+            statusCode={order.status}
             totalLabel={formatMoneyAmount(order.totalAmount, "AMD", locale)}
             bonusEarnedLabel={
               order.bonusEarnedAmount > 0

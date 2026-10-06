@@ -83,6 +83,7 @@ export function CustomerOrdersCards({
           <ProfileRecentOrderCard
             orderNumber={order.orderNumber}
             status={localizeOrderStatus(order.status, labels.statusLabels)}
+            statusCode={order.status}
             totalLabel={formatOrderDrawerMoney(
               order.totalAmount,
               order.baseCurrency,
