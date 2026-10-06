@@ -152,7 +152,7 @@ export function TidioChatLoader({
             type="button"
             aria-label={openLabel}
             onClick={openChat}
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-brand-forest bg-brand-forest text-white shadow-lg xl:border-border xl:bg-white xl:text-brand-forest"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-white bg-brand-forest text-white shadow-lg xl:border xl:border-border xl:bg-white xl:text-brand-forest"
           >
             <ChatIcon />
           </button>
@@ -164,7 +164,7 @@ export function TidioChatLoader({
 
 function ChatIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-10 w-10 xl:h-11 xl:w-11" fill="currentColor">
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-9 w-9 xl:h-11 xl:w-11" fill="currentColor">
       <path d="M7 4.5h10A2.5 2.5 0 0 1 19.5 7v7.2a2.5 2.5 0 0 1-2.5 2.5H9.2L4.5 20.8V7A2.5 2.5 0 0 1 7 4.5Z" />
       <circle cx="8.5" cy="11" r="1.15" className="fill-brand-forest xl:fill-white" />
       <circle cx="12" cy="11" r="1.15" className="fill-brand-forest xl:fill-white" />
