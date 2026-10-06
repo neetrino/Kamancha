@@ -153,6 +153,7 @@ export function AdminUserBonuses({
         isLoading={isPending}
         copy={adminCopy}
         includeAdminDetails
+        locale={locale}
         panelClassName={ADMIN_ORDER_SHEET_PANEL}
       />
     </>

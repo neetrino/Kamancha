@@ -14,7 +14,8 @@
     "messages": "Հաղորդագրություններ",
     "settings": "Կարգավորումներ",
     "giftCards": "Gift Card-եր",
-    "popups": "Popup-ներ"
+    "popups": "Popup-ներ",
+    "reviews": "Կարծիքներ"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -292,7 +293,8 @@
       "participantTotal": "Ընդամենը",
       "participantBonus": "Բոնուս",
       "participantNoItems": "Այս մասնակցի համար ապրանքներ չկան։",
-      "paymentMethodNone": "—"
+      "paymentMethodNone": "—",
+      "operatorNotes": "Նշումներ"
     },
     "detail": {
       "customer": "Հաճախորդ",
@@ -345,9 +347,15 @@
       "restoreOrder": "Վերականգնել պատվերը"
     },
     "notes": {
-      "title": "Ավելացնել ներքին նշում",
-      "note": "Նշում",
-      "addNote": "Ավելացնել նշում"
+      "title": "Օպերատորի նշումներ",
+      "hint": "Նշումը վերաբերում է այս պատվերին և երևում է Users բաժնում և հաճախորդի անձնական էջում։ Հաճախորդը կտեսնի այն։",
+      "guestHint": "Հյուրի պատվեր է․ նշումը կմնա միայն այս պատվերին։",
+      "note": "Նոր նշում",
+      "placeholder": "օր. Հաճախորդը խնդրեց զանգել առաքումից առաջ…",
+      "addNote": "Ավելացնել նշում",
+      "saved": "Նշումն ավելացված է։",
+      "empty": "Այս պատվերին դեռ նշումներ չկան։",
+      "loadFailed": "Չհաջողվեց բեռնել նշումները։"
     }
   },
   "products": {
@@ -783,6 +791,11 @@
         "rolePurchaser": "Գնորդ",
         "roleRecipient": "Ստացող",
         "roleBoth": "Գնորդ և ստացող"
+      },
+      "orderNotes": {
+        "title": "Պատվերների նշումներ",
+        "hint": "Օպերատորների նշումները այս հաճախորդի պատվերներից։",
+        "empty": "Պատվերներին դեռ նշումներ չկան։"
       }
     },
     "roleLabels": {
@@ -1049,6 +1062,26 @@
       "rubPerAmd": "RUB՝ 1 AMD-ի դիմաց",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Պահպանել փոխարժեքները"
+    }
+  },
+  "reviews": {
+    "title": "Կարծիքներ",
+    "count": "{total} ապրանք կարծիքներով",
+    "countPlural": "{total} ապրանք կարծիքներով",
+    "empty": "Դեռ որևէ ապրանք կարծիք չունի։",
+    "ratingAria": "Գնահատական՝ {rating} 5-ից",
+    "table": {
+      "product": "Ապրանք",
+      "rating": "Միջին գնահատական",
+      "reviews": "Կարծիքներ",
+      "lastReview": "Վերջին կարծիք"
+    },
+    "detail": {
+      "order": "Պատվեր {orderNumber}",
+      "count": "{total} կարծիք",
+      "countPlural": "{total} կարծիք",
+      "empty": "Այս ապրանքը կարծիքներ չունի։",
+      "noComment": "Առանց մեկնաբանության։"
     }
   },
   "giftCards": {

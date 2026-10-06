@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { ORDER_OPERATOR_NOTE_MAX_LENGTH } from "@/features/orders/domain/operator-note";
 import { ORDER_STATUSES } from "@/features/orders/domain/order-status";
 import { PAYMENT_STATUSES } from "@/features/orders/domain/payment-status";
 
@@ -51,7 +52,7 @@ export type ArchiveOrderInput = z.infer<typeof archiveOrderSchema>;
 
 export const addOrderNoteSchema = z.object({
   orderNumber: z.string().trim().min(1).max(64),
-  note: z.string().trim().min(1).max(1000),
+  note: z.string().trim().min(1).max(ORDER_OPERATOR_NOTE_MAX_LENGTH),
 });
 
 export type AddOrderNoteInput = z.infer<typeof addOrderNoteSchema>;

@@ -1,6 +1,7 @@
 "use client";
 
 import { CreditCard, MapPin, Package } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { SideSheet } from "@/components/ui/SideSheet";
 import {
@@ -8,12 +9,14 @@ import {
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
 import type { AdminOrderDetailView } from "@/features/orders/application/order-detail-view";
+import { CustomerOrderSheetNotes } from "@/features/orders/ui/CustomerOrderSheetNotes";
 import { CustomerOrderSheetPayment } from "@/features/orders/ui/CustomerOrderSheetPayment";
 import {
   localizeOrderStatus,
   localizePaymentStatus,
 } from "@/features/orders/ui/localize-order-status";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
+import { AdminOrderSheetNotes } from "@/features/orders/ui/AdminOrderSheetNotes";
 import { OrderAdminFeedbackCard } from "@/features/orders/ui/OrderAdminFeedbackCard";
 import {
   OrderFeedbackForm,
@@ -21,12 +24,15 @@ import {
 } from "@/features/orders/ui/OrderFeedbackForm";
 import { OrderScheduledDeliveryBanner } from "@/features/orders/ui/OrderScheduledDeliveryBanner";
 import { PROFILE_INNER_CARD } from "@/features/profile/ui/profile-surface";
-import type { Locale } from "@/lib/i18n/config";
+import { isLocale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 import { storefrontProductImageSrc } from "@/lib/media/storefront-product-photo";
 
 /** Admin order sheet — half the viewport, same as the orders list. */
 export const ADMIN_ORDER_SHEET_PANEL = "w-[92%] max-w-none sm:w-[47%]";
+
+/** Profile order sheet — wider than other storefront drawers to fit notes. */
+const CUSTOMER_ORDER_SHEET_PANEL = "w-[92%] max-w-[560px]";
 
 const PARTICIPANT_STAT_CELL = "w-max shrink-0 text-left whitespace-nowrap";
 const PARTICIPANT_STAT_CELL_DIVIDED = `${PARTICIPANT_STAT_CELL} sm:border-l sm:border-gray-200 sm:pl-4`;
@@ -42,7 +48,7 @@ type CustomerOrderDetailsSheetProps = {
   groupOrderBadgeLabel?: string;
   /** SideSheet panel width classes (default: narrow profile drawer). */
   panelClassName?: string;
-  locale?: Locale;
+  locale?: string;
   feedbackLabels?: OrderFeedbackFormLabels;
   onFeedbackSubmitted?: (value: {
     rating: number;
@@ -62,7 +68,7 @@ export function CustomerOrderDetailsSheet({
   copy,
   includeAdminDetails = false,
   groupOrderBadgeLabel,
-  panelClassName = "w-[87%] max-w-[420px]",
+  panelClassName = CUSTOMER_ORDER_SHEET_PANEL,
   locale,
   feedbackLabels,
   onFeedbackSubmitted,
@@ -138,6 +144,22 @@ export function CustomerOrderDetailsSheet({
             detail={detail}
             labels={d}
             includeAdminDetails={includeAdminDetails}
+            notes={
+              includeAdminDetails && locale ? (
+                <AdminOrderSheetNotes
+                  key={detail.orderNumber}
+                  locale={locale}
+                  orderNumber={detail.orderNumber}
+                  copy={copy}
+                />
+              ) : detail.customerNotes && detail.customerNotes.length > 0 ? (
+                <CustomerOrderSheetNotes
+                  notes={detail.customerNotes}
+                  title={d.operatorNotes}
+                  utcLabel={copy.common.utc}
+                />
+              ) : null
+            }
             locale={locale}
             feedbackLabels={feedbackLabels}
             onFeedbackSubmitted={onFeedbackSubmitted}
@@ -159,6 +181,7 @@ function CustomerOrderSheetBody({
   detail,
   labels,
   includeAdminDetails,
+  notes,
   locale,
   feedbackLabels,
   onFeedbackSubmitted,
@@ -166,7 +189,8 @@ function CustomerOrderSheetBody({
   detail: AdminOrderDetailView;
   labels: DrawerLabels;
   includeAdminDetails: boolean;
-  locale?: Locale;
+  notes: ReactNode;
+  locale?: string;
   feedbackLabels?: OrderFeedbackFormLabels;
   onFeedbackSubmitted?: (value: {
     rating: number;
@@ -229,7 +253,7 @@ function CustomerOrderSheetBody({
             </section>
           ) : null}
         </div>
-      ) : locale && feedbackLabels ? (
+      ) : locale && isLocale(locale) && feedbackLabels ? (
         <OrderFeedbackForm
           locale={locale}
           orderNumber={detail.orderNumber}
@@ -240,6 +264,8 @@ function CustomerOrderSheetBody({
           onSubmitted={onFeedbackSubmitted}
         />
       ) : null}
+
+      {notes}
 
       <section className={`${PROFILE_INNER_CARD} space-y-3 p-4`}>
         <h3 className="font-big-fat-boii text-sm font-normal tracking-wide whitespace-nowrap text-gray-900 uppercase sm:hidden">

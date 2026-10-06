@@ -1,72 +1,88 @@
 "use client";
 
+import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import {
-  ADMIN_LABEL,
-  ADMIN_SECTION_TITLE,
-  ADMIN_TEXTAREA,
-} from "@/features/admin/ui/admin-form-classes";
+import { ADMIN_LABEL, ADMIN_TEXTAREA } from "@/features/admin/ui/admin-form-classes";
 import { addOrderNoteAction } from "@/features/orders/application/add-order-note";
+import { ORDER_OPERATOR_NOTE_MAX_LENGTH } from "@/features/orders/domain/operator-note";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AddOrderNoteFormProps = {
   locale: string;
   orderNumber: string;
   copy: Dictionary["admin"];
+  /** Called after a note is saved (e.g. to reload a client-side list). */
+  onAdded?: () => Promise<void> | void;
 };
 
-export function AddOrderNoteForm({ locale, orderNumber, copy }: AddOrderNoteFormProps) {
+/** Operator note composer (admin order detail page and order drawer). */
+export function AddOrderNoteForm({
+  locale,
+  orderNumber,
+  copy,
+  onAdded,
+}: AddOrderNoteFormProps) {
   const router = useRouter();
+  const labels = copy.orders.notes;
+  const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [savedMessage, setSavedMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   return (
-    <Card className="p-6">
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const note = String(formData.get("note") ?? "").trim();
-
-          startTransition(async () => {
-            setError(null);
-            const result = await addOrderNoteAction(locale, {
-              orderNumber,
-              note,
-            });
-
-            if (!result.ok) {
-              setError(result.error.message);
-              return;
-            }
-
-            event.currentTarget.reset();
-            router.refresh();
-          });
-        }}
-      >
-        <h2 className={ADMIN_SECTION_TITLE}>{copy.orders.notes.title}</h2>
-        <label>
-          <span className={ADMIN_LABEL}>{copy.orders.notes.note}</span>
-          <textarea
-            name="note"
-            rows={3}
-            maxLength={1000}
-            required
-            className={ADMIN_TEXTAREA}
-            disabled={isPending}
-          />
-        </label>
-        {error ? <p className="text-sm text-red-700">{error}</p> : null}
-        <Button type="submit" size="sm" disabled={isPending}>
-          {isPending ? copy.common.saving : copy.orders.notes.addNote}
+    <form
+      className="flex flex-col gap-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+        startTransition(async () => {
+          setError(null);
+          setSavedMessage(null);
+          const result = await addOrderNoteAction(locale, { orderNumber, note });
+          if (!result.ok) {
+            setError(result.error.message);
+            return;
+          }
+          setNote("");
+          setSavedMessage(labels.saved);
+          await onAdded?.();
+          router.refresh();
+        });
+      }}
+    >
+      <label>
+        <span className={ADMIN_LABEL}>{labels.note}</span>
+        <textarea
+          value={note}
+          onChange={(event) => {
+            setNote(event.target.value);
+            setSavedMessage(null);
+          }}
+          rows={3}
+          maxLength={ORDER_OPERATOR_NOTE_MAX_LENGTH}
+          required
+          className={ADMIN_TEXTAREA}
+          placeholder={labels.placeholder}
+          disabled={isPending}
+        />
+      </label>
+      <div className="flex flex-wrap items-center gap-3">
+        <Button
+          type="submit"
+          size="field"
+          disabled={isPending || note.trim().length === 0}
+          className="gap-2"
+        >
+          <Send className="h-4 w-4" aria-hidden />
+          {isPending ? copy.common.saving : labels.addNote}
         </Button>
-      </form>
-    </Card>
+        {savedMessage ? (
+          <p className="text-sm text-brand-forest">{savedMessage}</p>
+        ) : null}
+        {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      </div>
+    </form>
   );
 }

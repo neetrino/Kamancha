@@ -5,6 +5,7 @@ import {
   loadAdminGroupOrderParticipantsView,
   type AdminGroupOrderParticipantView,
 } from "@/features/orders/application/group-order-participants-view";
+import type { OrderOperatorNote } from "@/features/orders/domain/operator-note";
 import { splitOrderItemTitle } from "@/features/orders/domain/order-item-label";
 import { paymentMethodLabel } from "@/features/orders/domain/payment-method-label";
 import { mediaPublicUrl } from "@/lib/media/public-url";
@@ -80,6 +81,8 @@ export type AdminOrderDetailView = {
   paymentAmount: number;
   items: AdminOrderDetailItemView[];
   groupParticipants: AdminGroupOrderParticipantView[];
+  /** Operator notes shown read-only to the order owner (profile drawer only). */
+  customerNotes?: OrderOperatorNote[];
 };
 
 /** Geocoder segments come as "Yerevan 0025"; postal codes are not displayed. */

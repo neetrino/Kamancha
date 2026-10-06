@@ -24,7 +24,10 @@ import {
   paymentStatusBadgeClass,
 } from "@/features/admin/ui/status-badge";
 import { splitOrderItemTitle } from "@/features/orders/domain/order-item-label";
+import { listOrderOperatorNotes } from "@/features/orders/application/operator-notes";
 import { getAdminOrderByNumber } from "@/features/orders/application/queries";
+import { readOperatorNoteBody } from "@/features/orders/domain/operator-note";
+import { AdminOrderOperatorNotes } from "@/features/orders/ui/AdminOrderOperatorNotes";
 import { OrderScheduledDeliveryBanner } from "@/features/orders/ui/OrderScheduledDeliveryBanner";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -76,6 +79,10 @@ export default async function AdminOrderDetailPage({
 
   const { order, items, events } = detail;
   const address = order.shippingAddress;
+  const operatorNotes = await listOrderOperatorNotes(order.id);
+  const historyEvents = events.filter(
+    (event) => readOperatorNoteBody(event.payload) === null,
+  );
 
   const d = copy.orders.detail;
 
@@ -312,10 +319,18 @@ export default async function AdminOrderDetailPage({
         </div>
       </Card>
 
+      <AdminOrderOperatorNotes
+        locale={locale}
+        orderNumber={order.orderNumber}
+        hasCustomer={order.userId != null}
+        notes={operatorNotes}
+        copy={copy}
+      />
+
       <Card className="p-6">
         <h2 className={`mb-4 ${ADMIN_SECTION_TITLE}`}>{d.history}</h2>
         <ol className="space-y-3">
-          {events.map((event) => (
+          {historyEvents.map((event) => (
             <li
               key={event.id}
               className="rounded-lg border border-gray-200 p-3 text-sm"
@@ -341,7 +356,7 @@ export default async function AdminOrderDetailPage({
               ) : null}
             </li>
           ))}
-          {events.length === 0 ? (
+          {historyEvents.length === 0 ? (
             <li className="text-sm text-gray-600">{d.noEvents}</li>
           ) : null}
         </ol>

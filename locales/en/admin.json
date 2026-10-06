@@ -14,7 +14,8 @@
     "messages": "Messages",
     "settings": "Settings",
     "giftCards": "Gift cards",
-    "popups": "Popups"
+    "popups": "Popups",
+    "reviews": "Reviews"
   },
   "shell": {
     "brandName": "Kamancha",
@@ -292,7 +293,8 @@
       "participantTotal": "Total",
       "participantBonus": "Bonus",
       "participantNoItems": "No items for this participant.",
-      "paymentMethodNone": "—"
+      "paymentMethodNone": "—",
+      "operatorNotes": "Notes"
     },
     "detail": {
       "customer": "Customer",
@@ -345,9 +347,15 @@
       "restoreOrder": "Restore order"
     },
     "notes": {
-      "title": "Add internal note",
-      "note": "Note",
-      "addNote": "Add note"
+      "title": "Operator notes",
+      "hint": "Applies to this order and is shown in Users and in the customer’s profile. The customer will see it.",
+      "guestHint": "Guest order: the note stays on this order only.",
+      "note": "New note",
+      "placeholder": "e.g. Customer asked to call before delivery…",
+      "addNote": "Add note",
+      "saved": "Note added.",
+      "empty": "No notes on this order yet.",
+      "loadFailed": "Unable to load notes."
     }
   },
   "products": {
@@ -783,6 +791,11 @@
         "rolePurchaser": "Purchaser",
         "roleRecipient": "Recipient",
         "roleBoth": "Purchaser & recipient"
+      },
+      "orderNotes": {
+        "title": "Order notes",
+        "hint": "Operator notes left on this customer’s orders.",
+        "empty": "No notes on orders yet."
       }
     },
     "roleLabels": {
@@ -1049,6 +1062,26 @@
       "rubPerAmd": "RUB per 1 AMD",
       "rubPlaceholder": "0.24",
       "saveExchangeRates": "Save exchange rates"
+    }
+  },
+  "reviews": {
+    "title": "Reviews",
+    "count": "{total} product with reviews",
+    "countPlural": "{total} products with reviews",
+    "empty": "No products have reviews yet.",
+    "ratingAria": "Rating {rating} out of 5",
+    "table": {
+      "product": "Product",
+      "rating": "Avg. rating",
+      "reviews": "Reviews",
+      "lastReview": "Last review"
+    },
+    "detail": {
+      "order": "Order {orderNumber}",
+      "count": "{total} review",
+      "countPlural": "{total} reviews",
+      "empty": "This product has no reviews.",
+      "noComment": "No comment."
     }
   },
   "giftCards": {
