@@ -9,7 +9,7 @@ import {
 describe("parseCatalogSearchParams", () => {
   it("applies safe defaults", () => {
     expect(parseCatalogSearchParams({})).toEqual({
-      sort: "newest",
+      sort: "popular",
       page: 1,
       pageSize: 18,
     });
@@ -50,7 +50,7 @@ describe("parseCatalogSearchParams", () => {
         inStock: "true",
       }),
     ).toMatchObject({
-      sort: "newest",
+      sort: "popular",
       page: 1,
       pageSize: 18,
       category: "tables",
@@ -63,7 +63,7 @@ describe("buildCatalogQueryString", () => {
   it("omits defaults", () => {
     expect(
       buildCatalogQueryString({
-        sort: "newest",
+        sort: "popular",
         page: 1,
         pageSize: 18,
       }),
@@ -73,7 +73,7 @@ describe("buildCatalogQueryString", () => {
   it("includes active filters and resets page via overrides", () => {
     const query = buildCatalogQueryString(
       {
-        sort: "popular",
+        sort: "newest",
         page: 3,
         pageSize: 30,
         category: "chairs",
@@ -81,7 +81,7 @@ describe("buildCatalogQueryString", () => {
       },
       { page: 1 },
     );
-    expect(query).toContain("sort=popular");
+    expect(query).toContain("sort=newest");
     expect(query).toContain("category=chairs");
     expect(query).toContain("inStock=true");
     expect(query).toContain("pageSize=30");
