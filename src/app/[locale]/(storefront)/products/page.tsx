@@ -173,7 +173,6 @@ export default async function ProductsPage({
             wishlistLabel={dictionary.nav.wishlist}
             addToCartLabel={dictionary.product.addToCart}
             discountOffLabel={dictionary.home.discountOff}
-            loadMoreLabel={catalogCopy.loadMore}
             loadingMoreLabel={catalogCopy.loadingMore}
           />
         )}

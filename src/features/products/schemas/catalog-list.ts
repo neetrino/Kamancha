@@ -13,7 +13,7 @@ export const CATALOG_PAGE_SIZES = [18, 30, 48] as const;
 
 export type CatalogPageSize = (typeof CATALOG_PAGE_SIZES)[number];
 
-export const DEFAULT_CATALOG_SORT: CatalogSort = "newest";
+export const DEFAULT_CATALOG_SORT: CatalogSort = "popular";
 /** Multiple of 2 and 3 so mobile/desktop catalog rows stay complete before “see more”. */
 export const DEFAULT_CATALOG_PAGE_SIZE: CatalogPageSize = 18;
 

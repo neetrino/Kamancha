@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
-import { Reveal, Stagger, StaggerItem } from "@/components/ui/RevealMotion";
+import { Stagger, StaggerItem } from "@/components/ui/RevealMotion";
 import {
   loadMoreCatalogProductsAction,
   type CatalogGridProduct,
@@ -12,10 +12,6 @@ import { ProductCard } from "@/features/products/ui/ProductCard";
 import type { Locale } from "@/lib/i18n/config";
 import type { Currency } from "@/lib/money/currency";
 
-/** Matches catalog `grid-cols-2` below this width; desktop uses 3 columns. */
-const MOBILE_TWO_COL_MQ = "(max-width: 743px)";
-const CATALOG_MOBILE_COLUMNS = 2;
-const CATALOG_DESKTOP_COLUMNS = 3;
 /** Storefront slug for the Drinks category (hy/en/ru share one slug). */
 const DRINKS_CATEGORY_SLUG = "ըմպելիք";
 
@@ -31,14 +27,11 @@ type CatalogProductGridProps = {
   wishlistLabel: string;
   addToCartLabel: string;
   discountOffLabel: string;
-  loadMoreLabel: string;
   loadingMoreLabel: string;
 };
 
 /**
- * Catalog grid with “see more” — keeps pageSize batches, appends below.
- * While more remains, the visible list is trimmed to full rows (2-col mobile /
- * 3-col desktop) so the grid never ends on a partial row before load-more.
+ * Catalog grid that appends the next page when the list end scrolls into view.
  * Remount via parent `key` when filters change.
  */
 export function CatalogProductGrid({
@@ -53,7 +46,6 @@ export function CatalogProductGrid({
   wishlistLabel,
   addToCartLabel,
   discountOffLabel,
-  loadMoreLabel,
   loadingMoreLabel,
 }: CatalogProductGridProps) {
   const [products, setProducts] = useState<CatalogGridProduct[]>([
@@ -64,47 +56,48 @@ export function CatalogProductGrid({
     initialPage * pageSize < total && initialProducts.length > 0,
   );
   const [isPending, startTransition] = useTransition();
-  const [isMobileTwoCol, setIsMobileTwoCol] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef(false);
 
   useEffect(() => {
-    const media = window.matchMedia(MOBILE_TWO_COL_MQ);
-    function sync(): void {
-      setIsMobileTwoCol(media.matches);
-    }
-    sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
-  }, []);
+    const node = sentinelRef.current;
+    if (!node || !hasMore || isPending) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        if (loadingRef.current) return;
+        loadingRef.current = true;
+        const nextPage = page + 1;
+        startTransition(async () => {
+          try {
+            const result = await loadMoreCatalogProductsAction(
+              locale,
+              currency,
+              filters,
+              nextPage,
+            );
+            setProducts((current) => {
+              const seen = new Set(current.map((item) => item.id));
+              const appended = result.products.filter(
+                (item) => !seen.has(item.id),
+              );
+              return [...current, ...appended];
+            });
+            setPage(result.page);
+            setHasMore(result.hasMore);
+          } finally {
+            loadingRef.current = false;
+          }
+        });
+      },
+      { rootMargin: "280px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [currency, filters, hasMore, isPending, locale, page]);
 
   const drinkPhotos = filters.category === DRINKS_CATEGORY_SLUG;
-  const columnCount = isMobileTwoCol
-    ? CATALOG_MOBILE_COLUMNS
-    : CATALOG_DESKTOP_COLUMNS;
-  const rowRemainder = products.length % columnCount;
-  const visibleProducts =
-    hasMore && rowRemainder > 0
-      ? products.slice(0, products.length - rowRemainder)
-      : products;
-
-  function onLoadMore(): void {
-    if (isPending || !hasMore) return;
-    const nextPage = page + 1;
-    startTransition(async () => {
-      const result = await loadMoreCatalogProductsAction(
-        locale,
-        currency,
-        filters,
-        nextPage,
-      );
-      setProducts((current) => {
-        const seen = new Set(current.map((item) => item.id));
-        const appended = result.products.filter((item) => !seen.has(item.id));
-        return [...current, ...appended];
-      });
-      setPage(result.page);
-      setHasMore(result.hasMore);
-    });
-  }
 
   return (
     <>
@@ -113,7 +106,7 @@ export function CatalogProductGrid({
         stagger={0.06}
         immediate
       >
-        {visibleProducts.map((product, index) => (
+        {products.map((product, index) => (
           <StaggerItem key={product.id} className="flex h-full min-w-0 w-full">
             <ProductCard
               href={product.href}
@@ -142,18 +135,13 @@ export function CatalogProductGrid({
       </Stagger>
 
       {hasMore ? (
-        <Reveal immediate delay={0.12} y={16}>
-          <div className="mt-8 flex justify-center">
-            <button
-              type="button"
-              onClick={onLoadMore}
-              disabled={isPending}
-              className="rounded-full border border-white/25 bg-white/10 px-8 py-3 font-big-fat-boii text-[15px] tracking-wide text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isPending ? loadingMoreLabel : loadMoreLabel}
-            </button>
-          </div>
-        </Reveal>
+        <div ref={sentinelRef} className="mt-8 flex justify-center">
+          {isPending ? (
+            <p className="font-big-fat-boii text-[15px] tracking-wide text-white/70">
+              {loadingMoreLabel}
+            </p>
+          ) : null}
+        </div>
       ) : null}
     </>
   );
