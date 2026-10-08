@@ -1,6 +1,10 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { notFound } from "next/navigation";
 
+import {
+  ComingSoonScreen,
+  isStorefrontAuthPath,
+} from "@/components/layout/ComingSoonScreen";
 import { DisableStorefrontImageCapture } from "@/components/layout/DisableStorefrontImageCapture";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -16,6 +20,7 @@ import { PromoPopupIsland } from "@/features/popups/ui/PromoPopupIsland";
 import { CartProductLinesHydrator } from "@/features/cart/ui/CartProductLinesHydrator";
 import { ProductCardCartCopyProvider } from "@/features/products/ui/product-card-cart-copy";
 import { StorefrontAlertHost } from "@/features/storefront-chrome/StorefrontAlertHost";
+import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -40,6 +45,15 @@ export default async function StorefrontLayout({
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
+  const pathname = (await headers()).get("x-pathname") ?? "";
+  const user = await getCurrentUser();
+
+  if (!user && !isStorefrontAuthPath(pathname)) {
+    return (
+      <ComingSoonScreen />
+    );
+  }
+
   const cookieStore = await cookies();
   const currency = parseCurrencyCookie(
     cookieStore.get(CURRENCY_COOKIE_NAME)?.value,
