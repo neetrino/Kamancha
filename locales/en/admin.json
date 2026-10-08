@@ -1068,22 +1068,18 @@
   },
   "reviews": {
     "title": "Reviews",
-    "count": "{total} product with reviews",
-    "countPlural": "{total} products with reviews",
-    "empty": "No products have reviews yet.",
+    "count": "{total} order review",
+    "countPlural": "{total} order reviews",
+    "empty": "No order reviews yet.",
     "ratingAria": "Rating {rating} out of 5",
+    "noComment": "No comment.",
     "table": {
-      "product": "Product",
-      "rating": "Avg. rating",
-      "reviews": "Reviews",
-      "lastReview": "Last review"
-    },
-    "detail": {
-      "order": "Order {orderNumber}",
-      "count": "{total} review",
-      "countPlural": "{total} reviews",
-      "empty": "This product has no reviews.",
-      "noComment": "No comment."
+      "order": "Order",
+      "orderNumber": "Order {orderNumber}",
+      "rating": "Rating",
+      "comment": "Comment",
+      "author": "Author",
+      "submittedAt": "Submitted"
     }
   },
   "giftCards": {

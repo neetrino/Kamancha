@@ -5,9 +5,9 @@ import {
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
-import { listAdminReviewedProducts } from "@/features/reviews/application/admin-queries";
+import { listAdminOrderReviews } from "@/features/reviews/application/admin-queries";
 import { adminReviewsPageSchema } from "@/features/reviews/schemas/admin-reviews";
-import { AdminReviewedProductsTable } from "@/features/reviews/ui/AdminReviewedProductsTable";
+import { AdminOrderReviewsTable } from "@/features/reviews/ui/AdminOrderReviewsTable";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -33,7 +33,7 @@ export default async function AdminReviewsPage({
   const parsedPage = adminReviewsPageSchema.safeParse(rawPage ?? "1");
   const page = parsedPage.success ? parsedPage.data : 1;
 
-  const { rows, total, pageSize } = await listAdminReviewedProducts(locale, page);
+  const { rows, total, pageSize } = await listAdminOrderReviews(page);
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const countLabel = (total === 1 ? t.count : t.countPlural).replace(
     "{total}",
@@ -47,7 +47,7 @@ export default async function AdminReviewsPage({
         <p className={`mt-1 ${ADMIN_PAGE_SUBTITLE}`}>{countLabel}</p>
       </div>
 
-      <AdminReviewedProductsTable locale={locale} rows={rows} copy={dictionary.admin} />
+      <AdminOrderReviewsTable locale={locale} rows={rows} copy={dictionary.admin} />
 
       <AdminPagination
         page={page}
