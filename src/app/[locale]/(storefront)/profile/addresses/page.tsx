@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { listCheckoutDeliveryOptions } from "@/features/delivery/application/queries";
 import { listCustomerAddresses } from "@/features/profile/application/address-queries";
 import { ProfileAddressesView } from "@/features/profile/ui/ProfileAddressesView";
 import { requireUser } from "@/lib/auth/policies";
@@ -18,14 +19,17 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
 
   const user = await requireUser(locale);
   const dictionary = getDictionary(locale);
-  const addressRows = await listCustomerAddresses(user.id);
+  const [addressRows, zones] = await Promise.all([
+    listCustomerAddresses(user.id),
+    listCheckoutDeliveryOptions(locale),
+  ]);
   const copy = dictionary.profile.addressBook;
-  const map = dictionary.checkout.map;
 
   return (
     <ProfileAddressesView
       locale={locale}
       addresses={addressRows}
+      zones={zones.map((zone) => ({ id: zone.id, label: zone.label }))}
       labels={{
         title: dictionary.profile.addresses,
         addNew: copy.addNew,
@@ -38,20 +42,14 @@ export default async function AddressesPage({ params }: AddressesPageProps) {
         formAddTitle: copy.formAddTitle,
         formEditTitle: copy.formEditTitle,
         line1: copy.line1,
-        city: copy.city,
+        addressPlaceholder: dictionary.checkout.placeholders.address,
+        community: dictionary.checkout.form.deliveryLocation,
+        selectCommunity: dictionary.checkout.form.selectLocation,
         isDefault: copy.isDefault,
         cancel: dictionary.profile.cancel,
         add: copy.add,
         update: copy.update,
         saving: dictionary.profile.saving,
-        map: {
-          openMap: map.openMap,
-          title: map.title,
-          hint: map.hint,
-          confirm: map.confirm,
-          cancel: map.cancel,
-          resolving: map.resolving,
-        },
       }}
     />
   );

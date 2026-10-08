@@ -3,6 +3,7 @@ import { z } from "zod";
 export const addressFormSchema = z.object({
   line1: z.string().trim().min(1).max(200),
   city: z.string().trim().min(1).max(100),
+  region: z.string().trim().min(1).max(120),
   isDefault: z.boolean().default(false),
 });
 
