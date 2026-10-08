@@ -1068,22 +1068,18 @@
   },
   "reviews": {
     "title": "Отзывы",
-    "count": "Товаров с отзывами: {total}",
-    "countPlural": "Товаров с отзывами: {total}",
-    "empty": "Пока нет товаров с отзывами.",
+    "count": "Отзывов по заказам: {total}",
+    "countPlural": "Отзывов по заказам: {total}",
+    "empty": "Пока нет отзывов по заказам.",
     "ratingAria": "Оценка {rating} из 5",
+    "noComment": "Без комментария.",
     "table": {
-      "product": "Товар",
-      "rating": "Средняя оценка",
-      "reviews": "Отзывы",
-      "lastReview": "Последний отзыв"
-    },
-    "detail": {
-      "order": "Заказ {orderNumber}",
-      "count": "Отзывов: {total}",
-      "countPlural": "Отзывов: {total}",
-      "empty": "У этого товара нет отзывов.",
-      "noComment": "Без комментария."
+      "order": "Заказ",
+      "orderNumber": "Заказ {orderNumber}",
+      "rating": "Оценка",
+      "comment": "Комментарий",
+      "author": "Автор",
+      "submittedAt": "Дата"
     }
   },
   "giftCards": {

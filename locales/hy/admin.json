@@ -1068,22 +1068,18 @@
   },
   "reviews": {
     "title": "Կարծիքներ",
-    "count": "{total} ապրանք կարծիքներով",
-    "countPlural": "{total} ապրանք կարծիքներով",
-    "empty": "Դեռ որևէ ապրանք կարծիք չունի։",
+    "count": "{total} պատվերի կարծիք",
+    "countPlural": "{total} պատվերի կարծիք",
+    "empty": "Դեռ որևէ պատվեր կարծիք չունի։",
     "ratingAria": "Գնահատական՝ {rating} 5-ից",
+    "noComment": "Առանց մեկնաբանության։",
     "table": {
-      "product": "Ապրանք",
-      "rating": "Միջին գնահատական",
-      "reviews": "Կարծիքներ",
-      "lastReview": "Վերջին կարծիք"
-    },
-    "detail": {
-      "order": "Պատվեր {orderNumber}",
-      "count": "{total} կարծիք",
-      "countPlural": "{total} կարծիք",
-      "empty": "Այս ապրանքը կարծիքներ չունի։",
-      "noComment": "Առանց մեկնաբանության։"
+      "order": "Պատվեր",
+      "orderNumber": "Պատվեր {orderNumber}",
+      "rating": "Գնահատական",
+      "comment": "Մեկնաբանություն",
+      "author": "Հեղինակ",
+      "submittedAt": "Ամսաթիվ"
     }
   },
   "giftCards": {

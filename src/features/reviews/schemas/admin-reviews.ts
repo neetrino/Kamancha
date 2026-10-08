@@ -6,5 +6,3 @@ export const adminReviewsPageSchema = z.coerce
   .min(1)
   .max(500)
   .default(1);
-
-export const adminReviewProductIdSchema = z.string().uuid();
