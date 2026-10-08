@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { getProviders } from "@/config/providers";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
+import { localizeAuthError } from "@/features/auth/localize-auth-error";
 import { resetPasswordSchema } from "@/features/auth/schemas";
 import { hashPassword } from "@/lib/auth/password";
 import { consumePasswordResetToken } from "@/lib/auth/password-reset-tokens";
@@ -34,9 +35,11 @@ export async function resetPasswordAction(
 
   if (!parsed.success) {
     return {
-      error:
-        parsed.error.issues[0]?.message ??
+      error: localizeAuthError(
+        locale,
+        parsed.error.issues[0]?.message,
         "Please check the password fields and try again.",
+      ),
     };
   }
 

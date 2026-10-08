@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
-import { AddressMapPicker } from "@/components/ui/AddressMapPicker";
+import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import type { CustomerAddressListItem } from "@/features/profile/application/address-queries";
 import {
   createCustomerAddressAction,
@@ -22,24 +23,22 @@ import {
   PROFILE_SECTION_TITLE,
 } from "@/features/profile/ui/profile-surface";
 
+type DeliveryZoneOption = {
+  id: string;
+  label: string;
+};
+
 type AddressFormState = {
   line1: string;
   city: string;
+  zoneId: string;
   isDefault: boolean;
-};
-
-type MapPickerLabels = {
-  openMap: string;
-  title: string;
-  hint: string;
-  confirm: string;
-  cancel: string;
-  resolving: string;
 };
 
 type ProfileAddressesViewProps = {
   locale: string;
   addresses: CustomerAddressListItem[];
+  zones: DeliveryZoneOption[];
   labels: {
     title: string;
     addNew: string;
@@ -52,13 +51,14 @@ type ProfileAddressesViewProps = {
     formAddTitle: string;
     formEditTitle: string;
     line1: string;
-    city: string;
+    addressPlaceholder: string;
+    community: string;
+    selectCommunity: string;
     isDefault: string;
     cancel: string;
     add: string;
     update: string;
     saving: string;
-    map: MapPickerLabels;
   };
 };
 
@@ -86,12 +86,14 @@ function applyMapAddress(
 const emptyForm: AddressFormState = {
   line1: "",
   city: "",
+  zoneId: "",
   isDefault: false,
 };
 
 export function ProfileAddressesView({
   locale,
   addresses,
+  zones,
   labels,
 }: ProfileAddressesViewProps) {
   const router = useRouter();
@@ -123,6 +125,8 @@ export function ProfileAddressesView({
     setForm({
       line1: address.line1,
       city: address.city,
+      zoneId:
+        zones.find((zone) => zone.label === address.region)?.id ?? "",
       isDefault: address.isDefaultShipping,
     });
     setShowForm(true);
@@ -136,9 +140,20 @@ export function ProfileAddressesView({
     setMessage(null);
 
     startTransition(async () => {
+      const zone = zones.find((item) => item.id === form.zoneId);
+      if (!zone) {
+        setError(labels.selectCommunity);
+        return;
+      }
+      const parsed = applyMapAddress(form.line1, form);
+      const payload = {
+        ...parsed,
+        city: parsed.city.trim() || "Երևան",
+        region: zone.label,
+      };
       const result = editingId
-        ? await updateCustomerAddressAction(locale, editingId, form)
-        : await createCustomerAddressAction(locale, form);
+        ? await updateCustomerAddressAction(locale, editingId, payload)
+        : await createCustomerAddressAction(locale, payload);
 
       if (!result.ok) {
         setError(result.error.message);
@@ -217,42 +232,41 @@ export function ProfileAddressesView({
             <h2 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
               {editingId ? labels.formEditTitle : labels.formAddTitle}
             </h2>
-            <div className="flex items-end gap-2 sm:gap-3">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <div className="w-full shrink-0 space-y-1.5 sm:w-auto">
+                <span className={PROFILE_LABEL}>{labels.community}</span>
+                <SelectDropdown
+                  ariaLabel={labels.community}
+                  value={form.zoneId}
+                  allLabel={labels.selectCommunity}
+                  options={zones.map((zone) => ({
+                    value: zone.id,
+                    label: zone.label,
+                  }))}
+                  disabled={isPending}
+                  fitContent
+                  fitContentFromSm
+                  onValueChange={(zoneId) =>
+                    setForm((prev) => ({ ...prev, zoneId }))
+                  }
+                />
+              </div>
               <label className={`${PROFILE_LABEL} min-w-0 flex-1`}>
-                {labels.line1}
-                <input
-                  required
-                  value={form.line1}
-                  onChange={(event) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      line1: event.target.value,
-                    }))
-                  }
-                  className={PROFILE_FIELD}
-                  autoComplete="street-address"
-                />
-              </label>
-              <label className={`${PROFILE_LABEL} w-[7.5rem] shrink-0 sm:w-40`}>
-                {labels.city}
-                <input
-                  required
-                  value={form.city}
-                  onChange={(event) =>
-                    setForm((prev) => ({ ...prev, city: event.target.value }))
-                  }
-                  className={PROFILE_FIELD}
-                  autoComplete="address-level2"
-                />
-              </label>
-              <AddressMapPicker
-                addressValue={form.line1}
+              {labels.line1}
+              <AddressAutocomplete
+                required
+                value={form.line1}
+                onValueChange={(line1) =>
+                  setForm((prev) => ({ ...prev, line1 }))
+                }
+                placeholder={labels.addressPlaceholder}
                 disabled={isPending}
-                onAddressSelected={(formatted) => {
-                  setForm((prev) => applyMapAddress(formatted, prev));
-                }}
-                labels={labels.map}
+                className={PROFILE_FIELD}
+                languageCode={
+                  locale === "en" || locale === "ru" ? locale : "hy"
+                }
               />
+            </label>
             </div>
             <label className="flex cursor-pointer items-center gap-3">
               <input

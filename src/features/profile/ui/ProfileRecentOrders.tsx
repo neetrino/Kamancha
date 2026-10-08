@@ -49,14 +49,14 @@ function RecentOrdersBody({
   dictionary,
   statusLabels,
   onOpenOrder,
-  ratedOrderNumbers,
+  submittedRatings,
 }: {
   locale: Locale;
   orders: RecentOrder[];
   dictionary: Dictionary["profile"];
   statusLabels: Dictionary["admin"]["orders"]["statusLabels"];
   onOpenOrder: (orderNumber: string) => void;
-  ratedOrderNumbers: ReadonlySet<string>;
+  submittedRatings: Readonly<Record<string, number>>;
 }) {
   if (orders.length === 0) {
     return (
@@ -96,9 +96,12 @@ function RecentOrdersBody({
             )}
             placedOnLine={`${dictionary.placedOn} ${formatShortDate(order.placedAt, locale)}`}
             rateLabel={dictionary.rateOrder}
+            rating={
+              submittedRatings[order.orderNumber] ?? order.customerRating
+            }
             rated={
               order.customerRating != null ||
-              ratedOrderNumbers.has(order.orderNumber)
+              submittedRatings[order.orderNumber] != null
             }
             orderNumberLabel={dictionary.orderNumber}
             groupOrderBadgeLabel={dictionary.groupOrderBadge}
@@ -121,9 +124,9 @@ export function ProfileRecentOrders({
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [ratedOrderNumbers, setRatedOrderNumbers] = useState<
-    ReadonlySet<string>
-  >(() => new Set());
+  const [submittedRatings, setSubmittedRatings] = useState<
+    Readonly<Record<string, number>>
+  >({});
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
@@ -169,7 +172,7 @@ export function ProfileRecentOrders({
           dictionary={dictionary}
           statusLabels={adminCopy.orders.statusLabels}
           onOpenOrder={openOrder}
-          ratedOrderNumbers={ratedOrderNumbers}
+          submittedRatings={submittedRatings}
         />
       </div>
       <CustomerOrderDetailsSheet
@@ -184,11 +187,10 @@ export function ProfileRecentOrders({
         feedbackLabels={dictionary.orderFeedback}
         onFeedbackSubmitted={(value) => {
           if (detail) {
-            setRatedOrderNumbers((current) => {
-              const next = new Set(current);
-              next.add(detail.orderNumber);
-              return next;
-            });
+            setSubmittedRatings((current) => ({
+              ...current,
+              [detail.orderNumber]: value.rating,
+            }));
           }
           setDetail((current) =>
             current

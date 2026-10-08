@@ -7,9 +7,9 @@ import { mediaAssets } from "@/db/schema";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
 /**
- * Primary storefront photo per product (READY + isPrimary or PRIMARY role).
+ * Primary storefront photo key per product (READY + isPrimary or PRIMARY role).
  */
-export async function loadPrimaryProductImageUrls(
+export async function loadPrimaryProductImageKeys(
   productIds: string[],
 ): Promise<Map<string, string>> {
   const map = new Map<string, string>();
@@ -36,8 +36,22 @@ export async function loadPrimaryProductImageUrls(
     if (!row.productId || map.has(row.productId)) {
       continue;
     }
-    map.set(row.productId, mediaPublicUrl(row.objectKey));
+    map.set(row.productId, row.objectKey);
   }
 
+  return map;
+}
+
+/**
+ * Primary storefront photo per product (READY + isPrimary or PRIMARY role).
+ */
+export async function loadPrimaryProductImageUrls(
+  productIds: string[],
+): Promise<Map<string, string>> {
+  const keys = await loadPrimaryProductImageKeys(productIds);
+  const map = new Map<string, string>();
+  for (const [productId, objectKey] of keys) {
+    map.set(productId, mediaPublicUrl(objectKey));
+  }
   return map;
 }

@@ -46,6 +46,7 @@ type CustomerOrdersCardsProps = {
   labels: CustomerOrdersCardsLabels;
   onOpenOrder: (orderNumber: string) => void;
   ratedOrderNumbers?: ReadonlySet<string>;
+  submittedRatings?: Readonly<Record<string, number>>;
 };
 
 function formatItemCount(count: number, one: string, other: string): string {
@@ -62,6 +63,7 @@ export function CustomerOrdersCards({
   labels,
   onOpenOrder,
   ratedOrderNumbers,
+  submittedRatings,
 }: CustomerOrdersCardsProps) {
   if (orders.length === 0) {
     return (
@@ -104,8 +106,12 @@ export function CustomerOrdersCards({
             )}
             placedOnLine={`${labels.placedOn} ${formatShortDate(order.placedAt, locale)}`}
             rateLabel={labels.rateOrder}
+            rating={
+              submittedRatings?.[order.orderNumber] ?? order.customerRating
+            }
             rated={
               order.customerRating != null ||
+              submittedRatings?.[order.orderNumber] != null ||
               (ratedOrderNumbers?.has(order.orderNumber) ?? false)
             }
             orderNumberLabel={labels.orderNumber}

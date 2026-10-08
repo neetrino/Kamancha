@@ -156,7 +156,8 @@ export function RegisterForm({ locale, dictionary, legal }: RegisterFormProps) {
             }`}
           />
           <span>
-            {dictionary.agreePrefix}{" "}
+            {dictionary.agreePrefix}
+            {REQUIRED_MARK}{" "}
             <PolicyTextButton
               label={dictionary.termsLink}
               onOpen={() => setPolicyKey("terms")}
@@ -166,7 +167,6 @@ export function RegisterForm({ locale, dictionary, legal }: RegisterFormProps) {
               label={dictionary.privacyLink}
               onOpen={() => setPolicyKey("privacy")}
             />
-            {REQUIRED_MARK}
           </span>
         </label>
       </div>

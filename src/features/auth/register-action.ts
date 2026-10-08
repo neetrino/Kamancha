@@ -12,6 +12,7 @@ import {
   type AuthActionState,
   type AuthFieldErrors,
 } from "@/features/auth/auth-action-state";
+import { localizeAuthError } from "@/features/auth/localize-auth-error";
 import { registerSchema } from "@/features/auth/schemas";
 import { claimGuestGroupOrderParticipantsForUser } from "@/features/group-orders/application/claim-guest-participants";
 import { createSession } from "@/lib/auth/session";
@@ -55,7 +56,11 @@ export async function registerAction(
     return registerErrorState(
       previousState,
       formData,
-      parsed.error.issues[0]?.message ?? "Invalid registration details.",
+      localizeAuthError(
+        locale,
+        parsed.error.issues[0]?.message,
+        "Invalid registration details.",
+      ),
       fieldErrorsFromZod(parsed.error),
     );
   }

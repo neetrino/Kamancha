@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
+import { localizeAuthError } from "@/features/auth/localize-auth-error";
 import { changePasswordSchema } from "@/features/auth/schemas";
 import { requireUser } from "@/lib/auth/policies";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
@@ -37,9 +38,12 @@ export async function changePasswordAction(
   });
 
   if (!parsed.success) {
-    const firstIssue = parsed.error.issues[0]?.message;
     return {
-      error: firstIssue ?? "Please check the password fields and try again.",
+      error: localizeAuthError(
+        locale,
+        parsed.error.issues[0]?.message,
+        "Please check the password fields and try again.",
+      ),
     };
   }
 
