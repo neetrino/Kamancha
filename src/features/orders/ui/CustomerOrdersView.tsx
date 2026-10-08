@@ -54,9 +54,9 @@ export function CustomerOrdersView({
   const [detail, setDetail] = useState<AdminOrderDetailView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [ratedOrderNumbers, setRatedOrderNumbers] = useState<
-    ReadonlySet<string>
-  >(() => new Set());
+  const [submittedRatings, setSubmittedRatings] = useState<
+    Readonly<Record<string, number>>
+  >({});
 
   function openOrder(orderNumber: string): void {
     setDrawerOpen(true);
@@ -90,7 +90,7 @@ export function CustomerOrdersView({
           statusLabels: copy.orders.statusLabels,
         }}
         onOpenOrder={openOrder}
-        ratedOrderNumbers={ratedOrderNumbers}
+        submittedRatings={submittedRatings}
       />
       <CustomerOrderDetailsSheet
         open={drawerOpen}
@@ -104,11 +104,10 @@ export function CustomerOrdersView({
         feedbackLabels={profileCopy.orderFeedback}
         onFeedbackSubmitted={(value) => {
           if (detail) {
-            setRatedOrderNumbers((current) => {
-              const next = new Set(current);
-              next.add(detail.orderNumber);
-              return next;
-            });
+            setSubmittedRatings((current) => ({
+              ...current,
+              [detail.orderNumber]: value.rating,
+            }));
           }
           setDetail((current) =>
             current

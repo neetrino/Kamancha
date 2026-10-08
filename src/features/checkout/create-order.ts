@@ -26,6 +26,7 @@ import {
   revalidateCartPaths,
 } from "@/features/cart/cart";
 import { cartLineUnitAmount } from "@/features/cart/domain/line-price";
+import { loadPrimaryProductImageKeys } from "@/features/products/application/product-primary-images";
 import {
   checkoutSchema,
   type CheckoutInput,
@@ -321,6 +322,7 @@ export async function createOrderAction(
         lineTotal: number;
         variantId: string | null;
         variantLabel: string | null;
+        imageKey: string | null;
         modifiers: Array<{
           modifierId: string;
           kind: "ADDITION" | "EXCEPTION";
@@ -473,6 +475,7 @@ export async function createOrderAction(
           sku: variant?.sku ?? locked.sku,
           variantId: variant?.id ?? null,
           variantLabel: optionLabel || null,
+          imageKey: variant?.imageObjectKey ?? null,
           quantity: item.quantity,
           unitAmount,
           unitDisplayAmount,
@@ -664,6 +667,10 @@ export async function createOrderAction(
         });
       }
 
+      const productImageKeys = await loadPrimaryProductImageKeys(
+        lineSnapshots.map((line) => line.productId),
+      );
+
       for (const line of lineSnapshots) {
         const orderItemId = createId();
         await tx.insert(orderItems).values({
@@ -672,6 +679,8 @@ export async function createOrderAction(
           productId: line.productId,
           productTitleSnapshot: line.title,
           productSkuSnapshot: line.sku,
+          productImageKeySnapshot:
+            line.imageKey ?? productImageKeys.get(line.productId) ?? null,
           variantId: line.variantId,
           variantLabelSnapshot: line.variantLabel,
           quantity: line.quantity,

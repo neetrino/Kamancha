@@ -1,7 +1,7 @@
 "use client";
 
 import type { KeyboardEvent } from "react";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Star } from "lucide-react";
 
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
 import { orderStatusBadgeClass } from "@/features/admin/ui/status-badge";
@@ -17,6 +17,7 @@ type ProfileRecentOrderCardProps = {
   placedOnLine: string;
   rateLabel: string;
   rated?: boolean;
+  rating?: number | null;
   orderNumberLabel: string;
   groupOrderBadgeLabel?: string;
   isGroupOrder?: boolean;
@@ -43,6 +44,7 @@ export function ProfileRecentOrderCard({
   placedOnLine,
   rateLabel,
   rated = false,
+  rating = null,
   orderNumberLabel,
   groupOrderBadgeLabel,
   isGroupOrder = false,
@@ -108,14 +110,25 @@ export function ProfileRecentOrderCard({
             />
           </div>
         ) : (
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
-              <ShoppingBag className="h-5 w-5" aria-hidden />
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-forest text-white">
+                <ShoppingBag className="h-5 w-5" aria-hidden />
+              </div>
+              <div className="min-w-0 pt-0.5 text-sm leading-snug text-gray-700">
+                <p>{metaLine}</p>
+                <p className="whitespace-nowrap">{placedOnLine}</p>
+              </div>
             </div>
-            <div className="min-w-0 pt-0.5 text-sm leading-snug text-gray-700">
-              <p>{metaLine}</p>
-              <p className="whitespace-nowrap">{placedOnLine}</p>
-            </div>
+            {rating != null ? (
+              <p className="flex shrink-0 items-center gap-1 -mt-2.5 text-sm font-semibold text-gray-900">
+                <Star
+                  className="h-4 w-4 fill-amber-400 text-amber-400"
+                  aria-hidden
+                />
+                {rating}
+              </p>
+            ) : null}
           </div>
         )}
       </div>
