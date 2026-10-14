@@ -5,6 +5,11 @@ import {
   ComingSoonScreen,
   isStorefrontAuthPath,
 } from "@/components/layout/ComingSoonScreen";
+import { ComingSoonUnlock } from "@/components/layout/ComingSoonUnlock";
+import {
+  isStorefrontPreviewCookie,
+  STOREFRONT_PREVIEW_COOKIE_NAME,
+} from "@/components/layout/coming-soon-preview";
 import { DisableStorefrontImageCapture } from "@/components/layout/DisableStorefrontImageCapture";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -47,14 +52,20 @@ export default async function StorefrontLayout({
   const dictionary = getDictionary(locale);
   const pathname = (await headers()).get("x-pathname") ?? "";
   const user = await getCurrentUser();
+  const cookieStore = await cookies();
+  const previewUnlocked = isStorefrontPreviewCookie(
+    cookieStore.get(STOREFRONT_PREVIEW_COOKIE_NAME)?.value,
+  );
 
-  if (!user && !isStorefrontAuthPath(pathname)) {
+  if (!user && !isStorefrontAuthPath(pathname) && !previewUnlocked) {
     return (
-      <ComingSoonScreen />
+      <>
+        <ComingSoonScreen />
+        <ComingSoonUnlock />
+      </>
     );
   }
 
-  const cookieStore = await cookies();
   const currency = parseCurrencyCookie(
     cookieStore.get(CURRENCY_COOKIE_NAME)?.value,
   );
