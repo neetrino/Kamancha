@@ -19,34 +19,17 @@ function isHomePath(pathname: string, locale: Locale): boolean {
   return pathname === `/${locale}` || pathname === `/${locale}/`;
 }
 
-function isFactoryMarkPath(pathname: string, locale: Locale): boolean {
-  const delivery = `/${locale}/delivery`;
-  const catalog = `/${locale}/products`;
-  return (
-    pathname === delivery ||
-    pathname.startsWith(`${delivery}/`) ||
-    pathname === catalog ||
-    pathname.startsWith(`${catalog}/`)
-  );
-}
-
 /**
- * Storefront wordmark from Figma (node 22:433) — 136×65.
- * On the home page, click scrolls smoothly to the top instead of remounting.
+ * Kamancha Factory mark in storefront chrome, including the hub.
  */
 export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const factoryMark = isFactoryMarkPath(pathname, locale);
-  const logoSrc = factoryMark
-    ? staticAssetUrl("/assets/brand/kamancha-factory-badge.webp", {
-        sameOrigin: true,
-      })
-    : staticAssetUrl("/assets/brand/kamancha-logo.svg");
+  const logoSrc = staticAssetUrl("/assets/brand/kamancha-factory-badge.webp", {
+    sameOrigin: true,
+  });
   const logoClassName =
     className ??
-    (factoryMark
-      ? "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[72px] xl:w-auto"
-      : "relative inline-flex h-[52px] w-[110px] shrink-0 items-center xl:h-[65px] xl:w-[136px]");
+    "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[72px] xl:w-auto";
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>): void {
     if (!isHomePath(pathname, locale)) {
@@ -65,20 +48,16 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
       className={logoClassName}
       aria-label={brandName}
       data-brand-logo
-      data-node-id={factoryMark ? "704:4057" : undefined}
+      data-node-id="704:4057"
     >
       <Image
         src={logoSrc}
         alt=""
-        width={factoryMark ? 203 : 136}
-        height={factoryMark ? 82 : 65}
+        width={203}
+        height={82}
         priority
         unoptimized
-        className={
-          factoryMark
-            ? "h-full w-auto max-w-none object-contain object-left"
-            : "h-full w-full object-contain object-left"
-        }
+        className="h-full w-auto max-w-none object-contain object-left"
       />
     </AppLink>
   );

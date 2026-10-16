@@ -38,7 +38,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
 
   return (
     <section
-      className="restaurants-page hub-first-page -mx-4 pt-[8px] sm:-mx-6 xl:-mx-8 xl:-mb-10 xl:pt-[8px]"
+      className="restaurants-page -mx-4 pt-0 sm:-mx-6 xl:-mx-8 xl:-mb-10"
       data-node-id="704:4019"
     >
       <div className="px-[15px] sm:px-6 xl:hidden">
