@@ -1,4 +1,3 @@
-import { HubBannerGrid } from "@/features/home/ui/HubBannerGrid";
 import { HubHandsIntro } from "@/features/home/ui/HubHandsIntro";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -18,8 +17,7 @@ type HubFirstPageProps = {
 export function HubFirstPage({ locale, labels }: HubFirstPageProps) {
   return (
     <section className="hub-first-page -mx-4 pt-[10px] sm:-mx-6 xl:-mx-8 xl:-my-10 xl:pt-[10px]">
-      <HubHandsIntro />
-      <HubBannerGrid locale={locale} labels={labels} />
+      <HubHandsIntro locale={locale} labels={labels} />
     </section>
   );
 }
