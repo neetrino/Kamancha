@@ -13,13 +13,24 @@ export function isDeliveryHomePath(pathname: string, locale: Locale): boolean {
   return pathname === base || pathname === `${base}/`;
 }
 
+export function isReturningToHub(
+  pathname: string,
+  locale: Locale,
+  previousPathname: string,
+): boolean {
+  if (!isHubHomePath(pathname, locale) || previousPathname === "") {
+    return false;
+  }
+  return !isHubHomePath(previousPathname, locale);
+}
+
 export function isNavbarDropPath(
   pathname: string,
   locale: Locale,
   previousPathname: string,
 ): boolean {
   if (isHubHomePath(pathname, locale)) {
-    return true;
+    return !isReturningToHub(pathname, locale, previousPathname);
   }
   if (!isDeliveryHomePath(pathname, locale)) {
     return false;

@@ -18,6 +18,7 @@ type HubBannerGridProps = {
   };
   reveal?: boolean;
   instant?: boolean;
+  playFromHidden?: boolean;
 };
 
 /**
@@ -28,6 +29,7 @@ export function HubBannerGrid({
   labels,
   reveal = true,
   instant = false,
+  playFromHidden = false,
 }: HubBannerGridProps) {
   const sameOrigin = { sameOrigin: true } as const;
 
@@ -41,6 +43,7 @@ export function HubBannerGrid({
         from="left"
         reveal={reveal}
         instant={instant}
+        playFromHidden={playFromHidden}
         className="xl:col-span-12"
       >
         <HubBannerCard
@@ -61,6 +64,7 @@ export function HubBannerGrid({
         from="right"
         reveal={reveal}
         instant={instant}
+        playFromHidden={playFromHidden}
         className="xl:col-span-12"
       >
         <HubBannerCard
@@ -81,6 +85,7 @@ export function HubBannerGrid({
         from="left"
         reveal={reveal}
         instant={instant}
+        playFromHidden={playFromHidden}
         className="xl:col-span-15"
       >
         <HubBannerCard
@@ -99,6 +104,7 @@ export function HubBannerGrid({
         from="right"
         reveal={reveal}
         instant={instant}
+        playFromHidden={playFromHidden}
         className="xl:col-span-9"
       >
         <HubBannerCard

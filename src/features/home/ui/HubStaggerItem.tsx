@@ -18,6 +18,7 @@ type HubStaggerItemProps = {
   from: "left" | "right";
   reveal: boolean;
   instant?: boolean;
+  playFromHidden?: boolean;
   className: string;
   children: ReactNode;
 };
@@ -30,10 +31,13 @@ export function HubStaggerItem({
   from,
   reveal,
   instant = false,
+  playFromHidden = false,
   className,
   children,
 }: HubStaggerItemProps) {
   const hiddenX = from === "left" ? `-${EDGE}` : EDGE;
+  const shown = { opacity: 1, x: "0%" };
+  const hidden = { opacity: 0, x: hiddenX };
   const transition: Transition = instant
     ? { duration: 0 }
     : { ...springSoft, delay: index * CARD_STAGGER_S };
@@ -41,8 +45,8 @@ export function HubStaggerItem({
   return (
     <motion.div
       className={className}
-      initial={false}
-      animate={reveal ? { opacity: 1, x: 0 } : { opacity: 0, x: hiddenX }}
+      initial={playFromHidden ? hidden : false}
+      animate={playFromHidden || reveal ? shown : hidden}
       transition={transition}
     >
       {children}

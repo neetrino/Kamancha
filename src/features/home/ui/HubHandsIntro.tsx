@@ -2,10 +2,16 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
+import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 
+import { isHubHomePath, isReturningToHub } from "@/features/home/hub-experience-path";
 import { writeHubIntroState } from "@/features/home/hub-intro-document";
-import { isPendingDeliveryNavbarDrop } from "@/features/home/storefront-path-memory";
+import {
+  captureHubReturnSkipArms,
+  isPendingDeliveryNavbarDrop,
+  peekStorefrontPathname,
+} from "@/features/home/storefront-path-memory";
 import {
   HUB_INTRO_DONE_MS,
   HUB_INTRO_HOLD_MS,
@@ -43,12 +49,17 @@ type HubHandsIntroProps = {
  * Hub entrance: arms start on-screen, slide off, then cards stagger in.
  */
 export function HubHandsIntro({ locale, labels }: HubHandsIntroProps) {
+  const pathname = usePathname() ?? `/${locale}`;
   const reduceMotion = useReducedMotion();
+  const skipArms = captureHubReturnSkipArms(
+    isReturningToHub(pathname, locale, peekStorefrontPathname()),
+    isHubHomePath(pathname, locale),
+  );
   const [phase, setPhase] = useState<Phase>("hold");
   const [instant, setInstant] = useState(false);
 
   useLayoutEffect(() => {
-    if (reduceMotion) {
+    if (reduceMotion || skipArms) {
       writeHubIntroState("done");
       return;
     }
@@ -58,11 +69,16 @@ export function HubHandsIntro({ locale, labels }: HubHandsIntroProps) {
         writeHubIntroState("done");
       }
     };
-  }, [phase, reduceMotion]);
+  }, [phase, reduceMotion, skipArms]);
 
   useDeferredEffect(() => {
     if (reduceMotion) {
       scheduleStateUpdate(setInstant, true);
+      scheduleStateUpdate(setPhase, "done");
+      return;
+    }
+
+    if (skipArms) {
       scheduleStateUpdate(setPhase, "done");
       return;
     }
@@ -78,9 +94,9 @@ export function HubHandsIntro({ locale, labels }: HubHandsIntroProps) {
       window.clearTimeout(leaveTimer);
       window.clearTimeout(doneTimer);
     };
-  }, [reduceMotion]);
+  }, [reduceMotion, skipArms]);
 
-  const playing = phase !== "done";
+  const playing = !skipArms && phase !== "done";
   useBodyScrollLock(playing);
 
   const revealCards = phase === "done";
@@ -91,8 +107,9 @@ export function HubHandsIntro({ locale, labels }: HubHandsIntroProps) {
       <HubBannerGrid
         locale={locale}
         labels={labels}
-        reveal={revealCards}
+        reveal={skipArms || revealCards}
         instant={instant}
+        playFromHidden={skipArms}
       />
     </>
   );
