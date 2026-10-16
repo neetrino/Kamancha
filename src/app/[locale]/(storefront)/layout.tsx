@@ -12,6 +12,7 @@ import {
 } from "@/components/layout/coming-soon-preview";
 import { DisableStorefrontImageCapture } from "@/components/layout/DisableStorefrontImageCapture";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
+import { StorefrontExperienceChrome } from "@/components/layout/StorefrontExperienceChrome";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { StorefrontScrollToTop } from "@/components/layout/StorefrontScrollToTop";
@@ -103,19 +104,21 @@ export default async function StorefrontLayout({
           <MaintenanceGate>{children}</MaintenanceGate>
         </main>
         <SiteFooter dictionary={dictionary} locale={locale} />
-        <MobileBottomNavIsland
-          locale={locale}
-          currency={currency}
-          dictionary={dictionary}
-        />
+        <StorefrontExperienceChrome locale={locale}>
+          <MobileBottomNavIsland
+            locale={locale}
+            currency={currency}
+            dictionary={dictionary}
+          />
+          <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
+          <TidioChat
+            locale={locale}
+            prompt={dictionary.nav.chatPrompt}
+            openLabel={dictionary.nav.openChat}
+          />
+        </StorefrontExperienceChrome>
         <StorefrontAlertHost />
-        <PromoPopupIsland closeLabel={dictionary.nav.closeMenu} />
         <CartProductLinesHydrator />
-        <TidioChat
-          locale={locale}
-          prompt={dictionary.nav.chatPrompt}
-          openLabel={dictionary.nav.openChat}
-        />
       </div>
       </ProductCardCartCopyProvider>
     </div>

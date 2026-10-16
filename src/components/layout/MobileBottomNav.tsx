@@ -66,7 +66,7 @@ function resolveSelectedTab(
 ): BottomNavTabId | null {
   if (cartOpen) return "cart";
   if (isHomePath(pathname, locale)) return "home";
-  if (startsWithPath(pathname, `/${locale}/products`)) return "shop";
+  if (startsWithPath(pathname, `/${locale}/delivery`)) return "shop";
   if (startsWithPath(pathname, `/${locale}/wishlist`)) return "wishlist";
   if (startsWithPath(pathname, `/${locale}/profile`)) return "profile";
   if (
@@ -228,8 +228,8 @@ export function MobileBottomNav({
 
   const shopTab: NavTab = {
     id: "shop",
-    href: `/${locale}/products`,
-    label: dictionary.nav.restaurant,
+    href: `/${locale}/delivery`,
+    label: dictionary.home.hub.delivery,
     icon: <NavClocheIcon className="h-[25px] w-[29px]" />,
   };
 
