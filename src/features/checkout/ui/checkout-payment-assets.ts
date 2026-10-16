@@ -4,26 +4,21 @@ import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 export const CHECKOUT_PAYMENT_VISA_SRC = staticAssetUrl(
   "/assets/payments/checkout/visa-card.webp?v=2",
-  { sameOrigin: true },
 );
 export const CHECKOUT_PAYMENT_MASTERCARD_SRC = staticAssetUrl(
   "/assets/payments/checkout/mastercard-card.webp?v=2",
-  { sameOrigin: true },
 );
 export const CHECKOUT_PAYMENT_ARCA_SRC = staticAssetUrl(
   "/assets/payments/checkout/arca-card.webp?v=2",
-  { sameOrigin: true },
 );
 export const CHECKOUT_PAYMENT_IDRAM_SRC = staticAssetUrl(
   "/assets/payments/checkout/idram.webp",
 );
 export const CHECKOUT_PAYMENT_TERMINAL_SRC = staticAssetUrl(
   "/assets/payments/checkout/terminal.webp?v=2",
-  { sameOrigin: true },
 );
 export const CHECKOUT_PAYMENT_CASH_SRC = staticAssetUrl(
   "/assets/payments/checkout/cash.webp?v=4",
-  { sameOrigin: true },
 );
 
 export const CHECKOUT_PAYMENT_OPTION_SELECTED_CLASS =

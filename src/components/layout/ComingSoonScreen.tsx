@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Montserrat } from "next/font/google";
 
 const comingSoonFont = Montserrat({
@@ -24,16 +25,26 @@ export function isStorefrontAuthPath(pathname: string): boolean {
 export function ComingSoonScreen() {
   return (
     <div className="relative min-h-dvh w-full bg-[#3d7a32]">
-      <img
-        src="/assets/brand/coming-soon/mobile.webp"
-        alt=""
-        className="absolute inset-0 size-full object-cover object-center md:hidden"
-      />
-      <img
-        src="/assets/brand/coming-soon/desktop.webp"
-        alt=""
-        className="absolute inset-0 hidden size-full object-cover object-center md:block"
-      />
+      <div className="absolute inset-0 md:hidden">
+        <Image
+          src="/assets/brand/coming-soon/mobile.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
+      <div className="absolute inset-0 hidden md:block">
+        <Image
+          src="/assets/brand/coming-soon/desktop.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
       <h1
         className={`${comingSoonFont.className} pointer-events-none absolute left-1/2 top-1/2 w-[94%] -translate-x-1/2 -translate-y-1/2 text-center text-[20vw] uppercase leading-[0.86] tracking-[-0.06em] text-white md:w-auto md:text-[8.4vw]`}
       >

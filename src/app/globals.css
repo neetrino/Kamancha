@@ -8,6 +8,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Mirage Expanded";
+  src: url("/fonts/Mirage-Expanded.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #f9fafb;
   --foreground: #111827;
@@ -17,8 +25,8 @@
   --accent-foreground: #f9fafb;
   --brand-forest: #265127;
   --radius: 15px;
-  /* SiteHeader xl+: pt-8 + min-h-[65px] + pb-2.5 */
-  --storefront-header-offset: calc(2rem + 65px + 0.625rem);
+  /* SiteHeader xl+: pt-6 + min-h-[65px] + pb-2.5 */
+  --storefront-header-offset: calc(1.5rem + 65px + 0.625rem);
   --profile-sticky-gap: 1.75rem;
   /* Mobile bottom nav (Figma 181:727) + home-like gap above the bar */
   --mobile-bottom-nav-height: 63px;
@@ -48,6 +56,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-big-fat-boii: "Big Fat Boii", ui-sans-serif, system-ui, sans-serif;
+  --font-mirage: "Mirage Expanded", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: 15px;
   --radius-md: 15px;
   --radius-lg: 15px;
@@ -882,10 +891,53 @@ body {
   }
 }
 
+.storefront-shell:has(.hub-first-page) .site-header,
+.storefront-shell:has(.home-mobile-page) .site-header {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+html[data-hub-intro="done"] .storefront-shell:has(.hub-first-page) .site-header,
+html[data-hub-intro="done"] .storefront-shell:has(.home-mobile-page) .site-header {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
 @media (max-width: 1279px) {
   .site-header [data-brand-logo] {
     height: 79px;
     width: 164px;
+  }
+
+  .site-header [data-brand-logo][data-node-id="704:4057"] {
+    height: 76px;
+    width: 200px;
+    overflow: visible;
+    transform: translate(-10px, -12px);
+  }
+
+  .site-header [data-brand-logo][data-node-id="704:4057"] img {
+    transform: scale(1.14);
+    transform-origin: left center;
+  }
+}
+
+@media (min-width: 1280px) {
+  .site-header [data-brand-logo] {
+    transform: translateX(-5px);
+  }
+
+  .site-header [data-brand-logo][data-node-id="704:4057"] {
+    height: 72px;
+    width: auto;
+    transform: translateX(-5px);
+  }
+
+  .site-header [data-brand-logo][data-node-id="704:4057"] img {
+    width: auto;
+    height: 72px;
   }
 }
 
@@ -930,6 +982,31 @@ body {
   /* Catalog MENU — tighter space above the heading on phone/tablet. */
   .storefront-main:has(.catalog-page) {
     padding-top: calc(1.25rem + 3px);
+  }
+
+  .storefront-main:has(.hub-first-page) {
+    padding-top: 1.75rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .storefront-main:has(.restaurants-page) {
+    padding-top: 0.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  @media (min-width: 1280px) {
+    .storefront-main:has(.hub-first-page) {
+      padding-top: 3rem;
+    }
+
+    .storefront-main:has(.restaurants-page) {
+      padding-top: 0.75rem;
+    }
+  }
+
+  .storefront-shell:has(.hub-first-page) .storefront-footer,
+  .storefront-shell:has(.restaurants-page) .storefront-footer {
+    padding-bottom: 1.5rem;
   }
 
   /* Checkout white cards (e.g. ՄԱՆՐ) on the forest background. */
@@ -1145,4 +1222,17 @@ body {
   background: transparent;
   height: 6px;
   border: none;
+}
+
+/* Desktop hub Restormania card — raise the portrait inside the tile. */
+@media (min-width: 1280px) {
+  [data-node-id="704:4062"] {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: cover;
+    object-position: center 58%;
+  }
 }

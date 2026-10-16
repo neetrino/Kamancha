@@ -1,4 +1,5 @@
 import { HomeHero } from "@/features/home/ui/HomeHero";
+import { HomeIntroSignal } from "@/features/home/ui/HomeIntroSignal";
 import { HomeMobilePromo } from "@/features/home/ui/HomeMobilePromo";
 import { HomeOrnamentStrip } from "@/features/home/ui/HomeOrnamentStrip";
 import type { Locale } from "@/lib/i18n/config";
@@ -21,6 +22,7 @@ export function HomePageChrome({
 }: HomePageChromeProps) {
   return (
     <div className="home-mobile-page -mx-4 sm:-mx-6 xl:-mx-8 xl:-my-10">
+      <HomeIntroSignal locale={locale} />
       <div className="hidden xl:block">
         <HomeHero
           brandName={dictionary.brand}

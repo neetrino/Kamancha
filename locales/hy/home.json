@@ -1,4 +1,13 @@
 {
+  "hub": {
+    "restaurants": "Ռեստորաններ",
+    "delivery": "Առաքում",
+    "blog": "Բլոգ",
+    "fastFood": "fast food",
+    "back": "Հետ",
+    "tumanyan": "Թումանյան 23",
+    "saryan": "սարյան 8"
+  },
   "title": "White Shop",
   "subtitle": "Բազմալեզու խանութը գործում է։",
   "cta": "Դիտել ապրանքները",

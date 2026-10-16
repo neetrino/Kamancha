@@ -1,4 +1,13 @@
 {
+  "hub": {
+    "restaurants": "Рестораны",
+    "delivery": "Доставка",
+    "blog": "Блог",
+    "fastFood": "fast food",
+    "back": "Назад",
+    "tumanyan": "Туманян 23",
+    "saryan": "сарьян 8"
+  },
   "title": "White Shop",
   "subtitle": "Многоязычный магазин уже работает.",
   "cta": "Смотреть товары",

@@ -17,8 +17,8 @@ type SiteHeaderProps = {
 
 function buildNavItems(locale: Locale, dictionary: Dictionary) {
   return [
-    { href: `/${locale}`, label: dictionary.nav.home },
-    { href: `/${locale}/products`, label: dictionary.nav.restaurant },
+    { href: `/${locale}/delivery`, label: dictionary.nav.home },
+    { href: `/${locale}/products`, label: dictionary.nav.delivery },
     { href: `/${locale}/about`, label: dictionary.nav.about },
     { href: `/${locale}/contact`, label: dictionary.nav.contact },
   ] as const;
@@ -79,7 +79,7 @@ async function SiteHeaderMainNavAsync({
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
-    <SiteHeaderScrollShell>
+    <SiteHeaderScrollShell locale={locale}>
       <Suspense
         fallback={
           <SiteHeaderShell

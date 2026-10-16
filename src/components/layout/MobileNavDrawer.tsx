@@ -98,14 +98,12 @@ export function MobileNavDrawer({
 
   const measurePanelTop = useCallback(() => {
     const pill = document.querySelector<HTMLElement>(MOBILE_HEADER_PILL_SELECTOR);
-    if (pill) {
-      setPanelTopPx(pill.getBoundingClientRect().bottom);
-      return;
-    }
+    const anchor =
+      pill ?? document.querySelector<HTMLElement>("[data-site-header]");
+    if (!anchor) return;
 
-    const header = document.querySelector<HTMLElement>("[data-site-header]");
-    if (!header) return;
-    setPanelTopPx(header.getBoundingClientRect().bottom);
+    const next = anchor.getBoundingClientRect().bottom;
+    setPanelTopPx((current) => (current === next ? current : next));
   }, []);
 
   const elevateHeaderPill = useCallback(() => {
@@ -133,6 +131,9 @@ export function MobileNavDrawer({
     pill.style.width = `${rect.width}px`;
     pill.style.height = `${rect.height}px`;
     pill.style.zIndex = "100";
+    // Visual top already includes -translate-y-2 (Tailwind `translate`, not `transform`).
+    pill.style.transform = "none";
+    pill.style.translate = "none";
   }, []);
 
   const restoreHeaderPill = useCallback(() => {
@@ -160,17 +161,18 @@ export function MobileNavDrawer({
     pill.style.width = "";
     pill.style.height = "";
     pill.style.zIndex = "";
+    pill.style.transform = "";
+    pill.style.translate = "";
   }, []);
 
   const openMenu = useCallback(() => {
     clearExitTimer();
+    elevateHeaderPill();
     measurePanelTop();
     renderedRef.current = true;
-    scheduleStateUpdate(setRendered, true);
     scheduleStateUpdate(setExpanded, false);
+    scheduleStateUpdate(setRendered, true);
     requestAnimationFrame(() => {
-      elevateHeaderPill();
-      measurePanelTop();
       requestAnimationFrame(() => {
         scheduleStateUpdate(setExpanded, true);
       });
@@ -238,16 +240,13 @@ export function MobileNavDrawer({
   }, [rendered]);
 
   useLayoutEffect(() => {
-    if (!rendered) return;
+    if (!rendered || !open) return;
 
     function syncLayout(): void {
-      if (open) {
-        elevateHeaderPill();
-      }
+      elevateHeaderPill();
       measurePanelTop();
     }
 
-    syncLayout();
     window.addEventListener("resize", syncLayout);
     return () => window.removeEventListener("resize", syncLayout);
   }, [rendered, open, elevateHeaderPill, measurePanelTop]);
@@ -355,10 +354,8 @@ export function MobileNavDrawer({
                 aria-modal="true"
                 aria-label={dictionary.nav.navigation}
                 {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
-                className={`fixed z-[90] origin-top-right overflow-hidden rounded-[20px] bg-white px-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] motion-reduce:transition-none motion-reduce:transform-none transition-[opacity,transform] duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  expanded
-                    ? "translate-y-0 scale-100 opacity-100"
-                    : "-translate-y-3 scale-[0.96] opacity-0"
+                className={`fixed z-[90] overflow-hidden rounded-[20px] bg-white px-5 shadow-[0_12px_40px_rgba(0,0,0,0.12)] motion-reduce:transition-none transition-opacity duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  expanded ? "opacity-100" : "opacity-0"
                 }`}
                 style={{
                   top: panelTopPx + MENU_GAP_PX,

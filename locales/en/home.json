@@ -1,4 +1,13 @@
 {
+  "hub": {
+    "restaurants": "Restaurants",
+    "delivery": "Delivery",
+    "blog": "Blog",
+    "fastFood": "fast food",
+    "back": "Back",
+    "tumanyan": "Tumanyan 23",
+    "saryan": "Saryan 8"
+  },
   "title": "White Shop",
   "subtitle": "Multilingual storefront is live.",
   "cta": "Browse products",
