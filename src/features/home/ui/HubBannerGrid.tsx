@@ -32,12 +32,12 @@ export function HubBannerGrid({ locale, labels }: HubBannerGridProps) {
           label={labels.restaurants}
           photoSrc={staticAssetUrl(`${HUB}/street.webp`, sameOrigin)}
           logoSrc={staticAssetUrl(`${HUB}/kamancha-script.svg`, sameOrigin)}
-          logoWidth={167}
-          logoHeight={87}
+          logoWidth={254}
+          logoHeight={132}
           iconSrc={staticAssetUrl(`${HUB}/icon-location.svg`, sameOrigin)}
           photoNodeId="704:4049"
-          photoClassName="object-cover object-[center_42%]"
-          logoClassName="top-3.5 left-[23px] h-[87px] w-[167px]"
+          photoClassName="object-cover object-[center_30%]"
+          logoClassName="top-6 left-[23px] h-[135px] w-auto"
         />
       </div>
       <div className="xl:col-span-12">
@@ -46,12 +46,12 @@ export function HubBannerGrid({ locale, labels }: HubBannerGridProps) {
           label={labels.delivery}
           photoSrc={staticAssetUrl(`${HUB}/khorovats.webp`, sameOrigin)}
           logoSrc={staticAssetUrl(`${HUB}/factory-badge.webp`, sameOrigin)}
-          logoWidth={203}
-          logoHeight={82}
+          logoWidth={254}
+          logoHeight={100}
           iconSrc={staticAssetUrl(`${HUB}/icon-truck.svg`, sameOrigin)}
           photoNodeId="704:4056"
           photoClassName="object-cover"
-          logoClassName="top-px left-0 h-[82px] w-[203px]"
+          logoClassName="top-7 left-[40px] h-[100px] w-auto"
         />
       </div>
       <div className="xl:col-span-15">
