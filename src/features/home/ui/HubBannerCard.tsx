@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { armPendingDeliveryNavbarDrop } from "@/features/home/storefront-path-memory";
 
 type HubBannerCardProps = {
   label: string;
@@ -131,7 +132,17 @@ export function HubBannerCard({
     }
 
     return (
-      <AppLink href={href} prefetchPolicy="intent" className="block" aria-label={label}>
+      <AppLink
+        href={href}
+        prefetchPolicy="intent"
+        className="block"
+        aria-label={label}
+        onPointerDown={() => {
+          if (href.includes("/delivery")) {
+            armPendingDeliveryNavbarDrop();
+          }
+        }}
+      >
         <BannerSurface className={className}>{inner}</BannerSurface>
       </AppLink>
     );

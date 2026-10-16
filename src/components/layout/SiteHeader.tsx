@@ -79,7 +79,7 @@ async function SiteHeaderMainNavAsync({
  */
 export function SiteHeader({ locale, currency, dictionary }: SiteHeaderProps) {
   return (
-    <SiteHeaderScrollShell>
+    <SiteHeaderScrollShell locale={locale}>
       <Suspense
         fallback={
           <SiteHeaderShell

@@ -1,9 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion, type Transition } from "motion/react";
-import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { useLayoutEffect, useState } from "react";
 
+import { writeHubIntroState } from "@/features/home/hub-intro-document";
+import { isPendingDeliveryNavbarDrop } from "@/features/home/storefront-path-memory";
+import {
+  HUB_INTRO_DONE_MS,
+  HUB_INTRO_HOLD_MS,
+  HUB_INTRO_SPRING,
+} from "@/features/home/hub-intro-timing";
 import { HubBannerGrid } from "@/features/home/ui/HubBannerGrid";
 import {
   HUB_HAND_BOW_SRC,
@@ -17,20 +24,10 @@ import {
 } from "@/lib/react/schedule-after-paint";
 import { useBodyScrollLock } from "@/lib/react/use-body-scroll-lock";
 
-const HOLD_MS = 650;
-const DONE_MS = 800;
-
 const HERO_SIDE_W = 820;
 const HERO_SIDE_H = 1024;
 
 type Phase = "hold" | "leave" | "done";
-
-const leaveTransition: Transition = {
-  type: "spring",
-  stiffness: 48,
-  damping: 18,
-  mass: 1.05,
-};
 
 type HubHandsIntroProps = {
   locale: Locale;
@@ -50,6 +47,19 @@ export function HubHandsIntro({ locale, labels }: HubHandsIntroProps) {
   const [phase, setPhase] = useState<Phase>("hold");
   const [instant, setInstant] = useState(false);
 
+  useLayoutEffect(() => {
+    if (reduceMotion) {
+      writeHubIntroState("done");
+      return;
+    }
+    writeHubIntroState(phase === "done" ? "done" : "playing");
+    return () => {
+      if (!isPendingDeliveryNavbarDrop()) {
+        writeHubIntroState("done");
+      }
+    };
+  }, [phase, reduceMotion]);
+
   useDeferredEffect(() => {
     if (reduceMotion) {
       scheduleStateUpdate(setInstant, true);
@@ -59,10 +69,10 @@ export function HubHandsIntro({ locale, labels }: HubHandsIntroProps) {
 
     const leaveTimer = window.setTimeout(() => {
       scheduleStateUpdate(setPhase, "leave");
-    }, HOLD_MS);
+    }, HUB_INTRO_HOLD_MS);
     const doneTimer = window.setTimeout(() => {
       scheduleStateUpdate(setPhase, "done");
-    }, HOLD_MS + DONE_MS);
+    }, HUB_INTRO_HOLD_MS + HUB_INTRO_DONE_MS);
 
     return () => {
       window.clearTimeout(leaveTimer);
@@ -107,7 +117,7 @@ function DesktopHomeArms({ leaving }: { leaving: boolean }) {
         className="absolute top-0 left-0"
         initial={false}
         animate={leaving ? { x: "-100%", opacity: 1 } : { x: 0, opacity: 1 }}
-        transition={leaveTransition}
+        transition={HUB_INTRO_SPRING}
       >
         <Image
           src={staticAssetUrl("/assets/brand/hero/hero-left.webp")}
@@ -123,7 +133,7 @@ function DesktopHomeArms({ leaving }: { leaving: boolean }) {
         className="absolute top-[6%] right-0"
         initial={false}
         animate={leaving ? { x: "100%", opacity: 1 } : { x: 0, opacity: 1 }}
-        transition={leaveTransition}
+        transition={HUB_INTRO_SPRING}
       >
         <Image
           src={staticAssetUrl("/assets/brand/hero/hero-right.webp")}
@@ -146,14 +156,14 @@ function MobileHandsCurtain({ leaving }: { leaving: boolean }) {
       aria-hidden
       initial={false}
       animate={{ opacity: leaving ? 0 : 1 }}
-      transition={leaveTransition}
+      transition={HUB_INTRO_SPRING}
       data-node-id="505:177"
     >
       <motion.div
         className="absolute inset-x-0 top-0 h-[54%] w-full"
         initial={false}
         animate={leaving ? { y: "-108%" } : { y: 0 }}
-        transition={leaveTransition}
+        transition={HUB_INTRO_SPRING}
       >
         <Image
           src={HUB_HAND_KAMANCHA_SRC}
@@ -169,7 +179,7 @@ function MobileHandsCurtain({ leaving }: { leaving: boolean }) {
         className="absolute inset-x-0 bottom-0 h-[58%] w-full"
         initial={false}
         animate={leaving ? { y: "108%" } : { y: 0 }}
-        transition={leaveTransition}
+        transition={HUB_INTRO_SPRING}
       >
         <Image
           src={HUB_HAND_BOW_SRC}

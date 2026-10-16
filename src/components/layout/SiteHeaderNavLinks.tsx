@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { isHubHomePath } from "@/features/home/hub-experience-path";
+import { armPendingDeliveryNavbarDrop } from "@/features/home/storefront-path-memory";
 import type { Locale } from "@/lib/i18n/config";
 
 type NavItem = {
@@ -49,6 +51,14 @@ export function SiteHeaderNavLinks({ locale, items }: SiteHeaderNavLinksProps) {
             prefetchPolicy="intent"
             className={navLinkClassName(active)}
             aria-current={active ? "page" : undefined}
+            onPointerDown={() => {
+              if (
+                isHubHomePath(pathname, locale) &&
+                item.href.endsWith("/delivery")
+              ) {
+                armPendingDeliveryNavbarDrop();
+              }
+            }}
           >
             {item.label}
           </AppLink>
