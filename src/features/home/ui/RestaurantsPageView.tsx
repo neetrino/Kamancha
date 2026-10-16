@@ -79,13 +79,13 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             photoClassName="absolute top-[-69px] left-1/2 h-[463px] min-w-full w-[413px] -translate-x-1/2 object-cover xl:top-[-103px] xl:h-[713px] xl:w-[636px]"
             photoNodeId="704:4023"
             logoSrc={staticAssetUrl(`${HUB}/kamancha-script-venue.svg`, SAME_ORIGIN)}
-            logoWidth={247}
-            logoHeight={133}
-            logoClassName="top-[18px] left-5"
+            logoWidth={210}
+            logoHeight={113}
+            logoClassName="top-[10px] left-5 h-[113px] w-[210px]"
             logoXlSrc={staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`, SAME_ORIGIN)}
-            logoXlWidth={339}
-            logoXlHeight={181}
-            logoXlClassName="top-[34px] left-[37px]"
+            logoXlWidth={280}
+            logoXlHeight={150}
+            logoXlClassName="top-[18px] left-[37px] h-[150px] w-[280px]"
           />
         </HubStaggerItem>
         <HubStaggerItem
@@ -104,9 +104,9 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             photoClassName="absolute top-[-15px] left-0 h-[531px] w-full object-cover object-bottom xl:top-[-2px] xl:left-[-1px] xl:h-[849px] xl:w-[634px]"
             photoNodeId="704:4027"
             logoSrc={staticAssetUrl(`${HUB}/tapaka-logo.webp`, SAME_ORIGIN)}
-            logoWidth={284}
-            logoHeight={160}
-            logoClassName="top-[9px] left-[15px] h-[160px] w-[284px] drop-shadow-[0px_4px_4px_rgba(0,0,0,0.9)] xl:top-[5px] xl:left-[19px] xl:h-[210px] xl:w-[374px]"
+            logoWidth={236}
+            logoHeight={133}
+            logoClassName="top-[9px] left-[15px] h-[133px] w-[236px] drop-shadow-[0px_4px_4px_rgba(0,0,0,0.9)] xl:top-[5px] xl:left-[19px] xl:h-[172px] xl:w-[307px]"
           />
         </HubStaggerItem>
         <HubStaggerItem
