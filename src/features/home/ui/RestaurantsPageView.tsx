@@ -41,12 +41,12 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
       className="restaurants-page -mx-4 pt-0 sm:-mx-6 xl:-mx-8 xl:-mb-10"
       data-node-id="704:4019"
     >
-      <div className="px-[15px] sm:px-6 xl:hidden">
+      <div className="mx-auto w-full max-w-[1312px] px-[15px] sm:px-6 xl:px-16">
         <AppLink
           href={`/${locale}`}
           prefetchPolicy="intent"
           aria-label={labels.back}
-          className="mb-[18px] inline-flex w-[64px] shrink-0"
+          className="mb-[18px] inline-flex w-[64px] shrink-0 xl:mb-6"
         >
           <Image
             src={staticAssetUrl(`${HUB}/back-chevron.svg`, SAME_ORIGIN)}
