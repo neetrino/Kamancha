@@ -88,7 +88,6 @@ export function MobileNavDrawer({
   const [rendered, setRendered] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [panelTopPx, setPanelTopPx] = useState(72);
-  const panelTopRef = useRef(72);
 
   const clearExitTimer = useCallback(() => {
     if (exitTimerRef.current !== null) {
@@ -104,7 +103,6 @@ export function MobileNavDrawer({
     if (!anchor) return;
 
     const next = anchor.getBoundingClientRect().bottom;
-    panelTopRef.current = next;
     setPanelTopPx((current) => (current === next ? current : next));
   }, []);
 
@@ -360,11 +358,10 @@ export function MobileNavDrawer({
                   expanded ? "opacity-100" : "opacity-0"
                 }`}
                 style={{
-                  top:
-                    (panelTopRef.current || panelTopPx) + MENU_GAP_PX,
+                  top: panelTopPx + MENU_GAP_PX,
                   left: MENU_INSET_PX,
                   right: MENU_INSET_PX,
-                  maxHeight: `calc(100svh - ${(panelTopRef.current || panelTopPx) + MENU_GAP_PX + MENU_INSET_PX}px)`,
+                  maxHeight: `calc(100svh - ${panelTopPx + MENU_GAP_PX + MENU_INSET_PX}px)`,
                 }}
               >
                 <nav

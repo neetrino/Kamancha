@@ -23,6 +23,7 @@ import {
 } from "@/features/home/hub-intro-document";
 import { HUB_INTRO_SPRING } from "@/features/home/hub-intro-timing";
 import type { Locale } from "@/lib/i18n/config";
+import { scheduleStateUpdate } from "@/lib/react/schedule-after-paint";
 
 /** Scroll distance over which the chrome eases fully in. */
 const SCROLL_FADE_RANGE_PX = 88;
@@ -73,19 +74,18 @@ function useHubHeaderReveal(locale: Locale): {
 
   useLayoutEffect(() => {
     if (!reveal.springIn) {
-      setReveal((prev) => ({ ...prev, shown: true }));
       return;
     }
 
-    function sync(): void {
-      setReveal((prev) => ({
-        ...prev,
-        shown: readHubIntroState() === "done",
-      }));
+    function applyIntroState(): void {
+      const done = readHubIntroState() === "done";
+      scheduleStateUpdate(setReveal, (prev) =>
+        prev.shown === done ? prev : { ...prev, shown: done },
+      );
     }
 
-    sync();
-    const observer = new MutationObserver(sync);
+    applyIntroState();
+    const observer = new MutationObserver(applyIntroState);
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: [HUB_INTRO_STATE_ATTR],
