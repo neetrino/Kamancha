@@ -68,15 +68,15 @@ export function HubBannerGrid({ locale, labels }: HubBannerGridProps) {
       <div className="xl:col-span-4">
         <HubBannerCard
           label={labels.fastFood}
-          photoSrc={staticAssetUrl(`${HUB}/pideh.webp`, sameOrigin)}
+          photoSrc={staticAssetUrl(`${HUB}/pideh-full.webp`, sameOrigin)}
           logoSrc={staticAssetUrl(`${HUB}/pideh-logo.svg`, sameOrigin)}
-          logoWidth={117}
-          logoHeight={90}
+          logoWidth={82}
+          logoHeight={63}
           iconSrc={staticAssetUrl(`${HUB}/icon-fastfood.svg`, sameOrigin)}
           className="xl:h-[335px]"
-          photoNodeId="704:4120"
-          photoClassName="object-cover object-bottom"
-          logoClassName="top-5 left-7 h-[90px] w-[117px]"
+          photoNodeId="704:4217"
+          photoClassName="object-cover object-center"
+          logoClassName="top-5 left-7 h-[63px] w-[82px]"
         />
       </div>
     </div>

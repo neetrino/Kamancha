@@ -3,6 +3,7 @@ import Image from "next/image";
 type RestaurantVenueCardProps = {
   title: string;
   titleClassName?: string;
+  className?: string;
   photoSrc: string;
   photoClassName: string;
   photoWidth: number;
@@ -12,6 +13,10 @@ type RestaurantVenueCardProps = {
   logoWidth?: number;
   logoHeight?: number;
   logoClassName?: string;
+  logoXlSrc?: string;
+  logoXlWidth?: number;
+  logoXlHeight?: number;
+  logoXlClassName?: string;
 };
 
 /**
@@ -20,6 +25,7 @@ type RestaurantVenueCardProps = {
 export function RestaurantVenueCard({
   title,
   titleClassName = "top-[180px] right-[21px]",
+  className = "",
   photoSrc,
   photoClassName,
   photoWidth,
@@ -29,9 +35,15 @@ export function RestaurantVenueCard({
   logoWidth = 247,
   logoHeight = 133,
   logoClassName = "top-[18px] left-5",
+  logoXlSrc,
+  logoXlWidth,
+  logoXlHeight,
+  logoXlClassName,
 }: RestaurantVenueCardProps) {
   return (
-    <article className="relative h-[234px] w-full overflow-hidden rounded-[20px] border-2 border-white bg-brand-forest">
+    <article
+      className={`relative h-[234px] w-full overflow-hidden rounded-[20px] border-2 border-white bg-brand-forest ${className}`}
+    >
       <Image
         src={photoSrc}
         alt=""
@@ -47,7 +59,17 @@ export function RestaurantVenueCard({
           width={logoWidth}
           height={logoHeight}
           unoptimized
-          className={`pointer-events-none absolute z-[1] max-w-none ${logoClassName}`}
+          className={`pointer-events-none absolute z-[1] max-w-none ${logoXlSrc ? "xl:hidden" : ""} ${logoClassName}`}
+        />
+      ) : null}
+      {logoXlSrc ? (
+        <Image
+          src={logoXlSrc}
+          alt=""
+          width={logoXlWidth ?? 339}
+          height={logoXlHeight ?? 181}
+          unoptimized
+          className={`pointer-events-none absolute z-[1] hidden max-w-none xl:block ${logoXlClassName ?? ""}`}
         />
       ) : null}
       <h2

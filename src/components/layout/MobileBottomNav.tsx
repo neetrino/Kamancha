@@ -43,10 +43,6 @@ type NavTab = {
   badge?: number;
 };
 
-function isHomePath(pathname: string, locale: Locale): boolean {
-  return pathname === `/${locale}` || pathname === `/${locale}/`;
-}
-
 function startsWithPath(pathname: string, base: string): boolean {
   return pathname === base || pathname.startsWith(`${base}/`);
 }
@@ -65,8 +61,8 @@ function resolveSelectedTab(
   user: SessionUser | null,
 ): BottomNavTabId | null {
   if (cartOpen) return "cart";
-  if (isHomePath(pathname, locale)) return "home";
-  if (startsWithPath(pathname, `/${locale}/delivery`)) return "shop";
+  if (startsWithPath(pathname, `/${locale}/delivery`)) return "home";
+  if (startsWithPath(pathname, `/${locale}/products`)) return "shop";
   if (startsWithPath(pathname, `/${locale}/wishlist`)) return "wishlist";
   if (startsWithPath(pathname, `/${locale}/profile`)) return "profile";
   if (
@@ -221,15 +217,15 @@ export function MobileBottomNav({
 
   const homeTab: NavTab = {
     id: "home",
-    href: `/${locale}`,
+    href: `/${locale}/delivery`,
     label: dictionary.nav.home,
     icon: <NavHomeIcon className="h-6 w-6" />,
   };
 
   const shopTab: NavTab = {
     id: "shop",
-    href: `/${locale}/delivery`,
-    label: dictionary.home.hub.delivery,
+    href: `/${locale}/products`,
+    label: dictionary.nav.products,
     icon: <NavClocheIcon className="h-[25px] w-[29px]" />,
   };
 
