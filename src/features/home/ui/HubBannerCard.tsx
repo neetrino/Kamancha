@@ -115,6 +115,21 @@ export function HubBannerCard({
   );
 
   if (href) {
+    const isExternal = href.startsWith("http://") || href.startsWith("https://");
+    if (isExternal) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
+          aria-label={label}
+        >
+          <BannerSurface className={className}>{inner}</BannerSurface>
+        </a>
+      );
+    }
+
     return (
       <AppLink href={href} prefetchPolicy="intent" className="block" aria-label={label}>
         <BannerSurface className={className}>{inner}</BannerSurface>

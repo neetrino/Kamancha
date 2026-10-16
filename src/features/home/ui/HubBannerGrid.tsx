@@ -23,10 +23,10 @@ export function HubBannerGrid({ locale, labels }: HubBannerGridProps) {
 
   return (
     <div
-      className="mx-auto grid w-full max-w-[1312px] grid-cols-1 gap-[18px] px-[15px] sm:px-6 xl:grid-cols-12 xl:gap-6 xl:px-16"
+      className="mx-auto grid w-full max-w-[1312px] grid-cols-1 gap-[18px] px-[15px] sm:px-6 xl:grid-cols-[repeat(24,minmax(0,1fr))] xl:gap-6 xl:px-16"
       data-node-id="704:4047"
     >
-      <div className="xl:col-span-6">
+      <div className="xl:col-span-12">
         <HubBannerCard
           href={`/${locale}/restaurants`}
           label={labels.restaurants}
@@ -40,7 +40,7 @@ export function HubBannerGrid({ locale, labels }: HubBannerGridProps) {
           logoClassName="top-3.5 left-[23px] h-[87px] w-[167px]"
         />
       </div>
-      <div className="xl:col-span-6">
+      <div className="xl:col-span-12">
         <HubBannerCard
           href={`/${locale}/delivery`}
           label={labels.delivery}
@@ -54,8 +54,9 @@ export function HubBannerGrid({ locale, labels }: HubBannerGridProps) {
           logoClassName="top-px left-0 h-[82px] w-[203px]"
         />
       </div>
-      <div className="xl:col-span-8">
+      <div className="xl:col-span-15">
         <HubBannerCard
+          href="https://restormania.am"
           label={labels.blog}
           photoSrc={staticAssetUrl(`${HUB}/restormania.webp`, sameOrigin)}
           logo={<RestormaniaHubMark />}
@@ -65,18 +66,19 @@ export function HubBannerGrid({ locale, labels }: HubBannerGridProps) {
           photoClassName="object-cover object-[center_28%]"
         />
       </div>
-      <div className="xl:col-span-4">
+      <div className="xl:col-span-9">
         <HubBannerCard
+          href="https://pideh.am"
           label={labels.fastFood}
           photoSrc={staticAssetUrl(`${HUB}/pideh-full.webp`, sameOrigin)}
           logoSrc={staticAssetUrl(`${HUB}/pideh-logo.svg`, sameOrigin)}
-          logoWidth={82}
-          logoHeight={63}
+          logoWidth={110}
+          logoHeight={85}
           iconSrc={staticAssetUrl(`${HUB}/icon-fastfood.svg`, sameOrigin)}
           className="xl:h-[335px]"
           photoNodeId="704:4217"
           photoClassName="object-cover object-center"
-          logoClassName="top-5 left-7 h-[63px] w-[82px]"
+          logoClassName="top-5 left-7 h-[85px] w-[110px]"
         />
       </div>
     </div>
