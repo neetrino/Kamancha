@@ -947,12 +947,13 @@ body {
   }
 
   .storefront-main:has(.restaurants-page) {
-    padding-top: 0.75rem;
+    padding-top: 1.75rem;
     padding-bottom: 1.5rem;
   }
 
   @media (min-width: 1280px) {
-    .storefront-main:has(.hub-first-page) {
+    .storefront-main:has(.hub-first-page),
+    .storefront-main:has(.restaurants-page) {
       padding-top: 3rem;
     }
   }

@@ -1,9 +1,17 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { HubStaggerItem } from "@/features/home/ui/HubStaggerItem";
 import { RestaurantVenueCard } from "@/features/home/ui/RestaurantVenueCard";
 import type { Locale } from "@/lib/i18n/config";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
+import {
+  scheduleStateUpdate,
+  useDeferredEffect,
+} from "@/lib/react/schedule-after-paint";
 
 const HUB = "/assets/brand/hub";
 const SAME_ORIGIN = { sameOrigin: true } as const;
@@ -19,20 +27,26 @@ type RestaurantsPageViewProps = {
 };
 
 /**
- * Restaurants list — mobile 704:4019, desktop 704:4230.
+ * Restaurants list — same hub grid and edge stagger (704:4019 / 704:4230).
  */
 export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps) {
+  const [reveal, setReveal] = useState(false);
+
+  useDeferredEffect(() => {
+    scheduleStateUpdate(setReveal, true);
+  }, []);
+
   return (
     <section
-      className="restaurants-page -mx-4 sm:-mx-6 xl:-mx-8 xl:-my-10"
+      className="restaurants-page hub-first-page -mx-4 pt-[8px] sm:-mx-6 xl:-mx-8 xl:-mb-10 xl:pt-[8px]"
       data-node-id="704:4019"
     >
-      <div className="mx-auto flex w-full max-w-[397px] flex-col gap-5 px-[15px] sm:px-6 xl:max-w-[1302px] xl:gap-8 xl:px-0">
+      <div className="px-[15px] sm:px-6 xl:hidden">
         <AppLink
           href={`/${locale}`}
           prefetchPolicy="intent"
           aria-label={labels.back}
-          className="inline-flex w-[64px] shrink-0 xl:hidden"
+          className="mb-[18px] inline-flex w-[64px] shrink-0"
         >
           <Image
             src={staticAssetUrl(`${HUB}/back-chevron.svg`, SAME_ORIGIN)}
@@ -43,15 +57,22 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             data-node-id="704:4040"
           />
         </AppLink>
+      </div>
 
-        <div
-          className="flex flex-col gap-5 xl:grid xl:grid-cols-2 xl:gap-x-[31px] xl:gap-y-[35px]"
-          data-node-id="709:4353"
+      <div
+        className="mx-auto grid w-full max-w-[1312px] grid-cols-1 gap-[18px] px-[15px] sm:px-6 xl:grid-cols-[repeat(24,minmax(0,1fr))] xl:gap-6 xl:px-16"
+        data-node-id="709:4353"
+      >
+        <HubStaggerItem
+          index={0}
+          from="left"
+          reveal={reveal}
+          className="xl:col-span-12"
         >
           <RestaurantVenueCard
             title={labels.tumanyan}
             titleClassName="top-[calc(50%+63px)] right-[21px] xl:top-[calc(50%+106.5px)] xl:right-[43px] xl:text-[54px]"
-            className="xl:h-[343px]"
+            className="xl:h-[338px]"
             photoSrc={staticAssetUrl(`${HUB}/venue-tumanyan.webp`, SAME_ORIGIN)}
             photoWidth={413}
             photoHeight={463}
@@ -66,10 +87,17 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             logoXlHeight={181}
             logoXlClassName="top-[34px] left-[37px]"
           />
+        </HubStaggerItem>
+        <HubStaggerItem
+          index={1}
+          from="right"
+          reveal={reveal}
+          className="xl:col-span-12"
+        >
           <RestaurantVenueCard
             title={labels.saryan}
             titleClassName="top-[calc(50%+67px)] right-[41px] xl:top-[calc(50%+114.5px)] xl:right-[38px] xl:text-[54px]"
-            className="xl:h-[343px]"
+            className="xl:h-[338px]"
             photoSrc={staticAssetUrl(`${HUB}/venue-saryan.webp`, SAME_ORIGIN)}
             photoWidth={397}
             photoHeight={531}
@@ -80,19 +108,24 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             logoHeight={160}
             logoClassName="top-[9px] left-[15px] h-[160px] w-[284px] drop-shadow-[0px_4px_4px_rgba(0,0,0,0.9)] xl:top-[5px] xl:left-[19px] xl:h-[210px] xl:w-[374px]"
           />
-          <div className="xl:col-span-2 xl:flex xl:justify-center">
-            <RestaurantVenueCard
-              title={labels.blog}
-              titleClassName="top-[181px] right-[37px] xl:top-[241px] xl:right-[39px]"
-              className="xl:h-[301px] xl:w-[577px]"
-              photoSrc={staticAssetUrl(`${HUB}/venue-blog.webp`, SAME_ORIGIN)}
-              photoWidth={398}
-              photoHeight={496}
-              photoClassName="absolute top-[calc(50%+76px)] left-1/2 h-[496px] min-w-full w-[398px] -translate-x-1/2 -translate-y-1/2 object-cover xl:top-[calc(50%+129px)] xl:h-[723px] xl:w-[578px]"
-              photoNodeId="704:4030"
-            />
-          </div>
-        </div>
+        </HubStaggerItem>
+        <HubStaggerItem
+          index={2}
+          from="left"
+          reveal={reveal}
+          className="xl:col-span-24 xl:flex xl:justify-center"
+        >
+          <RestaurantVenueCard
+            title={labels.blog}
+            titleClassName="top-[181px] right-[37px] xl:top-[241px] xl:right-[39px]"
+            className="xl:h-[301px] xl:w-[577px]"
+            photoSrc={staticAssetUrl(`${HUB}/venue-blog-hq.webp`, SAME_ORIGIN)}
+            photoWidth={819}
+            photoHeight={1024}
+            photoClassName="absolute inset-0 h-full w-full object-cover object-[center_18%]"
+            photoNodeId="704:4030"
+          />
+        </HubStaggerItem>
       </div>
     </section>
   );
