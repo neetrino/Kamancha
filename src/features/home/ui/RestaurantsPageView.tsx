@@ -60,7 +60,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
       </div>
 
       <div
-        className="mx-auto grid w-full max-w-[1312px] grid-cols-1 gap-[18px] px-[15px] sm:px-6 xl:grid-cols-[repeat(24,minmax(0,1fr))] xl:gap-6 xl:px-16"
+        className="mx-auto grid w-full max-w-[1312px] grid-cols-1 gap-[18px] px-[15px] sm:px-6 md:grid-cols-2 md:[&>:last-child:nth-child(odd)]:col-span-2 md:[&>:last-child:nth-child(odd)]:w-[calc(50%-9px)] md:[&>:last-child:nth-child(odd)]:justify-self-center xl:grid-cols-[repeat(24,minmax(0,1fr))] xl:gap-6 xl:px-16 xl:[&>:last-child:nth-child(odd)]:col-span-24 xl:[&>:last-child:nth-child(odd)]:w-auto xl:[&>:last-child:nth-child(odd)]:justify-self-stretch"
         data-node-id="709:4353"
       >
         <HubStaggerItem

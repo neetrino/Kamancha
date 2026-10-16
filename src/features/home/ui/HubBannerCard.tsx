@@ -28,7 +28,7 @@ function BannerSurface({
 }) {
   return (
     <div
-      className={`relative h-[169px] overflow-hidden rounded-[20px] border-2 border-white bg-brand-forest xl:h-[338px] ${className}`}
+      className={`relative h-[169px] overflow-hidden rounded-[20px] border-2 border-white xl:h-[338px] ${className.includes("bg-") ? "" : "bg-brand-forest"} ${className}`}
     >
       {children}
     </div>
@@ -101,7 +101,7 @@ export function HubBannerCard({
           />
         ) : null
       )}
-      <span className="absolute right-3 bottom-3 z-[1] inline-flex h-10 max-w-[calc(100%-1.5rem)] items-center gap-1.5 rounded-[30px] bg-white px-3 font-big-fat-boii text-base text-brand-forest xl:right-6 xl:bottom-6">
+      <span className="absolute right-4 bottom-4 z-[1] inline-flex h-10 max-w-[calc(100%-2rem)] items-center gap-1.5 rounded-[30px] bg-white px-3 font-big-fat-boii text-base leading-none text-brand-forest xl:right-6 xl:bottom-6">
         <Image
           src={iconSrc}
           alt=""
