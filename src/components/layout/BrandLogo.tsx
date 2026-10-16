@@ -24,9 +24,7 @@ function isHomePath(pathname: string, locale: Locale): boolean {
  */
 export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const logoSrc = staticAssetUrl("/assets/brand/kamancha-factory-badge.webp", {
-    sameOrigin: true,
-  });
+  const logoSrc = staticAssetUrl("/assets/brand/kamancha-factory-badge.webp");
   const logoClassName =
     className ??
     "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[72px] xl:w-auto";

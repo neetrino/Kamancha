@@ -1223,3 +1223,16 @@ html[data-hub-intro="done"] .storefront-shell:has(.home-mobile-page) .site-heade
   height: 6px;
   border: none;
 }
+
+/* Desktop hub Restormania card — raise the portrait inside the tile. */
+@media (min-width: 1280px) {
+  [data-node-id="704:4062"] {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: cover;
+    object-position: center 58%;
+  }
+}

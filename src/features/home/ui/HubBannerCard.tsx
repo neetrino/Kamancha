@@ -28,7 +28,7 @@ function BannerSurface({
 }) {
   return (
     <div
-      className={`relative h-[169px] overflow-hidden rounded-[20px] border-2 border-white xl:h-[338px] ${className.includes("bg-") ? "" : "bg-brand-forest"} ${className}`}
+      className={`relative h-[169px] overflow-hidden rounded-[20px] border-2 border-white bg-brand-forest xl:h-[338px] ${className}`}
     >
       {children}
     </div>

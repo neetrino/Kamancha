@@ -14,8 +14,6 @@ import {
 } from "@/lib/react/schedule-after-paint";
 
 const HUB = "/assets/brand/hub";
-const SAME_ORIGIN = { sameOrigin: true } as const;
-
 type RestaurantsPageViewProps = {
   locale: Locale;
   labels: {
@@ -49,7 +47,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
           className="mb-[18px] inline-flex w-[64px] shrink-0 xl:mb-6"
         >
           <Image
-            src={staticAssetUrl(`${HUB}/back-chevron.svg`, SAME_ORIGIN)}
+            src={staticAssetUrl(`${HUB}/back-chevron.svg`)}
             alt=""
             width={64}
             height={43}
@@ -73,16 +71,16 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             title={labels.tumanyan}
             titleClassName="top-[calc(50%+63px)] right-[21px] xl:top-[calc(50%+106.5px)] xl:right-[43px] xl:text-[54px]"
             className="xl:h-[338px]"
-            photoSrc={staticAssetUrl(`${HUB}/venue-tumanyan.webp`, SAME_ORIGIN)}
+            photoSrc={staticAssetUrl(`${HUB}/venue-tumanyan.webp`)}
             photoWidth={413}
             photoHeight={463}
             photoClassName="absolute top-[-69px] left-1/2 h-[463px] min-w-full w-[413px] -translate-x-1/2 object-cover xl:top-[-103px] xl:h-[713px] xl:w-[636px]"
             photoNodeId="704:4023"
-            logoSrc={staticAssetUrl(`${HUB}/kamancha-script-venue.svg`, SAME_ORIGIN)}
+            logoSrc={staticAssetUrl(`${HUB}/kamancha-script-venue.svg`)}
             logoWidth={210}
             logoHeight={113}
             logoClassName="top-[10px] left-5 h-[113px] w-[210px]"
-            logoXlSrc={staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`, SAME_ORIGIN)}
+            logoXlSrc={staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`)}
             logoXlWidth={280}
             logoXlHeight={150}
             logoXlClassName="top-[18px] left-[37px] h-[150px] w-[280px]"
@@ -98,12 +96,12 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             title={labels.saryan}
             titleClassName="top-[calc(50%+67px)] right-[41px] xl:top-[calc(50%+114.5px)] xl:right-[38px] xl:text-[54px]"
             className="xl:h-[338px]"
-            photoSrc={staticAssetUrl(`${HUB}/venue-saryan.webp`, SAME_ORIGIN)}
+            photoSrc={staticAssetUrl(`${HUB}/venue-saryan.webp`)}
             photoWidth={397}
             photoHeight={531}
             photoClassName="absolute top-[-15px] left-0 h-[531px] w-full object-cover object-bottom xl:top-[-2px] xl:left-[-1px] xl:h-[849px] xl:w-[634px]"
             photoNodeId="704:4027"
-            logoSrc={staticAssetUrl(`${HUB}/tapaka-logo.webp`, SAME_ORIGIN)}
+            logoSrc={staticAssetUrl(`${HUB}/tapaka-logo.webp`)}
             logoWidth={236}
             logoHeight={133}
             logoClassName="top-[9px] left-[15px] h-[133px] w-[236px] drop-shadow-[0px_4px_4px_rgba(0,0,0,0.9)] xl:top-[5px] xl:left-[19px] xl:h-[172px] xl:w-[307px]"
@@ -119,7 +117,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             title={labels.blog}
             titleClassName="top-[181px] right-[37px] xl:top-[241px] xl:right-[39px]"
             className="xl:h-[301px] xl:w-[577px]"
-            photoSrc={staticAssetUrl(`${HUB}/venue-blog-hq.webp`, SAME_ORIGIN)}
+            photoSrc={staticAssetUrl(`${HUB}/venue-blog-hq.webp`)}
             photoWidth={819}
             photoHeight={1024}
             photoClassName="absolute inset-0 h-full w-full object-cover object-[center_18%]"

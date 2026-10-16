@@ -31,8 +31,6 @@ export function HubBannerGrid({
   instant = false,
   playFromHidden = false,
 }: HubBannerGridProps) {
-  const sameOrigin = { sameOrigin: true } as const;
-
   return (
     <div
       className="mx-auto grid w-full max-w-[1312px] grid-cols-1 gap-[18px] px-[15px] sm:px-6 md:grid-cols-2 md:[&>:last-child:nth-child(odd)]:col-span-2 md:[&>:last-child:nth-child(odd)]:w-[calc(50%-9px)] md:[&>:last-child:nth-child(odd)]:justify-self-center xl:grid-cols-[repeat(24,minmax(0,1fr))] xl:gap-6 xl:px-16 xl:[&>:last-child:nth-child(odd)]:col-span-24 xl:[&>:last-child:nth-child(odd)]:w-auto xl:[&>:last-child:nth-child(odd)]:justify-self-stretch"
@@ -49,11 +47,11 @@ export function HubBannerGrid({
         <HubBannerCard
           href={`/${locale}/restaurants`}
           label={labels.restaurants}
-          photoSrc={staticAssetUrl(`${HUB}/street.webp`, sameOrigin)}
-          logoSrc={staticAssetUrl(`${HUB}/kamancha-script.svg`, sameOrigin)}
+          photoSrc={staticAssetUrl(`${HUB}/street.webp`)}
+          logoSrc={staticAssetUrl(`${HUB}/kamancha-script.svg`)}
           logoWidth={248}
           logoHeight={132}
-          iconSrc={staticAssetUrl(`${HUB}/icon-location.svg`, sameOrigin)}
+          iconSrc={staticAssetUrl(`${HUB}/icon-location.svg`)}
           photoNodeId="704:4049"
           photoClassName="absolute top-[-48.5%] left-1/2 h-[244.4%] w-[calc(100%+4px)] max-w-none -translate-x-1/2 object-cover xl:inset-0 xl:top-0 xl:left-0 xl:h-full xl:w-full xl:translate-x-0 xl:object-[center_30%]"
           logoClassName="top-[6px] left-[4px] h-[87px] w-[167px] xl:top-6 xl:left-[23px] xl:h-[142px] xl:w-auto"
@@ -70,11 +68,11 @@ export function HubBannerGrid({
         <HubBannerCard
           href={`/${locale}/delivery`}
           label={labels.delivery}
-          photoSrc={staticAssetUrl(`${HUB}/khorovats.webp`, sameOrigin)}
-          logoSrc={staticAssetUrl(`${HUB}/factory-badge.webp`, sameOrigin)}
+          photoSrc={staticAssetUrl(`${HUB}/khorovats.webp`)}
+          logoSrc={staticAssetUrl(`${HUB}/factory-badge.webp`)}
           logoWidth={244}
           logoHeight={96}
-          iconSrc={staticAssetUrl(`${HUB}/icon-truck.svg`, sameOrigin)}
+          iconSrc={staticAssetUrl(`${HUB}/icon-truck.svg`)}
           photoNodeId="704:4056"
           photoClassName="absolute top-[-39%] left-[-2px] h-[175.7%] w-[calc(100%+4px)] max-w-none object-cover xl:inset-0 xl:top-0 xl:left-0 xl:h-full xl:w-full"
           logoClassName="top-[12px] left-[8px] h-[74px] w-[183px] xl:top-7 xl:left-[24px] xl:h-[104px] xl:w-auto"
@@ -91,12 +89,12 @@ export function HubBannerGrid({
         <HubBannerCard
           href="https://restormania.am"
           label={labels.blog}
-          photoSrc={staticAssetUrl(`${HUB}/restormania.webp`, sameOrigin)}
+          photoSrc={staticAssetUrl(`${HUB}/restormania.webp`)}
           logo={<RestormaniaHubMark className="top-[15px] left-[19px] origin-top-left xl:scale-110" />}
-          iconSrc={staticAssetUrl(`${HUB}/icon-news.svg`, sameOrigin)}
+          iconSrc={staticAssetUrl(`${HUB}/icon-news.svg`)}
           className="xl:h-[335px]"
           photoNodeId="704:4062"
-          photoClassName="absolute top-[-33.1%] left-[-2px] h-[163.9%] w-[112%] max-w-none object-cover xl:inset-0 xl:top-0 xl:left-0 xl:h-full xl:w-full xl:object-[center_28%]"
+          photoClassName="absolute top-[-33.1%] left-[-2px] h-[163.9%] w-[112%] max-w-none object-cover xl:inset-0 xl:top-0 xl:left-0 xl:!h-full xl:!w-full xl:object-[center_68%]"
         />
       </HubStaggerItem>
       <HubStaggerItem
@@ -110,14 +108,14 @@ export function HubBannerGrid({
         <HubBannerCard
           href="https://pideh.am"
           label={labels.fastFood}
-          photoSrc={staticAssetUrl(`${HUB}/pideh-full.webp`, sameOrigin)}
-          logoSrc={staticAssetUrl(`${HUB}/pideh-logo.svg`, sameOrigin)}
+          photoSrc={staticAssetUrl(`${HUB}/pideh-hub.webp`, { sameOrigin: true })}
+          logoSrc={staticAssetUrl(`${HUB}/pideh-logo.svg`)}
           logoWidth={110}
           logoHeight={85}
-          iconSrc={staticAssetUrl(`${HUB}/icon-fastfood.svg`, sameOrigin)}
-          className="bg-[#753e00] xl:h-[335px] xl:bg-brand-forest"
+          iconSrc={staticAssetUrl(`${HUB}/icon-fastfood.svg`)}
+          className="xl:h-[335px]"
           photoNodeId="704:4120"
-          photoClassName="absolute top-1/2 right-[16px] h-[150%] w-[82%] max-w-none -translate-y-1/2 object-contain object-right xl:inset-0 xl:top-0 xl:right-0 xl:h-full xl:w-full xl:translate-y-0 xl:object-cover xl:object-center"
+          photoClassName="absolute inset-0 h-full w-full max-w-none object-cover object-center"
           logoClassName="top-[18px] left-4 h-[90px] w-[117px] xl:top-5 xl:left-7 xl:h-[85px] xl:w-[110px]"
         />
       </HubStaggerItem>

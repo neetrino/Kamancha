@@ -3,7 +3,6 @@ import Image from "next/image";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 const HUB = "/assets/brand/hub";
-const SAME_ORIGIN = { sameOrigin: true } as const;
 
 /**
  * Restormania mark (Figma 704:4063) — white stamps + lettering, no plate fill.
@@ -15,7 +14,7 @@ export function RestormaniaHubMark({ className = "top-[15px] left-[19px]" }: { c
       data-node-id="704:4063"
     >
       <Image
-        src={staticAssetUrl(`${HUB}/restormania-stamp-at.svg`, SAME_ORIGIN)}
+        src={staticAssetUrl(`${HUB}/restormania-stamp-at.svg`)}
         alt=""
         width={37}
         height={45}
@@ -25,7 +24,7 @@ export function RestormaniaHubMark({ className = "top-[15px] left-[19px]" }: { c
         data-node-id="704:4066"
       />
       <Image
-        src={staticAssetUrl(`${HUB}/restormania-stamp-restor.svg`, SAME_ORIGIN)}
+        src={staticAssetUrl(`${HUB}/restormania-stamp-restor.svg`)}
         alt=""
         width={103}
         height={44}
@@ -35,7 +34,7 @@ export function RestormaniaHubMark({ className = "top-[15px] left-[19px]" }: { c
         data-node-id="704:4065"
       />
       <Image
-        src={staticAssetUrl(`${HUB}/restormania-stamp-mania.svg`, SAME_ORIGIN)}
+        src={staticAssetUrl(`${HUB}/restormania-stamp-mania.svg`)}
         alt=""
         width={86}
         height={31}
@@ -45,7 +44,7 @@ export function RestormaniaHubMark({ className = "top-[15px] left-[19px]" }: { c
         data-node-id="704:4064"
       />
       <Image
-        src={staticAssetUrl(`${HUB}/restormania-lettering.svg`, SAME_ORIGIN)}
+        src={staticAssetUrl(`${HUB}/restormania-lettering.svg`)}
         alt=""
         width={126}
         height={82}
