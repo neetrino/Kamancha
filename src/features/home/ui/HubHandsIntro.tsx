@@ -18,10 +18,6 @@ import {
   HUB_INTRO_SPRING,
 } from "@/features/home/hub-intro-timing";
 import { HubBannerGrid } from "@/features/home/ui/HubBannerGrid";
-import {
-  HUB_HAND_BOW_SRC,
-  HUB_HAND_KAMANCHA_SRC,
-} from "@/lib/brand/assets";
 import type { Locale } from "@/lib/i18n/config";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import {
@@ -119,7 +115,7 @@ function IntroLayers({ leaving }: { leaving: boolean }) {
   return (
     <>
       <DesktopHomeArms leaving={leaving} />
-      <MobileHandsCurtain leaving={leaving} />
+      <MobileHomeArms leaving={leaving} />
     </>
   );
 }
@@ -166,48 +162,44 @@ function DesktopHomeArms({ leaving }: { leaving: boolean }) {
   );
 }
 
-function MobileHandsCurtain({ leaving }: { leaving: boolean }) {
+function MobileHomeArms({ leaving }: { leaving: boolean }) {
   return (
-    <motion.div
-      className="fixed inset-0 z-[120] overflow-hidden bg-brand-forest xl:hidden"
+    <div
+      className="pointer-events-none fixed inset-0 z-[120] overflow-hidden xl:hidden"
       aria-hidden
-      initial={false}
-      animate={{ opacity: leaving ? 0 : 1 }}
-      transition={HUB_INTRO_SPRING}
-      data-node-id="505:177"
     >
       <motion.div
-        className="absolute inset-x-0 top-0 h-[54%] w-full"
+        className="absolute top-0 right-0"
         initial={false}
-        animate={leaving ? { y: "-108%" } : { y: 0 }}
+        animate={leaving ? { x: "100%", opacity: 1 } : { x: 0, opacity: 1 }}
         transition={HUB_INTRO_SPRING}
       >
         <Image
-          src={HUB_HAND_KAMANCHA_SRC}
+          src={staticAssetUrl("/assets/brand/hero/hero-right.webp")}
           alt=""
-          width={820}
-          height={1024}
+          width={HERO_SIDE_W}
+          height={HERO_SIDE_H}
           priority
-          className="h-full w-full object-cover object-top"
-          data-node-id="505:601"
+          unoptimized
+          className="h-auto w-[min(88vw,708px)] max-w-none object-contain object-right-top"
         />
       </motion.div>
       <motion.div
-        className="absolute inset-x-0 bottom-0 h-[58%] w-full"
+        className="absolute bottom-0 left-0"
         initial={false}
-        animate={leaving ? { y: "108%" } : { y: 0 }}
+        animate={leaving ? { x: "-100%", opacity: 1 } : { x: 0, opacity: 1 }}
         transition={HUB_INTRO_SPRING}
       >
         <Image
-          src={HUB_HAND_BOW_SRC}
+          src={staticAssetUrl("/assets/brand/hero/hero-left.webp")}
           alt=""
-          width={679}
-          height={848}
+          width={HERO_SIDE_W}
+          height={HERO_SIDE_H}
           priority
-          className="h-full w-full object-cover object-left-bottom"
-          data-node-id="505:172"
+          unoptimized
+          className="h-auto w-[min(88vw,663px)] max-w-none object-contain object-left-bottom"
         />
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
