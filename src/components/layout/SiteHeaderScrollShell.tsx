@@ -147,7 +147,7 @@ export function SiteHeaderScrollShell({
 
   return (
     <div
-      className={`site-header relative sticky top-0 z-[80] shrink-0 bg-transparent pt-6 pb-2 xl:pt-8 xl:pb-2.5 ${shown ? "" : "pointer-events-none"} ${clipNav ? "overflow-hidden" : ""}`}
+      className={`site-header relative sticky top-0 z-[80] shrink-0 bg-transparent pt-6 pb-2 xl:pt-6 xl:pb-2.5 ${shown ? "" : "pointer-events-none"} ${clipNav ? "overflow-hidden" : ""}`}
       data-site-header
       data-scrolled={scrolled ? "true" : "false"}
       data-hub-header={shown ? "shown" : "hidden"}

@@ -25,8 +25,8 @@
   --accent-foreground: #f9fafb;
   --brand-forest: #265127;
   --radius: 15px;
-  /* SiteHeader xl+: pt-8 + min-h-[65px] + pb-2.5 */
-  --storefront-header-offset: calc(2rem + 65px + 0.625rem);
+  /* SiteHeader xl+: pt-6 + min-h-[65px] + pb-2.5 */
+  --storefront-header-offset: calc(1.5rem + 65px + 0.625rem);
   --profile-sticky-gap: 1.75rem;
   /* Mobile bottom nav (Figma 181:727) + home-like gap above the bar */
   --mobile-bottom-nav-height: 63px;
