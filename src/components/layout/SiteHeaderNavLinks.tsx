@@ -28,7 +28,7 @@ function isNavItemActive(
 
 function navLinkClassName(active: boolean): string {
   const base =
-    "font-big-fat-boii whitespace-nowrap text-base leading-6 text-white transition-opacity duration-200";
+    "inline-flex h-12 items-center font-big-fat-boii whitespace-nowrap text-base leading-none text-white transition-opacity duration-200";
   return active ? `${base} opacity-100` : `${base} opacity-70 hover:opacity-100`;
 }
 
@@ -39,7 +39,7 @@ export function SiteHeaderNavLinks({ locale, items }: SiteHeaderNavLinksProps) {
   const pathname = usePathname() ?? "";
 
   return (
-    <nav aria-label="Primary" className="flex items-center gap-6">
+    <nav aria-label="Primary" className="flex h-12 items-center gap-6">
       {items.map((item) => {
         const active = isNavItemActive(pathname, item.href, locale);
         return (

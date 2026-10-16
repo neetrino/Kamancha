@@ -48,12 +48,12 @@ export function HubBannerGrid({
           label={labels.restaurants}
           photoSrc={staticAssetUrl(`${HUB}/street.webp`, sameOrigin)}
           logoSrc={staticAssetUrl(`${HUB}/kamancha-script.svg`, sameOrigin)}
-          logoWidth={222}
-          logoHeight={118}
+          logoWidth={248}
+          logoHeight={132}
           iconSrc={staticAssetUrl(`${HUB}/icon-location.svg`, sameOrigin)}
           photoNodeId="704:4049"
           photoClassName="object-cover object-[center_30%]"
-          logoClassName="top-6 left-[23px] h-[118px] w-auto"
+          logoClassName="top-6 left-[23px] h-[132px] w-auto"
         />
       </HubStaggerItem>
       <HubStaggerItem
@@ -68,12 +68,12 @@ export function HubBannerGrid({
           label={labels.delivery}
           photoSrc={staticAssetUrl(`${HUB}/khorovats.webp`, sameOrigin)}
           logoSrc={staticAssetUrl(`${HUB}/factory-badge.webp`, sameOrigin)}
-          logoWidth={218}
-          logoHeight={86}
+          logoWidth={244}
+          logoHeight={96}
           iconSrc={staticAssetUrl(`${HUB}/icon-truck.svg`, sameOrigin)}
           photoNodeId="704:4056"
           photoClassName="object-cover"
-          logoClassName="top-7 left-[40px] h-[86px] w-auto"
+          logoClassName="top-7 left-[40px] h-[96px] w-auto"
         />
       </HubStaggerItem>
       <HubStaggerItem

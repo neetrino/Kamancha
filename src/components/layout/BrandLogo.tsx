@@ -45,7 +45,7 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
   const logoClassName =
     className ??
     (factoryMark
-      ? "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[52px] xl:w-[129px]"
+      ? "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[72px] xl:w-auto"
       : "relative inline-flex h-[52px] w-[110px] shrink-0 items-center xl:h-[65px] xl:w-[136px]");
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>): void {
@@ -74,7 +74,11 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
         height={factoryMark ? 82 : 65}
         priority
         unoptimized
-        className="h-full w-full object-contain object-left"
+        className={
+          factoryMark
+            ? "h-full w-auto max-w-none object-contain object-left"
+            : "h-full w-full object-contain object-left"
+        }
       />
     </AppLink>
   );
