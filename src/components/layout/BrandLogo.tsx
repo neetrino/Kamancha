@@ -24,10 +24,10 @@ function isHomePath(pathname: string, locale: Locale): boolean {
  */
 export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const logoSrc = staticAssetUrl("/assets/brand/kamancha-factory-badge.webp");
+  const logoSrc = staticAssetUrl("/assets/brand/hub/factory-badge.webp");
   const logoClassName =
     className ??
-    "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[72px] xl:w-auto";
+    "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[60px] xl:w-auto";
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>): void {
     if (!isHomePath(pathname, locale)) {
@@ -51,8 +51,8 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
       <Image
         src={logoSrc}
         alt=""
-        width={203}
-        height={82}
+        width={702}
+        height={276}
         priority
         unoptimized
         className="h-full w-auto max-w-none object-contain object-left"

@@ -48,13 +48,15 @@ export function HubBannerGrid({
           href={`/${locale}/restaurants`}
           label={labels.restaurants}
           photoSrc={staticAssetUrl(`${HUB}/street.webp`)}
-          logoSrc={staticAssetUrl(`${HUB}/kamancha-script.svg`)}
-          logoWidth={248}
-          logoHeight={132}
+          logoSrc={staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`, {
+            sameOrigin: true,
+          })}
+          logoWidth={339}
+          logoHeight={181}
           iconSrc={staticAssetUrl(`${HUB}/icon-location.svg`)}
           photoNodeId="704:4049"
           photoClassName="absolute top-[-48.5%] left-1/2 h-[244.4%] w-[calc(100%+4px)] max-w-none -translate-x-1/2 object-cover xl:inset-0 xl:top-0 xl:left-0 xl:h-full xl:w-full xl:translate-x-0 xl:object-[center_30%]"
-          logoClassName="top-[6px] left-[4px] h-[87px] w-[167px] xl:top-6 xl:left-[23px] xl:h-[142px] xl:w-auto"
+          logoClassName="top-[8px] left-[6px] h-[87px] w-auto xl:top-[26px] xl:left-[25px] xl:h-[142px] xl:w-auto"
         />
       </HubStaggerItem>
       <HubStaggerItem
