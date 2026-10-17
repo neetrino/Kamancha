@@ -6,7 +6,10 @@ import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 
 import { isHubHomePath, isReturningToHub } from "@/features/home/hub-experience-path";
-import { writeHubIntroState } from "@/features/home/hub-intro-document";
+import {
+  readHubIntroState,
+  writeHubIntroState,
+} from "@/features/home/hub-intro-document";
 import {
   captureHubReturnSkipArms,
   isPendingDeliveryNavbarDrop,
@@ -15,7 +18,9 @@ import {
 import {
   HUB_INTRO_DONE_MS,
   HUB_INTRO_HOLD_MS,
+  HUB_INTRO_NAV_LEAD_MS,
   HUB_INTRO_SPRING,
+  HUB_MOBILE_NAV_QUERY,
 } from "@/features/home/hub-intro-timing";
 import { HubBannerGrid } from "@/features/home/ui/HubBannerGrid";
 import type { Locale } from "@/lib/i18n/config";
@@ -79,15 +84,30 @@ export function HubHandsIntro({ locale, labels }: HubHandsIntroProps) {
       return;
     }
 
+    const introMs = HUB_INTRO_HOLD_MS + HUB_INTRO_DONE_MS;
     const leaveTimer = window.setTimeout(() => {
       scheduleStateUpdate(setPhase, "leave");
     }, HUB_INTRO_HOLD_MS);
+    const navLead = window.matchMedia(HUB_MOBILE_NAV_QUERY).matches
+      ? HUB_INTRO_NAV_LEAD_MS
+      : 0;
+    const navTimer =
+      navLead > 0
+        ? window.setTimeout(() => {
+            if (readHubIntroState() !== "done") {
+              writeHubIntroState("nav");
+            }
+          }, introMs - navLead)
+        : null;
     const doneTimer = window.setTimeout(() => {
       scheduleStateUpdate(setPhase, "done");
-    }, HUB_INTRO_HOLD_MS + HUB_INTRO_DONE_MS);
+    }, introMs);
 
     return () => {
       window.clearTimeout(leaveTimer);
+      if (navTimer !== null) {
+        window.clearTimeout(navTimer);
+      }
       window.clearTimeout(doneTimer);
     };
   }, [reduceMotion, skipArms]);

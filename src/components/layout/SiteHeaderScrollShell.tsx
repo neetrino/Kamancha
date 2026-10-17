@@ -19,6 +19,7 @@ import {
 } from "@/features/home/storefront-path-memory";
 import {
   HUB_INTRO_STATE_ATTR,
+  isHubNavbarRevealState,
   readHubIntroState,
 } from "@/features/home/hub-intro-document";
 import { HUB_INTRO_SPRING } from "@/features/home/hub-intro-timing";
@@ -78,9 +79,9 @@ function useHubHeaderReveal(locale: Locale): {
     }
 
     function applyIntroState(): void {
-      const done = readHubIntroState() === "done";
+      const ready = isHubNavbarRevealState(readHubIntroState());
       scheduleStateUpdate(setReveal, (prev) =>
-        prev.shown === done ? prev : { ...prev, shown: done },
+        prev.shown === ready ? prev : { ...prev, shown: ready },
       );
     }
 

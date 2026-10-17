@@ -899,7 +899,9 @@ body {
 }
 
 html[data-hub-intro="done"] .storefront-shell:has(.hub-first-page) .site-header,
-html[data-hub-intro="done"] .storefront-shell:has(.home-mobile-page) .site-header {
+html[data-hub-intro="nav"] .storefront-shell:has(.hub-first-page) .site-header,
+html[data-hub-intro="done"] .storefront-shell:has(.home-mobile-page) .site-header,
+html[data-hub-intro="nav"] .storefront-shell:has(.home-mobile-page) .site-header {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
