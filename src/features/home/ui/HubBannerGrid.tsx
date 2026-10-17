@@ -48,9 +48,7 @@ export function HubBannerGrid({
           href={`/${locale}/restaurants`}
           label={labels.restaurants}
           photoSrc={staticAssetUrl(`${HUB}/street.webp`)}
-          logoSrc={staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`, {
-            sameOrigin: true,
-          })}
+          logoSrc={staticAssetUrl(`${HUB}/kamancha-script-hub.svg`)}
           logoWidth={339}
           logoHeight={181}
           iconSrc={staticAssetUrl(`${HUB}/icon-location.svg`)}
