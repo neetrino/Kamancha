@@ -907,19 +907,19 @@ html[data-hub-intro="done"] .storefront-shell:has(.home-mobile-page) .site-heade
 
 @media (max-width: 1279px) {
   .site-header [data-brand-logo] {
-    height: 79px;
-    width: 164px;
+    height: 64px;
+    width: 148px;
   }
 
   .site-header [data-brand-logo][data-node-id="704:4057"] {
-    height: 76px;
-    width: 200px;
+    height: 64px;
+    width: 168px;
     overflow: visible;
-    transform: translate(-10px, -12px);
+    transform: translate(10px, -8px);
   }
 
   .site-header [data-brand-logo][data-node-id="704:4057"] img {
-    transform: scale(1.14);
+    transform: none;
     transform-origin: left center;
   }
 }
@@ -930,14 +930,14 @@ html[data-hub-intro="done"] .storefront-shell:has(.home-mobile-page) .site-heade
   }
 
   .site-header [data-brand-logo][data-node-id="704:4057"] {
-    height: 72px;
+    height: 60px;
     width: auto;
     transform: translateX(-5px);
   }
 
   .site-header [data-brand-logo][data-node-id="704:4057"] img {
     width: auto;
-    height: 72px;
+    height: 60px;
   }
 }
 
