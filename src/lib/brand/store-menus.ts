@@ -15,15 +15,15 @@ function menuPdfUrl(path: string, version: string): string {
  * Locale-specific Saryan food menu PDF (R2 when the CDN base is set).
  */
 export function saryanMenuUrl(locale: Locale): string {
-  return menuPdfUrl(SARYAN_MENU_PATH[locale], "3");
+  return menuPdfUrl(SARYAN_MENU_PATH[locale], "4");
 }
 
 /** Saryan bar menu PDF. */
 export function saryanBarMenuUrl(): string {
-  return menuPdfUrl("/assets/menus/saryan-bar-menu.pdf", "2");
+  return menuPdfUrl("/assets/menus/saryan-bar-menu.pdf", "3");
 }
 
 /** Saryan wine menu PDF. */
 export function saryanWineMenuUrl(): string {
-  return menuPdfUrl("/assets/menus/saryan-wine-menu.pdf", "2");
+  return menuPdfUrl("/assets/menus/saryan-wine-menu.pdf", "3");
 }
