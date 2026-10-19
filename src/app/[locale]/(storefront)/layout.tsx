@@ -1,15 +1,6 @@
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
-import {
-  ComingSoonScreen,
-  isStorefrontAuthPath,
-} from "@/components/layout/ComingSoonScreen";
-import { ComingSoonUnlock } from "@/components/layout/ComingSoonUnlock";
-import {
-  isStorefrontPreviewCookie,
-  STOREFRONT_PREVIEW_COOKIE_NAME,
-} from "@/components/layout/coming-soon-preview";
 import { DisableStorefrontImageCapture } from "@/components/layout/DisableStorefrontImageCapture";
 import { MobileBottomNavIsland } from "@/components/layout/MobileBottomNavIsland";
 import { StorefrontExperienceChrome } from "@/components/layout/StorefrontExperienceChrome";
@@ -26,7 +17,6 @@ import { PromoPopupIsland } from "@/features/popups/ui/PromoPopupIsland";
 import { CartProductLinesHydrator } from "@/features/cart/ui/CartProductLinesHydrator";
 import { ProductCardCartCopyProvider } from "@/features/products/ui/product-card-cart-copy";
 import { StorefrontAlertHost } from "@/features/storefront-chrome/StorefrontAlertHost";
-import { getCurrentUser } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import {
@@ -51,21 +41,7 @@ export default async function StorefrontLayout({
 
   const locale: Locale = rawLocale;
   const dictionary = getDictionary(locale);
-  const pathname = (await headers()).get("x-pathname") ?? "";
-  const user = await getCurrentUser();
   const cookieStore = await cookies();
-  const previewUnlocked = isStorefrontPreviewCookie(
-    cookieStore.get(STOREFRONT_PREVIEW_COOKIE_NAME)?.value,
-  );
-
-  if (!user && !isStorefrontAuthPath(pathname) && !previewUnlocked) {
-    return (
-      <>
-        <ComingSoonScreen />
-        <ComingSoonUnlock />
-      </>
-    );
-  }
 
   const currency = parseCurrencyCookie(
     cookieStore.get(CURRENCY_COOKIE_NAME)?.value,

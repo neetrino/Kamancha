@@ -7,6 +7,22 @@ export const CHECKOUT_PAYMENT_METHODS = [
 
 export type CheckoutPaymentMethod = (typeof CHECKOUT_PAYMENT_METHODS)[number];
 
+/**
+ * Temporarily hide bank/wallet methods until acquiring is live.
+ * Keep ids in `CHECKOUT_PAYMENT_METHODS` so they can be shown again.
+ */
+export const CHECKOUT_HIDDEN_PAYMENT_METHODS: readonly CheckoutPaymentMethod[] =
+  ["idram", "arca"];
+
+export function isCheckoutPaymentMethodOffered(
+  method: string,
+): method is CheckoutPaymentMethod {
+  return (
+    isCheckoutPaymentMethod(method) &&
+    !CHECKOUT_HIDDEN_PAYMENT_METHODS.includes(method)
+  );
+}
+
 /** Card/wallet providers used for split group-order participant pay. */
 export type CheckoutOnlineProvider = Extract<
   CheckoutPaymentMethod,

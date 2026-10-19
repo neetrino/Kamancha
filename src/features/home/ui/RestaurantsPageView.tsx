@@ -6,6 +6,7 @@ import { useState } from "react";
 import { AppLink } from "@/components/ui/AppLink";
 import { HubStaggerItem } from "@/features/home/ui/HubStaggerItem";
 import { RestaurantVenueCard } from "@/features/home/ui/RestaurantVenueCard";
+import { SaryanMenuDialog } from "@/features/home/ui/SaryanMenuDialog";
 import type { Locale } from "@/lib/i18n/config";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import {
@@ -20,6 +21,11 @@ type RestaurantsPageViewProps = {
     back: string;
     tumanyan: string;
     saryan: string;
+    saryanMenuTitle: string;
+    saryanFoodMenu: string;
+    saryanBarMenu: string;
+    saryanWineMenu: string;
+    saryanMenuClose: string;
     blog: string;
   };
 };
@@ -29,6 +35,7 @@ type RestaurantsPageViewProps = {
  */
 export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps) {
   const [reveal, setReveal] = useState(false);
+  const [saryanMenuOpen, setSaryanMenuOpen] = useState(false);
 
   useDeferredEffect(() => {
     scheduleStateUpdate(setReveal, true);
@@ -69,6 +76,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
         >
           <RestaurantVenueCard
             title={labels.tumanyan}
+            href={`${staticAssetUrl("/assets/menus/tumanyan-menu.pdf")}?v=3`}
             titleClassName="top-[calc(50%+63px)] right-[21px] xl:top-[calc(50%+106.5px)] xl:right-[43px] xl:text-[54px]"
             className="xl:h-[338px]"
             photoSrc={staticAssetUrl(`${HUB}/venue-tumanyan.webp`)}
@@ -76,11 +84,11 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             photoHeight={463}
             photoClassName="absolute top-[-69px] left-1/2 h-[463px] min-w-full w-[413px] -translate-x-1/2 object-cover xl:top-[-103px] xl:h-[713px] xl:w-[636px]"
             photoNodeId="704:4023"
-            logoSrc={staticAssetUrl(`${HUB}/kamancha-script-venue.svg`)}
+            logoSrc={`${staticAssetUrl(`${HUB}/kamancha-script-venue.svg`)}?v=2`}
             logoWidth={210}
             logoHeight={113}
             logoClassName="top-[10px] left-5 h-[113px] w-[210px]"
-            logoXlSrc={staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`)}
+            logoXlSrc={`${staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`)}?v=2`}
             logoXlWidth={280}
             logoXlHeight={150}
             logoXlClassName="top-[18px] left-[37px] h-[150px] w-[280px]"
@@ -94,6 +102,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
         >
           <RestaurantVenueCard
             title={labels.saryan}
+            onOpen={() => setSaryanMenuOpen(true)}
             titleClassName="top-[calc(50%+67px)] right-[41px] xl:top-[calc(50%+114.5px)] xl:right-[38px] xl:text-[54px]"
             className="xl:h-[338px]"
             photoSrc={staticAssetUrl(`${HUB}/venue-saryan.webp`)}
@@ -125,6 +134,16 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
           />
         </HubStaggerItem>
       </div>
+      <SaryanMenuDialog
+        open={saryanMenuOpen}
+        locale={locale}
+        title={labels.saryanMenuTitle}
+        foodLabel={labels.saryanFoodMenu}
+        barLabel={labels.saryanBarMenu}
+        wineLabel={labels.saryanWineMenu}
+        closeLabel={labels.saryanMenuClose}
+        onClose={() => setSaryanMenuOpen(false)}
+      />
     </section>
   );
 }

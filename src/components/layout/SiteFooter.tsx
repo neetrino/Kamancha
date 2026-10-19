@@ -77,7 +77,7 @@ function FooterColumn({
 
 const COPYRIGHT_CREATED_BY = "Created by";
 const COPYRIGHT_COMPANY_SHORT = "Neetrino";
-const COPYRIGHT_COMPANY_HREF = "https://neetrino.com";
+const COPYRIGHT_COMPANY_HREF = "https://neetrino.com/?utm_source=kamanchayerevan.am";
 
 /** Big Fat Boii maps © and | but those glyphs have empty outlines. */
 function CopyrightSymbol() {

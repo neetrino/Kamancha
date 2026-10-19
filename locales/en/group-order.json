@@ -118,6 +118,7 @@
   "payBackToGroup": "Back to group order",
   "payAlreadyPaidTitle": "Already paid",
   "payAlreadyPaidHint": "Your share is confirmed. You can return to the group order.",
+  "payOnlineUnavailable": "Card and Idram payments are temporarily unavailable.",
   "confirm": {
     "deleteTitle": "Delete",
     "confirmLabel": "Delete",

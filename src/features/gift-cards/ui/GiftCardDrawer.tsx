@@ -10,6 +10,7 @@ import {
   ADMIN_INPUT,
   ADMIN_LABEL,
 } from "@/features/admin/ui/admin-form-classes";
+import { isCheckoutPaymentMethodOffered } from "@/features/checkout/domain/payment-methods";
 import {
   CheckoutPaymentMethodOption,
   type CheckoutPaymentOption,
@@ -60,20 +61,21 @@ export function GiftCardDrawer({
   } | null>(null);
 
   const paymentOptions = useMemo<CheckoutPaymentOption[]>(
-    () => [
-      {
-        id: "cash_on_delivery",
-        name: copy.payment.cashOnDelivery,
-        shortName: copy.payment.cashShort,
-        description: copy.payment.cashOnDeliveryDescription,
-      },
-      {
-        id: "arca",
-        name: copy.payment.card,
-        shortName: copy.payment.card,
-        description: copy.payment.cardDescription,
-      },
-    ],
+    () =>
+      [
+        {
+          id: "cash_on_delivery" as const,
+          name: copy.payment.cashOnDelivery,
+          shortName: copy.payment.cashShort,
+          description: copy.payment.cashOnDeliveryDescription,
+        },
+        {
+          id: "arca" as const,
+          name: copy.payment.card,
+          shortName: copy.payment.card,
+          description: copy.payment.cardDescription,
+        },
+      ].filter((option) => isCheckoutPaymentMethodOffered(option.id)),
     [copy.payment],
   );
 
