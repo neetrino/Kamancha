@@ -34,7 +34,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
         founder={copy.ourStory.founder}
         pidehAlt={copy.ourStory.pidehAlt}
       />
-      <div className="mt-4 px-4 sm:px-6 xl:hidden">
+      <div className="mt-10 px-4 sm:px-6 xl:hidden">
         <FooterContactSocial
           instagramHref={social.instagram}
           facebookHref={social.facebook}

@@ -62,7 +62,7 @@ export function HomeOurStory({
   return (
     <section
       data-node-id="744:1043"
-      className="relative z-[1] overflow-visible pt-14 pb-6 sm:pt-16 sm:pb-8 md:pt-20 md:pb-8"
+      className="relative z-[1] hidden overflow-visible pt-14 pb-6 sm:pt-16 sm:pb-8 md:pt-20 md:pb-8 xl:block"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible">
         <div
