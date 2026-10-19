@@ -26,6 +26,9 @@ temp/
 # Local stub product uploads (until R2)
 public/uploads/
 
+# Large venue menus — served from R2 (`pnpm r2:sync-static-assets`)
+public/assets/menus/*.pdf
+
 # IDE (optional, uncomment if needed)
 # .idea/
 # .vscode/

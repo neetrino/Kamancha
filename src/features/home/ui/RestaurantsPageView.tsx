@@ -69,6 +69,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
         >
           <RestaurantVenueCard
             title={labels.tumanyan}
+            href={`${staticAssetUrl("/assets/menus/tumanyan-menu.pdf", { sameOrigin: true })}?v=3`}
             titleClassName="top-[calc(50%+63px)] right-[21px] xl:top-[calc(50%+106.5px)] xl:right-[43px] xl:text-[54px]"
             className="xl:h-[338px]"
             photoSrc={staticAssetUrl(`${HUB}/venue-tumanyan.webp`)}

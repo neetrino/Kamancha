@@ -2,6 +2,7 @@ import Image from "next/image";
 
 type RestaurantVenueCardProps = {
   title: string;
+  href?: string;
   titleClassName?: string;
   className?: string;
   photoSrc: string;
@@ -24,6 +25,7 @@ type RestaurantVenueCardProps = {
  */
 export function RestaurantVenueCard({
   title,
+  href,
   titleClassName = "top-[180px] right-[21px]",
   className = "",
   photoSrc,
@@ -40,7 +42,7 @@ export function RestaurantVenueCard({
   logoXlHeight,
   logoXlClassName,
 }: RestaurantVenueCardProps) {
-  return (
+  const card = (
     <article
       className={`relative h-[234px] w-full overflow-hidden rounded-[20px] border-2 border-white bg-brand-forest ${className}`}
     >
@@ -78,5 +80,26 @@ export function RestaurantVenueCard({
         {title}
       </h2>
     </article>
+  );
+
+  if (!href) {
+    return card;
+  }
+
+  const openInNewTab =
+    href.startsWith("http://") ||
+    href.startsWith("https://") ||
+    href.toLowerCase().includes(".pdf");
+  return (
+    <a
+      href={href}
+      className="block cursor-pointer"
+      aria-label={title}
+      {...(openInNewTab
+        ? { target: "_blank", rel: "noopener noreferrer" }
+        : {})}
+    >
+      {card}
+    </a>
   );
 }

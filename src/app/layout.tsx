@@ -96,10 +96,14 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   icons: {
-    icon: {
-      url: staticAssetUrl("/assets/brand/favicon.svg"),
-      type: "image/svg+xml",
-    },
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      {
+        url: staticAssetUrl("/assets/brand/favicon.svg"),
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "/favicon.ico",
     apple: staticAssetUrl("/assets/brand/apple-icon.png"),
   },
   openGraph: {
