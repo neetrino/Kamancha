@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { CHECKOUT_HIDDEN_PAYMENT_METHODS } from "@/features/checkout/domain/payment-methods";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
 /** Footer payment marks, slightly under the Mobee footer logo heights. */

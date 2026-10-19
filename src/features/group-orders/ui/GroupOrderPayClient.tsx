@@ -5,7 +5,10 @@ import { useMemo, useState, useTransition } from "react";
 
 import { AppLink } from "@/components/ui/AppLink";
 import { KamanchaPillButton } from "@/components/ui/KamanchaPillButton";
-import type { CheckoutOnlineProvider } from "@/features/checkout/domain/payment-methods";
+import {
+  isCheckoutPaymentMethodOffered,
+  type CheckoutOnlineProvider,
+} from "@/features/checkout/domain/payment-methods";
 import {
   CheckoutPaymentMethodOption,
   type CheckoutPaymentOption,
@@ -55,22 +58,43 @@ export function GroupOrderPayClient({
   const backHref = `/${locale}/group-orders/${inviteToken}`;
 
   const paymentOptions = useMemo<CheckoutPaymentOption[]>(
-    () => [
-      {
-        id: "arca",
-        name: checkoutPaymentLabels.card,
-        shortName: checkoutPaymentLabels.card,
-        description: checkoutPaymentLabels.cardDescription,
-      },
-      {
-        id: "idram",
-        name: checkoutPaymentLabels.idram,
-        shortName: checkoutPaymentLabels.idram,
-        description: checkoutPaymentLabels.idramDescription,
-      },
-    ],
+    () =>
+      [
+        {
+          id: "arca" as const,
+          name: checkoutPaymentLabels.card,
+          shortName: checkoutPaymentLabels.card,
+          description: checkoutPaymentLabels.cardDescription,
+        },
+        {
+          id: "idram" as const,
+          name: checkoutPaymentLabels.idram,
+          shortName: checkoutPaymentLabels.idram,
+          description: checkoutPaymentLabels.idramDescription,
+        },
+      ].filter((option) => isCheckoutPaymentMethodOffered(option.id)),
     [checkoutPaymentLabels],
   );
+
+  if (paymentOptions.length === 0) {
+    return (
+      <div className="group-order-page mx-auto max-w-lg px-0 py-8">
+        <div className="liquid-glass isolate overflow-hidden rounded-3xl p-6 text-center sm:p-8">
+          <h1 className={PAGE_TITLE}>{labels.payTitle}</h1>
+          <p className="mt-3 text-sm leading-relaxed text-white/70">
+            {labels.payOnlineUnavailable}
+          </p>
+          <div className="mt-6 flex justify-center">
+            <KamanchaPillButton
+              href={backHref}
+              label={labels.payBackToGroup}
+              className={PILL_FULL}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (alreadyPaid || amount <= 0) {
     return (

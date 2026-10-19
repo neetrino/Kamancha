@@ -1,6 +1,9 @@
 import { z } from "zod";
 
-import { CHECKOUT_PAYMENT_METHODS } from "@/features/checkout/domain/payment-methods";
+import {
+  CHECKOUT_PAYMENT_METHODS,
+  isCheckoutPaymentMethodOffered,
+} from "@/features/checkout/domain/payment-methods";
 
 export const checkoutSchema = z
   .object({
@@ -9,7 +12,9 @@ export const checkoutSchema = z
     contactEmail: z.string().trim().email().max(254),
     contactPhone: z.string().trim().min(5).max(40),
     shippingMethod: z.literal("delivery"),
-    paymentMethod: z.enum(CHECKOUT_PAYMENT_METHODS),
+    paymentMethod: z
+      .enum(CHECKOUT_PAYMENT_METHODS)
+      .refine(isCheckoutPaymentMethodOffered),
     city: z.string().trim().max(80).optional(),
     line1: z.string().trim().max(300).optional(),
     line2: z.string().trim().max(160).optional(),

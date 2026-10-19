@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { isCheckoutPaymentMethodOffered } from "@/features/checkout/domain/payment-methods";
 import { GROUP_ORDER_SPEND_LIMIT_MAX } from "@/features/group-orders/domain/spend-limit";
 import {
   GROUP_ORDER_PAYMENT_MODES,
@@ -106,7 +107,9 @@ export const adminMarkParticipantPaidSchema = z.object({
 
 export const completeParticipantCardPaymentSchema = z.object({
   inviteToken: z.string().uuid(),
-  provider: z.enum(["idram", "arca"]),
+  provider: z
+    .enum(["idram", "arca"])
+    .refine(isCheckoutPaymentMethodOffered),
 });
 
 export const adminRefundParticipantSchema = z.object({
