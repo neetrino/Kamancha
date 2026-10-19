@@ -28,13 +28,11 @@ export default async function AboutPage({ params }: AboutPageProps) {
       <AboutHeroSection copy={copy} />
       <AboutStorySection copy={copy} />
       <HomeOurStory
-        title={copy.ourStory.title}
-        intro={copy.ourStory.intro}
-        introSecond={copy.ourStory.introSecond}
         tumanyan={copy.ourStory.tumanyan}
         saryan={copy.ourStory.saryan}
         delivery={copy.ourStory.delivery}
         founder={copy.ourStory.founder}
+        pidehAlt={copy.ourStory.pidehAlt}
       />
       <div className="mt-10 px-4 sm:px-6 xl:hidden">
         <FooterContactSocial
