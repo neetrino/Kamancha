@@ -3,6 +3,10 @@
 import Image from 'next/image';
 
 import {
+  SITE_HEADER_INNER,
+  STOREFRONT_TABLET_INSET_X,
+} from '@/components/layout/site-header-classes';
+import {
   HomeReveal,
   HomeStagger,
   HomeStaggerItem,
@@ -58,27 +62,25 @@ export function HomeOurStory({
   return (
     <section
       data-node-id="744:1043"
-      className="relative z-[1] overflow-visible pt-14 pb-16 sm:pt-16 sm:pb-20 md:pt-20 md:pb-24"
+      className="relative z-[1] overflow-visible pt-14 pb-6 sm:pt-16 sm:pb-8 md:pt-20 md:pb-8"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible">
-        <div className="relative z-[1] w-full px-[max(1.25rem,5vw)] [container-type:inline-size] lg:px-[max(5rem,8vw)]">
-          <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1.95fr)_minmax(280px,390px)] lg:items-stretch lg:gap-[22px]">
+        <div
+          className={`${SITE_HEADER_INNER} ${STOREFRONT_TABLET_INSET_X} relative z-[1] [container-type:inline-size]`}
+        >
+          <div className="mx-auto grid w-full max-w-[1253px] grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,841px)_minmax(0,390px)] lg:items-stretch lg:gap-[22px]">
             <HomeStagger className="flex min-w-0 flex-col gap-5 lg:gap-[22px]" stagger={0.08}>
               <HomeStaggerItem>
-                <article
+                <a
                   data-node-id="744:1046"
-                  className="relative grid h-[280px] grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] overflow-hidden rounded-[30px] bg-white"
+                  href={KAMANCHA_BRANCHES.tumanyan.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative grid h-[280px] grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] overflow-hidden rounded-[30px] bg-white transition-opacity hover:opacity-95"
                 >
                   <div className="relative z-[1] flex flex-col justify-center px-7 py-6 sm:px-8">
                     <h3 className="font-big-fat-boii text-[24px] leading-[28px] font-normal text-[#222] uppercase">
-                      <a
-                        href={KAMANCHA_BRANCHES.tumanyan.mapUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="transition-opacity hover:opacity-70"
-                      >
-                        {tumanyan.title}
-                      </a>
+                      {tumanyan.title}
                     </h3>
                     <p className="mt-3 text-[14px] leading-[20px] text-[rgba(38,81,39,0.69)]">
                       {tumanyan.body}
@@ -96,24 +98,20 @@ export function HomeOurStory({
                       className="object-cover object-[center_40%]"
                     />
                   </div>
-                </article>
+                </a>
               </HomeStaggerItem>
 
               <HomeStaggerItem>
-                <article
+                <a
                   data-node-id="744:1050"
-                  className="relative h-[292px] overflow-hidden rounded-[30px] bg-[#a2d39c]"
+                  href={KAMANCHA_BRANCHES.saryan.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative block h-[292px] overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95"
                 >
                   <div className="relative z-[1] flex items-start gap-7 px-8 pt-[18px] sm:gap-8">
                     <h3 className="font-big-fat-boii shrink-0 text-[24px] leading-[28px] font-normal whitespace-nowrap text-[#222] uppercase">
-                      <a
-                        href={KAMANCHA_BRANCHES.saryan.mapUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="transition-opacity hover:opacity-70"
-                      >
-                        {saryan.title}
-                      </a>
+                      {saryan.title}
                     </h3>
                     <p className="max-w-[36rem] text-[14px] leading-[20px] text-[rgba(0,0,0,0.62)]">
                       {saryan.body}
@@ -132,7 +130,7 @@ export function HomeOurStory({
                       className="object-cover object-top"
                     />
                   </div>
-                </article>
+                </a>
               </HomeStaggerItem>
 
               <HomeStaggerItem className="grid grid-cols-1 gap-5 sm:h-[314px] sm:grid-cols-[minmax(0,1fr)_306px] sm:gap-[22px]">

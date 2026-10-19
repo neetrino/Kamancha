@@ -24,7 +24,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const { footer } = dictionary;
 
   return (
-    <div className="-mx-4 -mt-6 pb-8 sm:-mx-6 sm:-mt-8 xl:-mx-8">
+    <div className="about-page -mx-4 -mt-6 pb-2 sm:-mx-6 sm:-mt-8 xl:-mx-8">
       <AboutHeroSection copy={copy} />
       <AboutStorySection copy={copy} />
       <HomeOurStory
@@ -34,7 +34,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
         founder={copy.ourStory.founder}
         pidehAlt={copy.ourStory.pidehAlt}
       />
-      <div className="mt-10 px-4 sm:px-6 xl:hidden">
+      <div className="mt-4 px-4 sm:px-6 xl:hidden">
         <FooterContactSocial
           instagramHref={social.instagram}
           facebookHref={social.facebook}

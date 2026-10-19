@@ -1004,6 +1004,12 @@ html[data-hub-intro="nav"] .storefront-shell:has(.home-mobile-page) .site-header
     padding-bottom: 1.5rem;
   }
 
+  @media (min-width: 1280px) {
+    .storefront-shell:has(.about-page) .storefront-footer {
+      padding-top: 3rem;
+    }
+  }
+
   /* Checkout white cards (e.g. ՄԱՆՐ) on the forest background. */
   .checkout-page .profile-inner-card {
     border-color: rgb(229 231 235);
