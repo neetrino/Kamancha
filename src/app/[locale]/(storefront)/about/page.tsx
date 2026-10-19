@@ -24,7 +24,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
   const { footer } = dictionary;
 
   return (
-    <div className="about-page -mx-4 -mt-6 pb-2 sm:-mx-6 sm:-mt-8 xl:-mx-8">
+    <div className="about-page -mx-4 -mt-6 pb-8 sm:-mx-6 sm:-mt-8 xl:-mx-8 xl:pb-2">
       <AboutHeroSection copy={copy} />
       <AboutStorySection copy={copy} />
       <HomeOurStory

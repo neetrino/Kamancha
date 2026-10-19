@@ -60,23 +60,26 @@ export function HomeOurStory({
   return (
     <section
       data-node-id="744:1043"
-      className="relative z-[1] hidden overflow-visible pt-14 pb-6 sm:pt-16 sm:pb-8 md:pt-20 md:pb-8 xl:block"
+      className="relative z-[1] overflow-visible pt-8 pb-0 sm:pt-12 md:pt-16 xl:pt-14 xl:pb-6"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible">
         <div
           className={`${SITE_HEADER_INNER} ${STOREFRONT_TABLET_INSET_X} relative z-[1] [container-type:inline-size]`}
         >
-          <div className="mx-auto grid w-full max-w-[1253px] grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,841px)_minmax(0,390px)] lg:items-stretch lg:gap-[22px]">
-            <HomeStagger className="flex min-w-0 flex-col gap-5 lg:gap-[22px]" stagger={0.08}>
-              <HomeStaggerItem>
+          <div className="mx-auto w-full max-w-[1253px]">
+            <HomeStagger
+              className="flex flex-col gap-5 min-[744px]:grid min-[744px]:grid-cols-2 min-[744px]:items-stretch xl:grid-cols-[minmax(0,841px)_minmax(0,390px)] xl:items-stretch xl:gap-[22px]"
+              stagger={0.08}
+            >
+              <HomeStaggerItem className="min-[744px]:max-xl:h-full">
                 <a
                   data-node-id="744:1046"
                   href={KAMANCHA_BRANCHES.tumanyan.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative grid h-[280px] grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] overflow-hidden rounded-[30px] bg-white transition-opacity hover:opacity-95"
+                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-white transition-opacity hover:opacity-95 xl:grid xl:h-[280px] xl:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)]"
                 >
-                  <div className="relative z-[1] flex flex-col justify-center px-7 py-6 sm:px-8">
+                  <div className="relative z-[1] order-2 flex flex-col justify-center px-6 py-6 sm:px-8 xl:order-1 xl:px-7">
                     <h3 className="font-big-fat-boii text-[24px] leading-[28px] font-normal text-[#222] uppercase">
                       {tumanyan.title}
                     </h3>
@@ -86,7 +89,7 @@ export function HomeOurStory({
                   </div>
                   <div
                     data-node-id="744:1073"
-                    className="relative h-full min-h-0 overflow-hidden rounded-l-[24px]"
+                    className="relative order-1 h-[200px] overflow-hidden sm:h-[240px] xl:order-2 xl:h-full xl:min-h-0 xl:rounded-l-[24px]"
                   >
                     <Image
                       src={TUMANYAN_PHOTO}
@@ -99,16 +102,16 @@ export function HomeOurStory({
                 </a>
               </HomeStaggerItem>
 
-              <HomeStaggerItem>
+              <HomeStaggerItem className="min-[744px]:max-xl:h-full">
                 <a
                   data-node-id="744:1050"
                   href={KAMANCHA_BRANCHES.saryan.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative block h-[292px] overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95"
+                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95 xl:block xl:h-[292px]"
                 >
-                  <div className="relative z-[1] flex items-start gap-7 px-8 pt-[18px] sm:gap-8">
-                    <h3 className="font-big-fat-boii shrink-0 text-[24px] leading-[28px] font-normal whitespace-nowrap text-[#222] uppercase">
+                  <div className="relative z-[1] flex flex-col gap-3 px-6 pt-6 sm:px-8 xl:flex-row xl:items-start xl:gap-8 xl:px-8 xl:pt-[18px]">
+                    <h3 className="font-big-fat-boii shrink-0 text-[24px] leading-[28px] font-normal text-[#222] uppercase xl:whitespace-nowrap">
                       {saryan.title}
                     </h3>
                     <p className="max-w-[36rem] text-[14px] leading-[20px] text-[rgba(0,0,0,0.62)]">
@@ -117,7 +120,7 @@ export function HomeOurStory({
                   </div>
                   <div
                     data-node-id="744:1053"
-                    className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%]"
+                    className="relative mt-4 h-[160px] min-h-[160px] flex-1 sm:h-[200px] sm:min-h-[200px] min-[744px]:max-xl:h-auto xl:pointer-events-none xl:absolute xl:inset-x-0 xl:bottom-0 xl:mt-0 xl:h-[58%] xl:min-h-0 xl:flex-none"
                   >
                     <Image
                       src={SARYAN_PAINTING}
@@ -131,13 +134,13 @@ export function HomeOurStory({
                 </a>
               </HomeStaggerItem>
 
-              <HomeStaggerItem className="grid grid-cols-1 gap-5 sm:h-[314px] sm:grid-cols-[minmax(0,1fr)_306px] sm:gap-[22px]">
+              <HomeStaggerItem className="max-[743px]:contents flex h-full min-h-0 flex-col gap-5 xl:grid xl:h-[314px] xl:grid-cols-[minmax(0,1fr)_306px] xl:gap-[22px]">
                 <article
                   data-node-id="744:1054"
-                  className="relative min-h-[314px] overflow-hidden rounded-[30px] bg-black sm:min-h-0 sm:h-full"
+                  className="relative min-h-[314px] shrink-0 overflow-hidden rounded-[30px] bg-black xl:h-full xl:min-h-0"
                 >
-                  <div className="relative z-[1] max-w-[58%] pt-[22px] pr-2 pl-[32px]">
-                    <h3 className="flex items-center gap-1 text-[#e5e2e1]">
+                  <div className="relative z-[1] px-6 pt-[22px] xl:pt-[18px] xl:pr-8 xl:pb-0 xl:pl-[35px]">
+                    <h3 className="flex items-center gap-1 text-[#e5e2e1] xl:gap-[9px]">
                       <span className="sr-only">
                         {`${delivery.title}${delivery.titleSuffix ?? ''}`}
                       </span>
@@ -146,39 +149,42 @@ export function HomeOurStory({
                         alt=""
                         width={360}
                         height={120}
-                        className="h-[52px] w-auto max-w-[min(240px,85%)] object-contain object-left"
+                        className="h-[52px] w-auto max-w-[min(240px,85%)] object-contain object-left xl:h-[78px] xl:max-w-[247px]"
                       />
                       {delivery.titleSuffix ? (
-                        <span className="font-big-fat-boii pb-1 text-[18px] leading-none font-normal text-[#e5e2e1]" aria-hidden>
+                        <span className="font-big-fat-boii pb-1 text-[18px] leading-none font-normal text-[#e5e2e1] xl:pb-0 xl:text-[21px] xl:leading-[24px]" aria-hidden>
                           {delivery.titleSuffix}
                         </span>
                       ) : null}
                     </h3>
-                    <p className="mt-3 text-[14px] leading-[20px] text-white/72">
+                    <p className="mt-3 text-[14px] leading-[20px] text-white/72 xl:mt-4 xl:max-w-[447px] xl:leading-[24px]">
                       {delivery.body}
                     </p>
                     <a
                       data-node-id="455:204"
                       href={`tel:${delivery.phone.replace(/\s/g, '')}`}
-                      className="mt-3 inline-flex items-center gap-2 text-[14px] leading-6 text-white"
+                      className="mt-3 inline-flex items-center gap-2 text-[17px] leading-6 text-white xl:mt-4 xl:gap-[9px] xl:text-[18px] xl:leading-[24px]"
                     >
                       <Image
                         src={PHONE_ICON_SRC}
                         alt=""
                         width={20}
                         height={20}
-                        className="size-5"
+                        className="size-5 xl:size-[26px]"
                       />
                       {delivery.phone}
                     </a>
                   </div>
-                  <div className="pointer-events-none absolute right-0 bottom-[4%] h-[82%] w-[46%]">
+                  <div
+                    data-node-id="744:1061"
+                    className="pointer-events-none relative -mt-6 ml-auto h-[280px] w-full overflow-hidden xl:absolute xl:top-[69px] xl:right-auto xl:bottom-auto xl:left-[252px] xl:mt-0 xl:ml-0 xl:h-[236px] xl:w-[266px] xl:rounded-br-[30px] xl:opacity-30"
+                  >
                     <Image
                       src={DELIVERY_SRC}
                       alt=""
-                      fill
-                      sizes="(min-width: 1024px) 22vw, 50vw"
-                      className="object-contain object-[right_bottom]"
+                      width={520}
+                      height={360}
+                      className="ml-auto h-[280px] w-auto max-w-none object-contain object-right xl:absolute xl:top-[-20.94%] xl:left-0 xl:ml-0 xl:h-[143.59%] xl:w-[137.58%] xl:max-w-none xl:object-fill"
                     />
                   </div>
                 </article>
@@ -188,7 +194,7 @@ export function HomeOurStory({
                   href={PIDEH_HREF}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative block h-[314px] w-full overflow-hidden rounded-[30px] bg-[#c47828] transition-opacity hover:opacity-95 sm:h-full sm:w-[306px] sm:justify-self-end"
+                  className="relative order-2 block h-[280px] w-full shrink-0 overflow-hidden rounded-[30px] bg-[#c47828] transition-opacity hover:opacity-95 sm:h-[314px] min-[744px]:max-xl:!h-auto min-[744px]:max-xl:min-h-0 min-[744px]:max-xl:flex-1 xl:order-none xl:h-full xl:w-[306px] xl:shrink xl:flex-none xl:justify-self-end"
                 >
                   <Image
                     src={PIDEH_PHOTO}
@@ -207,21 +213,26 @@ export function HomeOurStory({
                   />
                 </a>
               </HomeStaggerItem>
-            </HomeStagger>
 
-            <HomeReveal delay={0.2} y={40} x={20} amount={0.15} className="w-full lg:h-auto">
+              <HomeReveal
+                delay={0.2}
+                y={40}
+                x={20}
+                amount={0.15}
+                className="order-1 w-full min-[744px]:h-auto min-[744px]:self-start xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:order-none xl:h-auto xl:self-auto"
+              >
               <article
                 data-node-id="744:1062"
-                className="relative h-[520px] overflow-hidden rounded-[30px] bg-[#efe7da] lg:h-full lg:min-h-0"
+                className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] min-[744px]:h-auto xl:block xl:h-full xl:min-h-0"
               >
-                <div className="relative z-[1] px-8 pt-10 pr-6 lg:px-[max(36px,2.86cqw)] lg:pt-[max(45px,3.58cqw)] lg:pr-[max(25px,1.99cqw)]">
+                <div className="relative z-[1] px-6 pt-8 pr-6 pb-2 xl:px-8 xl:pt-10 xl:pb-0 lg:px-[max(36px,2.86cqw)] lg:pt-[max(45px,3.58cqw)] lg:pr-[max(25px,1.99cqw)]">
                   <h3 className={`${cardTitleClass} text-[#222]`}>{founder.title}</h3>
                   <p className="mt-6 max-w-[329px] text-[16px] leading-[26px] text-[rgba(34,34,34,0.81)] lg:mt-[max(29px,2.31cqw)] lg:max-w-[max(329px,82%)] lg:text-[max(16px,1.27cqw)] lg:leading-[max(26px,2.07cqw)]">
                     {founder.body}
                   </p>
                 </div>
                 {/* Figma 744:1062 — cutout sits from ~32% down; platter clips to the card. */}
-                <div className="pointer-events-none absolute top-[32%] left-1/2 h-[69%] w-[118%] -translate-x-1/2">
+                <div className="relative -mt-2 h-[420px] w-full xl:pointer-events-none xl:absolute xl:top-[32%] xl:left-1/2 xl:mt-0 xl:h-[69%] xl:w-[118%] xl:-translate-x-1/2">
                   <Image
                     src={FOUNDER_SRC}
                     alt={founder.title}
@@ -232,6 +243,7 @@ export function HomeOurStory({
                 </div>
               </article>
             </HomeReveal>
+            </HomeStagger>
           </div>
         </div>
       </div>
