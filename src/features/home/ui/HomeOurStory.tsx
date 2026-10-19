@@ -60,14 +60,17 @@ export function HomeOurStory({
   return (
     <section
       data-node-id="744:1043"
-      className="relative z-[1] overflow-visible pt-8 pb-6 sm:pt-12 sm:pb-8 md:pt-16 xl:pt-14"
+      className="relative z-[1] overflow-visible pt-8 pb-0 sm:pt-12 md:pt-16 xl:pt-14 xl:pb-6"
     >
       <div className="relative left-1/2 w-screen max-w-[100vw] -translate-x-1/2 overflow-visible">
         <div
           className={`${SITE_HEADER_INNER} ${STOREFRONT_TABLET_INSET_X} relative z-[1] [container-type:inline-size]`}
         >
-          <div className="mx-auto grid w-full max-w-[1253px] grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,841px)_minmax(0,390px)] xl:items-stretch xl:gap-[22px]">
-            <HomeStagger className="max-xl:contents xl:flex xl:min-w-0 xl:flex-col xl:gap-[22px]" stagger={0.08}>
+          <div className="mx-auto w-full max-w-[1253px]">
+            <HomeStagger
+              className="flex flex-col gap-5 xl:grid xl:grid-cols-[minmax(0,841px)_minmax(0,390px)] xl:items-stretch xl:gap-[22px]"
+              stagger={0.08}
+            >
               <HomeStaggerItem>
                 <a
                   data-node-id="744:1046"
@@ -207,9 +210,14 @@ export function HomeOurStory({
                   />
                 </a>
               </HomeStaggerItem>
-            </HomeStagger>
 
-            <HomeReveal delay={0.2} y={40} x={20} amount={0.15} className="order-1 w-full xl:order-none xl:h-auto">
+              <HomeReveal
+                delay={0.2}
+                y={40}
+                x={20}
+                amount={0.15}
+                className="order-1 w-full xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:order-none xl:h-auto"
+              >
               <article
                 data-node-id="744:1062"
                 className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] xl:block xl:h-full xl:min-h-0"
@@ -232,6 +240,7 @@ export function HomeOurStory({
                 </div>
               </article>
             </HomeReveal>
+            </HomeStagger>
           </div>
         </div>
       </div>
