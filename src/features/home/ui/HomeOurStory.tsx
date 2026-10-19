@@ -139,8 +139,8 @@ export function HomeOurStory({
                   data-node-id="744:1054"
                   className="relative min-h-[314px] overflow-hidden rounded-[30px] bg-black xl:h-full xl:min-h-0"
                 >
-                  <div className="relative z-[1] px-6 pt-[22px] xl:max-w-[58%] xl:pr-2 xl:pl-[32px]">
-                    <h3 className="flex items-center gap-1 text-[#e5e2e1]">
+                  <div className="relative z-[1] px-6 pt-[22px] xl:pt-[18px] xl:pr-8 xl:pb-0 xl:pl-[35px]">
+                    <h3 className="flex items-center gap-1 text-[#e5e2e1] xl:gap-[9px]">
                       <span className="sr-only">
                         {`${delivery.title}${delivery.titleSuffix ?? ''}`}
                       </span>
@@ -149,39 +149,42 @@ export function HomeOurStory({
                         alt=""
                         width={360}
                         height={120}
-                        className="h-[52px] w-auto max-w-[min(240px,85%)] object-contain object-left"
+                        className="h-[52px] w-auto max-w-[min(240px,85%)] object-contain object-left xl:h-[78px] xl:max-w-[247px]"
                       />
                       {delivery.titleSuffix ? (
-                        <span className="font-big-fat-boii pb-1 text-[18px] leading-none font-normal text-[#e5e2e1]" aria-hidden>
+                        <span className="font-big-fat-boii pb-1 text-[18px] leading-none font-normal text-[#e5e2e1] xl:pb-0 xl:text-[21px] xl:leading-[24px]" aria-hidden>
                           {delivery.titleSuffix}
                         </span>
                       ) : null}
                     </h3>
-                    <p className="mt-3 text-[14px] leading-[20px] text-white/72">
+                    <p className="mt-3 text-[14px] leading-[20px] text-white/72 xl:mt-4 xl:max-w-[447px] xl:leading-[24px]">
                       {delivery.body}
                     </p>
                     <a
                       data-node-id="455:204"
                       href={`tel:${delivery.phone.replace(/\s/g, '')}`}
-                      className="mt-3 inline-flex items-center gap-2 text-[14px] leading-6 text-white"
+                      className="mt-3 inline-flex items-center gap-2 text-[17px] leading-6 text-white xl:mt-4 xl:gap-[9px] xl:text-[18px] xl:leading-[24px]"
                     >
                       <Image
                         src={PHONE_ICON_SRC}
                         alt=""
                         width={20}
                         height={20}
-                        className="size-5"
+                        className="size-5 xl:size-[26px]"
                       />
                       {delivery.phone}
                     </a>
                   </div>
-                  <div className="pointer-events-none relative -mt-6 ml-auto h-[280px] w-full xl:absolute xl:right-0 xl:bottom-[4%] xl:mt-0 xl:ml-0 xl:h-[82%] xl:w-[46%]">
+                  <div
+                    data-node-id="744:1061"
+                    className="pointer-events-none relative -mt-6 ml-auto h-[280px] w-full overflow-hidden xl:absolute xl:top-[69px] xl:right-auto xl:bottom-auto xl:left-[252px] xl:mt-0 xl:ml-0 xl:h-[236px] xl:w-[266px] xl:rounded-br-[30px] xl:opacity-30"
+                  >
                     <Image
                       src={DELIVERY_SRC}
                       alt=""
-                      fill
-                      sizes="(min-width: 1024px) 22vw, 50vw"
-                      className="object-contain object-[right_bottom]"
+                      width={520}
+                      height={360}
+                      className="ml-auto h-[280px] w-auto max-w-none object-contain object-right xl:absolute xl:top-[-20.94%] xl:left-0 xl:ml-0 xl:h-[143.59%] xl:w-[137.58%] xl:max-w-none xl:object-fill"
                     />
                   </div>
                 </article>
