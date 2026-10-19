@@ -9,10 +9,7 @@ import {
 } from "@/features/group-orders/application/advance-after-payments";
 import { appendGroupOrderEvent } from "@/features/group-orders/application/money";
 import { isSuccessfulParticipantPayment } from "@/features/group-orders/domain/spend-limit";
-import {
-  isCheckoutPaymentMethodOffered,
-  type CheckoutOnlineProvider,
-} from "@/features/checkout/domain/payment-methods";
+import type { CheckoutOnlineProvider } from "@/features/checkout/domain/payment-methods";
 import { createId } from "@/lib/id";
 
 export type ParticipantPaymentResult =

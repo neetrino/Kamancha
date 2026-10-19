@@ -28,8 +28,6 @@ const PIDEH_HREF = 'https://pideh.am';
 
 const cardTitleClass =
   'font-big-fat-boii text-[21px] leading-[24px] font-normal uppercase lg:text-[max(21px,1.67cqw)] lg:leading-[max(24px,1.91cqw)]';
-const cardBodyClass =
-  'text-[14px] leading-[20px] lg:text-[max(14px,1.11cqw)] lg:leading-[max(20px,1.59cqw)]';
 
 type StoryCard = {
   title: string;

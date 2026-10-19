@@ -135,13 +135,13 @@ export function BuyGiftCardForm({
     () =>
       [
         {
-          id: "cash_on_delivery",
+          id: "cash_on_delivery" as const,
           name: copy.payment.cashOnDelivery,
           shortName: copy.payment.cashShort,
           description: copy.payment.cashOnDeliveryDescription,
         },
         {
-          id: "arca",
+          id: "arca" as const,
           name: copy.payment.card,
           shortName: copy.payment.card,
           description: copy.payment.cardDescription,
