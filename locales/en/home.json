@@ -6,7 +6,12 @@
     "fastFood": "fast food",
     "back": "Back",
     "tumanyan": "Tumanyan 23",
-    "saryan": "Saryan 8"
+    "saryan": "Saryan 8",
+    "saryanMenuTitle": "Choose the Saryan menu",
+    "saryanFoodMenu": "Menu",
+    "saryanBarMenu": "Bar",
+    "saryanWineMenu": "Wine",
+    "saryanMenuClose": "Close"
   },
   "title": "White Shop",
   "subtitle": "Multilingual storefront is live.",

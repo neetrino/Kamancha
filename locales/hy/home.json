@@ -6,7 +6,12 @@
     "fastFood": "fast food",
     "back": "Հետ",
     "tumanyan": "Թումանյան 23",
-    "saryan": "սարյան 8"
+    "saryan": "սարյան 8",
+    "saryanMenuTitle": "Ընտրեք Սարյանի մենյուն",
+    "saryanFoodMenu": "Մենյու",
+    "saryanBarMenu": "Բար",
+    "saryanWineMenu": "Գինի",
+    "saryanMenuClose": "Փակել"
   },
   "title": "White Shop",
   "subtitle": "Բազմալեզու խանութը գործում է։",

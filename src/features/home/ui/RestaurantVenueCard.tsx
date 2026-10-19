@@ -3,6 +3,7 @@ import Image from "next/image";
 type RestaurantVenueCardProps = {
   title: string;
   href?: string;
+  onOpen?: () => void;
   titleClassName?: string;
   className?: string;
   photoSrc: string;
@@ -26,6 +27,7 @@ type RestaurantVenueCardProps = {
 export function RestaurantVenueCard({
   title,
   href,
+  onOpen,
   titleClassName = "top-[180px] right-[21px]",
   className = "",
   photoSrc,
@@ -81,6 +83,19 @@ export function RestaurantVenueCard({
       </h2>
     </article>
   );
+
+  if (onOpen) {
+    return (
+      <button
+        type="button"
+        onClick={onOpen}
+        className="block w-full cursor-pointer text-left"
+        aria-label={title}
+      >
+        {card}
+      </button>
+    );
+  }
 
   if (!href) {
     return card;

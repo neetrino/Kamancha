@@ -6,7 +6,12 @@
     "fastFood": "fast food",
     "back": "Назад",
     "tumanyan": "Туманян 23",
-    "saryan": "сарьян 8"
+    "saryan": "сарьян 8",
+    "saryanMenuTitle": "Выберите меню Сарьяна",
+    "saryanFoodMenu": "Меню",
+    "saryanBarMenu": "Бар",
+    "saryanWineMenu": "Вино",
+    "saryanMenuClose": "Закрыть"
   },
   "title": "White Shop",
   "subtitle": "Многоязычный магазин уже работает.",

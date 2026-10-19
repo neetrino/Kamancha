@@ -6,6 +6,7 @@ import { useState } from "react";
 import { AppLink } from "@/components/ui/AppLink";
 import { HubStaggerItem } from "@/features/home/ui/HubStaggerItem";
 import { RestaurantVenueCard } from "@/features/home/ui/RestaurantVenueCard";
+import { SaryanMenuDialog } from "@/features/home/ui/SaryanMenuDialog";
 import type { Locale } from "@/lib/i18n/config";
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 import {
@@ -20,6 +21,11 @@ type RestaurantsPageViewProps = {
     back: string;
     tumanyan: string;
     saryan: string;
+    saryanMenuTitle: string;
+    saryanFoodMenu: string;
+    saryanBarMenu: string;
+    saryanWineMenu: string;
+    saryanMenuClose: string;
     blog: string;
   };
 };
@@ -29,6 +35,7 @@ type RestaurantsPageViewProps = {
  */
 export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps) {
   const [reveal, setReveal] = useState(false);
+  const [saryanMenuOpen, setSaryanMenuOpen] = useState(false);
 
   useDeferredEffect(() => {
     scheduleStateUpdate(setReveal, true);
@@ -95,6 +102,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
         >
           <RestaurantVenueCard
             title={labels.saryan}
+            onOpen={() => setSaryanMenuOpen(true)}
             titleClassName="top-[calc(50%+67px)] right-[41px] xl:top-[calc(50%+114.5px)] xl:right-[38px] xl:text-[54px]"
             className="xl:h-[338px]"
             photoSrc={staticAssetUrl(`${HUB}/venue-saryan.webp`)}
@@ -126,6 +134,16 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
           />
         </HubStaggerItem>
       </div>
+      <SaryanMenuDialog
+        open={saryanMenuOpen}
+        locale={locale}
+        title={labels.saryanMenuTitle}
+        foodLabel={labels.saryanFoodMenu}
+        barLabel={labels.saryanBarMenu}
+        wineLabel={labels.saryanWineMenu}
+        closeLabel={labels.saryanMenuClose}
+        onClose={() => setSaryanMenuOpen(false)}
+      />
     </section>
   );
 }
