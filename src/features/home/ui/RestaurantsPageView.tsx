@@ -77,11 +77,11 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
             photoHeight={463}
             photoClassName="absolute top-[-69px] left-1/2 h-[463px] min-w-full w-[413px] -translate-x-1/2 object-cover xl:top-[-103px] xl:h-[713px] xl:w-[636px]"
             photoNodeId="704:4023"
-            logoSrc={staticAssetUrl(`${HUB}/kamancha-script-venue.svg`)}
+            logoSrc={`${staticAssetUrl(`${HUB}/kamancha-script-venue.svg`)}?v=2`}
             logoWidth={210}
             logoHeight={113}
             logoClassName="top-[10px] left-5 h-[113px] w-[210px]"
-            logoXlSrc={staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`)}
+            logoXlSrc={`${staticAssetUrl(`${HUB}/kamancha-script-venue-xl.svg`)}?v=2`}
             logoXlWidth={280}
             logoXlHeight={150}
             logoXlClassName="top-[18px] left-[37px] h-[150px] w-[280px]"
