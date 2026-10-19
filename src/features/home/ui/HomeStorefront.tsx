@@ -1,10 +1,8 @@
 import { listStorefrontCategories } from '@/features/categories/application/list-storefront-categories';
 import { HomeCategories } from '@/features/home/ui/HomeCategories';
-import { HomeFamilyDinnerPromo } from '@/features/home/ui/HomeFamilyDinnerPromo';
 import { HomeFeaturedProducts } from '@/features/home/ui/HomeFeaturedProducts';
 import { HomeMobileCategories } from '@/features/home/ui/HomeMobileCategories';
 import { HomeMobileProductSection } from '@/features/home/ui/HomeMobileProductSection';
-import { HomeOurStory } from '@/features/home/ui/HomeOurStory';
 import {
   getDiscountedProducts,
   getFeaturedProducts,
@@ -163,27 +161,6 @@ export async function HomeStorefront({
           discountOffLabel={dictionary.home.discountOff}
           isSignedIn={Boolean(user)}
           products={featuredCards}
-        />
-
-        <HomeFamilyDinnerPromo
-          headlineBefore={dictionary.home.familyDinner.headlineBefore}
-          headlineAccent={dictionary.home.familyDinner.headlineAccent}
-          headlineAfter={dictionary.home.familyDinner.headlineAfter}
-          subtitle={dictionary.home.familyDinner.subtitle}
-          subtitleMuted={dictionary.home.familyDinner.subtitleMuted}
-          priceLabel={dictionary.home.familyDinner.price}
-          ctaLabel={dictionary.home.viewAll}
-          ctaHref={`/${locale}/products?category=${encodeURIComponent("ընտանեկան")}`}
-        />
-
-        <HomeOurStory
-          title={dictionary.home.ourStory.title}
-          intro={dictionary.home.ourStory.intro}
-          introSecond={dictionary.home.ourStory.introSecond}
-          tumanyan={dictionary.home.ourStory.tumanyan}
-          saryan={dictionary.home.ourStory.saryan}
-          delivery={dictionary.home.ourStory.delivery}
-          founder={dictionary.home.ourStory.founder}
         />
       </div>
     </>

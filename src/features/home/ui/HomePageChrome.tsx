@@ -1,6 +1,5 @@
 import { HomeHero } from "@/features/home/ui/HomeHero";
 import { HomeIntroSignal } from "@/features/home/ui/HomeIntroSignal";
-import { HomeMobilePromo } from "@/features/home/ui/HomeMobilePromo";
 import { HomeOrnamentStrip } from "@/features/home/ui/HomeOrnamentStrip";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -30,14 +29,6 @@ export function HomePageChrome({
           ctaHref={`/${locale}/products`}
         />
         <HomeOrnamentStrip />
-      </div>
-      <div className="xl:hidden">
-        <HomeMobilePromo
-          headlineBefore={dictionary.home.familyDinner.headlineBefore}
-          headlineAccent={dictionary.home.familyDinner.headlineAccent}
-          headlineAfter={dictionary.home.familyDinner.headlineAfter}
-          href={`/${locale}/products?category=${encodeURIComponent("ընտանեկան")}`}
-        />
       </div>
       {children}
     </div>
