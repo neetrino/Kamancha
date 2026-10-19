@@ -7,23 +7,23 @@ const SARYAN_MENU_PATH: Record<Locale, string> = {
   ru: "/assets/menus/saryan-menu-ru.pdf",
 };
 
-function sameOriginPdf(path: string, version: string): string {
-  return `${staticAssetUrl(path, { sameOrigin: true })}?v=${version}`;
+function menuPdfUrl(path: string, version: string): string {
+  return `${staticAssetUrl(path)}?v=${version}`;
 }
 
 /**
- * Locale-specific Saryan food menu PDF — served from the app origin.
+ * Locale-specific Saryan food menu PDF (R2 when the CDN base is set).
  */
 export function saryanMenuUrl(locale: Locale): string {
-  return sameOriginPdf(SARYAN_MENU_PATH[locale], "1");
+  return menuPdfUrl(SARYAN_MENU_PATH[locale], "1");
 }
 
 /** Saryan bar menu PDF. */
 export function saryanBarMenuUrl(): string {
-  return sameOriginPdf("/assets/menus/saryan-bar-menu.pdf", "2");
+  return menuPdfUrl("/assets/menus/saryan-bar-menu.pdf", "2");
 }
 
 /** Saryan wine menu PDF. */
 export function saryanWineMenuUrl(): string {
-  return sameOriginPdf("/assets/menus/saryan-wine-menu.pdf", "2");
+  return menuPdfUrl("/assets/menus/saryan-wine-menu.pdf", "2");
 }
