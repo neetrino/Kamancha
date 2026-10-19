@@ -15,7 +15,7 @@ function menuPdfUrl(path: string, version: string): string {
  * Locale-specific Saryan food menu PDF (R2 when the CDN base is set).
  */
 export function saryanMenuUrl(locale: Locale): string {
-  return menuPdfUrl(SARYAN_MENU_PATH[locale], "1");
+  return menuPdfUrl(SARYAN_MENU_PATH[locale], "2");
 }
 
 /** Saryan bar menu PDF. */
