@@ -20,14 +20,15 @@ function isHomePath(pathname: string, locale: Locale): boolean {
 }
 
 /**
- * Kamancha Factory mark in storefront chrome, including the hub.
+ * Storefront wordmark from Figma (node 22:433) — 136×65.
+ * On the home page, click scrolls smoothly to the top instead of remounting.
  */
 export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
   const pathname = usePathname() ?? `/${locale}`;
-  const logoSrc = staticAssetUrl("/assets/brand/hub/factory-badge.webp");
+  const logoSrc = staticAssetUrl("/assets/brand/kamancha-logo.svg");
   const logoClassName =
     className ??
-    "relative inline-flex h-[42px] w-[104px] shrink-0 items-center xl:h-[60px] xl:w-auto";
+    "relative inline-flex h-[58px] w-[122px] shrink-0 items-center xl:h-[74px] xl:w-[154px]";
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>): void {
     if (!isHomePath(pathname, locale)) {
@@ -46,16 +47,15 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
       className={logoClassName}
       aria-label={brandName}
       data-brand-logo
-      data-node-id="704:4057"
     >
       <Image
         src={logoSrc}
         alt=""
-        width={702}
-        height={276}
+        width={136}
+        height={65}
         priority
         unoptimized
-        className="h-full w-auto max-w-none object-contain object-left"
+        className="h-full w-full object-contain object-left"
       />
     </AppLink>
   );

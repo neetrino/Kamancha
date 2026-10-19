@@ -909,37 +909,30 @@ html[data-hub-intro="nav"] .storefront-shell:has(.home-mobile-page) .site-header
 
 @media (max-width: 1279px) {
   .site-header [data-brand-logo] {
-    height: 64px;
-    width: 148px;
-  }
-
-  .site-header [data-brand-logo][data-node-id="704:4057"] {
-    height: 64px;
-    width: 168px;
+    height: 56px;
+    width: 154px;
     overflow: visible;
-    transform: translate(10px, -8px);
+    align-self: center;
+    transform: translate(12px, -4px);
   }
 
-  .site-header [data-brand-logo][data-node-id="704:4057"] img {
-    transform: none;
-    transform-origin: left center;
+  .site-header [data-brand-logo] img {
+    height: 74px;
+    width: auto;
+    max-width: none;
   }
 }
 
 @media (min-width: 1280px) {
   .site-header [data-brand-logo] {
+    height: 74px;
+    width: 154px;
     transform: translateX(-5px);
   }
 
-  .site-header [data-brand-logo][data-node-id="704:4057"] {
-    height: 60px;
-    width: auto;
-    transform: translateX(-5px);
-  }
-
-  .site-header [data-brand-logo][data-node-id="704:4057"] img {
-    width: auto;
-    height: 60px;
+  .site-header [data-brand-logo] img {
+    width: 154px;
+    height: 74px;
   }
 }
 
@@ -992,7 +985,7 @@ html[data-hub-intro="nav"] .storefront-shell:has(.home-mobile-page) .site-header
   }
 
   .storefront-main:has(.restaurants-page) {
-    padding-top: 0.5rem;
+    padding-top: 1.25rem;
     padding-bottom: 1.5rem;
   }
 
