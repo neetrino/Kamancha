@@ -68,16 +68,16 @@ export function HomeOurStory({
         >
           <div className="mx-auto w-full max-w-[1253px]">
             <HomeStagger
-              className="flex flex-col gap-5 xl:grid xl:grid-cols-[minmax(0,841px)_minmax(0,390px)] xl:items-stretch xl:gap-[22px]"
+              className="flex flex-col gap-5 min-[744px]:grid min-[744px]:grid-cols-2 min-[744px]:items-stretch xl:grid-cols-[minmax(0,841px)_minmax(0,390px)] xl:items-stretch xl:gap-[22px]"
               stagger={0.08}
             >
-              <HomeStaggerItem>
+              <HomeStaggerItem className="min-[744px]:max-xl:h-full">
                 <a
                   data-node-id="744:1046"
                   href={KAMANCHA_BRANCHES.tumanyan.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative flex flex-col overflow-hidden rounded-[30px] bg-white transition-opacity hover:opacity-95 xl:grid xl:h-[280px] xl:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)]"
+                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-white transition-opacity hover:opacity-95 xl:grid xl:h-[280px] xl:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)]"
                 >
                   <div className="relative z-[1] order-2 flex flex-col justify-center px-6 py-6 sm:px-8 xl:order-1 xl:px-7">
                     <h3 className="font-big-fat-boii text-[24px] leading-[28px] font-normal text-[#222] uppercase">
@@ -102,13 +102,13 @@ export function HomeOurStory({
                 </a>
               </HomeStaggerItem>
 
-              <HomeStaggerItem>
+              <HomeStaggerItem className="min-[744px]:max-xl:h-full">
                 <a
                   data-node-id="744:1050"
                   href={KAMANCHA_BRANCHES.saryan.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95 xl:block xl:h-[292px]"
+                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95 xl:block xl:h-[292px]"
                 >
                   <div className="relative z-[1] flex flex-col gap-3 px-6 pt-6 sm:px-8 xl:flex-row xl:items-start xl:gap-8 xl:px-8 xl:pt-[18px]">
                     <h3 className="font-big-fat-boii shrink-0 text-[24px] leading-[28px] font-normal text-[#222] uppercase xl:whitespace-nowrap">
@@ -120,7 +120,7 @@ export function HomeOurStory({
                   </div>
                   <div
                     data-node-id="744:1053"
-                    className="relative mt-4 h-[160px] sm:h-[200px] xl:pointer-events-none xl:absolute xl:inset-x-0 xl:bottom-0 xl:mt-0 xl:h-[58%]"
+                    className="relative mt-4 h-[160px] min-h-[160px] flex-1 sm:h-[200px] sm:min-h-[200px] min-[744px]:max-xl:h-auto xl:pointer-events-none xl:absolute xl:inset-x-0 xl:bottom-0 xl:mt-0 xl:h-[58%] xl:min-h-0 xl:flex-none"
                   >
                     <Image
                       src={SARYAN_PAINTING}
@@ -134,10 +134,10 @@ export function HomeOurStory({
                 </a>
               </HomeStaggerItem>
 
-              <HomeStaggerItem className="max-xl:contents xl:grid xl:h-[314px] xl:grid-cols-[minmax(0,1fr)_306px] xl:gap-[22px]">
+              <HomeStaggerItem className="max-[743px]:contents flex h-full min-h-0 flex-col gap-5 xl:grid xl:h-[314px] xl:grid-cols-[minmax(0,1fr)_306px] xl:gap-[22px]">
                 <article
                   data-node-id="744:1054"
-                  className="relative min-h-[314px] overflow-hidden rounded-[30px] bg-black xl:h-full xl:min-h-0"
+                  className="relative min-h-[314px] shrink-0 overflow-hidden rounded-[30px] bg-black xl:h-full xl:min-h-0"
                 >
                   <div className="relative z-[1] px-6 pt-[22px] xl:pt-[18px] xl:pr-8 xl:pb-0 xl:pl-[35px]">
                     <h3 className="flex items-center gap-1 text-[#e5e2e1] xl:gap-[9px]">
@@ -194,7 +194,7 @@ export function HomeOurStory({
                   href={PIDEH_HREF}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative order-2 block h-[280px] w-full overflow-hidden rounded-[30px] bg-[#c47828] transition-opacity hover:opacity-95 sm:h-[314px] xl:order-none xl:h-full xl:w-[306px] xl:justify-self-end"
+                  className="relative order-2 block h-[280px] w-full shrink-0 overflow-hidden rounded-[30px] bg-[#c47828] transition-opacity hover:opacity-95 sm:h-[314px] min-[744px]:max-xl:!h-auto min-[744px]:max-xl:min-h-0 min-[744px]:max-xl:flex-1 xl:order-none xl:h-full xl:w-[306px] xl:shrink xl:flex-none xl:justify-self-end"
                 >
                   <Image
                     src={PIDEH_PHOTO}
@@ -219,11 +219,11 @@ export function HomeOurStory({
                 y={40}
                 x={20}
                 amount={0.15}
-                className="order-1 w-full xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:order-none xl:h-auto"
+                className="order-1 w-full min-[744px]:h-auto min-[744px]:self-start xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:order-none xl:h-auto xl:self-auto"
               >
               <article
                 data-node-id="744:1062"
-                className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] xl:block xl:h-full xl:min-h-0"
+                className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] min-[744px]:h-auto xl:block xl:h-full xl:min-h-0"
               >
                 <div className="relative z-[1] px-6 pt-8 pr-6 pb-2 xl:px-8 xl:pt-10 xl:pb-0 lg:px-[max(36px,2.86cqw)] lg:pt-[max(45px,3.58cqw)] lg:pr-[max(25px,1.99cqw)]">
                   <h3 className={`${cardTitleClass} text-[#222]`}>{founder.title}</h3>
