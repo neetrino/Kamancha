@@ -32,6 +32,7 @@ const PHONE_ICON_SRC = staticAssetUrl('/assets/brand/home/our-story/phone.svg');
 const PIDEH_PHOTO = staticAssetUrl('/assets/brand/hub/pideh-hub.webp');
 const PIDEH_LOGO = staticAssetUrl('/assets/brand/hub/pideh-logo.svg');
 const PIDEH_HREF = 'https://pideh.am';
+const RESTORMANIA_HREF = 'https://restormania.am';
 
 const cardTitleClass =
   'font-big-fat-boii text-[21px] leading-[24px] font-normal uppercase lg:text-[max(21px,1.67cqw)] lg:leading-[max(24px,1.91cqw)]';
@@ -245,9 +246,12 @@ export function HomeOurStory({
                 amount={0.15}
                 className="order-1 w-full min-[744px]:h-auto min-[744px]:self-start xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:order-none xl:h-auto xl:self-auto"
               >
-              <article
+              <a
                 data-node-id="744:1062"
-                className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] min-[744px]:h-auto xl:block xl:h-full xl:min-h-0"
+                href={RESTORMANIA_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] transition-opacity hover:opacity-95 min-[744px]:h-auto xl:block xl:h-full xl:min-h-0"
               >
                 <div className="relative z-[1] px-6 pt-8 pr-6 pb-2 xl:px-8 xl:pt-10 xl:pb-0 lg:px-[max(36px,2.86cqw)] lg:pt-[max(45px,3.58cqw)] lg:pr-[max(25px,1.99cqw)]">
                   <h3 className={`${cardTitleClass} text-[#222]`}>{founder.title}</h3>
@@ -265,7 +269,7 @@ export function HomeOurStory({
                     className="object-cover object-[center_6%]"
                   />
                 </div>
-              </article>
+              </a>
             </HomeReveal>
             </HomeStagger>
           </div>
