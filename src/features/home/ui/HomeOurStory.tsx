@@ -15,16 +15,24 @@ import { KAMANCHA_BRANCHES } from '@/lib/brand/store-locations';
 import { staticAssetUrl } from '@/lib/media/static-asset-url';
 
 const TUMANYAN_PHOTO = staticAssetUrl('/assets/brand/hub/venue-tumanyan.webp');
-const SARYAN_PAINTING = `${staticAssetUrl('/assets/brand/home/our-story/saryan-landscape.webp', {
+const SARYAN_PAINTING = `${staticAssetUrl('/assets/brand/home/our-story/saryan-card.webp', {
   sameOrigin: true,
-})}?v=20261019`;
-const DELIVERY_SRC = staticAssetUrl('/assets/brand/home/our-story/delivery-truck.webp');
-const FACTORY_LOGO_SRC = staticAssetUrl('/assets/brand/hub/factory-badge.webp');
+})}?v=20261020b`;
+const TAPAKA_ROOMS_LOGO = staticAssetUrl('/assets/brand/home/our-story/tapaka-rooms-logo.webp', {
+  sameOrigin: true,
+});
+const FACTORY_PLATTER = staticAssetUrl('/assets/brand/home/our-story/factory-platter.webp', {
+  sameOrigin: true,
+});
+const FACTORY_LOGO_SRC = staticAssetUrl('/assets/brand/home/our-story/factory-badge-cutout.webp', {
+  sameOrigin: true,
+});
 const FOUNDER_SRC = `${staticAssetUrl('/assets/brand/home/our-story/founder.webp')}?v=20260925`;
 const PHONE_ICON_SRC = staticAssetUrl('/assets/brand/home/our-story/phone.svg');
 const PIDEH_PHOTO = staticAssetUrl('/assets/brand/hub/pideh-hub.webp');
 const PIDEH_LOGO = staticAssetUrl('/assets/brand/hub/pideh-logo.svg');
 const PIDEH_HREF = 'https://pideh.am';
+const RESTORMANIA_HREF = 'https://restormania.am';
 
 const cardTitleClass =
   'font-big-fat-boii text-[21px] leading-[24px] font-normal uppercase lg:text-[max(21px,1.67cqw)] lg:leading-[max(24px,1.91cqw)]';
@@ -108,28 +116,35 @@ export function HomeOurStory({
                   href={KAMANCHA_BRANCHES.saryan.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95 xl:block xl:h-[292px]"
+                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95 xl:block xl:h-[320px]"
                 >
-                  <div className="relative z-[1] flex flex-col gap-3 px-6 pt-6 sm:px-8 xl:flex-row xl:items-start xl:gap-8 xl:px-8 xl:pt-[18px]">
-                    <h3 className="font-big-fat-boii shrink-0 text-[24px] leading-[28px] font-normal text-[#222] uppercase xl:whitespace-nowrap">
-                      {saryan.title}
-                    </h3>
-                    <p className="max-w-[36rem] text-[14px] leading-[20px] text-[rgba(0,0,0,0.62)]">
-                      {saryan.body}
-                    </p>
-                  </div>
                   <div
                     data-node-id="744:1053"
-                    className="relative mt-4 h-[160px] min-h-[160px] flex-1 sm:h-[200px] sm:min-h-[200px] min-[744px]:max-xl:h-auto xl:pointer-events-none xl:absolute xl:inset-x-0 xl:bottom-0 xl:mt-0 xl:h-[58%] xl:min-h-0 xl:flex-none"
+                    className="pointer-events-none relative order-2 mt-2 h-[180px] overflow-hidden sm:h-[220px] xl:absolute xl:top-[150px] xl:left-0 xl:mt-0 xl:h-[170px] xl:w-full"
                   >
-                    <Image
+                    <img
                       src={SARYAN_PAINTING}
                       alt=""
-                      fill
-                      unoptimized
-                      sizes="(min-width: 1024px) 55vw, 100vw"
-                      className="object-cover object-top"
+                      className="absolute inset-0 h-full w-full max-w-none object-cover object-center xl:object-fill"
                     />
+                  </div>
+                  <div className="relative z-[1] flex flex-col gap-3 px-6 pt-5 pb-2 sm:px-8 xl:absolute xl:inset-x-0 xl:top-0 xl:block xl:px-0 xl:pt-0 xl:pb-0">
+                    <div className="flex items-center gap-4 xl:block">
+                      <img
+                        data-node-id="796:317"
+                        src={TAPAKA_ROOMS_LOGO}
+                        alt=""
+                        width={400}
+                        height={223}
+                        className="h-[88px] w-[157px] shrink-0 object-contain object-left xl:absolute xl:top-[11px] xl:left-[37px] xl:h-[112px] xl:w-[200px]"
+                      />
+                      <h3 className="font-big-fat-boii text-[21px] leading-[24px] font-normal text-[#222] uppercase xl:absolute xl:top-[28px] xl:left-[248px]">
+                        {saryan.title}
+                      </h3>
+                    </div>
+                    <p className="text-[14px] leading-[19px] text-[rgba(0,0,0,0.59)] xl:absolute xl:top-[61px] xl:left-[248px] xl:w-[561px]">
+                      {saryan.body}
+                    </p>
                   </div>
                 </a>
               </HomeStaggerItem>
@@ -137,55 +152,65 @@ export function HomeOurStory({
               <HomeStaggerItem className="max-[743px]:contents flex h-full min-h-0 flex-col gap-5 xl:grid xl:h-[314px] xl:grid-cols-[minmax(0,1fr)_306px] xl:gap-[22px]">
                 <article
                   data-node-id="744:1054"
-                  className="relative min-h-[314px] shrink-0 overflow-hidden rounded-[30px] bg-black xl:h-full xl:min-h-0"
+                  className="relative min-h-[314px] shrink-0 overflow-hidden rounded-[30px] bg-black xl:h-[314px] xl:min-h-0"
                 >
-                  <div className="relative z-[1] px-6 pt-[22px] xl:pt-[18px] xl:pr-8 xl:pb-0 xl:pl-[35px]">
-                    <h3 className="flex items-center gap-1 text-[#e5e2e1] xl:gap-[9px]">
+                  <div
+                    data-node-id="796:320"
+                    className="pointer-events-none relative mx-auto h-[220px] w-full overflow-hidden sm:h-[260px] xl:absolute xl:top-[-26px] xl:left-[196px] xl:mx-0 xl:h-[343px] xl:w-[479px]"
+                  >
+                    <Image
+                      src={FACTORY_PLATTER}
+                      alt=""
+                      fill
+                      unoptimized
+                      sizes="479px"
+                      className="scale-y-[-1] object-cover object-center max-xl:-translate-x-3 xl:object-bottom"
+                    />
+                  </div>
+                  <div className="relative z-[1] px-6 pt-5 pb-6 xl:absolute xl:inset-0 xl:px-0 xl:pt-0 xl:pb-0">
+                    <h3 className="flex items-end gap-2 xl:absolute xl:top-[18px] xl:left-[6px]">
                       <span className="sr-only">
                         {`${delivery.title}${delivery.titleSuffix ?? ''}`}
                       </span>
                       <Image
+                        data-node-id="744:1078"
                         src={FACTORY_LOGO_SRC}
                         alt=""
-                        width={360}
-                        height={120}
-                        className="h-[52px] w-auto max-w-[min(240px,85%)] object-contain object-left xl:h-[78px] xl:max-w-[247px]"
+                        width={506}
+                        height={202}
+                        unoptimized
+                        className="h-[72px] w-auto max-w-[min(220px,70%)] object-contain object-left xl:h-[101px] xl:w-[253px] xl:max-w-none"
                       />
                       {delivery.titleSuffix ? (
-                        <span className="font-big-fat-boii pb-1 text-[18px] leading-none font-normal text-[#e5e2e1] xl:pb-0 xl:text-[21px] xl:leading-[24px]" aria-hidden>
+                        <span
+                          data-node-id="744:1056"
+                          className="font-big-fat-boii pb-2 text-[18px] leading-none font-normal text-[#e5e2e1] uppercase xl:absolute xl:top-[63px] xl:left-[246px] xl:pb-0 xl:text-[21px] xl:leading-[24px]"
+                          aria-hidden
+                        >
                           {delivery.titleSuffix}
                         </span>
                       ) : null}
                     </h3>
-                    <p className="mt-3 text-[14px] leading-[20px] text-white/72 xl:mt-4 xl:max-w-[447px] xl:leading-[24px]">
+                    <p
+                      data-node-id="744:1055"
+                      className="mt-3 max-w-[447px] text-[14px] leading-[22px] text-white/72 xl:absolute xl:top-[136px] xl:left-[35px] xl:mt-0 xl:w-[447px] xl:leading-[24px]"
+                    >
                       {delivery.body}
                     </p>
                     <a
-                      data-node-id="455:204"
+                      data-node-id="744:1057"
                       href={`tel:${delivery.phone.replace(/\s/g, '')}`}
-                      className="mt-3 inline-flex items-center gap-2 text-[17px] leading-6 text-white xl:mt-4 xl:gap-[9px] xl:text-[18px] xl:leading-[24px]"
+                      className="mt-3 inline-flex items-center gap-[9px] text-[14px] leading-[24px] text-white xl:absolute xl:top-[258px] xl:left-[43px] xl:mt-0"
                     >
                       <Image
                         src={PHONE_ICON_SRC}
                         alt=""
-                        width={20}
-                        height={20}
-                        className="size-5 xl:size-[26px]"
+                        width={26}
+                        height={26}
+                        className="size-[26px]"
                       />
                       {delivery.phone}
                     </a>
-                  </div>
-                  <div
-                    data-node-id="744:1061"
-                    className="pointer-events-none relative -mt-6 ml-auto h-[280px] w-full overflow-hidden xl:absolute xl:top-[69px] xl:right-auto xl:bottom-auto xl:left-[252px] xl:mt-0 xl:ml-0 xl:h-[236px] xl:w-[266px] xl:rounded-br-[30px] xl:opacity-30"
-                  >
-                    <Image
-                      src={DELIVERY_SRC}
-                      alt=""
-                      width={520}
-                      height={360}
-                      className="ml-auto h-[280px] w-auto max-w-none object-contain object-right xl:absolute xl:top-[-20.94%] xl:left-0 xl:ml-0 xl:h-[143.59%] xl:w-[137.58%] xl:max-w-none xl:object-fill"
-                    />
                   </div>
                 </article>
 
@@ -221,9 +246,12 @@ export function HomeOurStory({
                 amount={0.15}
                 className="order-1 w-full min-[744px]:h-auto min-[744px]:self-start xl:col-start-2 xl:row-span-3 xl:row-start-1 xl:order-none xl:h-auto xl:self-auto"
               >
-              <article
+              <a
                 data-node-id="744:1062"
-                className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] min-[744px]:h-auto xl:block xl:h-full xl:min-h-0"
+                href={RESTORMANIA_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative flex flex-col overflow-hidden rounded-[30px] bg-[#efe7da] transition-opacity hover:opacity-95 min-[744px]:h-auto xl:block xl:h-full xl:min-h-0"
               >
                 <div className="relative z-[1] px-6 pt-8 pr-6 pb-2 xl:px-8 xl:pt-10 xl:pb-0 lg:px-[max(36px,2.86cqw)] lg:pt-[max(45px,3.58cqw)] lg:pr-[max(25px,1.99cqw)]">
                   <h3 className={`${cardTitleClass} text-[#222]`}>{founder.title}</h3>
@@ -241,7 +269,7 @@ export function HomeOurStory({
                     className="object-cover object-[center_6%]"
                   />
                 </div>
-              </article>
+              </a>
             </HomeReveal>
             </HomeStagger>
           </div>

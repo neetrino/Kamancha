@@ -28,7 +28,7 @@ export default async function ProfileLayout({
   return (
     <ProfileSessionProvider user={user}>
       <div className="profile-desktop-page flex flex-col gap-6 pb-10 xl:flex-1 xl:flex-row xl:items-start xl:gap-8 xl:pb-0">
-        <div className="profile-desktop-sidebar profile-sticky-band hidden w-[280px] shrink-0 xl:block">
+        <div className="profile-desktop-sidebar profile-sticky-band hidden w-max max-w-full shrink-0 xl:block">
           <ProfileSidebar
             locale={rawLocale}
             user={user}

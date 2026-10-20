@@ -61,7 +61,7 @@ function RecentOrdersBody({
   if (orders.length === 0) {
     return (
       <div className="relative z-[2] flex flex-col items-center gap-5 py-12">
-        <p className="max-w-sm text-center text-sm text-gray-700">
+        <p className="max-w-sm text-center text-sm text-gray-700 xl:text-white">
           {dictionary.noOrders}
         </p>
         <AppLink

@@ -229,7 +229,7 @@ export function ProfileAddressesView({
             onSubmit={onSave}
             className="relative z-[2] mb-8 space-y-5 overflow-hidden rounded-3xl border border-gray-200 bg-gray-50 p-4 sm:mb-10 sm:p-6 xl:border-white/50 xl:bg-white/35"
           >
-            <h2 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
+            <h2 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase xl:text-white">
               {editingId ? labels.formEditTitle : labels.formAddTitle}
             </h2>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
@@ -280,7 +280,7 @@ export function ProfileAddressesView({
                 }
                 className="h-4 w-4 rounded border-white/60 text-brand-forest focus:ring-brand-forest"
               />
-              <span className="text-sm text-gray-800">{labels.isDefault}</span>
+              <span className="text-sm text-gray-800 xl:text-white">{labels.isDefault}</span>
             </label>
             <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row sm:gap-3">
               <button
@@ -310,12 +310,12 @@ export function ProfileAddressesView({
         ) : null}
 
         {error ? (
-          <p className="relative z-[2] mb-4 text-sm text-red-700" role="alert">
+          <p className="relative z-[2] mb-4 text-sm text-red-700 xl:text-white" role="alert">
             {error}
           </p>
         ) : null}
         {message ? (
-          <p className="relative z-[2] mb-4 text-sm text-brand-forest" role="status">
+          <p className="relative z-[2] mb-4 text-sm text-brand-forest xl:text-white" role="status">
             {message}
           </p>
         ) : null}
@@ -339,7 +339,7 @@ export function ProfileAddressesView({
               />
             ))
           ) : (
-            <p className="col-span-full py-12 text-center text-sm text-gray-700 sm:py-16">
+            <p className="col-span-full py-12 text-center text-sm text-gray-700 sm:py-16 xl:text-white">
               {labels.noAddresses}
             </p>
           )}

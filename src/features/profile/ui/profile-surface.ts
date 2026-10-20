@@ -29,7 +29,7 @@ export const PROFILE_BODY =
   "relative z-[2] text-sm leading-relaxed text-gray-600 xl:text-white";
 
 export const PROFILE_LINK =
-  "font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase transition-opacity hover:opacity-80";
+  "font-big-fat-boii text-sm font-normal tracking-wide text-brand-forest uppercase transition-opacity hover:opacity-80 xl:text-white";
 
 export const PROFILE_PILL_LIGHT =
   "profile-pill-light inline-flex h-12 items-center justify-center rounded-[70px] bg-white px-6 font-big-fat-boii text-base leading-none text-brand-forest transition-colors hover:bg-white/95 disabled:cursor-not-allowed disabled:opacity-50";
