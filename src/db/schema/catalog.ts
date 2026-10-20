@@ -51,6 +51,8 @@ export const products = pgTable(
     status: productStatusEnum("status").notNull().default("DRAFT"),
     isFeatured: boolean("is_featured").notNull().default(false),
     isUpcoming: boolean("is_upcoming").notNull().default(false),
+    /** Storefront menu order. Lower numbers appear first. */
+    sortOrder: integer("sort_order").notNull().default(0),
     badgeTranslations: jsonb("badge_translations").$type<
       Partial<Record<"hy" | "en" | "ru", string>>
     >(),
@@ -63,6 +65,7 @@ export const products = pgTable(
   (table) => [
     uniqueIndex("products_sku_uidx").on(table.sku),
     index("products_status_created_idx").on(table.status, table.createdAt),
+    index("products_status_sort_idx").on(table.status, table.sortOrder),
     index("products_stock_idx").on(table.stockOnHand),
     uniqueIndex("products_slug_hy_uidx")
       .on(sql`(${table.translations}->'hy'->>'slug')`)

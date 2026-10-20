@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
+import { nextProductSortOrder } from "@/features/products/application/product-sort-order";
 import {
   categories,
   productCategories,
@@ -225,6 +226,7 @@ export async function createProductFromDrawerAction(
   const actor = await requireAdmin(locale as Locale);
   const id = createId();
   const files = collectImageFiles(formData);
+  const sortOrder = await nextProductSortOrder();
 
   await getDb().insert(products).values({
     id,
@@ -233,6 +235,7 @@ export async function createProductFromDrawerAction(
     compareAtAmount: null,
     stockOnHand: data.stockOnHand,
     status: data.status,
+    sortOrder,
     translations: buildTranslations(data),
   });
 

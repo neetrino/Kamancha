@@ -24,6 +24,7 @@ export type CatalogLabels = CatalogFilterLabels & {
   sortPriceAsc: string;
   sortPriceDesc: string;
   sortPopular: string;
+  sortMenu: string;
 };
 
 type CatalogControlsProps = {
@@ -46,12 +47,15 @@ function sortLabelFor(sort: CatalogSort, labels: CatalogLabels): string {
     case "popular":
       return labels.sortPopular;
     case "newest":
-    default:
       return labels.sortNewest;
+    case "menu":
+    default:
+      return labels.sortMenu;
   }
 }
 
 const SORT_ORDER: readonly CatalogSort[] = [
+  "menu",
   "popular",
   "newest",
   "price_asc",

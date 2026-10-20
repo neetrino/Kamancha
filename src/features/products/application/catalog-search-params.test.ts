@@ -9,7 +9,7 @@ import {
 describe("parseCatalogSearchParams", () => {
   it("applies safe defaults", () => {
     expect(parseCatalogSearchParams({})).toEqual({
-      sort: "popular",
+      sort: "menu",
       page: 1,
       pageSize: 18,
     });
@@ -50,7 +50,7 @@ describe("parseCatalogSearchParams", () => {
         inStock: "true",
       }),
     ).toMatchObject({
-      sort: "popular",
+      sort: "menu",
       page: 1,
       pageSize: 18,
       category: "tables",
@@ -63,7 +63,7 @@ describe("buildCatalogQueryString", () => {
   it("omits defaults", () => {
     expect(
       buildCatalogQueryString({
-        sort: "popular",
+        sort: "menu",
         page: 1,
         pageSize: 18,
       }),

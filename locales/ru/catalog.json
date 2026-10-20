@@ -33,6 +33,7 @@
   "sortPriceAsc": "Цена ↑",
   "sortPriceDesc": "Цена ↓",
   "sortPopular": "Популярные",
+  "sortMenu": "Меню",
   "removeFilter": "Убрать {label}",
   "chipSearch": "Поиск: {value}",
   "chipCategory": "Категория: {value}",

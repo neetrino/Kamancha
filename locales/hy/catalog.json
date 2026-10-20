@@ -33,6 +33,7 @@
   "sortPriceAsc": "Գին ↑",
   "sortPriceDesc": "Գին ↓",
   "sortPopular": "Հայտնի",
+  "sortMenu": "Մենյու",
   "removeFilter": "Հեռացնել՝ {label}",
   "chipSearch": "Որոնում՝ {value}",
   "chipCategory": "Կատեգորիա՝ {value}",

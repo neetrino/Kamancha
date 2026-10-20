@@ -398,7 +398,11 @@
       "duplicateAria": "Duplicate {title}",
       "deleteAria": "Delete {title}",
       "activateAria": "Activate product",
-      "deactivateAria": "Deactivate product"
+      "deactivateAria": "Deactivate product",
+      "reorderAria": "Reorder products",
+      "reorderItemAria": "Drag to reorder {title}",
+      "clearFiltersToReorder": "Clear search, filters, and column sorting to reorder the menu.",
+      "reorderReset": "Show menu order"
     },
     "drawer": {
       "addTitle": "Add new product",

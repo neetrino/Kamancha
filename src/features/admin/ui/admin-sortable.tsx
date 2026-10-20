@@ -2,12 +2,15 @@
 
 import {
   DndContext,
+  DragOverlay,
   KeyboardSensor,
   PointerSensor,
   closestCenter,
+  defaultDropAnimationSideEffects,
   useSensor,
   useSensors,
   type DragEndEvent,
+  type DragStartEvent,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
@@ -21,7 +24,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
-import type { CSSProperties, ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 
 export { arrayMove, rectSortingStrategy, verticalListSortingStrategy };
 
@@ -35,12 +38,22 @@ export function useAdminSortableSensors() {
   );
 }
 
+const dragDropAnimation = {
+  duration: 240,
+  easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+  sideEffects: defaultDropAnimationSideEffects({
+    styles: { active: { opacity: "0.35" } },
+  }),
+};
+
 type AdminSortableRootProps = {
   items: UniqueIdentifier[];
   disabled?: boolean;
   /** Defaults to vertical list (ToonExpo homepage style). */
   strategy?: SortingStrategy;
   onReorder: (activeId: string, overId: string) => void;
+  /** Floating preview that lifts out of the list while dragging. */
+  renderOverlay?: (activeId: string) => ReactNode;
   children: ReactNode;
 };
 
@@ -53,11 +66,23 @@ export function AdminSortableRoot({
   disabled = false,
   strategy = verticalListSortingStrategy,
   onReorder,
+  renderOverlay,
   children,
 }: AdminSortableRootProps) {
   const sensors = useAdminSortableSensors();
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  function handleDragStart(event: DragStartEvent): void {
+    if (disabled || !renderOverlay) return;
+    setActiveId(String(event.active.id));
+  }
+
+  function clearDrag(): void {
+    setActiveId(null);
+  }
 
   function handleDragEnd(event: DragEndEvent): void {
+    clearDrag();
     const { active, over } = event;
     if (disabled || !over || active.id === over.id) return;
     onReorder(String(active.id), String(over.id));
@@ -67,11 +92,18 @@ export function AdminSortableRoot({
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragCancel={clearDrag}
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items} strategy={strategy} disabled={disabled}>
         {children}
       </SortableContext>
+      {renderOverlay ? (
+        <DragOverlay dropAnimation={dragDropAnimation}>
+          {activeId ? renderOverlay(activeId) : null}
+        </DragOverlay>
+      ) : null}
     </DndContext>
   );
 }

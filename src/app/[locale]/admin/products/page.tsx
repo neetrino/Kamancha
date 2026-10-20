@@ -7,7 +7,10 @@ import {
   listAdminProducts,
 } from "@/features/products/application/list-admin-products";
 import { listModifiersForProductAdmin } from "@/features/products/application/product-modifiers";
-import { adminProductsFilterSchema } from "@/features/products/schemas/admin-list";
+import {
+  adminProductsFilterSchema,
+  isAdminProductManualOrder,
+} from "@/features/products/schemas/admin-list";
 import { AdminProductsView } from "@/features/products/ui/AdminProductsView";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -44,7 +47,7 @@ function buildQuery(
   if (merged.sku) params.set("sku", merged.sku);
   if (merged.categoryId) params.set("categoryId", merged.categoryId);
   if (merged.stock !== "all") params.set("stock", merged.stock);
-  if (merged.sort !== "created") params.set("sort", merged.sort);
+  if (merged.sort !== "order") params.set("sort", merged.sort);
   if (merged.dir !== "desc") params.set("dir", merged.dir);
   if (merged.page > 1) params.set("page", String(merged.page));
   return params.toString();
@@ -68,22 +71,32 @@ export default async function AdminProductsPage({
     sku: firstParam(raw.sku) || undefined,
     categoryId: firstParam(raw.categoryId) || undefined,
     stock: firstParam(raw.stock) ?? "all",
-    sort: firstParam(raw.sort) ?? "created",
+    sort: firstParam(raw.sort) ?? "order",
     dir: firstParam(raw.dir) ?? "desc",
     page: firstParam(raw.page) ?? "1",
   });
 
-  const filters = parsed.success
+  const requested = parsed.success
     ? parsed.data
     : {
         page: 1 as const,
         stock: "all" as const,
-        sort: "created" as const,
+        sort: "order" as const,
         dir: "desc" as const,
         q: undefined,
         sku: undefined,
         categoryId: undefined,
       };
+  // Older admin URLs kept the previous default (newest first) in the query.
+  const filters =
+    requested.sort === "created" &&
+    requested.dir === "desc" &&
+    !requested.q &&
+    !requested.sku &&
+    !requested.categoryId &&
+    requested.stock === "all"
+      ? { ...requested, sort: "order" as const }
+      : requested;
 
   const [{ rows, total, pageSize }, categories, modifierLibrary, attributeLibrary] =
     await Promise.all([
@@ -129,6 +142,7 @@ export default async function AdminProductsPage({
         stock={filters.stock}
         sort={filters.sort}
         dir={filters.dir}
+        reorderEnabled={isAdminProductManualOrder(filters)}
         copy={{
           products: adminCopy.products,
           common: adminCopy.common,

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const CATALOG_SORT_VALUES = [
+  "menu",
   "newest",
   "price_asc",
   "price_desc",
@@ -13,7 +14,8 @@ export const CATALOG_PAGE_SIZES = [18, 30, 48] as const;
 
 export type CatalogPageSize = (typeof CATALOG_PAGE_SIZES)[number];
 
-export const DEFAULT_CATALOG_SORT: CatalogSort = "popular";
+/** Admin drag order. Shoppers can still pick price, newest, or popular. */
+export const DEFAULT_CATALOG_SORT: CatalogSort = "menu";
 /** Multiple of 2 and 3 so mobile/desktop catalog rows stay complete before “see more”. */
 export const DEFAULT_CATALOG_PAGE_SIZE: CatalogPageSize = 18;
 

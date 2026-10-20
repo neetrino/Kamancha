@@ -2,9 +2,14 @@
 
 import { and, eq, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { getDb } from "@/db/client";
 import { products, type TranslationsJson } from "@/db/schema";
+import {
+  nextProductSortOrder,
+  saveProductSortOrder,
+} from "@/features/products/application/product-sort-order";
 import {
   productIdsSchema,
   type ProductIdsInput,
@@ -182,6 +187,7 @@ export async function duplicateProductAction(
 
   const id = createId();
   const skuSuffix = createId().slice(0, 6);
+  const sortOrder = await nextProductSortOrder();
   await getDb().insert(products).values({
     id,
     sku: `${existing.sku}-COPY-${skuSuffix}`,
@@ -196,6 +202,7 @@ export async function duplicateProductAction(
     badgeTranslations: existing.badgeTranslations,
     badgeStyle: existing.badgeStyle,
     badgePosition: existing.badgePosition,
+    sortOrder,
   });
 
   revalidateProducts(locale, {
@@ -203,4 +210,51 @@ export async function duplicateProductAction(
     translations: withCopySuffix(existing.translations),
   });
   return ok({ id });
+}
+
+const reorderProductsSchema = z.object({
+  orderedIds: z.array(z.string().uuid()).min(1),
+});
+
+/** Persists the admin product order so the storefront menu follows it. */
+export async function reorderProductsAction(
+  locale: string,
+  raw: z.infer<typeof reorderProductsSchema>,
+): Promise<Result<{ updated: number }>> {
+  if (!isLocale(locale)) {
+    return err("INVALID_LOCALE", "Invalid locale.");
+  }
+
+  const parsed = reorderProductsSchema.safeParse(raw);
+  if (!parsed.success) {
+    return err("VALIDATION_ERROR", "Invalid product order.");
+  }
+
+  await requireAdmin(locale as Locale);
+  const orderedIds = parsed.data.orderedIds;
+  const uniqueIds = [...new Set(orderedIds)];
+  if (uniqueIds.length !== orderedIds.length) {
+    return err("VALIDATION_ERROR", "Duplicate product ids in order.");
+  }
+
+  const existing = await getDb()
+    .select({ id: products.id })
+    .from(products)
+    .where(isNull(products.deletedAt));
+
+  if (existing.length !== uniqueIds.length) {
+    return err(
+      "VALIDATION_ERROR",
+      "Product list is out of date. Refresh and try again.",
+    );
+  }
+
+  const existingSet = new Set(existing.map((row) => row.id));
+  if (uniqueIds.some((id) => !existingSet.has(id))) {
+    return err("NOT_FOUND", "Product not found.");
+  }
+
+  await saveProductSortOrder(uniqueIds);
+  revalidateProducts(locale);
+  return ok({ updated: uniqueIds.length });
 }

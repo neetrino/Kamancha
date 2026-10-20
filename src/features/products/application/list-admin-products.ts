@@ -33,7 +33,10 @@ import {
 import { loadProductImagesForAdmin } from "@/features/products/application/persist-product-media";
 import { loadProductDiscounts } from "@/features/products/application/sync-product-discount";
 import type { AdminProductDiscount } from "@/features/products/types/product-discount";
-import type { AdminProductsFilter } from "@/features/products/schemas/admin-list";
+import {
+  isAdminProductManualOrder,
+  type AdminProductsFilter,
+} from "@/features/products/schemas/admin-list";
 import type { Locale } from "@/lib/i18n/config";
 import { mediaPublicUrl } from "@/lib/media/public-url";
 
@@ -136,8 +139,10 @@ function orderByClause(filters: AdminProductsFilter, locale: Locale): SQL[] {
     case "title":
       return [draftsLast, direction(sql`${products.translations}->${locale}->>'title'`)];
     case "created":
-    default:
       return [draftsLast, direction(products.createdAt)];
+    case "order":
+    default:
+      return [asc(products.sortOrder), asc(products.createdAt), asc(products.id)];
   }
 }
 
@@ -239,14 +244,16 @@ export async function listAdminProducts(
     .where(where);
 
   const total = totalRow?.value ?? 0;
-  const offset = (filters.page - 1) * PAGE_SIZE;
+  const manualOrder = isAdminProductManualOrder(filters);
+  const pageSize = manualOrder ? Math.max(total, 1) : PAGE_SIZE;
+  const offset = manualOrder ? 0 : (filters.page - 1) * PAGE_SIZE;
 
   const rows = await db
     .select()
     .from(products)
     .where(where)
     .orderBy(...orderByClause(filters, locale))
-    .limit(PAGE_SIZE)
+    .limit(pageSize)
     .offset(offset);
 
   const ids = rows.map((row) => row.id);
@@ -263,7 +270,7 @@ export async function listAdminProducts(
 
   return {
     total,
-    pageSize: PAGE_SIZE,
+    pageSize,
     rows: rows.map((product) => {
       const translation = translationFor(product.translations, locale);
       const categoryMeta = categoryMap.get(product.id);

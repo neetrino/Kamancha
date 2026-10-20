@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+import { AdminSortableRoot } from "@/features/admin/ui/admin-sortable";
+
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -25,7 +27,9 @@ import {
   toggleProductVisibilityAction,
 } from "@/features/products/application/admin-product-actions";
 import type { AdminProductListItem } from "@/features/products/application/list-admin-products";
+import { renderAdminProductDragOverlay } from "@/features/products/ui/AdminProductDragPreview";
 import { AdminProductRow } from "@/features/products/ui/AdminProductRow";
+import { useAdminProductOrder } from "@/features/products/ui/use-admin-product-order";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminProductsSortLinks = {
@@ -45,6 +49,7 @@ type AdminProductsTableProps = {
   locale: string;
   products: AdminProductListItem[];
   sortLinks: AdminProductsSortLinks;
+  reorderEnabled: boolean;
   onEdit: (product: AdminProductListItem) => void;
   copy: TableCopy;
 };
@@ -53,6 +58,7 @@ export function AdminProductsTable({
   locale,
   products,
   sortLinks,
+  reorderEnabled,
   onEdit,
   copy,
 }: AdminProductsTableProps) {
@@ -60,13 +66,16 @@ export function AdminProductsTable({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const order = useAdminProductOrder(locale, products, reorderEnabled && !isPending);
   const [pendingDelete, setPendingDelete] = useState<{
     kind: "single" | "bulk";
     productIds: string[];
     label: string;
   } | null>(null);
 
-  const allIds = products.map((product) => product.id);
+  const busy = isPending || order.isReordering;
+  const rows = order.rows;
+  const allIds = rows.map((product) => product.id);
   const allSelected =
     allIds.length > 0 && allIds.every((id) => selected.has(id));
 
@@ -149,7 +158,7 @@ export function AdminProductsTable({
             type="button"
             size="sm"
             variant="danger"
-            disabled={isPending}
+            disabled={busy}
             onClick={deleteSelected}
           >
             {copy.table.deleteSelected}
@@ -157,7 +166,15 @@ export function AdminProductsTable({
         </Card>
       ) : null}
 
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {error ?? order.reorderError ? (
+        <p className="text-sm text-red-700">{error ?? order.reorderError}</p>
+      ) : null}
+      {!reorderEnabled ? (
+        <p className="text-xs text-gray-500">
+          {copy.table.clearFiltersToReorder}{" "}
+          <Link href={`/${locale}/admin/products`} className="underline">{copy.table.reorderReset}</Link>
+        </p>
+      ) : null}
 
       <Card className={ADMIN_TABLE_CARD}>
         {products.length === 0 ? (
@@ -166,16 +183,25 @@ export function AdminProductsTable({
           </p>
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
+            <AdminSortableRoot
+              items={rows.map((product) => product.id)}
+              disabled={!reorderEnabled || busy}
+              onReorder={order.handleReorder}
+              renderOverlay={(activeId) =>
+                renderAdminProductDragOverlay(rows, activeId, locale, copy.common.na)
+              }
+            >
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
                 <tr>
+                  <th className={`${ADMIN_TABLE_TH_CHECK} w-8`} aria-label={copy.table.reorderAria} />
                   <th className={ADMIN_TABLE_TH_CHECK}>
                     <input
                       type="checkbox"
                       className={ADMIN_TABLE_CHECKBOX}
                       checked={allSelected}
                       onChange={toggleAll}
-                      disabled={isPending}
+                      disabled={busy}
                       aria-label={copy.table.selectAllAria}
                     />
                   </th>
@@ -193,23 +219,21 @@ export function AdminProductsTable({
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.featured}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{copy.table.actions}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>
-                    <Link
-                      href={sortLinks.created}
-                      className="hover:text-gray-900"
-                    >
+                    <Link href={sortLinks.created} className="hover:text-gray-900">
                       {copy.table.created}
                     </Link>
                   </th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
-                {products.map((product) => (
+                {rows.map((product) => (
                   <AdminProductRow
                     key={product.id}
                     locale={locale}
                     product={product}
                     selected={selected.has(product.id)}
-                    disabled={isPending}
+                    disabled={busy}
+                    reorderEnabled={reorderEnabled && !busy}
                     copy={{ table: copy.table, common: copy.common }}
                     onToggle={() => toggleOne(product.id)}
                     onEdit={() => onEdit(product)}
@@ -242,6 +266,7 @@ export function AdminProductsTable({
                 ))}
               </tbody>
             </table>
+            </AdminSortableRoot>
           </div>
         )}
       </Card>
