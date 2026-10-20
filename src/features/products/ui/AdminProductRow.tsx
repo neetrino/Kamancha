@@ -5,6 +5,7 @@ import { Pencil, Star, Trash2 } from "lucide-react";
 
 import {
   AdminSortableGrip,
+  shouldIgnoreSortableClick,
   useAdminSortableItem,
 } from "@/features/admin/ui/admin-sortable";
 import {
@@ -53,16 +54,25 @@ export function AdminProductRow({
   const isActive = product.status === "ACTIVE";
   const created = new Date(product.createdAt);
   const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
-  const sortable = useAdminSortableItem(product.id, !reorderEnabled || disabled);
+  const sortable = useAdminSortableItem(product.id, !reorderEnabled, {
+    dragOverlay: true,
+  });
 
   return (
     <tr
       ref={sortable.setNodeRef}
-      style={sortable.style}
+      style={{
+        ...sortable.style,
+        position: "relative",
+        zIndex: sortable.isDragging ? 2 : undefined,
+      }}
       className={`${ADMIN_TABLE_ROW} cursor-pointer ${
-        sortable.isDragging ? "bg-gray-100/80 opacity-40" : ""
+        sortable.isDragging ? "opacity-30" : ""
       }`}
-      onClick={onEdit}
+      onClick={() => {
+        if (shouldIgnoreSortableClick()) return;
+        onEdit();
+      }}
     >
       <td
         className={ADMIN_TABLE_TD_CHECK}
@@ -70,7 +80,8 @@ export function AdminProductRow({
       >
         <AdminSortableGrip
           label={copy.table.reorderItemAria.replace("{title}", product.title)}
-          disabled={!reorderEnabled || disabled}
+          disabled={!reorderEnabled}
+          liftRow
           attributes={sortable.attributes}
           listeners={sortable.listeners}
         />

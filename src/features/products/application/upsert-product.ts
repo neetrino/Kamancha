@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
-import { nextProductSortOrder } from "@/features/products/application/product-sort-order";
+import {
+  nextProductSortOrder,
+  placeProductInMenu,
+} from "@/features/products/application/product-sort-order";
 import {
   categories,
   productCategories,
@@ -68,6 +71,8 @@ const productUpsertSchema = z.object({
   primaryExistingId: z.string().uuid().nullable(),
   primaryNewIndex: z.number().int().nullable(),
   removeImageIds: z.array(z.string().uuid()),
+  /** 1-based place in the menu. Clamped to the live catalog on save. */
+  menuPosition: z.number().int().positive(),
 });
 
 export type ProductUpsertInput = z.infer<typeof productUpsertSchema>;
@@ -238,6 +243,7 @@ export async function createProductFromDrawerAction(
     sortOrder,
     translations: buildTranslations(data),
   });
+  await placeProductInMenu(id, data.menuPosition);
 
   const categoryError = await syncProductCategories(id, data.categoryIds);
   if (categoryError) {
@@ -340,6 +346,7 @@ export async function updateProductFromDrawerAction(
       updatedAt: new Date(),
     })
     .where(eq(products.id, existing.id));
+  await placeProductInMenu(existing.id, data.menuPosition);
 
   const categoryError = await syncProductCategories(
     existing.id,
