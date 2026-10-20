@@ -86,7 +86,7 @@ export function DeleteAccountForm({ locale, labels }: DeleteAccountFormProps) {
         </label>
 
         {state.error ? (
-          <p className="text-sm text-red-700" role="alert">
+          <p className="text-sm text-red-700 xl:text-white" role="alert">
             {state.error}
           </p>
         ) : null}

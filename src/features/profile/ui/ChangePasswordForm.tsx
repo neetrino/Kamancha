@@ -113,12 +113,12 @@ export function ChangePasswordForm({ locale, labels }: ChangePasswordFormProps) 
         </label>
 
         {state.error ? (
-          <p className="text-sm text-red-700" role="alert">
+          <p className="text-sm text-red-700 xl:text-white" role="alert">
             {state.error}
           </p>
         ) : null}
         {state.success ? (
-          <p className="text-sm text-brand-forest" role="status">
+          <p className="text-sm text-brand-forest xl:text-white" role="status">
             {state.success}
           </p>
         ) : null}

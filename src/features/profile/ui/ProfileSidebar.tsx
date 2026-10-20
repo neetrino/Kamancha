@@ -18,14 +18,23 @@ type ProfileSidebarProps = {
 function ProfileContactRow({
   icon,
   value,
+  singleLine = false,
 }: {
   icon: ReactNode;
   value: string;
+  /** Email sets the sidebar width and stays on one line. */
+  singleLine?: boolean;
 }) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-white/50 bg-white/15 px-3.5 py-2.5 text-left shadow-sm">
       <span className="shrink-0 text-white">{icon}</span>
-      <p className="min-w-0 break-all text-xs font-medium text-white sm:text-sm">
+      <p
+        className={
+          singleLine
+            ? "whitespace-nowrap text-xs font-medium text-white sm:text-sm"
+            : "min-w-0 break-words text-xs font-medium text-white sm:text-sm"
+        }
+      >
         {value}
       </p>
     </div>
@@ -59,6 +68,7 @@ export function ProfileSidebar({
           <ProfileContactRow
             icon={<Mail className="h-4 w-4" aria-hidden />}
             value={user.email}
+            singleLine
           />
           {user.phone ? (
             <ProfileContactRow
