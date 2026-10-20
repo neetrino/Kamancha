@@ -115,11 +115,11 @@ export function HomeOurStory({
                   href={KAMANCHA_BRANCHES.saryan.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95 xl:block xl:h-[381px]"
+                  className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-[#a2d39c] transition-opacity hover:opacity-95 xl:block xl:h-[320px]"
                 >
                   <div
                     data-node-id="744:1053"
-                    className="pointer-events-none relative order-2 mt-2 h-[180px] overflow-hidden sm:h-[220px] xl:absolute xl:top-[97px] xl:left-0 xl:mt-0 xl:h-[284px] xl:w-full"
+                    className="pointer-events-none relative order-2 mt-2 h-[180px] overflow-hidden sm:h-[220px] xl:absolute xl:top-[150px] xl:left-0 xl:mt-0 xl:h-[170px] xl:w-full"
                   >
                     <img
                       src={SARYAN_PAINTING}
