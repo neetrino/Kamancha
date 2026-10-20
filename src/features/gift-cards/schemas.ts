@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { isCheckoutPaymentMethodOffered } from "@/features/checkout/domain/payment-methods";
 import {
   GIFT_CARD_PAYMENT_METHODS,
 } from "@/features/gift-cards/domain/gift-card-payment-method";
@@ -12,7 +13,9 @@ export const purchaseGiftCardSchema = z.object({
   purchaserName: z.string().trim().min(1).max(120),
   message: z.string().trim().max(1000).optional(),
   scheduledSendAt: z.string().datetime().optional().nullable(),
-  paymentMethod: z.enum(GIFT_CARD_PAYMENT_METHODS),
+  paymentMethod: z
+    .enum(GIFT_CARD_PAYMENT_METHODS)
+    .refine(isCheckoutPaymentMethodOffered),
   locale: z.enum(["hy", "en", "ru"]),
 });
 

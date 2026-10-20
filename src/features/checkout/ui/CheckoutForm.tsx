@@ -19,7 +19,10 @@ import type { CheckoutOrderProduct } from "@/features/checkout/ui/checkout-order
 import type { CheckoutLabels } from "@/features/checkout/ui/checkout-form-labels";
 import { previewCouponAction } from "@/features/checkout/application/preview-coupon";
 import { createOrderAction } from "@/features/checkout/create-order";
-import type { CheckoutPaymentMethod } from "@/features/checkout/domain/payment-methods";
+import {
+  isCheckoutPaymentMethodOffered,
+  type CheckoutPaymentMethod,
+} from "@/features/checkout/domain/payment-methods";
 import { CheckoutDetailsSections } from "@/features/checkout/ui/CheckoutDetailsSections";
 import {
   collectCheckoutInvalidFields,
@@ -222,9 +225,12 @@ export function CheckoutForm({
         shortName: labels.terminal,
         description: labels.terminalDescription,
       },
-    ];
+    ].filter((option) => isCheckoutPaymentMethodOffered(option.id));
     if (!isGroupOrderCheckout) return options;
-    return options.filter((option) => option.id !== "cash_on_delivery");
+    const withoutCash = options.filter(
+      (option) => option.id !== "cash_on_delivery",
+    );
+    return withoutCash.length > 0 ? withoutCash : options;
   }, [
     isGroupOrderCheckout,
     labels.card,

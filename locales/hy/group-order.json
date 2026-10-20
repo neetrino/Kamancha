@@ -118,6 +118,7 @@
   "payBackToGroup": "Վերադառնալ խմբային պատվեր",
   "payAlreadyPaidTitle": "Արդեն վճարված է",
   "payAlreadyPaidHint": "Ձեր մասը հաստատված է։ Կարող եք վերադառնալ խմբային պատվերին։",
+  "payOnlineUnavailable": "Քարտով և Idram-ով վճարումները ժամանակավորապես անհասանելի են։",
   "confirm": {
     "deleteTitle": "Ջնջել",
     "confirmLabel": "Ջնջել",

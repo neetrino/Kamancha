@@ -118,6 +118,7 @@
   "payBackToGroup": "Назад к групповому заказу",
   "payAlreadyPaidTitle": "Уже оплачено",
   "payAlreadyPaidHint": "Ваша доля подтверждена. Можно вернуться к групповому заказу.",
+  "payOnlineUnavailable": "Оплата картой и Idram временно недоступна.",
   "confirm": {
     "deleteTitle": "Удалить",
     "confirmLabel": "Удалить",

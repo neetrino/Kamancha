@@ -18,6 +18,7 @@ const MIME_BY_EXT: Record<string, string> = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml",
+  ".pdf": "application/pdf",
   ".ico": "image/x-icon",
 };
 

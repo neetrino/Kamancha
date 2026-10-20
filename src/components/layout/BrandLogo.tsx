@@ -25,6 +25,10 @@ function isHomePath(pathname: string, locale: Locale): boolean {
  */
 export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
   const pathname = usePathname() ?? `/${locale}`;
+  const logoSrc = staticAssetUrl("/assets/brand/kamancha-logo.svg");
+  const logoClassName =
+    className ??
+    "relative inline-flex h-[58px] w-[122px] shrink-0 items-center xl:h-[74px] xl:w-[154px]";
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>): void {
     if (!isHomePath(pathname, locale)) {
@@ -40,15 +44,12 @@ export function BrandLogo({ locale, brandName, className }: BrandLogoProps) {
       href={`/${locale}`}
       prefetchPolicy="intent"
       onClick={handleClick}
-      className={
-        className ??
-        "relative inline-flex h-[52px] w-[110px] shrink-0 items-center xl:h-[65px] xl:w-[136px]"
-      }
+      className={logoClassName}
       aria-label={brandName}
       data-brand-logo
     >
       <Image
-        src={staticAssetUrl("/assets/brand/kamancha-logo.svg")}
+        src={logoSrc}
         alt=""
         width={136}
         height={65}

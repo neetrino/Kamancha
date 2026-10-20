@@ -14,6 +14,7 @@ import { DateTimePickerField } from "@/components/ui/DateTimePickerField";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { formatYerevanDate } from "@/features/delivery/domain/delivery-schedule";
+import { isCheckoutPaymentMethodOffered } from "@/features/checkout/domain/payment-methods";
 import {
   CheckoutPaymentMethodOption,
   type CheckoutPaymentOption,
@@ -131,20 +132,21 @@ export function BuyGiftCardForm({
   const useCustom = selectedAmount === "custom";
 
   const paymentOptions = useMemo<CheckoutPaymentOption[]>(
-    () => [
-      {
-        id: "cash_on_delivery",
-        name: copy.payment.cashOnDelivery,
-        shortName: copy.payment.cashShort,
-        description: copy.payment.cashOnDeliveryDescription,
-      },
-      {
-        id: "arca",
-        name: copy.payment.card,
-        shortName: copy.payment.card,
-        description: copy.payment.cardDescription,
-      },
-    ],
+    () =>
+      [
+        {
+          id: "cash_on_delivery" as const,
+          name: copy.payment.cashOnDelivery,
+          shortName: copy.payment.cashShort,
+          description: copy.payment.cashOnDeliveryDescription,
+        },
+        {
+          id: "arca" as const,
+          name: copy.payment.card,
+          shortName: copy.payment.card,
+          description: copy.payment.cardDescription,
+        },
+      ].filter((option) => isCheckoutPaymentMethodOffered(option.id)),
     [copy.payment],
   );
 

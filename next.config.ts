@@ -113,6 +113,23 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: buildImageRemotePatterns(),
   },
+  async rewrites() {
+    const r2Base = (
+      process.env.NEXT_PUBLIC_STATIC_ASSET_BASE_URL ??
+      process.env.R2_PUBLIC_BASE_URL ??
+      process.env.R2_PUBLIC_URL ??
+      ""
+    ).replace(/\/$/, "");
+    if (!r2Base) {
+      return [];
+    }
+    return [
+      {
+        source: "/assets/menus/:file",
+        destination: `${r2Base}/assets/menus/:file`,
+      },
+    ];
+  },
   async headers() {
     return [
       {

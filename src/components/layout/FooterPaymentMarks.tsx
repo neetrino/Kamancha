@@ -77,7 +77,7 @@ export function FooterPaymentMarks({ layout = "row" }: FooterPaymentMarksProps) 
         return (
           <li key={mark.alt} className={itemClassName}>
             <Image
-              src={staticAssetUrl(mark.src, { sameOrigin: true })}
+              src={staticAssetUrl(mark.src)}
               alt={mark.alt}
               width={mark.width}
               height={mark.height}

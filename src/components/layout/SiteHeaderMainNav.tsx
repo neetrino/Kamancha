@@ -120,22 +120,22 @@ export function SiteHeaderMainNav({
         <div className="relative flex min-h-12 items-center xl:min-h-[65px]">
           <BrandLogo locale={locale} brandName={dictionary.brand} />
 
-          {/* Nav centered in the free space between logo and search */}
-          <div className="hidden min-w-0 flex-1 items-center justify-center px-4 xl:flex">
+          <div className="hidden min-w-0 flex-1 -translate-x-[5px] items-center justify-center self-center xl:flex">
             <SiteHeaderNavLinks locale={locale} items={navItems} />
           </div>
 
-          <div className="ml-auto flex min-w-0 items-center self-center xl:ml-0">
-            {/* Desktop: search | icons | language | group order */}
-            <div className="hidden h-12 items-center gap-4 xl:flex">
-              <HeaderSearch
-                locale={locale}
-                currency={currency}
-                labels={searchLabels}
-                variant="pill"
-                tone="onDark"
-              />
+          <div className="hidden h-12 shrink-0 items-center xl:flex">
+            <HeaderSearch
+              locale={locale}
+              currency={currency}
+              labels={searchLabels}
+              variant="pill"
+              tone="onDark"
+            />
+          </div>
 
+          <div className="ml-auto flex min-w-0 items-center self-center xl:ml-4">
+            <div className="hidden h-12 items-center gap-4 xl:flex">
               <SiteHeaderIconRail
                 locale={locale}
                 currency={currency}
@@ -168,42 +168,44 @@ export function SiteHeaderMainNav({
             {/* Below xl: home-style menu + account pill */}
             <div className="flex items-center self-center xl:hidden">
               <div
-                className="flex h-14 w-[113px] items-center justify-between rounded-[28px] bg-white pr-[2.5px] pl-3"
+                className="flex h-14 w-[113px] -translate-y-2 items-center rounded-[28px] bg-white pr-[2.5px]"
                 data-mobile-header-pill
                 data-node-id="181:504"
               >
-                <MobileNavDrawer
-                  locale={locale}
-                  dictionary={dictionary}
-                  navItems={navItems}
-                  user={user}
-                  forestTrigger
-                  triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
-                  panelFooter={
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="min-w-0 space-y-2">
-                        <span className="text-xs font-medium tracking-wide text-gray-500">
-                          {dictionary.header.language}
-                        </span>
-                        <LocaleSwitcher
-                          locale={locale}
-                          label={dictionary.header.language}
-                          variant="segmented"
-                        />
+                <div className="flex min-h-full min-w-0 flex-1 items-center justify-center">
+                  <MobileNavDrawer
+                    locale={locale}
+                    dictionary={dictionary}
+                    navItems={navItems}
+                    user={user}
+                    forestTrigger
+                    triggerClassName="relative flex size-[34px] shrink-0 items-center justify-center text-brand-forest transition-opacity hover:opacity-80 touch-manipulation"
+                    panelFooter={
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="min-w-0 space-y-2">
+                          <span className="text-xs font-medium tracking-wide text-gray-500">
+                            {dictionary.header.language}
+                          </span>
+                          <LocaleSwitcher
+                            locale={locale}
+                            label={dictionary.header.language}
+                            variant="segmented"
+                          />
+                        </div>
+                        <div className="min-w-0 space-y-2">
+                          <span className="text-xs font-medium tracking-wide text-gray-500">
+                            {dictionary.header.currency}
+                          </span>
+                          <CurrencySwitcher
+                            currency={currency}
+                            label={dictionary.header.currency}
+                            variant="segmented"
+                          />
+                        </div>
                       </div>
-                      <div className="min-w-0 space-y-2">
-                        <span className="text-xs font-medium tracking-wide text-gray-500">
-                          {dictionary.header.currency}
-                        </span>
-                        <CurrencySwitcher
-                          currency={currency}
-                          label={dictionary.header.currency}
-                          variant="segmented"
-                        />
-                      </div>
-                    </div>
-                  }
-                />
+                    }
+                  />
+                </div>
                 <GroupOrderHeaderButton
                   locale={locale}
                   label={dictionary.nav.groupOrder}

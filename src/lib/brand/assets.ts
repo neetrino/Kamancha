@@ -20,3 +20,11 @@ export const CONTACT_HAND_PARCHMENT_SRC = staticAssetUrl(
 export const CONTACT_HAND_QUILL_SRC = staticAssetUrl(
   "/assets/brand/contact/hand-quill.webp",
 );
+
+/** Hub intro hands — Figma 505:172 (bow) / 505:601 (kamancha). */
+export const HUB_HAND_BOW_SRC = staticAssetUrl(
+  "/assets/brand/catalog/hand-bow.webp",
+);
+export const HUB_HAND_KAMANCHA_SRC = staticAssetUrl(
+  "/assets/brand/catalog/hand-kamancha.webp",
+);
