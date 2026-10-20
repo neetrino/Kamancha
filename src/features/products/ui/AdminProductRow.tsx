@@ -4,6 +4,10 @@ import Image from "next/image";
 import { Pencil, Star, Trash2 } from "lucide-react";
 
 import {
+  AdminSortableGrip,
+  useAdminSortableItem,
+} from "@/features/admin/ui/admin-sortable";
+import {
   ADMIN_TABLE_ROW,
   ADMIN_TABLE_TD,
   ADMIN_TABLE_TD_CENTER,
@@ -24,6 +28,7 @@ type AdminProductRowProps = {
   product: AdminProductListItem;
   selected: boolean;
   disabled: boolean;
+  reorderEnabled: boolean;
   onToggle: () => void;
   onEdit: () => void;
   onFeatured: () => void;
@@ -37,6 +42,7 @@ export function AdminProductRow({
   product,
   selected,
   disabled,
+  reorderEnabled,
   onToggle,
   onEdit,
   onFeatured,
@@ -47,12 +53,28 @@ export function AdminProductRow({
   const isActive = product.status === "ACTIVE";
   const created = new Date(product.createdAt);
   const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
+  const sortable = useAdminSortableItem(product.id, !reorderEnabled || disabled);
 
   return (
     <tr
-      className={`${ADMIN_TABLE_ROW} cursor-pointer`}
+      ref={sortable.setNodeRef}
+      style={sortable.style}
+      className={`${ADMIN_TABLE_ROW} cursor-pointer ${
+        sortable.isDragging ? "bg-gray-100/80 opacity-40" : ""
+      }`}
       onClick={onEdit}
     >
+      <td
+        className={ADMIN_TABLE_TD_CHECK}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <AdminSortableGrip
+          label={copy.table.reorderItemAria.replace("{title}", product.title)}
+          disabled={!reorderEnabled || disabled}
+          attributes={sortable.attributes}
+          listeners={sortable.listeners}
+        />
+      </td>
       <td
         className={ADMIN_TABLE_TD_CHECK}
         onClick={(event) => event.stopPropagation()}

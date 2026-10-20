@@ -398,7 +398,11 @@
       "duplicateAria": "Կրկնօրինակել {title}",
       "deleteAria": "Ջնջել {title}",
       "activateAria": "Ակտիվացնել ապրանքը",
-      "deactivateAria": "Ապաակտիվացնել ապրանքը"
+      "deactivateAria": "Ապաակտիվացնել ապրանքը",
+      "reorderAria": "Վերադասավորել ապրանքները",
+      "reorderItemAria": "Քաշել՝ {title}-ի հերթականությունը փոխելու համար",
+      "clearFiltersToReorder": "Մաքրեք որոնումը, ֆիլտրերը և սյունակի տեսակավորումը՝ մենյուն վերադասավորելու համար։",
+      "reorderReset": "Ցույց տալ հերթականությունը"
     },
     "drawer": {
       "addTitle": "Ավելացնել նոր ապրանք",

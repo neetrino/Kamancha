@@ -172,8 +172,14 @@ function orderByClause(sort: CatalogFilters["sort"], soldExpr: SQL) {
     case "popular":
       return [desc(soldExpr), desc(products.createdAt), desc(products.id)] as const;
     case "newest":
-    default:
       return [desc(products.createdAt), desc(products.id)] as const;
+    case "menu":
+    default:
+      return [
+        asc(products.sortOrder),
+        asc(products.createdAt),
+        asc(products.id),
+      ] as const;
   }
 }
 

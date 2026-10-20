@@ -398,7 +398,11 @@
       "duplicateAria": "Дублировать {title}",
       "deleteAria": "Удалить {title}",
       "activateAria": "Активировать товар",
-      "deactivateAria": "Деактивировать товар"
+      "deactivateAria": "Деактивировать товар",
+      "reorderAria": "Изменить порядок товаров",
+      "reorderItemAria": "Перетащить, чтобы изменить порядок: {title}",
+      "clearFiltersToReorder": "Очистите поиск, фильтры и сортировку столбцов, чтобы изменить порядок меню.",
+      "reorderReset": "Показать порядок меню"
     },
     "drawer": {
       "addTitle": "Добавить новый товар",

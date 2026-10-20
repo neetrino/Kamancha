@@ -33,6 +33,7 @@
   "sortPriceAsc": "Price ↑",
   "sortPriceDesc": "Price ↓",
   "sortPopular": "Popular",
+  "sortMenu": "Menu",
   "removeFilter": "Remove {label}",
   "chipSearch": "Search: {value}",
   "chipCategory": "Category: {value}",

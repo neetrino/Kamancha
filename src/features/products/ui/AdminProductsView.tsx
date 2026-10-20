@@ -43,6 +43,7 @@ type AdminProductsViewProps = {
   stock: AdminProductsFilter["stock"];
   sort: string;
   dir: string;
+  reorderEnabled: boolean;
   copy: ViewCopy;
 };
 
@@ -59,6 +60,7 @@ export function AdminProductsView({
   stock,
   sort,
   dir,
+  reorderEnabled,
   copy,
 }: AdminProductsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -113,6 +115,7 @@ export function AdminProductsView({
         locale={locale}
         products={products}
         sortLinks={sortLinks}
+        reorderEnabled={reorderEnabled}
         onEdit={openEdit}
         copy={{
           table: copy.products.table,

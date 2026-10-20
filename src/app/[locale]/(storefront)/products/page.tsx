@@ -146,6 +146,7 @@ export default async function ProductsPage({
           sortPriceAsc: catalogCopy.sortPriceAsc,
           sortPriceDesc: catalogCopy.sortPriceDesc,
           sortPopular: catalogCopy.sortPopular,
+          sortMenu: catalogCopy.sortMenu,
         }}
       >
         {initialProducts.length === 0 ? (

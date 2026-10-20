@@ -131,6 +131,7 @@ async function seed(): Promise<void> {
         lowStockThreshold: 5,
         status: "ACTIVE",
         isFeatured: true,
+        sortOrder: 1,
       },
       {
         id: seedIds.productHoodie,
@@ -157,6 +158,7 @@ async function seed(): Promise<void> {
         lowStockThreshold: 3,
         status: "ACTIVE",
         isFeatured: true,
+        sortOrder: 2,
       },
     ])
     .onConflictDoUpdate({
