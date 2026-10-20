@@ -44,6 +44,7 @@ type AdminProductsViewProps = {
   sort: string;
   dir: string;
   reorderEnabled: boolean;
+  menuTotal: number;
   copy: ViewCopy;
 };
 
@@ -61,6 +62,7 @@ export function AdminProductsView({
   sort,
   dir,
   reorderEnabled,
+  menuTotal,
   copy,
 }: AdminProductsViewProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -132,6 +134,7 @@ export function AdminProductsView({
         categories={categories}
         modifierLibrary={modifierLibrary}
         attributeLibrary={attributeLibrary}
+        menuTotal={menuTotal}
         copy={{
           drawer: copy.products.drawer,
           categories: copy.products.categories,

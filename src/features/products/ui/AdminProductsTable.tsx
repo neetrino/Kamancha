@@ -13,7 +13,6 @@ import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
   ADMIN_TABLE_CHECKBOX,
-  ADMIN_TABLE_OUTER_SCROLL,
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TH,
@@ -27,7 +26,6 @@ import {
   toggleProductVisibilityAction,
 } from "@/features/products/application/admin-product-actions";
 import type { AdminProductListItem } from "@/features/products/application/list-admin-products";
-import { renderAdminProductDragOverlay } from "@/features/products/ui/AdminProductDragPreview";
 import { AdminProductRow } from "@/features/products/ui/AdminProductRow";
 import { useAdminProductOrder } from "@/features/products/ui/use-admin-product-order";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -66,7 +64,7 @@ export function AdminProductsTable({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const order = useAdminProductOrder(locale, products, reorderEnabled && !isPending);
+  const order = useAdminProductOrder(locale, products, reorderEnabled);
   const [pendingDelete, setPendingDelete] = useState<{
     kind: "single" | "bulk";
     productIds: string[];
@@ -74,6 +72,7 @@ export function AdminProductsTable({
   } | null>(null);
 
   const busy = isPending || order.isReordering;
+  const dragLocked = !reorderEnabled || isPending;
   const rows = order.rows;
   const allIds = rows.map((product) => product.id);
   const allSelected =
@@ -166,9 +165,7 @@ export function AdminProductsTable({
         </Card>
       ) : null}
 
-      {error ?? order.reorderError ? (
-        <p className="text-sm text-red-700">{error ?? order.reorderError}</p>
-      ) : null}
+      {error ?? order.reorderError ? <p className="text-sm text-red-700">{error ?? order.reorderError}</p> : null}
       {!reorderEnabled ? (
         <p className="text-xs text-gray-500">
           {copy.table.clearFiltersToReorder}{" "}
@@ -182,14 +179,16 @@ export function AdminProductsTable({
             {copy.table.empty}
           </p>
         ) : (
-          <div className={ADMIN_TABLE_OUTER_SCROLL}>
+          <div className="w-full min-w-0 overflow-x-auto rounded-t-lg">
             <AdminSortableRoot
               items={rows.map((product) => product.id)}
-              disabled={!reorderEnabled || busy}
-              onReorder={order.handleReorder}
-              renderOverlay={(activeId) =>
-                renderAdminProductDragOverlay(rows, activeId, locale, copy.common.na)
-              }
+              disabled={dragLocked}
+              activationDistance={0}
+              onDragStart={order.markDragging}
+              onDragOver={order.shift}
+              onDragCancel={order.cancelDrag}
+              onDragSettled={order.persist}
+              onReorder={order.shift}
             >
             <table className={ADMIN_TABLE}>
               <thead className={ADMIN_TABLE_THEAD}>
@@ -233,7 +232,7 @@ export function AdminProductsTable({
                     product={product}
                     selected={selected.has(product.id)}
                     disabled={busy}
-                    reorderEnabled={reorderEnabled && !busy}
+                    reorderEnabled={!dragLocked}
                     copy={{ table: copy.table, common: copy.common }}
                     onToggle={() => toggleOne(product.id)}
                     onEdit={() => onEdit(product)}

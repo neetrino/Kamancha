@@ -422,6 +422,9 @@
       "skuPlaceholder": "SKU",
       "quantity": "Quantity",
       "quantityPlaceholder": "Stock",
+      "order": "Order",
+      "orderHint": "1 is the first place in the menu. Allowed range: 1–{count}.",
+      "orderInvalid": "Order must be between 1 and {count}.",
       "imagesTooLarge": "Images are too large to upload together. Use fewer or smaller files (max 5MB each)."
     },
     "attributes": {

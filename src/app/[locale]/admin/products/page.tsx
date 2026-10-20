@@ -98,7 +98,7 @@ export default async function AdminProductsPage({
       ? { ...requested, sort: "order" as const }
       : requested;
 
-  const [{ rows, total, pageSize }, categories, modifierLibrary, attributeLibrary] =
+  const [{ rows, total, pageSize, menuTotal }, categories, modifierLibrary, attributeLibrary] =
     await Promise.all([
       listAdminProducts(locale, filters),
       listAdminCategoryOptions(locale),
@@ -143,6 +143,7 @@ export default async function AdminProductsPage({
         sort={filters.sort}
         dir={filters.dir}
         reorderEnabled={isAdminProductManualOrder(filters)}
+        menuTotal={menuTotal}
         copy={{
           products: adminCopy.products,
           common: adminCopy.common,

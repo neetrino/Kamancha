@@ -48,6 +48,7 @@ type ProductDrawerProduct = Pick<
   | "discount"
   | "translations"
   | "images"
+  | "menuPosition"
 >;
 
 type ProductLocaleDraft = {
@@ -74,6 +75,8 @@ type ProductDrawerProps = {
   categories: AdminCategoryOption[];
   modifierLibrary: ProductModifierOption[];
   attributeLibrary: AttributeOption[];
+  /** Non-deleted products in the menu, before this add. */
+  menuTotal: number;
   copy: DrawerCopy;
 };
 
@@ -97,6 +100,7 @@ export function ProductDrawer({
   categories: initialCategories,
   modifierLibrary: initialModifierLibrary,
   attributeLibrary: initialAttributeLibrary,
+  menuTotal,
   copy,
 }: ProductDrawerProps) {
   const router = useRouter();
@@ -127,9 +131,11 @@ export function ProductDrawer({
   const [priceAmount, setPriceAmount] = useState("");
   const [sku, setSku] = useState("");
   const [stockOnHand, setStockOnHand] = useState("");
+  const [menuPosition, setMenuPosition] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const activeDraft = localizedText[activeLocale];
+  const maxMenuPosition = isEdit ? Math.max(menuTotal, 1) : menuTotal + 1;
 
   function setActiveDraft(patch: Partial<ProductLocaleDraft>): void {
     setLocalizedText((current) => ({
@@ -184,6 +190,7 @@ export function ProductDrawer({
       scheduleStateUpdate(setPriceAmount, String(product.priceAmount));
       scheduleStateUpdate(setSku, product.sku);
       scheduleStateUpdate(setStockOnHand, String(product.stockOnHand));
+      scheduleStateUpdate(setMenuPosition, String(product.menuPosition));
       scheduleStateUpdate(setError, null);
     } else {
       scheduleStateUpdate(setActiveLocale, "hy");
@@ -202,9 +209,17 @@ export function ProductDrawer({
       scheduleStateUpdate(setPriceAmount, "");
       scheduleStateUpdate(setSku, "");
       scheduleStateUpdate(setStockOnHand, "");
+      scheduleStateUpdate(setMenuPosition, String(menuTotal + 1));
       scheduleStateUpdate(setError, null);
     }
-  }, [open, product, initialCategories, initialModifierLibrary, initialAttributeLibrary]);
+  }, [
+    open,
+    product,
+    menuTotal,
+    initialCategories,
+    initialModifierLibrary,
+    initialAttributeLibrary,
+  ]);
 
   function handleImagesChange(next: ProductDraftImage[]): void {
     const nextKeys = new Set(next.map((image) => image.key));
@@ -253,6 +268,20 @@ export function ProductDrawer({
               );
               return;
             }
+            const parsedPosition = Number(menuPosition);
+            if (
+              !Number.isInteger(parsedPosition) ||
+              parsedPosition < 1 ||
+              parsedPosition > maxMenuPosition
+            ) {
+              setError(
+                copy.drawer.orderInvalid.replace(
+                  "{count}",
+                  String(maxMenuPosition),
+                ),
+              );
+              return;
+            }
 
             const payload = {
               sku: sku.trim(),
@@ -289,6 +318,7 @@ export function ProductDrawer({
                   ? primaryNewIndex
                   : null,
               removeImageIds: removedImageIds,
+              menuPosition: parsedPosition,
             };
 
             const formData = new FormData();
@@ -496,6 +526,29 @@ export function ProductDrawer({
                   className={ADMIN_INPUT}
                   disabled={isPending}
                 />
+              </label>
+              <label className="sm:col-span-2 sm:max-w-xs">
+                <span className={ADMIN_LABEL}>
+                  {copy.drawer.order}{" "}
+                  <span className="text-red-600">{copy.common.requiredMark}</span>
+                </span>
+                <input
+                  required
+                  min={1}
+                  max={maxMenuPosition}
+                  step={1}
+                  type="number"
+                  value={menuPosition}
+                  onChange={(event) => setMenuPosition(event.target.value)}
+                  className={ADMIN_INPUT}
+                  disabled={isPending}
+                />
+                <span className="mt-1 block text-xs text-gray-500">
+                  {copy.drawer.orderHint.replace(
+                    "{count}",
+                    String(maxMenuPosition),
+                  )}
+                </span>
               </label>
             </div>
 

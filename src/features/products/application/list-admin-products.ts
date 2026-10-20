@@ -70,6 +70,8 @@ export type AdminProductListItem = {
   discount: AdminProductDiscount | null;
   images: AdminProductImage[];
   variants: AdminProductVariants;
+  /** 1-based place in the unfiltered menu. */
+  menuPosition: number;
 };
 
 export type AdminCategoryOption = {
@@ -230,11 +232,34 @@ async function loadCategoryMeta(
   return map;
 }
 
+/** 1-based menu ranks for every non-deleted product. */
+async function loadMenuRanks(): Promise<{
+  positions: Map<string, number>;
+  total: number;
+}> {
+  const ranked = await getDb()
+    .select({ id: products.id })
+    .from(products)
+    .where(isNull(products.deletedAt))
+    .orderBy(asc(products.sortOrder), asc(products.createdAt), asc(products.id));
+
+  const positions = new Map<string, number>();
+  ranked.forEach((row, index) => {
+    positions.set(row.id, index + 1);
+  });
+  return { positions, total: ranked.length };
+}
+
 /** Lists products for the admin catalog table with filters and sort. */
 export async function listAdminProducts(
   locale: Locale,
   filters: AdminProductsFilter,
-): Promise<{ rows: AdminProductListItem[]; total: number; pageSize: number }> {
+): Promise<{
+  rows: AdminProductListItem[];
+  total: number;
+  pageSize: number;
+  menuTotal: number;
+}> {
   const where = buildWhere(filters, locale);
   const db = getDb();
 
@@ -257,7 +282,7 @@ export async function listAdminProducts(
     .offset(offset);
 
   const ids = rows.map((row) => row.id);
-  const [primaryImages, categoryMap, modifierMap, attributeMap, discountMap, galleryImages, variantDrafts] =
+  const [primaryImages, categoryMap, modifierMap, attributeMap, discountMap, galleryImages, variantDrafts, menuRanks] =
     await Promise.all([
       loadPrimaryImages(ids),
       loadCategoryMeta(ids, locale),
@@ -266,11 +291,13 @@ export async function listAdminProducts(
       loadProductDiscounts(ids),
       loadProductImagesForAdmin(ids),
       loadAdminVariantDrafts(ids),
+      loadMenuRanks(),
     ]);
 
   return {
     total,
     pageSize,
+    menuTotal: menuRanks.total,
     rows: rows.map((product) => {
       const translation = translationFor(product.translations, locale);
       const categoryMeta = categoryMap.get(product.id);
@@ -300,6 +327,7 @@ export async function listAdminProducts(
           attributeIds: [],
           variants: [],
         },
+        menuPosition: menuRanks.positions.get(product.id) ?? menuRanks.total,
       };
     }),
   };

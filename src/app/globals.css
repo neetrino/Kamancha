@@ -177,6 +177,29 @@ body {
 }
 
 /* Confirm / modal dismiss — same motion as Mobee storefront dialog */
+@keyframes admin-drag-lift {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-8px) scale(1.015);
+  }
+}
+
+.admin-drag-lift {
+  transform-origin: left center;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow:
+    0 18px 42px rgba(15, 23, 42, 0.18),
+    0 0 0 1px rgba(15, 23, 42, 0.06);
+  animation: admin-drag-lift 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.admin-drag-source {
+  opacity: 0.28;
+}
+
 @keyframes confirm-dialog-backdrop-in {
   0% {
     opacity: 0;
@@ -193,21 +216,6 @@ body {
   to {
     opacity: 0;
   }
-}
-
-@keyframes admin-drag-lift {
-  from {
-    opacity: 0.72;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.animate-admin-drag-lift {
-  animation: 220ms cubic-bezier(0.22, 1, 0.36, 1) admin-drag-lift both;
 }
 
 @keyframes confirm-dialog-panel-in {
