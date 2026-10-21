@@ -195,6 +195,10 @@ Simple ապրանքը (`products.kind = SIMPLE`) մնում է մեկ գին/պ�
 
 Admin title, optional click-through `link_url`, `is_active` և timestamps։ Միաժամանակ միայն մեկ ակտիվ popup (partial unique index)։ Պատկերը `media_assets.popup_id + role=POPUP`։
 
+### 7.3 `blog_posts`
+
+Ընդհանուր `slug`, `translations JSONB` (hy/en/ru title, optional excerpt, body), `is_active`, `published_at`, optional `author_user_id`։ Cover-ը `media_assets.blog_post_id + role=COVER`։ Public ցանկը ցույց է տալիս միայն ակտիվ post-երը։
+
 ## 8. Cart և wishlist
 
 ### 8.1 `carts`

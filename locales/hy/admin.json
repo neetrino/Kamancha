@@ -15,6 +15,7 @@
     "settings": "Կարգավորումներ",
     "giftCards": "Gift Card-եր",
     "popups": "Popup-ներ",
+    "blog": "Բլոգ",
     "reviews": "Կարծիքներ"
   },
   "shell": {
@@ -915,6 +916,43 @@
       "remove": "Հեռացնել",
       "create": "Ստեղծել",
       "edit": "Խմբագրել"
+    }
+  },
+  "blog": {
+    "title": "Բլոգ",
+    "count": "{count} հրապարակում",
+    "countPlural": "{count} հրապարակում",
+    "createPost": "Նոր բլոգ",
+    "noImage": "Նկար չկա",
+    "active": "ԱԿՏԻՎ",
+    "inactive": "ԱՆԱԿՏԻՎ",
+    "empty": "Դեռևս հրապարակումներ չկան։",
+    "editAria": "Խմբագրել {title}",
+    "deleteAria": "Ջնջել {title}",
+    "activateAria": "Ակտիվացնել հրապարակումը",
+    "deactivateAria": "Ապաակտիվացնել հրապարակումը",
+    "errors": {
+      "invalid": "Լրացրեք վերնագիրը, տեքստը և վավեր slug-ը։",
+      "imageRequired": "Շապիկի նկարը պարտադիր է։",
+      "notFound": "Հրապարակումը չի գտնվել։",
+      "saveFailed": "Չհաջողվեց պահպանել հրապարակումը։"
+    },
+    "drawer": {
+      "createTitle": "Նոր բլոգ",
+      "editTitle": "Խմբագրել բլոգը",
+      "createAria": "Ստեղծել բլոգ",
+      "editAria": "Խմբագրել բլոգը",
+      "title": "Վերնագիր",
+      "excerpt": "Կարճ նկարագրություն",
+      "body": "Տեքստ",
+      "slug": "Slug",
+      "slugHint": "Ստեղծվում է ավտոմատ՝ վերնագրից։ Slug՝",
+      "cover": "Շապիկի նկար",
+      "uploadImage": "+ Վերբեռնել նկար",
+      "changeImage": "Փոխել նկարը",
+      "remove": "Հեռացնել",
+      "create": "Ստեղծել",
+      "edit": "Պահպանել"
     }
   },
   "popups": {

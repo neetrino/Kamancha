@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { AppLink } from "@/components/ui/AppLink";
+
 type RestaurantVenueCardProps = {
   title: string;
   href?: string;
@@ -105,14 +107,27 @@ export function RestaurantVenueCard({
     href.startsWith("http://") ||
     href.startsWith("https://") ||
     href.toLowerCase().includes(".pdf");
+
+  if (!openInNewTab) {
+    return (
+      <AppLink
+        href={href}
+        prefetchPolicy="intent"
+        className="block cursor-pointer"
+        aria-label={title}
+      >
+        {card}
+      </AppLink>
+    );
+  }
+
   return (
     <a
       href={href}
       className="block cursor-pointer"
       aria-label={title}
-      {...(openInNewTab
-        ? { target: "_blank", rel: "noopener noreferrer" }
-        : {})}
+      target="_blank"
+      rel="noopener noreferrer"
     >
       {card}
     </a>

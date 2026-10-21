@@ -1,6 +1,7 @@
 import type { Locale } from "@/lib/i18n/config";
 
 import enAbout from "@/locales/en/about.json";
+import enBlog from "@/locales/en/blog.json";
 import enAdmin from "@/locales/en/admin.json";
 import enAuth from "@/locales/en/auth.json";
 import enCart from "@/locales/en/cart.json";
@@ -16,6 +17,7 @@ import enProfile from "@/locales/en/profile.json";
 import enWishlist from "@/locales/en/wishlist.json";
 
 import hyAbout from "@/locales/hy/about.json";
+import hyBlog from "@/locales/hy/blog.json";
 import hyAdmin from "@/locales/hy/admin.json";
 import hyAuth from "@/locales/hy/auth.json";
 import hyCart from "@/locales/hy/cart.json";
@@ -31,6 +33,7 @@ import hyProfile from "@/locales/hy/profile.json";
 import hyWishlist from "@/locales/hy/wishlist.json";
 
 import ruAbout from "@/locales/ru/about.json";
+import ruBlog from "@/locales/ru/blog.json";
 import ruAdmin from "@/locales/ru/admin.json";
 import ruAuth from "@/locales/ru/auth.json";
 import ruCart from "@/locales/ru/cart.json";
@@ -51,6 +54,7 @@ type LocaleNamespaces = {
   home: typeof hyHome;
   contact: typeof hyContact;
   about: typeof hyAbout;
+  blog: typeof hyBlog;
   auth: typeof hyAuth;
   profile: typeof hyProfile;
   checkout: typeof hyCheckout;
@@ -73,6 +77,7 @@ function buildDictionary(namespaces: LocaleNamespaces) {
     home: namespaces.home,
     contact: namespaces.contact,
     about: namespaces.about,
+    blog: namespaces.blog,
     auth: namespaces.auth,
     profile: namespaces.profile,
     checkout: namespaces.checkout,
@@ -92,6 +97,7 @@ const dictionaries = {
     home: hyHome,
     contact: hyContact,
     about: hyAbout,
+    blog: hyBlog,
     auth: hyAuth,
     profile: hyProfile,
     checkout: hyCheckout,
@@ -108,6 +114,7 @@ const dictionaries = {
     home: enHome,
     contact: enContact,
     about: enAbout,
+    blog: enBlog,
     auth: enAuth,
     profile: enProfile,
     checkout: enCheckout,
@@ -124,6 +131,7 @@ const dictionaries = {
     home: ruHome,
     contact: ruContact,
     about: ruAbout,
+    blog: ruBlog,
     auth: ruAuth,
     profile: ruProfile,
     checkout: ruCheckout,

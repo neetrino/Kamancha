@@ -316,7 +316,7 @@
 
 ## 19. Blog և content
 
-Blog feature-ը հանված է scope-ից (`0016_drop_blog`)։
+Admin-ը `/admin/blog`-ում ստեղծում, խմբագրում, ակտիվացնում և ջնջում է հրապարակումներ (աջ drawer, էջի կեսը)։ Յուրաքանչյուր post ունի ընդհանուր slug, locale title/excerpt/body և cover։ Storefront-ում header-ի «Բլոգ»-ը բացում է միայն ակտիվ post-երի ցանկը, իսկ քարտը տանում է `/{locale}/blog/[slug]`։
 
 ## 20. Settings
 

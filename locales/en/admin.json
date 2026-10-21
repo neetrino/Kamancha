@@ -15,6 +15,7 @@
     "settings": "Settings",
     "giftCards": "Gift cards",
     "popups": "Popups",
+    "blog": "Blog",
     "reviews": "Reviews"
   },
   "shell": {
@@ -915,6 +916,43 @@
       "remove": "Remove",
       "create": "Create",
       "edit": "Edit"
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "count": "{count} post",
+    "countPlural": "{count} posts",
+    "createPost": "New blog",
+    "noImage": "No image",
+    "active": "ACTIVE",
+    "inactive": "INACTIVE",
+    "empty": "No posts yet.",
+    "editAria": "Edit {title}",
+    "deleteAria": "Delete {title}",
+    "activateAria": "Activate post",
+    "deactivateAria": "Deactivate post",
+    "errors": {
+      "invalid": "Add a title, body, and a valid slug.",
+      "imageRequired": "A cover image is required.",
+      "notFound": "Post not found.",
+      "saveFailed": "Unable to save the post."
+    },
+    "drawer": {
+      "createTitle": "New blog",
+      "editTitle": "Edit blog",
+      "createAria": "Create blog",
+      "editAria": "Edit blog",
+      "title": "Title",
+      "excerpt": "Short description",
+      "body": "Text",
+      "slug": "Slug",
+      "slugHint": "Generated automatically from the title. Slug:",
+      "cover": "Cover image",
+      "uploadImage": "+ Upload image",
+      "changeImage": "Change image",
+      "remove": "Remove",
+      "create": "Create",
+      "edit": "Save"
     }
   },
   "popups": {

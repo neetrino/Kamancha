@@ -143,6 +143,7 @@ export function SiteFooter({ dictionary, locale }: SiteFooterProps) {
   const navigationLinks: FooterLink[] = [
     { href: `/${locale}/products`, label: footer.menu },
     { href: `/${locale}/about`, label: footer.about },
+    { href: `/${locale}/blog`, label: footer.blog },
     { href: `/${locale}/contact`, label: footer.contact },
   ];
 

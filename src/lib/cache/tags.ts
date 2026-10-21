@@ -8,6 +8,7 @@ export const CACHE_TAGS = {
     `product-slug:${locale}:${slug}`,
   hero: "hero",
   popups: "popups",
+  blog: "blog",
   categories: "categories",
   settings: "settings",
 } as const;

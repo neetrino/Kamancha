@@ -20,6 +20,7 @@ function buildNavItems(locale: Locale, dictionary: Dictionary) {
     { href: `/${locale}/delivery`, label: dictionary.nav.home },
     { href: `/${locale}/products`, label: dictionary.nav.delivery },
     { href: `/${locale}/about`, label: dictionary.nav.about },
+    { href: `/${locale}/blog`, label: dictionary.nav.blog },
     { href: `/${locale}/contact`, label: dictionary.nav.contact },
   ] as const;
 }

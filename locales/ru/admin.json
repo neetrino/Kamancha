@@ -15,6 +15,7 @@
     "settings": "Настройки",
     "giftCards": "Подарочные карты",
     "popups": "Popup",
+    "blog": "Блог",
     "reviews": "Отзывы"
   },
   "shell": {
@@ -915,6 +916,43 @@
       "remove": "Убрать",
       "create": "Создать",
       "edit": "Редактировать"
+    }
+  },
+  "blog": {
+    "title": "Блог",
+    "count": "{count} публикация",
+    "countPlural": "{count} публикаций",
+    "createPost": "Новый блог",
+    "noImage": "Нет изображения",
+    "active": "АКТИВНО",
+    "inactive": "НЕАКТИВНО",
+    "empty": "Публикаций пока нет.",
+    "editAria": "Редактировать {title}",
+    "deleteAria": "Удалить {title}",
+    "activateAria": "Активировать публикацию",
+    "deactivateAria": "Деактивировать публикацию",
+    "errors": {
+      "invalid": "Заполните заголовок, текст и корректный slug.",
+      "imageRequired": "Обложка обязательна.",
+      "notFound": "Публикация не найдена.",
+      "saveFailed": "Не удалось сохранить публикацию."
+    },
+    "drawer": {
+      "createTitle": "Новый блог",
+      "editTitle": "Редактировать блог",
+      "createAria": "Создать блог",
+      "editAria": "Редактировать блог",
+      "title": "Заголовок",
+      "excerpt": "Краткое описание",
+      "body": "Текст",
+      "slug": "Slug",
+      "slugHint": "Создаётся автоматически из заголовка. Slug:",
+      "cover": "Обложка",
+      "uploadImage": "+ Загрузить изображение",
+      "changeImage": "Сменить изображение",
+      "remove": "Убрать",
+      "create": "Создать",
+      "edit": "Сохранить"
     }
   },
   "popups": {
