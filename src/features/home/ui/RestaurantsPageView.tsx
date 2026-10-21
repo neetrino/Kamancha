@@ -123,6 +123,7 @@ export function RestaurantsPageView({ locale, labels }: RestaurantsPageViewProps
           className="xl:col-span-24 xl:flex xl:justify-center"
         >
           <RestaurantVenueCard
+            href={`/${locale}/blog`}
             title={labels.blog}
             titleClassName="top-[181px] right-[37px] xl:top-[241px] xl:right-[39px]"
             className="xl:h-[301px] xl:w-[577px]"

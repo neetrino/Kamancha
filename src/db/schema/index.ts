@@ -32,6 +32,11 @@ export {
 } from "@/db/schema/content";
 export { storePopups } from "@/db/schema/popups";
 export {
+  blogPosts,
+  type BlogTranslation,
+  type BlogTranslationsJson,
+} from "@/db/schema/blog";
+export {
   cartItems,
   carts,
   wishlistItems,
