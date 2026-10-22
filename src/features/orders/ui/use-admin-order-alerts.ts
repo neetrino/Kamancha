@@ -6,6 +6,7 @@ import {
   getAdminOrderAlertsAction,
   type AdminOrderAlertLatest,
 } from "@/features/orders/application/admin-order-alerts";
+import { startBackgroundInterval } from "@/features/orders/ui/background-interval";
 import {
   disposeAdminOrderAlertSound,
   isAdminOrderAlertSoundLooping,
@@ -137,14 +138,20 @@ export function useAdminOrderAlerts({
       await refresh();
     }
 
+    function onVisibilityChange(): void {
+      if (document.visibilityState === "visible") void tick();
+    }
+
     void tick();
-    const timer = window.setInterval(() => {
+    const stopPolling = startBackgroundInterval(() => {
       void tick();
     }, ADMIN_ORDER_ALERT_POLL_MS);
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       cancelled = true;
-      window.clearInterval(timer);
+      stopPolling();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       disposeAdminOrderAlertSound();
     };
   }, [refresh]);

@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { after } from "next/server";
 
 import { getProviders } from "@/config/providers";
 import {
@@ -21,6 +22,7 @@ import {
   stockMovements,
 } from "@/db/schema";
 import { withTransaction } from "@/db/transaction";
+import { notifyAdminsOfNewOrder } from "@/features/admin-push/application/notify-admins-of-new-order";
 import {
   getCartWithItems,
   revalidateCartPaths,
@@ -256,6 +258,7 @@ export async function createOrderAction(
   );
 
   try {
+    let createdNewOrder = false;
     const orderNumber = await withTransaction(async (tx) => {
       const [existing] = await tx
         .select({ id: orders.id, orderNumber: orders.orderNumber })
@@ -856,9 +859,13 @@ export async function createOrderAction(
         .set({ status: "CONVERTED", updatedAt: now })
         .where(eq(carts.id, cart.id));
 
+      createdNewOrder = true;
       return number;
     });
 
+    if (createdNewOrder) {
+      after(() => notifyAdminsOfNewOrder(orderNumber));
+    }
     await revalidateCartPaths();
     if (groupCheckout.active) {
       await clearGroupOrderSession();

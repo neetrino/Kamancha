@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 
 import { useAdminOrderAlertsContext } from "@/features/orders/ui/AdminOrderAlertsContext";
 import { formatOrderDrawerMoney } from "@/features/orders/ui/order-drawer-format";
+import { useAdminOrderSystemNotification } from "@/features/orders/ui/use-admin-order-system-notification";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AlertCopy = Dictionary["admin"]["orders"]["newAlert"];
@@ -30,6 +31,8 @@ function formatAlertPlacedAt(iso: string, locale: string): string {
 export function AdminNewOrderAlert({ locale, copy }: AdminNewOrderAlertProps) {
   const { unseenCount, latest, popupOpen, dismissPopup } =
     useAdminOrderAlertsContext();
+
+  useAdminOrderSystemNotification({ popupOpen, latest, copy });
 
   if (
     typeof document === "undefined" ||

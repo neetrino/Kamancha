@@ -11,6 +11,7 @@ import {
 import type { AdminOrderAlertLatest } from "@/features/orders/application/admin-order-alerts";
 import { unlockAdminOrderAlertSound } from "@/features/orders/ui/play-admin-order-alert-sound";
 import { useAdminOrderAlerts } from "@/features/orders/ui/use-admin-order-alerts";
+import { useAdminUnseenTitle } from "@/features/orders/ui/use-admin-unseen-title";
 
 type AdminOrderAlertsContextValue = {
   unseenCount: number;
@@ -48,6 +49,8 @@ export function AdminOrderAlertsProvider({
     locale,
     playSoundOnArrival: true,
   });
+
+  useAdminUnseenTitle(unseenCount);
 
   // Browsers block AudioContext until a user gesture; unlock then restart chime
   // if the popup is already waiting for acknowledge.

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { AdminPushToggle } from "@/features/admin-push/ui/AdminPushToggle";
 import { AdminPagination } from "@/features/admin/ui/AdminPagination";
 import { ADMIN_PAGE_TITLE } from "@/features/admin/ui/admin-form-classes";
 import { listAdminOrders } from "@/features/orders/application/queries";
@@ -15,6 +16,7 @@ import { AdminOrdersUnseenBadge } from "@/features/orders/ui/AdminOrdersUnseenBa
 import { AdminOrdersView } from "@/features/orders/ui/AdminOrdersView";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getWebPushPublicKey } from "@/lib/push/web-push-sender";
 
 type AdminOrdersPageProps = {
   params: Promise<{ locale: string }>;
@@ -104,6 +106,13 @@ export default async function AdminOrdersPage({
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <h1 className={ADMIN_PAGE_TITLE}>{copy.orders.title}</h1>
         <AdminOrdersUnseenBadge ariaLabel={copy.orders.newAlert.badgeAria} />
+        <div className="ml-auto">
+          <AdminPushToggle
+            locale={locale}
+            publicKey={getWebPushPublicKey()}
+            copy={copy.orders.push}
+          />
+        </div>
       </div>
 
       <AdminOrderKindFilter

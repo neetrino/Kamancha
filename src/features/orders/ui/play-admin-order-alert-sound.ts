@@ -1,7 +1,9 @@
+import { startBackgroundInterval } from "@/features/orders/ui/background-interval";
+
 let sharedContext: AudioContext | null = null;
 let masterGain: GainNode | null = null;
 let activeOscillators: OscillatorNode[] = [];
-let loopTimer: number | null = null;
+let stopLoop: (() => void) | null = null;
 /** Bumps on every stop so in-flight resume/play work is ignored. */
 let playGeneration = 0;
 
@@ -29,10 +31,9 @@ function getOrCreateContext(): AudioContext | null {
 }
 
 function clearLoopTimer(): void {
-  if (typeof window === "undefined") return;
-  if (loopTimer == null) return;
-  window.clearInterval(loopTimer);
-  loopTimer = null;
+  if (!stopLoop) return;
+  stopLoop();
+  stopLoop = null;
 }
 
 function silenceGraph(): void {
@@ -84,7 +85,7 @@ export function unlockAdminOrderAlertSound(): void {
 
 /** Whether the acknowledge-loop chime is currently scheduled. */
 export function isAdminOrderAlertSoundLooping(): boolean {
-  return loopTimer != null;
+  return stopLoop != null;
 }
 
 /** Stops any in-flight admin order alert chime immediately (keeps context unlocked). */
@@ -162,7 +163,7 @@ export function playAdminOrderAlertSound(): void {
 
     scheduleChimeBurst(context, generation);
     clearLoopTimer();
-    loopTimer = window.setInterval(() => {
+    stopLoop = startBackgroundInterval(() => {
       scheduleChimeBurst(context, generation);
     }, CHIME_LOOP_MS);
   };
