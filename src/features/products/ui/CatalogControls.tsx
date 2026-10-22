@@ -111,8 +111,10 @@ export function CatalogControls({
             key={value}
             type="button"
             aria-pressed={active}
-            onClick={() => navigateSort(value)}
+            onClick={() => navigateSort(active ? "menu" : value)}
             className={`rounded-[50px] px-4 py-2 text-[14px] leading-[21px] transition-colors ${
+              value === "menu" ? "hidden xl:inline-flex " : ""
+            }${
               active
                 ? "bg-white font-semibold text-brand-forest"
                 : "bg-white/10 font-normal text-white hover:bg-white/15"
