@@ -24,10 +24,17 @@ export function BlogIndexView({ locale, posts, copy }: BlogIndexViewProps) {
         </Reveal>
       </header>
       {posts.length === 0 ? (
-        <div className="relative left-1/2 min-h-[420px] w-screen max-w-[100vw] -translate-x-1/2 [--blog-empty-photo:min(44vw,780px)] sm:min-h-[520px]">
-          <p className="absolute inset-y-0 left-0 z-[1] flex w-[calc(100%-var(--blog-empty-photo))] items-center justify-center px-6 text-center font-big-fat-boii text-[clamp(22px,3vw,36px)] leading-[1.15] font-normal whitespace-pre-line text-[#e5e2e1]">
-            {copy.empty}
-          </p>
+        <div className="relative left-1/2 min-h-[70vh] w-screen max-w-[100vw] -translate-x-1/2 [--blog-empty-photo:min(78vw,520px)] lg:[--blog-empty-photo:min(44vw,780px)] lg:min-h-[520px]">
+          <Reveal
+            immediate
+            delay={0.45}
+            y={48}
+            className="relative z-[1] mt-16 px-6 lg:absolute lg:inset-y-0 lg:left-0 lg:mt-0 lg:flex lg:w-[calc(100%-var(--blog-empty-photo))] lg:items-center lg:justify-center"
+          >
+            <p className="text-center font-big-fat-boii text-[clamp(22px,3vw,36px)] leading-[1.15] font-normal whitespace-pre-line text-[#e5e2e1]">
+              {copy.empty}
+            </p>
+          </Reveal>
           <BlogEmptyIllustration />
         </div>
       ) : (
