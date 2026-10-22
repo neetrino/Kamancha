@@ -15,7 +15,7 @@ export const STOREFRONT_TABLET_INSET_X =
 
 /** Icon rail: cart + wishlist + account — nudged slightly below / left of optical center. */
 export const SITE_HEADER_ICON_RAIL =
-  "flex h-12 shrink-0 -translate-x-px translate-y-1 items-center gap-4";
+  "flex h-12 shrink-0 -translate-x-px translate-y-1 items-center gap-2";
 
 /** Cart trigger hit area — centered in the 48px rail. */
 export const SITE_HEADER_CART_TRIGGER =
@@ -23,7 +23,7 @@ export const SITE_HEADER_CART_TRIGGER =
 
 /** Count badge on cart / wishlist header icons. */
 export const SITE_HEADER_CART_BADGE =
-  "absolute -top-0.5 -right-0.5 flex size-5 min-w-5 items-center justify-center rounded-full border border-solid border-white bg-brand-forest p-px text-center text-[10px] font-bold leading-none text-white";
+  "absolute top-0 right-0 flex size-5 min-w-5 items-center justify-center rounded-full border border-solid border-white bg-brand-forest p-px text-center text-[10px] font-bold leading-none text-white";
 
 /** Desktop search pill — slightly longer than the «Որոնել» label. */
 export const SITE_HEADER_SEARCH_PILL =
