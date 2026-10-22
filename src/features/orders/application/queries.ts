@@ -538,7 +538,7 @@ export async function getAdminDashboardMetrics(input: {
       .from(orders)
       .where(and(eq(orders.isArchived, false), isNull(orders.groupOrderId)))
       .orderBy(desc(orders.placedAt))
-      .limit(8),
+      .limit(5),
     getDb()
       .select({
         productId: orderItems.productId,

@@ -188,13 +188,13 @@ export default async function AdminPage({
               {copy.viewAll}
             </Link>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {metrics.topProducts.map((product) => (
               <div
                 key={product.productId}
-                className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
+                className={`flex items-center gap-3 rounded-[12px] bg-white px-3 py-2.5 shadow-[0_2px_8px_rgba(17,24,39,0.05)] ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
               >
-                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-gray-100">
                   {product.imageUrl ? (
                     <Image
                       src={product.imageUrl}
@@ -210,10 +210,10 @@ export default async function AdminPage({
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-gray-900">
+                  <p className="truncate text-[15px] font-medium text-gray-900">
                     {product.title}
                   </p>
-                  <p className="text-[11px] text-gray-500">
+                  <p className="text-xs text-gray-500">
                     {fillTemplate(copy.soldCount, {
                       quantity: String(product.quantity),
                     })}
