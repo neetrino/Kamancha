@@ -118,23 +118,25 @@ export function SiteHeaderMainNav({
     <header className="relative z-40 bg-transparent text-white" data-node-id="22:393">
       <div className={SITE_HEADER_INNER}>
         <div className="relative flex min-h-12 items-center xl:min-h-[65px]">
-          <BrandLogo locale={locale} brandName={dictionary.brand} />
+          <div className="flex min-w-min flex-1 items-center">
+            <BrandLogo locale={locale} brandName={dictionary.brand} />
 
-          <div className="hidden min-w-0 flex-1 -translate-x-[5px] items-center justify-center self-center xl:flex">
-            <SiteHeaderNavLinks locale={locale} items={navItems} />
+            <div className="hidden min-w-min flex-1 items-center justify-center px-6 xl:flex">
+              <SiteHeaderNavLinks locale={locale} items={navItems} />
+            </div>
+
+            <div className="hidden h-12 shrink-0 items-center xl:flex">
+              <HeaderSearch
+                locale={locale}
+                currency={currency}
+                labels={searchLabels}
+                variant="pill"
+                tone="onDark"
+              />
+            </div>
           </div>
 
-          <div className="hidden h-12 shrink-0 items-center xl:flex">
-            <HeaderSearch
-              locale={locale}
-              currency={currency}
-              labels={searchLabels}
-              variant="pill"
-              tone="onDark"
-            />
-          </div>
-
-          <div className="ml-auto flex min-w-0 items-center self-center xl:ml-4">
+          <div className="ml-6 flex shrink-0 items-center self-center">
             <div className="hidden h-12 items-center gap-4 xl:flex">
               <SiteHeaderIconRail
                 locale={locale}

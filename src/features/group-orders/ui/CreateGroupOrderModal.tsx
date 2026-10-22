@@ -164,7 +164,7 @@ export function CreateGroupOrderModal({
         role="dialog"
         aria-modal="true"
         aria-label={labels.createTitle}
-        className={`relative z-[1] flex max-h-[min(92vh,720px)] w-full max-w-md flex-col overflow-hidden rounded-3xl bg-white shadow-xl sm:max-w-lg ${panelClass}`}
+        className={`relative z-[1] flex max-h-[min(92vh,720px)] w-full max-w-md flex-col overflow-hidden rounded-[20px] bg-white shadow-xl sm:max-w-lg ${panelClass}`}
         {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
         onAnimationEnd={handlePanelAnimationEnd}
       >
