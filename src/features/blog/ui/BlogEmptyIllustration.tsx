@@ -5,9 +5,7 @@ import { motion, useReducedMotion, type Transition } from "motion/react";
 
 import { staticAssetUrl } from "@/lib/media/static-asset-url";
 
-const BLOG_EMPTY_ILLUSTRATION = staticAssetUrl("/assets/blog/blog-empty.webp", {
-  sameOrigin: true,
-});
+const BLOG_EMPTY_ILLUSTRATION = staticAssetUrl("/assets/blog/blog-empty.webp");
 
 const springSoft: Transition = {
   type: "spring",
