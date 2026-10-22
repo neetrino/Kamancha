@@ -361,7 +361,7 @@ export function CartDrawer({
                 return (
                   <li
                     key={item.id}
-                    className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-white px-3 py-3.5"
+                    className="relative isolate overflow-hidden rounded-[20px] border border-gray-200 bg-white px-3 py-3.5 shadow-sm"
                   >
                     <button
                       type="button"
