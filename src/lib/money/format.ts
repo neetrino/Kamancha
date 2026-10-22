@@ -44,5 +44,5 @@ export function formatMoneyAmount(
   }
 
   const major = raw / 10 ** meta.scale;
-  return `${formatMajorAmount(major, meta.fractionDigits)} ${currencySymbols[currency]}`;
+  return `${formatMajorAmount(major, meta.fractionDigits)}${GROUP_SEPARATOR}${currencySymbols[currency]}`;
 }

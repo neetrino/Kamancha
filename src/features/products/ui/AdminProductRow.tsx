@@ -122,12 +122,12 @@ export function AdminProductRow({
       </td>
       <td className={ADMIN_TABLE_TD_CENTER}>
         <div className="inline-flex flex-col items-center">
-          <span className="font-medium text-gray-900">
+          <span className="whitespace-nowrap font-medium text-gray-900">
             {formatMoneyAmount(product.priceAmount, "AMD", locale)}
           </span>
           {product.compareAtAmount != null &&
           product.compareAtAmount > product.priceAmount ? (
-            <span className="text-xs text-gray-400 line-through">
+            <span className="whitespace-nowrap text-xs text-gray-400 line-through">
               {formatMoneyAmount(product.compareAtAmount, "AMD", locale)}
             </span>
           ) : null}

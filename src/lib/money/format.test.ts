@@ -6,15 +6,15 @@ const NBSP = "\u00A0";
 
 describe("formatMoneyAmount", () => {
   it("formats AMD with space thousands and a stable currency symbol", () => {
-    expect(formatMoneyAmount(12_500, "AMD", "hy")).toBe(`12${NBSP}500 ֏`);
-    expect(formatMoneyAmount(12_500, "AMD", "en")).toBe(`12${NBSP}500 ֏`);
-    expect(formatMoneyAmount(1_000, "AMD", "hy")).toBe(`1${NBSP}000 ֏`);
-    expect(formatMoneyAmount(10_000, "AMD", "hy")).toBe(`10${NBSP}000 ֏`);
-    expect(formatMoneyAmount(29_000, "AMD", "hy")).toBe(`29${NBSP}000 ֏`);
+    expect(formatMoneyAmount(12_500, "AMD", "hy")).toBe(`12${NBSP}500${NBSP}֏`);
+    expect(formatMoneyAmount(12_500, "AMD", "en")).toBe(`12${NBSP}500${NBSP}֏`);
+    expect(formatMoneyAmount(1_000, "AMD", "hy")).toBe(`1${NBSP}000${NBSP}֏`);
+    expect(formatMoneyAmount(10_000, "AMD", "hy")).toBe(`10${NBSP}000${NBSP}֏`);
+    expect(formatMoneyAmount(29_000, "AMD", "hy")).toBe(`29${NBSP}000${NBSP}֏`);
   });
 
   it("formats USD from minor units with comma decimals", () => {
-    expect(formatMoneyAmount(2600n, "USD", "en")).toBe("26,00 $");
+    expect(formatMoneyAmount(2600n, "USD", "en")).toBe(`26,00${NBSP}$`);
   });
 
   it("is identical for the same amount across app locales (SSR-safe)", () => {
@@ -22,6 +22,6 @@ describe("formatMoneyAmount", () => {
     expect(formatMoneyAmount(amount, "AMD", "hy")).toBe(
       formatMoneyAmount(amount, "AMD", "en"),
     );
-    expect(formatMoneyAmount(amount, "AMD", "hy")).toBe(`1${NBSP}234 ֏`);
+    expect(formatMoneyAmount(amount, "AMD", "hy")).toBe(`1${NBSP}234${NBSP}֏`);
   });
 });
