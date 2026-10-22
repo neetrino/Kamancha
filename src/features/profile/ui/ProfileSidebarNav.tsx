@@ -9,12 +9,12 @@ import {
   MapPin,
   Package,
   Gift,
-  Sparkles,
   Trash2,
   User,
 } from "lucide-react";
 
 import { AppLink } from "@/components/ui/AppLink";
+import { ProfileBonusIcon } from "@/features/profile/ui/ProfileBonusIcon";
 import {
   SLIDING_NAV_TRANSITION_MS,
   useSlidingNavIndicator,
@@ -54,7 +54,7 @@ function buildNavItems(
     {
       href: `/${locale}/profile/bonuses`,
       label: dictionary.bonuses,
-      icon: <Sparkles className="h-4 w-4" />,
+      icon: <ProfileBonusIcon className="h-5 w-5" />,
     },
     {
       href: `/${locale}/profile/gift-cards`,
