@@ -1,3 +1,4 @@
+export { adminPushSubscriptions } from "@/db/schema/admin-push";
 export { appMeta } from "@/db/schema/app-meta";
 export {
   categories,

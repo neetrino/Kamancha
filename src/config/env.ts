@@ -26,6 +26,14 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1).optional(),
   /** Server + browser Google Maps Platform key (Geocoding, Routes, Places, Maps JS). */
   GOOGLE_MAPS_API_KEY: z.string().min(1).optional(),
+  /** Web Push (admin new-order alerts); feature is disabled when keys are missing. */
+  VAPID_PUBLIC_KEY: z.string().min(1).optional(),
+  VAPID_PRIVATE_KEY: z.string().min(1).optional(),
+  /** `mailto:` or `https:` contact; web-push rejects `http:` subjects. */
+  VAPID_SUBJECT: z
+    .string()
+    .regex(/^(mailto:|https:\/\/)/, "must start with mailto: or https://")
+    .optional(),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;
@@ -65,6 +73,9 @@ export function getEnv(): AppEnv {
     EMAIL_FROM: optionalEnv(process.env.EMAIL_FROM),
     RESEND_API_KEY: optionalEnv(process.env.RESEND_API_KEY),
     GOOGLE_MAPS_API_KEY: optionalEnv(process.env.GOOGLE_MAPS_API_KEY),
+    VAPID_PUBLIC_KEY: optionalEnv(process.env.VAPID_PUBLIC_KEY),
+    VAPID_PRIVATE_KEY: optionalEnv(process.env.VAPID_PRIVATE_KEY),
+    VAPID_SUBJECT: optionalEnv(process.env.VAPID_SUBJECT),
   });
 
   if (!parsed.success) {

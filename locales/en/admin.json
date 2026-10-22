@@ -162,7 +162,17 @@
       "payment": "Payment",
       "time": "Time",
       "acknowledge": "Got it — close all ({count})",
-      "badgeAria": "{count} new orders"
+      "badgeAria": "{count} new orders",
+      "pushTitle": "New order #{orderNumber}",
+      "pushBody": "{customer} · {total}"
+    },
+    "push": {
+      "loading": "Checking…",
+      "enable": "Enable notifications",
+      "enabled": "Notifications on",
+      "blocked": "Notifications blocked",
+      "blockedHint": "Allow notifications in the browser site settings (lock icon in the address bar)",
+      "error": "Failed, try again"
     },
     "kindFilter": {
       "aria": "Order type",
