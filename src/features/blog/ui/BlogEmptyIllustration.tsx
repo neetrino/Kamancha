@@ -21,7 +21,7 @@ export function BlogEmptyIllustration() {
 
   return (
     <motion.div
-      className="pointer-events-none absolute top-8 right-0 lg:top-auto lg:bottom-[-140px]"
+      className="pointer-events-none absolute top-20 right-0 lg:top-auto lg:bottom-[-140px]"
       initial={playMotion ? { opacity: 0, x: "12%" } : false}
       animate={{ opacity: 1, x: 0 }}
       transition={playMotion ? springSoft : { duration: 0 }}
@@ -32,7 +32,7 @@ export function BlogEmptyIllustration() {
         width={824}
         height={1024}
         unoptimized
-        className="h-auto w-[var(--blog-empty-photo)] max-w-none object-contain object-right"
+        className="h-auto max-h-[calc(100dvh-26rem)] w-[var(--blog-empty-photo)] max-w-none object-contain object-right lg:max-h-none"
       />
     </motion.div>
   );

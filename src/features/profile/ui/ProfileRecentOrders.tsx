@@ -94,7 +94,7 @@ function RecentOrdersBody({
               dictionary.itemCountOne,
               dictionary.itemCountOther,
             )}
-            placedOnLine={`${dictionary.placedOn} ${formatShortDate(order.placedAt, locale)}`}
+            placedOnLine={formatShortDate(order.placedAt, locale)}
             rateLabel={dictionary.rateOrder}
             rating={
               submittedRatings[order.orderNumber] ?? order.customerRating

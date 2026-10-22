@@ -34,10 +34,10 @@ export function AnalyticsTopRankings({
   copy,
 }: AnalyticsTopRankingsProps) {
   return (
-    <div className="mb-3 grid gap-3 lg:grid-cols-2">
-      <div className={`${ADMIN_CARD_CLASS} p-4 sm:p-5`}>
+    <div className="mb-3 grid items-stretch gap-3 lg:grid-cols-2">
+      <div className={`${ADMIN_CARD_CLASS} flex h-full flex-col p-5`}>
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900">
             {copy.analytics.topProducts.title}
           </h2>
           <div
@@ -46,11 +46,11 @@ export function AnalyticsTopRankings({
             <ShoppingBag className="h-3.5 w-3.5" aria-hidden />
           </div>
         </div>
-        <div className="space-y-2">
-          {products.map((product, index) => (
+        <div className="flex flex-1 flex-col gap-2.5">
+          {products.slice(0, 5).map((product, index) => (
             <div
               key={product.productId}
-              className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
+              className={`flex flex-1 items-center gap-3 rounded-[12px] bg-white px-3 py-2.5 shadow-[0_2px_8px_rgba(17,24,39,0.05)] ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
             >
               <RankBadge rank={index + 1} />
               <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[10px] bg-gray-50">
@@ -69,9 +69,6 @@ export function AnalyticsTopRankings({
                 <p className="truncate text-sm font-medium text-gray-900">
                   {product.title}
                 </p>
-                <p className="truncate text-[11px] text-gray-500">
-                  {product.sku}
-                </p>
                 <p className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
                   <span>
                     {copy.analytics.topProducts.sold.replace(
@@ -88,7 +85,7 @@ export function AnalyticsTopRankings({
                   </span>
                 </p>
               </div>
-              <p className="shrink-0 text-sm font-semibold text-gray-900">
+              <p className="shrink-0 whitespace-nowrap text-[15px] font-semibold text-gray-900">
                 {formatMoney(product.revenueAmount)}
               </p>
             </div>
@@ -101,9 +98,9 @@ export function AnalyticsTopRankings({
         </div>
       </div>
 
-      <div className={`${ADMIN_CARD_CLASS} p-4 sm:p-5`}>
+      <div className={`${ADMIN_CARD_CLASS} flex h-full flex-col p-5`}>
         <div className="mb-3 flex items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900">
             {copy.analytics.topCategories.title}
           </h2>
           <div
@@ -112,11 +109,11 @@ export function AnalyticsTopRankings({
             <Tag className="h-3.5 w-3.5" aria-hidden />
           </div>
         </div>
-        <div className="space-y-2">
-          {categories.map((category, index) => (
+        <div className="flex flex-1 flex-col gap-2.5">
+          {categories.slice(0, 5).map((category, index) => (
             <div
               key={category.categoryId}
-              className={`flex items-center gap-3 rounded-[12px] px-2.5 py-2 ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
+              className={`flex flex-1 items-center gap-3 rounded-[12px] bg-white px-3 py-2.5 shadow-[0_2px_8px_rgba(17,24,39,0.05)] ring-1 ring-gray-100/80 ${ADMIN_CARD_HOVER_CLASS}`}
             >
               <RankBadge rank={index + 1} />
               <div className="min-w-0 flex-1">
@@ -139,7 +136,7 @@ export function AnalyticsTopRankings({
                   </span>
                 </p>
               </div>
-              <p className="shrink-0 text-sm font-semibold text-gray-900">
+              <p className="shrink-0 whitespace-nowrap text-[15px] font-semibold text-gray-900">
                 {formatMoney(category.revenueAmount)}
               </p>
             </div>

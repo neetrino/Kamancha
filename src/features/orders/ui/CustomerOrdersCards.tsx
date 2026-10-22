@@ -104,7 +104,7 @@ export function CustomerOrdersCards({
               labels.itemCountOne,
               labels.itemCountOther,
             )}
-            placedOnLine={`${labels.placedOn} ${formatShortDate(order.placedAt, locale)}`}
+            placedOnLine={formatShortDate(order.placedAt, locale)}
             rateLabel={labels.rateOrder}
             rating={
               submittedRatings?.[order.orderNumber] ?? order.customerRating

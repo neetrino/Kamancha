@@ -15,8 +15,8 @@ type BlogIndexViewProps = {
 
 export function BlogIndexView({ locale, posts, copy }: BlogIndexViewProps) {
   return (
-    <section className="pb-16">
-      <header className="mb-8 max-w-2xl">
+    <section className={posts.length === 0 ? "pb-4 lg:pb-16" : "pb-16"}>
+      <header className="mb-8 max-w-2xl xl:pt-2">
         <Reveal immediate>
           <h1 className="font-big-fat-boii text-[clamp(36px,5vw,64px)] leading-[1.05] font-normal text-[#e5e2e1]">
             {copy.title}
@@ -24,12 +24,12 @@ export function BlogIndexView({ locale, posts, copy }: BlogIndexViewProps) {
         </Reveal>
       </header>
       {posts.length === 0 ? (
-        <div className="relative left-1/2 min-h-[70vh] w-screen max-w-[100vw] -translate-x-1/2 [--blog-empty-photo:min(78vw,520px)] lg:[--blog-empty-photo:min(44vw,780px)] lg:min-h-[520px]">
+        <div className="relative left-1/2 h-[calc(100svh-20rem)] w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden [--blog-empty-photo:min(78vw,520px)] lg:h-auto lg:min-h-[520px] lg:overflow-visible lg:[--blog-empty-photo:min(44vw,780px)]">
           <Reveal
             immediate
             delay={0.45}
             y={48}
-            className="relative z-[1] mt-16 px-6 lg:absolute lg:inset-y-0 lg:left-0 lg:mt-0 lg:flex lg:w-[calc(100%-var(--blog-empty-photo))] lg:items-center lg:justify-center"
+            className="relative z-[1] mt-8 px-6 lg:absolute lg:inset-y-0 lg:left-0 lg:mt-0 lg:flex lg:w-[calc(100%-var(--blog-empty-photo))] lg:items-center lg:justify-center lg:pb-16"
           >
             <p className="text-center font-big-fat-boii text-[clamp(22px,3vw,36px)] leading-[1.15] font-normal whitespace-pre-line text-[#e5e2e1]">
               {copy.empty}
