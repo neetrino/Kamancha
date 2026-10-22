@@ -15,7 +15,7 @@ export const STOREFRONT_TABLET_INSET_X =
 
 /** Icon rail: cart + wishlist + account — nudged slightly below / left of optical center. */
 export const SITE_HEADER_ICON_RAIL =
-  "flex h-12 shrink-0 -translate-x-px translate-y-1 items-center gap-3";
+  "flex h-12 shrink-0 -translate-x-px translate-y-1 items-center gap-4";
 
 /** Cart trigger hit area — centered in the 48px rail. */
 export const SITE_HEADER_CART_TRIGGER =
