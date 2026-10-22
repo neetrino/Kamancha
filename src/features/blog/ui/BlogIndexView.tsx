@@ -15,7 +15,7 @@ type BlogIndexViewProps = {
 
 export function BlogIndexView({ locale, posts, copy }: BlogIndexViewProps) {
   return (
-    <section className="pb-16">
+    <section className={posts.length === 0 ? "pb-4 lg:pb-16" : "pb-16"}>
       <header className="mb-8 max-w-2xl">
         <Reveal immediate>
           <h1 className="font-big-fat-boii text-[clamp(36px,5vw,64px)] leading-[1.05] font-normal text-[#e5e2e1]">

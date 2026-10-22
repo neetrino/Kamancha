@@ -32,7 +32,7 @@ export function BlogEmptyIllustration() {
         width={824}
         height={1024}
         unoptimized
-        className="h-auto w-[var(--blog-empty-photo)] max-w-none object-contain object-right"
+        className="h-auto max-h-[calc(100dvh-26rem)] w-[var(--blog-empty-photo)] max-w-none object-contain object-right lg:max-h-none"
       />
     </motion.div>
   );
