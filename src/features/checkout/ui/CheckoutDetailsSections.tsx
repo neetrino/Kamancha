@@ -57,6 +57,11 @@ type CheckoutDetailsLabels = {
   scheduleApproximatelyOneHour: string;
   scheduleChange: string;
   scheduleAsapOption: string;
+  scheduleOption: string;
+  scheduleDeliveryDay: string;
+  scheduleDeliveryTime: string;
+  scheduleApply: string;
+  scheduleClose: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;

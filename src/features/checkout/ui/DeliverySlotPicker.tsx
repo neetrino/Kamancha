@@ -305,7 +305,7 @@ export function DeliverySlotPicker({
                 asapSelected ? "ring-2 ring-inset ring-white" : ""
               }`}
             >
-              {labels.asapOption}
+              {labels.approximatelyOneHour}
             </button>
             <DeliverySlotCalendar
               locale={locale}
