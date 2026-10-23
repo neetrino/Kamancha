@@ -83,7 +83,6 @@ export default async function AdminMessagesPage({
         q={filters.q}
         status={filters.status}
         copy={t}
-        filterLabel={t.filter}
       />
 
       <AdminMessagesView
