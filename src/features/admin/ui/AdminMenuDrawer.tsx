@@ -11,6 +11,7 @@ import {
   isAdminTabActive,
 } from "@/features/admin/ui/admin-menu.config";
 import { ADMIN_BRAND_LOGO_CLASS } from "@/features/admin/ui/admin-shell-classes";
+import { AdminMessagesNavBadge } from "@/features/contact/ui/AdminMessagesNavBadge";
 import { AdminOrdersNavBadge } from "@/features/orders/ui/AdminOrdersNavBadge";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -21,6 +22,7 @@ type AdminMenuDrawerProps = {
   shell: Dictionary["admin"]["shell"];
   nav: Dictionary["admin"]["nav"];
   ordersBadgeAria: string;
+  messagesBadgeAria: string;
 };
 
 function navIconClass(active: boolean): string {
@@ -35,6 +37,7 @@ export function AdminMenuDrawer({
   shell,
   nav,
   ordersBadgeAria,
+  messagesBadgeAria,
 }: AdminMenuDrawerProps) {
   const [open, setOpen] = useState(false);
   const tabs = getAdminMenuItems(locale, nav);
@@ -92,6 +95,9 @@ export function AdminMenuDrawer({
                   </span>
                   {tab.id === "orders" ? (
                     <AdminOrdersNavBadge ariaLabel={ordersBadgeAria} />
+                  ) : null}
+                  {tab.id === "messages" ? (
+                    <AdminMessagesNavBadge ariaLabel={messagesBadgeAria} />
                   ) : null}
                 </AppLink>
               );

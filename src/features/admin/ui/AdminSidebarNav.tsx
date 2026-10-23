@@ -12,6 +12,7 @@ import {
   isAdminTabActive,
 } from "@/features/admin/ui/admin-menu.config";
 import { useAdminSidebarCollapse } from "@/features/admin/ui/AdminSidebarCollapseContext";
+import { AdminMessagesNavBadge } from "@/features/contact/ui/AdminMessagesNavBadge";
 import { AdminOrdersNavBadge } from "@/features/orders/ui/AdminOrdersNavBadge";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -22,6 +23,7 @@ type AdminSidebarNavProps = {
   shell: Dictionary["admin"]["shell"];
   nav: Dictionary["admin"]["nav"];
   ordersBadgeAria: string;
+  messagesBadgeAria: string;
 };
 
 function navIconClass(active: boolean): string {
@@ -41,6 +43,7 @@ export function AdminSidebarNav({
   pathname,
   nav,
   ordersBadgeAria,
+  messagesBadgeAria,
 }: AdminSidebarNavProps) {
   const tabs = getAdminMenuItems(locale, nav);
   const { collapsed } = useAdminSidebarCollapse();
@@ -97,6 +100,12 @@ export function AdminSidebarNav({
                   compact
                 />
               ) : null}
+              {tab.id === "messages" && collapsed ? (
+                <AdminMessagesNavBadge
+                  ariaLabel={messagesBadgeAria}
+                  compact
+                />
+              ) : null}
             </span>
             {collapsed ? null : (
               <>
@@ -109,6 +118,9 @@ export function AdminSidebarNav({
                 </span>
                 {tab.id === "orders" ? (
                   <AdminOrdersNavBadge ariaLabel={ordersBadgeAria} />
+                ) : null}
+                {tab.id === "messages" ? (
+                  <AdminMessagesNavBadge ariaLabel={messagesBadgeAria} />
                 ) : null}
               </>
             )}

@@ -2,7 +2,7 @@
 
 import { CircleCheckBig, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { Button } from "@/components/ui/Button";
@@ -23,6 +23,9 @@ type UpdateContactStatusFormProps = {
   eligibleStatuses: ContactStatus[];
   copy: Dictionary["admin"];
   onSuccess?: () => void;
+  /** Scrolls with the sheet body; the submit button stays at the bottom. */
+  children?: ReactNode;
+  pinButton?: boolean;
 };
 
 export function UpdateContactStatusForm({
@@ -32,6 +35,8 @@ export function UpdateContactStatusForm({
   eligibleStatuses,
   copy,
   onSuccess,
+  children,
+  pinButton = false,
 }: UpdateContactStatusFormProps) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -40,10 +45,17 @@ export function UpdateContactStatusForm({
   const labels = copy.messages.statusLabels;
 
   if (eligibleStatuses.length === 0) {
-    return (
+    const note = (
       <p className="text-sm text-gray-600">
         {copy.messages.updateStatus.noFurtherChanges}
       </p>
+    );
+    if (!pinButton) return note;
+    return (
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5">
+        {children}
+        {note}
+      </div>
     );
   }
 
@@ -54,58 +66,76 @@ export function UpdateContactStatusForm({
     label: contactStatusLabel(item, labels),
   }));
 
-  return (
-    <Card className="p-5 sm:p-6">
-      <div className="flex items-center gap-4">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
-          <CircleCheckBig className="h-5 w-5" aria-hidden />
-        </span>
-        <h2 className={ADMIN_SECTION_TITLE}>{copy.common.status}</h2>
-      </div>
+  const submitButton = (
+    <Button
+      type="submit"
+      size="field"
+      disabled={isPending || status === currentStatus}
+      className={pinButton ? "w-full gap-2" : "shrink-0 gap-2 whitespace-nowrap"}
+    >
+      <Send className="h-4 w-4" aria-hidden />
+      {isPending
+        ? copy.common.updating
+        : copy.messages.updateStatus.updateStatus}
+    </Button>
+  );
 
-      <form
-        className="mt-4 flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          startTransition(async () => {
-            setError(null);
-            const result = await updateContactStatusAction(locale, {
-              messageId,
-              status,
-            });
-            if (!result.ok) {
-              setError(result.error.message);
-              return;
-            }
-            onSuccess?.();
-            router.refresh();
+  return (
+    <form
+      className={pinButton ? "flex min-h-0 flex-1 flex-col" : undefined}
+      onSubmit={(event) => {
+        event.preventDefault();
+        startTransition(async () => {
+          setError(null);
+          const result = await updateContactStatusAction(locale, {
+            messageId,
+            status,
           });
-        }}
+          if (!result.ok) {
+            setError(result.error.message);
+            return;
+          }
+          onSuccess?.();
+          router.refresh();
+        });
+      }}
+    >
+      <div
+        className={
+          pinButton
+            ? "min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5"
+            : undefined
+        }
       >
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="min-w-0 flex-1 overflow-x-auto">
-            <SegmentedControl
-              aria-label={copy.messages.updateStatus.newStatus}
-              value={status}
-              options={statusOptions}
-              disabled={isPending}
-              onSelect={setStatus}
-            />
+        {children}
+        <Card className="p-5 sm:p-6">
+          <div className="flex items-center gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-forest/10 text-brand-forest">
+              <CircleCheckBig className="h-5 w-5" aria-hidden />
+            </span>
+            <h2 className={ADMIN_SECTION_TITLE}>{copy.common.status}</h2>
           </div>
-          <Button
-            type="submit"
-            size="field"
-            disabled={isPending || status === currentStatus}
-            className="shrink-0 gap-2 whitespace-nowrap"
-          >
-            <Send className="h-4 w-4" aria-hidden />
-            {isPending
-              ? copy.common.updating
-              : copy.messages.updateStatus.updateStatus}
-          </Button>
+          <div className={pinButton ? "mt-4" : "mt-4 flex flex-wrap items-center gap-3"}>
+            <div className={pinButton ? undefined : "min-w-0 flex-1 overflow-x-auto"}>
+              <SegmentedControl
+                aria-label={copy.messages.updateStatus.newStatus}
+                value={status}
+                options={statusOptions}
+                disabled={isPending}
+                fullWidth={pinButton}
+                onSelect={setStatus}
+              />
+            </div>
+            {pinButton ? null : submitButton}
+          </div>
+          {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
+        </Card>
+      </div>
+      {pinButton ? (
+        <div className="shrink-0 border-t border-gray-200 px-5 py-4">
+          {submitButton}
         </div>
-        {error ? <p className="text-sm text-red-700">{error}</p> : null}
-      </form>
-    </Card>
+      ) : null}
+    </form>
   );
 }

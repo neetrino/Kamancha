@@ -13,17 +13,20 @@ import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
+import { formatAdminDateTime } from "@/features/admin/ui/format-admin-placed";
 import {
   ADMIN_PAGE_TITLE,
   ADMIN_SECTION_TITLE,
 } from "@/features/admin/ui/admin-form-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
 import { getAdminContactMessageById } from "@/features/contact/application/queries";
 import {
   getEligibleContactStatuses,
   isContactStatus,
 } from "@/features/contact/domain/contact-rules";
-import { contactStatusBadgeClass } from "@/features/contact/ui/contact-status-badge-class";
+import {
+  CONTACT_STATUS_PILL_CLASS,
+  contactStatusBadgeClass,
+} from "@/features/contact/ui/contact-status-badge-class";
 import { contactStatusLabel } from "@/features/contact/ui/contact-status-label";
 import { UpdateContactStatusForm } from "@/features/contact/ui/UpdateContactStatusForm";
 import { isLocale } from "@/lib/i18n/config";
@@ -54,7 +57,7 @@ export default async function AdminMessageDetailPage({
 
   const status = isContactStatus(message.status) ? message.status : null;
   const eligible = status ? getEligibleContactStatuses(status) : [];
-  const receivedAt = `${message.createdAt.toISOString().slice(0, 19).replace("T", " ")} ${t.common.utc}`;
+  const receivedAt = formatAdminDateTime(message.createdAt);
 
   return (
     <section>
@@ -70,7 +73,7 @@ export default async function AdminMessageDetailPage({
       </div>
 
       <Card className="mb-4 p-5 sm:p-6">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-x-10">
+        <div className="grid gap-4">
           <AdminDetailField
             icon={<User className={FIELD_ICON_CLASS} />}
             label={t.messages.detail.fromLabel}
@@ -94,7 +97,7 @@ export default async function AdminMessageDetailPage({
             label={t.common.status}
           >
             <span
-              className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
+              className={`${CONTACT_STATUS_PILL_CLASS} ${contactStatusBadgeClass(message.status)}`}
             >
               {contactStatusLabel(message.status, labels)}
             </span>

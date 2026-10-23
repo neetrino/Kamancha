@@ -2,7 +2,6 @@
 
 import {
   CalendarDays,
-  CircleCheckBig,
   Mail,
   MessageSquare,
   Phone,
@@ -14,13 +13,16 @@ import { Card } from "@/components/ui/Card";
 import { SideSheet } from "@/components/ui/SideSheet";
 import { AdminDetailField } from "@/features/admin/ui/AdminDetailField";
 import { ADMIN_SECTION_TITLE } from "@/features/admin/ui/admin-form-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
+import { formatAdminDateTime } from "@/features/admin/ui/format-admin-placed";
+import {
+  CONTACT_STATUS_PILL_CLASS,
+  contactStatusBadgeClass,
+} from "@/features/contact/ui/contact-status-badge-class";
 import type { AdminContactMessageDetail } from "@/features/contact/application/queries";
 import {
   getEligibleContactStatuses,
   isContactStatus,
 } from "@/features/contact/domain/contact-rules";
-import { contactStatusBadgeClass } from "@/features/contact/ui/contact-status-badge-class";
 import { contactStatusLabel } from "@/features/contact/ui/contact-status-label";
 import { UpdateContactStatusForm } from "@/features/contact/ui/UpdateContactStatusForm";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
@@ -50,7 +52,7 @@ export function AdminMessageDetailSheet({
   const status = message && isContactStatus(message.status) ? message.status : null;
   const eligible = status ? getEligibleContactStatuses(status) : [];
   const receivedAt = message
-    ? `${new Date(message.createdAt).toISOString().slice(0, 19).replace("T", " ")} ${copy.common.utc}`
+    ? formatAdminDateTime(message.createdAt)
     : "";
 
   return (
@@ -58,33 +60,42 @@ export function AdminMessageDetailSheet({
       open={open}
       onClose={onClose}
       ariaLabel={copy.messages.sheetAria}
-      panelClassName="w-full sm:w-[65%] lg:w-[55%] max-w-4xl"
+      panelClassName="w-full max-w-lg"
     >
       <div className="flex h-full min-h-0 flex-col">
-        <div className="shrink-0 border-b border-gray-200 px-5 py-4 sm:px-6">
+        <div className="flex shrink-0 items-start justify-between gap-3 border-b border-gray-200 px-5 py-4 sm:px-6">
+          <h2 className="min-w-0 text-lg font-semibold text-gray-900 sm:text-xl">
+            {message ? message.subject : copy.messages.sheetTitle}
+          </h2>
           {message ? (
-            <h2 className="text-lg font-semibold text-gray-900 sm:text-xl">
-              {message.subject}
-            </h2>
-          ) : (
-            <h2 className="text-lg font-semibold text-gray-900">
-              {copy.messages.sheetTitle}
-            </h2>
-          )}
+            <span
+              className={`${CONTACT_STATUS_PILL_CLASS} shrink-0 ${contactStatusBadgeClass(message.status)}`}
+            >
+              {contactStatusLabel(message.status, labels)}
+            </span>
+          ) : null}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5">
         {isLoading ? (
-          <div className="space-y-3">
+          <div className="space-y-3 px-5 py-4 sm:px-6 sm:py-5">
             <div className="h-28 animate-pulse rounded-2xl bg-gray-100" />
             <div className="h-36 animate-pulse rounded-2xl bg-gray-100" />
           </div>
         ) : null}
 
-        {!isLoading && message ? (
-          <div className="space-y-4">
+        {!isLoading && message && status ? (
+          <UpdateContactStatusForm
+            key={`${message.id}-${message.status}`}
+            locale={locale}
+            messageId={message.id}
+            currentStatus={status}
+            eligibleStatuses={eligible}
+            copy={copy}
+            onSuccess={onStatusUpdated}
+            pinButton
+          >
             <Card className="p-4 sm:p-5">
-              <div className="grid gap-4 md:grid-cols-2 md:gap-x-8">
+              <div className="grid gap-4">
                 <AdminDetailField
                   icon={<User className={FIELD_ICON_CLASS} />}
                   label={copy.messages.detail.fromLabel}
@@ -102,16 +113,6 @@ export function AdminMessageDetailSheet({
                   label={copy.messages.detail.phoneLabel}
                 >
                   {message.phone ?? copy.common.none}
-                </AdminDetailField>
-                <AdminDetailField
-                  icon={<CircleCheckBig className={FIELD_ICON_CLASS} />}
-                  label={copy.common.status}
-                >
-                  <span
-                    className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
-                  >
-                    {contactStatusLabel(message.status, labels)}
-                  </span>
                 </AdminDetailField>
                 <AdminDetailField
                   icon={<ShieldAlert className={FIELD_ICON_CLASS} />}
@@ -145,25 +146,14 @@ export function AdminMessageDetailSheet({
                 </div>
               </div>
             </Card>
-
-            {status ? (
-              <UpdateContactStatusForm
-                key={`${message.id}-${message.status}`}
-                locale={locale}
-                messageId={message.id}
-                currentStatus={status}
-                eligibleStatuses={eligible}
-                copy={copy}
-                onSuccess={onStatusUpdated}
-              />
-            ) : (
-              <p className="text-sm text-red-700">
-                {copy.messages.detail.unknownStatus}
-              </p>
-            )}
-          </div>
+          </UpdateContactStatusForm>
         ) : null}
-        </div>
+
+        {!isLoading && message && !status ? (
+          <p className="px-5 py-4 text-sm text-red-700 sm:px-6">
+            {copy.messages.detail.unknownStatus}
+          </p>
+        ) : null}
       </div>
     </SideSheet>
   );

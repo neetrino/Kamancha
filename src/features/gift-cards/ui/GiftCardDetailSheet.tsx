@@ -10,6 +10,7 @@ import {
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/Button";
+import { formatAdminDateTime } from "@/features/admin/ui/format-admin-placed";
 import { SideSheet } from "@/components/ui/SideSheet";
 import type { GiftCardDetail } from "@/features/gift-cards/application/queries";
 import { giftCardPaymentDisplayKey } from "@/features/gift-cards/domain/gift-card-payment-method";
@@ -46,17 +47,6 @@ function formatDateOnly(
     return noneLabel;
   }
   return date.toISOString().slice(0, 10);
-}
-
-function formatDateTime(
-  value: Date | string,
-  utcLabel: string,
-): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "—";
-  }
-  return `${date.toISOString().slice(0, 16).replace("T", " ")} ${utcLabel}`;
 }
 
 type DetailRowProps = {
@@ -190,7 +180,7 @@ export function GiftCardDetailSheet({
                       <div>
                         <p className="font-medium text-gray-900">{row.type}</p>
                         <p className="text-xs text-gray-500">
-                          {formatDateTime(row.createdAt, common.utc)}
+                          {formatAdminDateTime(row.createdAt)}
                         </p>
                       </div>
                       <p className="font-semibold text-gray-900">

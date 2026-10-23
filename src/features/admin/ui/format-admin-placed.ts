@@ -30,3 +30,10 @@ export function formatAdminPlacedParts(value: string | Date): {
     date: `${get("day")}.${get("month")}.${get("year")}`,
   };
 }
+
+/** Single stamp `DD.MM.YYYY, HH:mm` in Asia/Yerevan. */
+export function formatAdminDateTime(value: string | Date): string {
+  const parts = formatAdminPlacedParts(value);
+  if (parts.time === "—") return "—";
+  return `${parts.date}, ${parts.time}`;
+}
