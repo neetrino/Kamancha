@@ -149,6 +149,8 @@ export function AdminDeliveryView({
         schedule: {
           slotMinutes: nextSchedule.slotMinutes,
           maxDaysAhead: nextSchedule.maxDaysAhead,
+          estimateFromMinutes: nextSchedule.estimateFromMinutes,
+          estimateToMinutes: nextSchedule.estimateToMinutes,
           weekly,
           closedDates: nextSchedule.closedDates,
         },

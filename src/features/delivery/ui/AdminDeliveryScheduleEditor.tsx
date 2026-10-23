@@ -171,6 +171,40 @@ export function AdminDeliveryScheduleEditor({
             }
           />
         </label>
+        <label className="flex flex-col">
+          <span className={`${ADMIN_LABEL} flex-1`}>{copy.estimateFrom}</span>
+          <input
+            type="number"
+            min={5}
+            max={240}
+            value={value.estimateFromMinutes}
+            disabled={disabled}
+            className={ADMIN_INPUT}
+            onChange={(event) =>
+              onChange({
+                ...value,
+                estimateFromMinutes: Number(event.target.value),
+              })
+            }
+          />
+        </label>
+        <label className="flex flex-col">
+          <span className={`${ADMIN_LABEL} flex-1`}>{copy.estimateTo}</span>
+          <input
+            type="number"
+            min={5}
+            max={240}
+            value={value.estimateToMinutes}
+            disabled={disabled}
+            className={ADMIN_INPUT}
+            onChange={(event) =>
+              onChange({
+                ...value,
+                estimateToMinutes: Number(event.target.value),
+              })
+            }
+          />
+        </label>
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-gray-200">

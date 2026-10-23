@@ -43,6 +43,8 @@ const dayHoursSchema = z
 const deliveryScheduleSchema = z.object({
   slotMinutes: z.coerce.number().int().min(15).max(240),
   maxDaysAhead: z.coerce.number().int().min(1).max(60),
+  estimateFromMinutes: z.coerce.number().int().min(5).max(240),
+  estimateToMinutes: z.coerce.number().int().min(5).max(240),
   weekly: z.object({
     1: dayHoursSchema,
     2: dayHoursSchema,
@@ -56,6 +58,14 @@ const deliveryScheduleSchema = z.object({
     .array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/))
     .max(366)
     .transform((dates) => [...new Set(dates)].sort()),
+}).superRefine((value, ctx) => {
+  if (value.estimateToMinutes <= value.estimateFromMinutes) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["estimateToMinutes"],
+      message: "Estimate end must be after estimate start.",
+    });
+  }
 });
 
 const cashChangeDenominationSchema = z.object({

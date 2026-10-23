@@ -19,6 +19,8 @@ describe("parseDeliverySchedule", () => {
     const parsed = parseDeliverySchedule({
       slotMinutes: 30,
       maxDaysAhead: 5,
+      estimateFromMinutes: 30,
+      estimateToMinutes: 45,
       weekly: {
         7: { isOpen: true, openTime: "12:00", closeTime: "18:00" },
       },
@@ -27,6 +29,8 @@ describe("parseDeliverySchedule", () => {
 
     expect(parsed.slotMinutes).toBe(30);
     expect(parsed.maxDaysAhead).toBe(5);
+    expect(parsed.estimateFromMinutes).toBe(30);
+    expect(parsed.estimateToMinutes).toBe(45);
     expect(parsed.weekly[7]).toEqual({
       isOpen: true,
       openTime: "12:00",

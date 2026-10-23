@@ -282,6 +282,7 @@ export function AdminCategoriesView({
         ) : (
           <div className={ADMIN_TABLE_OUTER_SCROLL}>
             <AdminSortableRoot
+              id="admin-categories"
               items={visible.map((category) => category.id)}
               disabled={reorderDisabled}
               onReorder={handleReorder}

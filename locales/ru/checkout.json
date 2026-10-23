@@ -43,9 +43,9 @@
   "schedule": {
     "title": "Дата и время",
     "deliverTo": "Доставим",
-    "approximatelyOneHour": "примерно 45-60 минут",
+    "approximatelyOneHour": "примерно {from}-{to} минут",
     "change": "Изменить",
-    "asapOption": "Как можно скорее (45-60 минут)",
+    "asapOption": "Как можно скорее ({from}-{to} минут)",
     "scheduleOption": "Запланировать",
     "deliveryDay": "День доставки",
     "deliveryTime": "Время доставки",

@@ -67,6 +67,7 @@ function isWithinBounds(
 const POPOVER_GAP_PX = 8;
 
 type PopoverPlacement = "bottom" | "top";
+type PopoverAlign = "left" | "right";
 
 function resolvePopoverPlacement(
   triggerRect: DOMRect,
@@ -84,6 +85,32 @@ function resolvePopoverPlacement(
   }
 
   return "bottom";
+}
+
+/** Clipping box of the nearest scroll/overflow parent, or the viewport. */
+function visibleBounds(node: HTMLElement): { left: number; right: number } {
+  let current = node.parentElement;
+  while (current) {
+    const style = getComputedStyle(current);
+    const overflow = `${style.overflow} ${style.overflowX}`;
+    if (/(auto|hidden|clip|scroll)/.test(overflow)) {
+      const rect = current.getBoundingClientRect();
+      return { left: rect.left, right: rect.right };
+    }
+    current = current.parentElement;
+  }
+  return { left: 0, right: window.innerWidth };
+}
+
+function resolvePopoverAlign(
+  triggerRect: DOMRect,
+  panelWidth: number,
+  bounds: { left: number; right: number },
+): PopoverAlign {
+  const overflowsRight = triggerRect.left + panelWidth > bounds.right - POPOVER_GAP_PX;
+  const fitsLeft = triggerRect.right - panelWidth >= bounds.left + POPOVER_GAP_PX;
+  if (overflowsRight && fitsLeft) return "right";
+  return "left";
 }
 
 /** Popover date field — input + dropdown calendar (not inline, not bottom sheet). */
@@ -113,6 +140,7 @@ export function DatePickerField({
   const panelRef = useRef<HTMLDivElement>(null);
   const [openInternal, setOpenInternal] = useState(false);
   const [placement, setPlacement] = useState<PopoverPlacement>("bottom");
+  const [align, setAlign] = useState<PopoverAlign>("left");
   const open = openProp ?? openInternal;
   const setOpen = onOpenChange ?? setOpenInternal;
 
@@ -153,8 +181,14 @@ export function DatePickerField({
       const panel = panelRef.current;
       if (!root || !panel) return;
 
-      setPlacement(
-        resolvePopoverPlacement(root.getBoundingClientRect(), panel.offsetHeight),
+      const triggerRect = root.getBoundingClientRect();
+      setPlacement(resolvePopoverPlacement(triggerRect, panel.offsetHeight));
+      setAlign(
+        resolvePopoverAlign(
+          triggerRect,
+          panel.offsetWidth,
+          visibleBounds(root),
+        ),
       );
     }
 
@@ -233,7 +267,9 @@ export function DatePickerField({
           ref={panelRef}
           role="dialog"
           aria-label={labels.placeholder}
-          className={`absolute left-0 z-50 w-80 rounded-xl border border-gray-200 bg-white p-3 shadow-lg ${
+          className={`absolute z-50 w-72 max-w-[calc(100vw-2rem)] rounded-xl border border-gray-200 bg-white p-2.5 shadow-lg ${
+            align === "right" ? "right-0" : "left-0"
+          } ${
             placement === "top"
               ? "bottom-[calc(100%+0.5rem)]"
               : "top-[calc(100%+0.5rem)]"
@@ -287,7 +323,7 @@ export function DatePickerField({
                       ? selectDate(cell.date)
                       : selectAdjacentDate(cell.date)
                   }
-                  className={`h-9 rounded-md text-sm transition-colors ${
+                  className={`h-8 rounded-md text-sm transition-colors ${
                     isSelected
                       ? "bg-brand-forest font-semibold text-white"
                       : cell.inMonth

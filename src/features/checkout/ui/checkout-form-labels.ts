@@ -97,9 +97,17 @@ export type CheckoutLabels = {
   groupPrepaidYouPay: string;
 };
 
+function fillEstimate(template: string, from: number, to: number): string {
+  return template.replaceAll("{from}", String(from)).replaceAll("{to}", String(to));
+}
+
 /** Maps checkout dictionary copy onto CheckoutForm labels. */
 export function checkoutFormLabels(
   copy: Dictionary["checkout"],
+  estimate: { fromMinutes: number; toMinutes: number } = {
+    fromMinutes: 45,
+    toMinutes: 60,
+  },
 ): CheckoutLabels {
   return {
     title: copy.title,
@@ -132,9 +140,17 @@ export function checkoutFormLabels(
     selectDeliveryZoneError: copy.shipping.selectDeliveryLocation,
     scheduleTitle: copy.schedule.title,
     scheduleDeliverTo: copy.schedule.deliverTo,
-    scheduleApproximatelyOneHour: copy.schedule.approximatelyOneHour,
+    scheduleApproximatelyOneHour: fillEstimate(
+      copy.schedule.approximatelyOneHour,
+      estimate.fromMinutes,
+      estimate.toMinutes,
+    ),
     scheduleChange: copy.schedule.change,
-    scheduleAsapOption: copy.schedule.asapOption,
+    scheduleAsapOption: fillEstimate(
+      copy.schedule.asapOption,
+      estimate.fromMinutes,
+      estimate.toMinutes,
+    ),
     scheduleOption: copy.schedule.scheduleOption,
     scheduleDeliveryDay: copy.schedule.deliveryDay,
     scheduleDeliveryTime: copy.schedule.deliveryTime,

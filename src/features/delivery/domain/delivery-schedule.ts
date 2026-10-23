@@ -15,6 +15,10 @@ export type DeliveryScheduleSettings = {
   slotMinutes: number;
   /** How many calendar days ahead (including today) customers may book. */
   maxDaysAhead: number;
+  /** Lower bound of the ASAP estimate shown at checkout, in minutes. */
+  estimateFromMinutes: number;
+  /** Upper bound of the ASAP estimate shown at checkout, in minutes. */
+  estimateToMinutes: number;
   weekly: Record<IsoWeekday, DayHours>;
   /** Closed calendar dates `YYYY-MM-DD` (store holidays / blackout days). */
   closedDates: string[];
@@ -51,6 +55,8 @@ export const DEFAULT_DELIVERY_SCHEDULE: DeliveryScheduleSettings = {
   timezone: "Asia/Yerevan",
   slotMinutes: 60,
   maxDaysAhead: 7,
+  estimateFromMinutes: 45,
+  estimateToMinutes: 60,
   weekly: {
     1: { ...DEFAULT_DAY_OPEN },
     2: { ...DEFAULT_DAY_OPEN },
@@ -75,6 +81,18 @@ export const ISO_WEEKDAY_LABELS_EN: Record<IsoWeekday, string> = {
 
 export function isValidTimeHHmm(value: string): boolean {
   return TIME_PATTERN.test(value);
+}
+
+function parseEstimateMinutes(value: unknown, fallback: number): number {
+  if (
+    typeof value === "number" &&
+    Number.isInteger(value) &&
+    value >= 5 &&
+    value <= 240
+  ) {
+    return value;
+  }
+  return fallback;
 }
 
 function parseYmdParts(dateYmd: string): {
@@ -154,6 +172,21 @@ export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings 
     record.maxDaysAhead <= 60
       ? record.maxDaysAhead
       : DEFAULT_DELIVERY_SCHEDULE.maxDaysAhead;
+  const estimateFromMinutes = parseEstimateMinutes(
+    record.estimateFromMinutes,
+    DEFAULT_DELIVERY_SCHEDULE.estimateFromMinutes,
+  );
+  const estimateToMinutes = parseEstimateMinutes(
+    record.estimateToMinutes,
+    DEFAULT_DELIVERY_SCHEDULE.estimateToMinutes,
+  );
+  const estimate =
+    estimateToMinutes > estimateFromMinutes
+      ? { estimateFromMinutes, estimateToMinutes }
+      : {
+          estimateFromMinutes: DEFAULT_DELIVERY_SCHEDULE.estimateFromMinutes,
+          estimateToMinutes: DEFAULT_DELIVERY_SCHEDULE.estimateToMinutes,
+        };
 
   const weeklySource =
     record.weekly && typeof record.weekly === "object"
@@ -183,6 +216,8 @@ export function parseDeliverySchedule(value: unknown): DeliveryScheduleSettings 
     timezone: "Asia/Yerevan",
     slotMinutes,
     maxDaysAhead,
+    estimateFromMinutes: estimate.estimateFromMinutes,
+    estimateToMinutes: estimate.estimateToMinutes,
     weekly,
     closedDates,
   };

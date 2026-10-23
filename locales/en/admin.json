@@ -568,6 +568,8 @@
       "title": "Delivery schedule",
       "slotLength": "Slot length (minutes)",
       "bookableDaysAhead": "Bookable days ahead",
+      "estimateFrom": "Approximate from (minutes)",
+      "estimateTo": "Approximate to (minutes)",
       "day": "Day",
       "open": "Open",
       "from": "From",

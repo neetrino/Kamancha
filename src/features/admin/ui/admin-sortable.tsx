@@ -80,6 +80,8 @@ function placeFollowOverlay(node: HTMLDivElement | null, pose: FollowPose): void
 }
 
 type AdminSortableRootProps = {
+  /** Stable id so server and client share the same drag description. */
+  id: string;
   items: UniqueIdentifier[];
   disabled?: boolean;
   strategy?: SortingStrategy;
@@ -94,6 +96,7 @@ type AdminSortableRootProps = {
 };
 
 export function AdminSortableRoot({
+  id,
   items,
   disabled = false,
   strategy = verticalListSortingStrategy,
@@ -179,6 +182,7 @@ export function AdminSortableRoot({
 
   return (
     <DndContext
+      id={id}
       sensors={sensors}
       collisionDetection={renderOverlay ? followPointer : closestCenter}
       autoScroll
