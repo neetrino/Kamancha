@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { DeliverySlotCalendar } from "@/features/checkout/ui/DeliverySlotCalendar";
 import { DeliverySlotMobileSchedule } from "@/features/checkout/ui/DeliverySlotMobileSchedule";
@@ -153,10 +153,7 @@ export function DeliverySlotPicker({
   const [isEditing, setIsEditing] = useState(false);
   const [useAsap, setUseAsap] = useState(true);
   const [pickedDate, setPickedDate] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (invalid && pickedDate) setIsEditing(true);
-  }, [invalid, pickedDate]);
+  const editing = isEditing || Boolean(invalid && pickedDate);
 
   const todayYmd = formatYerevanDate(new Date());
   const todayParts = parseYmd(todayYmd);
@@ -234,7 +231,7 @@ export function DeliverySlotPicker({
         />
       </div>
 
-      {isEditing ? (
+      {editing ? (
         <div>
         <DeliverySlotMobileSchedule
           locale={locale}

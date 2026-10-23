@@ -54,20 +54,21 @@ export function AdminProductRow({
   const isActive = product.status === "ACTIVE";
   const created = new Date(product.createdAt);
   const createdLabel = `${created.getDate()}/${created.getMonth() + 1}/${created.getFullYear()}`;
-  const sortable = useAdminSortableItem(product.id, !reorderEnabled, {
-    dragOverlay: true,
-  });
+  const { setNodeRef, style, isDragging, attributes, listeners } =
+    useAdminSortableItem(product.id, !reorderEnabled, {
+      dragOverlay: true,
+    });
 
   return (
     <tr
-      ref={sortable.setNodeRef}
+      ref={setNodeRef}
       style={{
-        ...sortable.style,
+        ...style,
         position: "relative",
-        zIndex: sortable.isDragging ? 2 : undefined,
+        zIndex: isDragging ? 2 : undefined,
       }}
       className={`${ADMIN_TABLE_ROW} cursor-pointer ${
-        sortable.isDragging ? "opacity-30" : ""
+        isDragging ? "opacity-30" : ""
       }`}
       onClick={() => {
         if (shouldIgnoreSortableClick()) return;
@@ -82,8 +83,8 @@ export function AdminProductRow({
           label={copy.table.reorderItemAria.replace("{title}", product.title)}
           disabled={!reorderEnabled}
           liftRow
-          attributes={sortable.attributes}
-          listeners={sortable.listeners}
+          attributes={attributes}
+          listeners={listeners}
         />
       </td>
       <td

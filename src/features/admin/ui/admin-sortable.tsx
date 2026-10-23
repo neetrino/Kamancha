@@ -29,10 +29,10 @@ import { GripVertical } from "lucide-react";
 
 import { beginRowLift, endRowLift, moveRowLift } from "@/features/admin/ui/admin-drag-lift";
 import {
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -112,16 +112,16 @@ export function AdminSortableRoot({
   const sensors = useAdminSortableSensors(activationDistance);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overlayWidth, setOverlayWidth] = useState<number | undefined>();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const overlayRef = useRef<HTMLDivElement>(null);
   const followRef = useRef<FollowPose>({
     cursor: { x: 0, y: 0 },
     offset: { x: 0, y: 0 },
   });
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   function handleDragStart(event: DragStartEvent): void {
     if (disabled) return;
