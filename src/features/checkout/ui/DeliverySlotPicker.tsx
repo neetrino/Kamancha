@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { DeliverySlotCalendar } from "@/features/checkout/ui/DeliverySlotCalendar";
+import { DeliverySlotMobileSchedule } from "@/features/checkout/ui/DeliverySlotMobileSchedule";
 import { DeliverySlotSummary } from "@/features/checkout/ui/DeliverySlotSummary";
 import { CheckoutRadio } from "@/features/checkout/ui/CheckoutRadio";
 import { CHECKOUT_TITLE_INVALID_CLASS } from "@/features/checkout/ui/checkout-ui";
@@ -28,6 +29,11 @@ type DeliverySlotPickerLabels = {
   approximatelyOneHour: string;
   change: string;
   asapOption: string;
+  scheduleOption: string;
+  deliveryDay: string;
+  deliveryTime: string;
+  apply: string;
+  close: string;
   pickDate: string;
   pickTime: string;
   noSlots: string;
@@ -180,7 +186,7 @@ export function DeliverySlotPicker({
 
   function applyCustomSlot(value: SelectedDeliverySlot): void {
     setUseAsap(false);
-    setPickedDate(null);
+    setPickedDate(value.date);
     onTimePendingChange?.(false);
     onChange(value);
     setIsEditing(false);
@@ -200,7 +206,7 @@ export function DeliverySlotPicker({
   const asapSelected = useAsap && isSameDeliverySlot(selected, asapSlot);
 
   return (
-    <div data-checkout-field="deliverySlot" className="relative z-[2] space-y-6">
+    <div data-checkout-field="deliverySlot" className="relative z-[2] space-y-4">
       <div className={SUMMARY_CARD_CLASS}>
         <div className="mb-3 flex items-center justify-between gap-3">
           <h3 className="font-big-fat-boii text-base font-normal tracking-wide text-gray-900 uppercase">
@@ -225,7 +231,65 @@ export function DeliverySlotPicker({
       </div>
 
       {isEditing ? (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start lg:gap-10">
+        <div>
+        <DeliverySlotMobileSchedule
+          locale={locale}
+          disabled={disabled}
+          asapLabel={labels.asapOption}
+          scheduleLabel={labels.scheduleOption}
+          datePlaceholder={labels.pickDate}
+          timePlaceholder={labels.pickTime}
+          dayTitle={labels.deliveryDay}
+          timeTitle={labels.deliveryTime}
+          applyLabel={labels.apply}
+          closeLabel={labels.close}
+          asapSelected={asapSelected}
+          hasAsap={Boolean(asapSlot)}
+          days={availableDays}
+          pickedDate={pickedDate}
+          pickedSlot={
+            !useAsap && selected && selected.date === pickedDate
+              ? {
+                  startTime: selected.startTime,
+                  endTime: selected.endTime,
+                  label: `${selected.startTime}–${selected.endTime}`,
+                }
+              : null
+          }
+          onAsap={applyAsap}
+          onDateApplied={(date) => {
+            if (disabled || !availableByDate.has(date)) return;
+            setUseAsap(false);
+            setPickedDate(date);
+            const sameTime = availableByDate
+              .get(date)
+              ?.slots.find(
+                (slot) =>
+                  selected?.startTime === slot.startTime &&
+                  selected.endTime === slot.endTime,
+              );
+            if (sameTime && !useAsap) {
+              onTimePendingChange?.(false);
+              onChange({
+                date,
+                startTime: sameTime.startTime,
+                endTime: sameTime.endTime,
+              });
+              setIsEditing(false);
+              return;
+            }
+            onTimePendingChange?.(true);
+          }}
+          onTimeApplied={(slot) => {
+            if (!pickedDate) return;
+            applyCustomSlot({
+              date: pickedDate,
+              startTime: slot.startTime,
+              endTime: slot.endTime,
+            });
+          }}
+        />
+        <div className="hidden gap-6 md:grid md:grid-cols-2 md:items-start md:gap-10">
           <div className="max-w-[20.5rem] space-y-3">
             <h3 className={PICKER_HEADING_CLASS}>{labels.title}</h3>
             <button
@@ -262,7 +326,7 @@ export function DeliverySlotPicker({
           </div>
           <div>
             <h3
-              className={`${PICKER_HEADING_CLASS} ${
+              className={`${PICKER_HEADING_CLASS} whitespace-pre-line ${
                 invalid && pickedDate ? CHECKOUT_TITLE_INVALID_CLASS : ""
               }`}
             >
@@ -279,6 +343,7 @@ export function DeliverySlotPicker({
               <p className="text-sm text-white/80">{labels.pickDate}</p>
             )}
           </div>
+        </div>
         </div>
       ) : null}
     </div>
