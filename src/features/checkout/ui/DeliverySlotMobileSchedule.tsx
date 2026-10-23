@@ -6,6 +6,7 @@ import {
   DeliverySlotWheelColumn,
   DeliverySlotWheelSheet,
 } from "@/features/checkout/ui/DeliverySlotWheelSheet";
+import { CHECKOUT_TITLE_INVALID_CLASS } from "@/features/checkout/ui/checkout-ui";
 import type {
   DeliveryDayAvailability,
   DeliveryTimeSlot,
@@ -28,6 +29,8 @@ type DeliverySlotMobileScheduleProps = {
   days: readonly DeliveryDayAvailability[];
   pickedDate: string | null;
   pickedSlot: DeliveryTimeSlot | null;
+  /** Day is chosen, time is still empty, and checkout submit marked the slot invalid. */
+  timeInvalid?: boolean;
   onAsap: () => void;
   onDateApplied: (date: string) => void;
   onTimeApplied: (slot: DeliveryTimeSlot) => void;
@@ -78,6 +81,7 @@ export function DeliverySlotMobileSchedule({
   days,
   pickedDate,
   pickedSlot,
+  timeInvalid = false,
   onAsap,
   onDateApplied,
   onTimeApplied,
@@ -232,7 +236,10 @@ export function DeliverySlotMobileSchedule({
             type="button"
             disabled={disabled || !pickedDate}
             onClick={openTime}
-            className={DATE_TIME_BUTTON_CLASS}
+            aria-invalid={timeInvalid || undefined}
+            className={`${DATE_TIME_BUTTON_CLASS} ${
+              timeInvalid ? `${CHECKOUT_TITLE_INVALID_CLASS} ring-2 ring-inset ring-red-500` : ""
+            }`}
           >
             {timeButtonText}
           </button>

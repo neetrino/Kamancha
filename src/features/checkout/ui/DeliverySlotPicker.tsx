@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { DeliverySlotCalendar } from "@/features/checkout/ui/DeliverySlotCalendar";
 import { DeliverySlotMobileSchedule } from "@/features/checkout/ui/DeliverySlotMobileSchedule";
@@ -154,6 +154,10 @@ export function DeliverySlotPicker({
   const [useAsap, setUseAsap] = useState(true);
   const [pickedDate, setPickedDate] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (invalid && pickedDate) setIsEditing(true);
+  }, [invalid, pickedDate]);
+
   const todayYmd = formatYerevanDate(new Date());
   const todayParts = parseYmd(todayYmd);
   const [viewYear, setViewYear] = useState(todayParts.year);
@@ -247,6 +251,7 @@ export function DeliverySlotPicker({
           hasAsap={Boolean(asapSlot)}
           days={availableDays}
           pickedDate={pickedDate}
+          timeInvalid={invalid && Boolean(pickedDate)}
           pickedSlot={
             !useAsap && selected && selected.date === pickedDate
               ? {
@@ -333,12 +338,20 @@ export function DeliverySlotPicker({
               {labels.pickTime}
             </h3>
             {selectedDay ? (
-              <DeliveryTimeSlotList
-                day={selectedDay}
-                selected={null}
-                disabled={disabled}
-                onChange={applyCustomSlot}
-              />
+              <div
+                className={
+                  invalid
+                    ? "rounded-2xl ring-2 ring-inset ring-red-500"
+                    : undefined
+                }
+              >
+                <DeliveryTimeSlotList
+                  day={selectedDay}
+                  selected={null}
+                  disabled={disabled}
+                  onChange={applyCustomSlot}
+                />
+              </div>
             ) : (
               <p className="text-sm text-white/80">{labels.pickDate}</p>
             )}
