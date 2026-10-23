@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import {
   CALENDAR_MONTH_NAMES,
@@ -77,28 +77,33 @@ export function DeliveryDateStrip({
 }: DeliveryDateStripProps) {
   const available = new Set(dates);
   const weeks = buildWeeks(dates);
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const weekRefs = useRef<Array<HTMLDivElement | null>>([]);
   const initialWeek = Math.max(
     0,
     weeks.findIndex((week) => week.includes(value)),
   );
   const [weekIndex, setWeekIndex] = useState(initialWeek);
+  const [dragX, setDragX] = useState(0);
+  const [glide, setGlide] = useState(false);
+  const dragStartX = useRef(0);
+  const dragStartAt = useRef(0);
+  const dragging = useRef(false);
   const visibleWeek = weeks[weekIndex] ?? weeks[0] ?? [];
   const monthSource =
     visibleWeek.find((date) => available.has(date)) ?? visibleWeek[3] ?? value;
+  const weekCount = Math.max(weeks.length, 1);
 
-  useLayoutEffect(() => {
-    const week = weekRefs.current[initialWeek];
-    week?.scrollIntoView({ inline: "start", block: "nearest" });
-  }, [initialWeek]);
-
-  function syncWeekFromScroll(): void {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    const left = scroller.scrollLeft;
-    const width = scroller.clientWidth || 1;
-    const next = Math.min(weeks.length - 1, Math.max(0, Math.round(left / width)));
+  function endDrag(endX: number): void {
+    if (!dragging.current) return;
+    dragging.current = false;
+    const delta = endX - dragStartX.current;
+    const elapsed = Math.max(Date.now() - dragStartAt.current, 1);
+    const velocity = delta / elapsed;
+    let next = weekIndex;
+    if (delta < -24 || velocity < -0.35) next += 1;
+    else if (delta > 24 || velocity > 0.35) next -= 1;
+    next = Math.min(weeks.length - 1, Math.max(0, next));
+    setGlide(true);
+    setDragX(0);
     setWeekIndex(next);
   }
 
@@ -111,18 +116,39 @@ export function DeliveryDateStrip({
         {monthLabel(locale, monthSource)}
       </p>
       <div
-        ref={scrollerRef}
-        onScroll={syncWeekFromScroll}
-        className="flex snap-x snap-mandatory overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="overflow-hidden"
+        style={{ touchAction: "none" }}
+        onPointerDown={(event) => {
+          event.stopPropagation();
+          event.currentTarget.setPointerCapture(event.pointerId);
+          dragging.current = true;
+          dragStartX.current = event.clientX;
+          dragStartAt.current = Date.now();
+          setGlide(false);
+        }}
+        onPointerMove={(event) => {
+          if (!dragging.current) return;
+          setDragX(event.clientX - dragStartX.current);
+        }}
+        onPointerUp={(event) => endDrag(event.clientX)}
+        onPointerCancel={() => endDrag(dragStartX.current)}
       >
-        {weeks.map((week, index) => (
-          <div
-            key={week[0]}
-            ref={(node) => {
-              weekRefs.current[index] = node;
-            }}
-            className="grid w-full shrink-0 snap-start grid-cols-7"
-          >
+        <div
+          className="flex"
+          style={{
+            width: `${weekCount * 100}%`,
+            transform: `translate3d(calc(${(-weekIndex * 100) / weekCount}% + ${dragX}px), 0, 0)`,
+            transition: glide
+              ? "transform 220ms cubic-bezier(0.22, 1, 0.36, 1)"
+              : "none",
+          }}
+        >
+          {weeks.map((week) => (
+            <div
+              key={week[0]}
+              className="grid shrink-0 grid-cols-7"
+              style={{ width: `${100 / weekCount}%` }}
+            >
             {week.map((date) => {
               const bookable = available.has(date);
               const selected = date === value;
@@ -153,8 +179,9 @@ export function DeliveryDateStrip({
                 </button>
               );
             })}
-          </div>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

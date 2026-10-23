@@ -16,7 +16,11 @@ type DeliverySlotWheelsProps = {
   onChange: (value: Record<string, string>, key: string) => void;
 };
 
-/** Default iOS drum wheel. The gray bar marks the selected row. */
+const WHEEL_ITEM_HEIGHT_PX = 36;
+const IOS_WHEEL_FADE =
+  "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.18) 16%, rgba(0,0,0,0.55) 32%, #000 44%, #000 56%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,0.18) 84%, transparent 100%)";
+
+/** iOS UIDatePicker drum: gray capsule and a fade away from the selected row. */
 export function DeliverySlotWheels({
   value,
   columns,
@@ -28,16 +32,22 @@ export function DeliverySlotWheels({
       onPointerDown={(event) => event.stopPropagation()}
     >
       <div
-        className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2 rounded-lg bg-gray-100"
-        style={{ height: 36 }}
+        className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2 rounded-[10px] bg-[#ececf1]"
+        style={{ height: WHEEL_ITEM_HEIGHT_PX }}
         aria-hidden
       />
-      <div className="relative z-[2] [&_.picker-item]:text-gray-300">
+      <div className="relative z-[2]">
         <Picker
           className="delivery-time-wheel [&>div:last-child]:hidden"
           value={value}
           onChange={onChange}
+          height={WHEEL_ITEM_HEIGHT_PX * 7}
+          itemHeight={WHEEL_ITEM_HEIGHT_PX}
           wheelMode="natural"
+          style={{
+            maskImage: IOS_WHEEL_FADE,
+            WebkitMaskImage: IOS_WHEEL_FADE,
+          }}
         >
           {columns.map((column) => (
             <Picker.Column key={column.name} name={column.name}>
@@ -45,11 +55,9 @@ export function DeliverySlotWheels({
                 <Picker.Item key={option.value} value={option.value}>
                   {({ selected }) => (
                     <span
-                      className={
-                        selected
-                          ? "text-[17px] font-semibold text-gray-900"
-                          : "text-[17px] font-medium text-gray-300"
-                      }
+                      className={`text-[22px] tracking-tight text-black ${
+                        selected ? "font-semibold" : "font-normal"
+                      }`}
                     >
                       {option.label}
                     </span>
