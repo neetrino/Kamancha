@@ -1,95 +1,64 @@
 "use client";
 
-import {
-  useLayoutEffect,
-  useRef,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import type { ReactNode } from "react";
+import Picker from "react-mobile-picker";
 
 import { BottomSheet } from "@/components/ui/BottomSheet";
-import { BOTTOM_SHEET_SCROLL_ATTR } from "@/components/ui/use-bottom-sheet-drag";
-import { BODY_SCROLL_LOCK_ALLOW } from "@/lib/react/use-body-scroll-lock";
 
-const ROW_HEIGHT_PX = 48;
-const VISIBLE_ROWS = 5;
-const PAD_ROWS = 2;
-
-type WheelColumnProps<T extends string | number> = {
-  items: readonly T[];
-  value: T;
-  format: (item: T) => string;
-  onChange: (item: T) => void;
-  ariaLabel: string;
+export type DeliverySlotWheelColumnModel = {
+  name: string;
+  options: readonly { value: string; label: string }[];
 };
 
-function WheelColumn<T extends string | number>({
-  items,
+type DeliverySlotWheelsProps = {
+  value: Record<string, string>;
+  columns: readonly DeliverySlotWheelColumnModel[];
+  onChange: (value: Record<string, string>, key: string) => void;
+};
+
+/** Default iOS drum wheel. The gray bar marks the selected row. */
+export function DeliverySlotWheels({
   value,
-  format,
+  columns,
   onChange,
-  ariaLabel,
-}: WheelColumnProps<T>) {
-  const listRef = useRef<HTMLDivElement>(null);
-  const valueRef = useRef(value);
-  valueRef.current = value;
-
-  useLayoutEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const index = Math.max(0, items.indexOf(valueRef.current));
-    list.scrollTop = index * ROW_HEIGHT_PX;
-  }, [items]);
-
-  function handleScroll(): void {
-    const list = listRef.current;
-    if (!list || items.length === 0) return;
-    const index = Math.min(
-      items.length - 1,
-      Math.max(0, Math.round(list.scrollTop / ROW_HEIGHT_PX)),
-    );
-    const next = items[index];
-    if (next !== undefined && next !== valueRef.current) {
-      onChange(next);
-    }
-  }
-
+}: DeliverySlotWheelsProps) {
   return (
-    <div className="relative min-w-0 flex-1">
+    <div
+      className="relative"
+      onPointerDown={(event) => event.stopPropagation()}
+    >
       <div
-        className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2 bg-red-50"
-        style={{ height: ROW_HEIGHT_PX }}
+        className="pointer-events-none absolute inset-x-0 top-1/2 z-[1] -translate-y-1/2 rounded-lg bg-gray-100"
+        style={{ height: 36 }}
         aria-hidden
       />
-      <div
-        ref={listRef}
-        role="listbox"
-        aria-label={ariaLabel}
-        {...{ [BODY_SCROLL_LOCK_ALLOW]: "", [BOTTOM_SHEET_SCROLL_ATTR]: "" }}
-        onScroll={handleScroll}
-        className="relative z-[2] snap-y snap-mandatory overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ height: ROW_HEIGHT_PX * VISIBLE_ROWS }}
-      >
-        <div style={{ height: ROW_HEIGHT_PX * PAD_ROWS }} />
-        {items.map((item) => {
-          const selected = item === value;
-          return (
-            <div
-              key={String(item)}
-              role="option"
-              aria-selected={selected}
-              className={`flex snap-center items-center justify-center text-base ${
-                selected
-                  ? "font-bold text-red-500"
-                  : "font-medium text-gray-400"
-              }`}
-              style={{ height: ROW_HEIGHT_PX }}
-            >
-              {format(item)}
-            </div>
-          );
-        })}
-        <div style={{ height: ROW_HEIGHT_PX * PAD_ROWS }} />
+      <div className="relative z-[2] [&_.picker-item]:text-gray-300">
+        <Picker
+          className="delivery-time-wheel [&>div:last-child]:hidden"
+          value={value}
+          onChange={onChange}
+          wheelMode="natural"
+        >
+          {columns.map((column) => (
+            <Picker.Column key={column.name} name={column.name}>
+              {column.options.map((option) => (
+                <Picker.Item key={option.value} value={option.value}>
+                  {({ selected }) => (
+                    <span
+                      className={
+                        selected
+                          ? "text-[17px] font-semibold text-gray-900"
+                          : "text-[17px] font-medium text-gray-300"
+                      }
+                    >
+                      {option.label}
+                    </span>
+                  )}
+                </Picker.Item>
+              ))}
+            </Picker.Column>
+          ))}
+        </Picker>
       </div>
     </div>
   );
@@ -126,11 +95,11 @@ export function DeliverySlotWheelSheet({
     >
       <div className="px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <h2 className="mb-2 text-lg font-bold text-gray-900">{title}</h2>
-        <div className="flex gap-2">{children}</div>
+        {children}
         <button
           type="button"
           onClick={onApply}
-          className="mt-6 w-full rounded-full bg-red-500 py-3.5 text-base font-semibold text-white"
+          className="mt-6 w-full rounded-full bg-brand-forest py-3.5 text-base font-semibold text-white"
         >
           {applyLabel}
         </button>
@@ -139,8 +108,3 @@ export function DeliverySlotWheelSheet({
   );
 }
 
-export function DeliverySlotWheelColumn<T extends string | number>(
-  props: WheelColumnProps<T>,
-): ReactElement {
-  return <WheelColumn {...props} />;
-}

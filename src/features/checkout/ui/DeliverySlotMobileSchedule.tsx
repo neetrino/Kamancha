@@ -2,10 +2,8 @@
 
 import { useMemo, useState } from "react";
 
-import {
-  DeliverySlotWheelColumn,
-  DeliverySlotWheelSheet,
-} from "@/features/checkout/ui/DeliverySlotWheelSheet";
+import { DeliveryDateStrip } from "@/features/checkout/ui/DeliveryDateStrip";
+import { DeliverySlotWheelSheet, DeliverySlotWheels } from "@/features/checkout/ui/DeliverySlotWheelSheet";
 import { CHECKOUT_TITLE_INVALID_CLASS } from "@/features/checkout/ui/checkout-ui";
 import type {
   DeliveryDayAvailability,
@@ -254,26 +252,23 @@ export function DeliverySlotMobileSchedule({
         onClose={() => setDateOpen(false)}
         onApply={applyDate}
       >
-        <DeliverySlotWheelColumn
-          items={dayNumbers}
-          value={safeDay}
-          format={(day) => String(day)}
-          ariaLabel={dayTitle}
-          onChange={setDraftDay}
-        />
-        <DeliverySlotWheelColumn
-          items={monthIndexes}
-          value={safeMonth}
-          format={(monthIndex) => shortMonth(locale, monthIndex)}
-          ariaLabel={dayTitle}
-          onChange={(monthIndex) => alignDraft(draftYear, monthIndex, safeDay)}
-        />
-        <DeliverySlotWheelColumn
-          items={years}
-          value={safeYear}
-          format={(year) => String(year)}
-          ariaLabel={dayTitle}
-          onChange={(year) => alignDraft(year, safeMonth, safeDay)}
+        <DeliveryDateStrip
+          locale={locale}
+          dates={days.map((day) => day.date)}
+          value={
+            days.find((day) => {
+              const part = parseYmd(day.date);
+              return (
+                part.year === safeYear &&
+                part.monthIndex === safeMonth &&
+                part.day === safeDay
+              );
+            })?.date ?? days[0]?.date ?? ""
+          }
+          onChange={(date) => {
+            const part = parseYmd(date);
+            alignDraft(part.year, part.monthIndex, part.day);
+          }}
         />
       </DeliverySlotWheelSheet>
 
@@ -286,12 +281,20 @@ export function DeliverySlotMobileSchedule({
         onApply={applyTime}
       >
         {timeKeys.length > 0 ? (
-          <DeliverySlotWheelColumn
-            items={timeKeys}
-            value={draftSlotKey ?? timeKeys[0] ?? ""}
-            format={(key) => formatClock(key.split("|")[0] ?? "")}
-            ariaLabel={timeTitle}
-            onChange={setDraftSlotKey}
+          <DeliverySlotWheels
+            value={{ time: draftSlotKey ?? timeKeys[0] ?? "" }}
+            columns={[
+              {
+                name: "time",
+                options: timeKeys.map((key) => ({
+                  value: key,
+                  label: formatClock(key.split("|")[0] ?? ""),
+                })),
+              },
+            ]}
+            onChange={(next) => {
+              if (next.time) setDraftSlotKey(next.time);
+            }}
           />
         ) : null}
       </DeliverySlotWheelSheet>
