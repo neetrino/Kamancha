@@ -24,7 +24,7 @@ export function BlogIndexView({ locale, posts, copy }: BlogIndexViewProps) {
         </Reveal>
       </header>
       {posts.length === 0 ? (
-        <div className="relative left-1/2 h-[calc(100svh-20rem)] w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden [--blog-empty-photo:min(78vw,520px)] lg:h-auto lg:min-h-[520px] lg:overflow-visible lg:[--blog-empty-photo:min(44vw,780px)]">
+        <div className="relative left-1/2 h-[calc(100svh-20rem)] w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden [--blog-empty-photo:min(90vw,560px)] lg:h-auto lg:min-h-[520px] lg:overflow-visible lg:[--blog-empty-photo:min(44vw,780px)]">
           <Reveal
             immediate
             delay={0.45}

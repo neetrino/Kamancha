@@ -34,6 +34,11 @@ export type CheckoutLabels = {
   scheduleApproximatelyOneHour: string;
   scheduleChange: string;
   scheduleAsapOption: string;
+  scheduleOption: string;
+  scheduleDeliveryDay: string;
+  scheduleDeliveryTime: string;
+  scheduleApply: string;
+  scheduleClose: string;
   schedulePickDate: string;
   schedulePickTime: string;
   scheduleNoSlots: string;
@@ -130,6 +135,11 @@ export function checkoutFormLabels(
     scheduleApproximatelyOneHour: copy.schedule.approximatelyOneHour,
     scheduleChange: copy.schedule.change,
     scheduleAsapOption: copy.schedule.asapOption,
+    scheduleOption: copy.schedule.scheduleOption,
+    scheduleDeliveryDay: copy.schedule.deliveryDay,
+    scheduleDeliveryTime: copy.schedule.deliveryTime,
+    scheduleApply: copy.schedule.apply,
+    scheduleClose: copy.schedule.close,
     schedulePickDate: copy.schedule.pickDate,
     schedulePickTime: copy.schedule.pickTime,
     scheduleNoSlots: copy.schedule.noSlots,
