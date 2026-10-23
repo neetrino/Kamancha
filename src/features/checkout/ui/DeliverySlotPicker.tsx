@@ -331,11 +331,11 @@ export function DeliverySlotPicker({
           </div>
           <div>
             <h3
-              className={`${PICKER_HEADING_CLASS} whitespace-pre-line ${
+              className={`${PICKER_HEADING_CLASS} whitespace-nowrap ${
                 invalid && pickedDate ? CHECKOUT_TITLE_INVALID_CLASS : ""
               }`}
             >
-              {labels.pickTime}
+              {labels.pickTime.replace(/\n/g, " ")}
             </h3>
             {selectedDay ? (
               <div
