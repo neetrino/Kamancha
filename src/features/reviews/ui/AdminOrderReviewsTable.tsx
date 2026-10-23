@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Card } from "@/components/ui/Card";
+import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import {
   ADMIN_TABLE,
   ADMIN_TABLE_CARD,
@@ -9,7 +10,9 @@ import {
   ADMIN_TABLE_STATE_INSET,
   ADMIN_TABLE_TBODY,
   ADMIN_TABLE_TD,
+  ADMIN_TABLE_TD_CENTER,
   ADMIN_TABLE_TH,
+  ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
 import type { AdminOrderReview } from "@/features/reviews/application/admin-queries";
@@ -21,10 +24,6 @@ type AdminOrderReviewsTableProps = {
   rows: AdminOrderReview[];
   copy: Dictionary["admin"];
 };
-
-function formatUtc(date: Date | null, utc: string, none: string): string {
-  return date ? `${date.toISOString().slice(0, 16).replace("T", " ")} ${utc}` : none;
-}
 
 export function AdminOrderReviewsTable({
   locale,
@@ -48,14 +47,18 @@ export function AdminOrderReviewsTable({
           <thead className={ADMIN_TABLE_THEAD}>
             <tr>
               <th className={ADMIN_TABLE_TH}>{t.table.order}</th>
-              <th className={ADMIN_TABLE_TH}>{t.table.rating}</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>{t.table.rating}</th>
               <th className={ADMIN_TABLE_TH}>{t.table.comment}</th>
               <th className={ADMIN_TABLE_TH}>{t.table.author}</th>
-              <th className={ADMIN_TABLE_TH}>{t.table.submittedAt}</th>
+              <th className={ADMIN_TABLE_TH_CENTER}>{t.table.submittedAt}</th>
             </tr>
           </thead>
           <tbody className={ADMIN_TABLE_TBODY}>
-            {rows.map((row) => (
+            {rows.map((row) => {
+              const submitted = row.createdAt
+                ? formatAdminPlacedParts(row.createdAt)
+                : null;
+              return (
               <tr key={row.orderId} className={ADMIN_TABLE_ROW}>
                 <td className={ADMIN_TABLE_TD}>
                   <Link
@@ -65,8 +68,8 @@ export function AdminOrderReviewsTable({
                     {t.table.orderNumber.replace("{orderNumber}", row.orderNumber)}
                   </Link>
                 </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="inline-flex items-center gap-2">
+                <td className={ADMIN_TABLE_TD_CENTER}>
+                  <span className="inline-flex items-center justify-center gap-2">
                     <AdminReviewStars
                       rating={row.rating}
                       ariaLabel={t.ratingAria.replace("{rating}", String(row.rating))}
@@ -83,13 +86,19 @@ export function AdminOrderReviewsTable({
                   <span className="block font-medium text-gray-900">{row.authorName}</span>
                   <span className="block text-xs text-gray-500">{row.authorEmail}</span>
                 </td>
-                <td className={ADMIN_TABLE_TD}>
-                  <span className="text-xs text-gray-500">
-                    {formatUtc(row.createdAt, copy.common.utc, copy.common.none)}
-                  </span>
+                <td className={ADMIN_TABLE_TD_CENTER}>
+                  {submitted ? (
+                    <>
+                      <p className="text-sm text-gray-700">{submitted.time}</p>
+                      <p className="text-xs text-gray-500">{submitted.date}</p>
+                    </>
+                  ) : (
+                    <span className="text-sm text-gray-500">{copy.common.none}</span>
+                  )}
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

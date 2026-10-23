@@ -10,6 +10,7 @@ import {
   ADMIN_MAIN_INNER,
   ADMIN_PAGE_SHELL,
 } from "@/features/admin/ui/admin-shell-classes";
+import { AdminUnreadMessagesProvider } from "@/features/contact/ui/AdminUnreadMessagesContext";
 import { AdminNewOrderAlert } from "@/features/orders/ui/AdminNewOrderAlert";
 import { AdminOrderAlertsProvider } from "@/features/orders/ui/AdminOrderAlertsContext";
 import type { Locale } from "@/lib/i18n/config";
@@ -25,12 +26,14 @@ export function AdminShell({ locale, copy, children }: AdminShellProps) {
   return (
     <AdminSidebarCollapseProvider>
       <AdminOrderAlertsProvider locale={locale}>
+        <AdminUnreadMessagesProvider locale={locale}>
         <div className={ADMIN_PAGE_SHELL} data-admin-shell="">
           <AdminSidebar
             locale={locale}
             shell={copy.shell}
             nav={copy.nav}
             ordersBadgeAria={copy.orders.newAlert.badgeAria}
+            messagesBadgeAria={copy.messages.badgeAria}
           />
           <div className={ADMIN_MAIN_COLUMN}>
             <div className={ADMIN_MAIN_INNER}>
@@ -39,6 +42,7 @@ export function AdminShell({ locale, copy, children }: AdminShellProps) {
           </div>
           <AdminNewOrderAlert locale={locale} copy={copy.orders.newAlert} />
         </div>
+        </AdminUnreadMessagesProvider>
       </AdminOrderAlertsProvider>
     </AdminSidebarCollapseProvider>
   );

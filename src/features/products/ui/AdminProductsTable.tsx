@@ -181,6 +181,7 @@ export function AdminProductsTable({
         ) : (
           <div className="w-full min-w-0 overflow-x-auto rounded-t-lg">
             <AdminSortableRoot
+              id="admin-products"
               items={rows.map((product) => product.id)}
               disabled={dragLocked}
               activationDistance={0}

@@ -1,3 +1,7 @@
+/** Same pill shape as the order status chips. */
+export const CONTACT_STATUS_PILL_CLASS =
+  "inline-flex h-8 items-center rounded-full px-3 text-xs font-medium uppercase";
+
 /** Admin inbox badge colors for contact message status. */
 export function contactStatusBadgeClass(status: string): string {
   const normalized = status.toUpperCase();

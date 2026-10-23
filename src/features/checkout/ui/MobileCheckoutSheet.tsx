@@ -30,7 +30,15 @@ export function MobileCheckoutSheet({
 }: MobileCheckoutSheetProps) {
   const router = useRouter();
   const [view, setView] = useState<CheckoutFormView | null>(null);
-  const labels = checkoutFormLabels(dictionary.checkout);
+  const labels = checkoutFormLabels(
+    dictionary.checkout,
+    view
+      ? {
+          fromMinutes: view.deliverySchedule.estimateFromMinutes,
+          toMinutes: view.deliverySchedule.estimateToMinutes,
+        }
+      : undefined,
+  );
   const onCloseRef = useRef(onClose);
 
   useLayoutEffect(() => {

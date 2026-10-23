@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { Card } from "@/components/ui/Card";
+import { formatAdminDateTime } from "@/features/admin/ui/format-admin-placed";
 import {
   ADMIN_PAGE_SUBTITLE,
   ADMIN_PAGE_TITLE,
@@ -279,7 +280,7 @@ export default async function AdminOrderDetailPage({
           <p className="mt-2 text-sm text-gray-500">
             {d.placedAt.replace(
               "{datetime}",
-              order.placedAt.toISOString().slice(0, 16).replace("T", " "),
+              formatAdminDateTime(order.placedAt),
             )}
           </p>
         </Card>
@@ -341,8 +342,7 @@ export default async function AdminOrderDetailPage({
                   : null}
               </p>
               <p className="text-gray-500">
-                {event.createdAt.toISOString().slice(0, 19).replace("T", " ")}{" "}
-                {copy.common.utc}
+                {formatAdminDateTime(event.createdAt)}
                 {event.isCustomerVisible
                   ? ` · ${d.customerVisible}`
                   : ` · ${d.internal}`}

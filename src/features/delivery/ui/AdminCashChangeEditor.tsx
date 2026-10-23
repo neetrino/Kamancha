@@ -291,6 +291,7 @@ export function AdminCashChangeEditor({
 
       {value.length > 0 ? (
         <AdminSortableRoot
+          id="admin-cash-change"
           items={value.map((item) => item.id)}
           disabled={reorderDisabled}
           onReorder={handleReorder}

@@ -122,15 +122,17 @@ export function HomeOurStory({
                     data-node-id="744:1053"
                     className="pointer-events-none relative order-2 mt-2 h-[180px] overflow-hidden sm:h-[220px] xl:absolute xl:top-[150px] xl:left-0 xl:mt-0 xl:h-[170px] xl:w-full"
                   >
-                    <img
+                    <Image
                       src={SARYAN_PAINTING}
                       alt=""
-                      className="absolute inset-0 h-full w-full max-w-none object-cover object-center xl:object-fill"
+                      fill
+                      sizes="(min-width: 1280px) 40vw, 100vw"
+                      className="object-cover object-center xl:object-fill"
                     />
                   </div>
                   <div className="relative z-[1] flex flex-col gap-3 px-6 pt-5 pb-2 sm:px-8 xl:absolute xl:inset-x-0 xl:top-0 xl:block xl:px-0 xl:pt-0 xl:pb-0">
                     <div className="flex items-center gap-4 xl:block">
-                      <img
+                      <Image
                         data-node-id="796:317"
                         src={TAPAKA_ROOMS_LOGO}
                         alt=""

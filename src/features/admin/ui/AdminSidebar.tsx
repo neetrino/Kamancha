@@ -20,6 +20,7 @@ type AdminSidebarProps = {
   shell: Dictionary["admin"]["shell"];
   nav: Dictionary["admin"]["nav"];
   ordersBadgeAria: string;
+  messagesBadgeAria: string;
 };
 
 export function AdminSidebar({
@@ -27,6 +28,7 @@ export function AdminSidebar({
   shell,
   nav,
   ordersBadgeAria,
+  messagesBadgeAria,
 }: AdminSidebarProps) {
   const pathname = usePathname() ?? `/${locale}/admin`;
   const { collapsed } = useAdminSidebarCollapse();
@@ -49,6 +51,7 @@ export function AdminSidebar({
             shell={shell}
             nav={nav}
             ordersBadgeAria={ordersBadgeAria}
+            messagesBadgeAria={messagesBadgeAria}
           />
         </div>
       </div>
@@ -60,6 +63,7 @@ export function AdminSidebar({
           shell={shell}
           nav={nav}
           ordersBadgeAria={ordersBadgeAria}
+          messagesBadgeAria={messagesBadgeAria}
         />
       </aside>
     </>

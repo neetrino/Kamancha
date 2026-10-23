@@ -43,9 +43,9 @@
   "schedule": {
     "title": "Date and time",
     "deliverTo": "Deliver to",
-    "approximatelyOneHour": "approximately 45-60 minutes",
+    "approximatelyOneHour": "approximately {from}-{to} minutes",
     "change": "Change",
-    "asapOption": "As soon as possible (45-60 minutes)",
+    "asapOption": "As soon as possible ({from}-{to} minutes)",
     "scheduleOption": "Schedule",
     "deliveryDay": "Delivery day",
     "deliveryTime": "Delivery time",

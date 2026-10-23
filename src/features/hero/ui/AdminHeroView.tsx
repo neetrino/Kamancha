@@ -223,6 +223,7 @@ export function AdminHeroView({
         </Card>
       ) : (
         <AdminSortableRoot
+          id="admin-hero-slides"
           items={ordered.map((slide) => slide.id)}
           disabled={isPending}
           onReorder={handleReorder}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { formatAdminDateTime } from "@/features/admin/ui/format-admin-placed";
 import { getGiftCardDetail } from "@/features/gift-cards/application/queries";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -89,8 +90,7 @@ export default async function AdminGiftCardDetailPage({ params }: PageProps) {
                 <div>
                   <p className="font-medium text-gray-900">{row.type}</p>
                   <p className="text-xs text-gray-500">
-                    {row.createdAt.toISOString().slice(0, 16).replace("T", " ")}{" "}
-                    UTC
+                    {formatAdminDateTime(row.createdAt)}
                   </p>
                 </div>
                 <p className="font-semibold text-gray-900">

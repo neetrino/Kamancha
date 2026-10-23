@@ -27,7 +27,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   return (
     <CheckoutForm
       locale={rawLocale}
-      labels={checkoutFormLabels(dictionary.checkout)}
+      labels={checkoutFormLabels(dictionary.checkout, {
+        fromMinutes: view.deliverySchedule.estimateFromMinutes,
+        toMinutes: view.deliverySchedule.estimateToMinutes,
+      })}
       productsHref={view.productsHref}
       hasItems={view.hasItems}
       orderProducts={view.orderProducts}

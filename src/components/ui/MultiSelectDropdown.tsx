@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
 
 import { DROPDOWN_ANIMATION_MS } from "@/components/ui/SelectDropdown";
+import { BODY_SCROLL_LOCK_ALLOW } from "@/lib/react/use-body-scroll-lock";
 
 export type MultiSelectOption = {
   label: string;
@@ -173,7 +174,7 @@ export function MultiSelectDropdown({
         onClick={() => (open ? closeMenu() : openMenu())}
         className={
           title
-            ? "flex w-full items-start justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left shadow-sm outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+            ? "flex w-full items-start justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left outline-none transition-colors hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
             : "flex h-11 w-full items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-3 text-left text-sm text-gray-900 transition hover:border-gray-300 disabled:opacity-40"
         }
       >
@@ -197,6 +198,7 @@ export function MultiSelectDropdown({
         ? createPortal(
             <div
               ref={menuRef}
+              {...{ [BODY_SCROLL_LOCK_ALLOW]: "" }}
               className={`fixed z-[200] origin-top grid transition-[grid-template-rows,opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 open
                   ? "translate-y-0 grid-rows-[1fr] opacity-100"
@@ -211,7 +213,7 @@ export function MultiSelectDropdown({
               aria-hidden={!open}
             >
               <div className="min-h-0 overflow-hidden">
-                <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white py-2 shadow-lg">
+                <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white py-2">
                   {searchPlaceholder ? (
                     <div className="px-3 pb-2">
                       <input
@@ -227,7 +229,7 @@ export function MultiSelectDropdown({
                     id={listId}
                     role="listbox"
                     aria-multiselectable="true"
-                    className="max-h-56 overflow-y-auto"
+                    className="max-h-56 overflow-y-auto overscroll-contain"
                   >
                     {visibleOptions.length === 0 ? (
                       <li className="px-4 py-2.5 text-sm text-gray-500">

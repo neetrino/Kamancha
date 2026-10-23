@@ -234,7 +234,6 @@ export function DeliverySlotMobileSchedule({
             type="button"
             disabled={disabled || !pickedDate}
             onClick={openTime}
-            aria-invalid={timeInvalid || undefined}
             className={`${DATE_TIME_BUTTON_CLASS} ${
               timeInvalid ? `${CHECKOUT_TITLE_INVALID_CLASS} ring-2 ring-inset ring-red-500` : ""
             }`}

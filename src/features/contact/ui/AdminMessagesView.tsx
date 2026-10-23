@@ -17,14 +17,18 @@ import {
   ADMIN_TABLE_TH_CENTER,
   ADMIN_TABLE_THEAD,
 } from "@/features/admin/ui/admin-table-classes";
-import { ADMIN_BADGE } from "@/features/admin/ui/status-badge";
+import { formatAdminPlacedParts } from "@/features/admin/ui/format-admin-placed";
 import type {
   AdminContactListItem,
   AdminContactMessageDetail,
 } from "@/features/contact/application/queries";
 import { getAdminContactMessageDetailAction } from "@/features/contact/application/update-contact-status";
 import { AdminMessageDetailSheet } from "@/features/contact/ui/AdminMessageDetailSheet";
-import { contactStatusBadgeClass } from "@/features/contact/ui/contact-status-badge-class";
+import {
+  CONTACT_STATUS_PILL_CLASS,
+  contactStatusBadgeClass,
+} from "@/features/contact/ui/contact-status-badge-class";
+import { contactStatusLabel } from "@/features/contact/ui/contact-status-label";
 import type { Dictionary } from "@/lib/i18n/get-dictionary";
 
 type AdminMessagesViewProps = {
@@ -91,7 +95,7 @@ export function AdminMessagesView({
                   <th className={ADMIN_TABLE_TH}>{t.table.subject}</th>
                   <th className={ADMIN_TABLE_TH}>{t.table.from}</th>
                   <th className={ADMIN_TABLE_TH_CENTER}>{t.table.status}</th>
-                  <th className={ADMIN_TABLE_TH}>{t.table.received}</th>
+                  <th className={ADMIN_TABLE_TH_CENTER}>{t.table.received}</th>
                 </tr>
               </thead>
               <tbody className={ADMIN_TABLE_TBODY}>
@@ -112,9 +116,9 @@ export function AdminMessagesView({
                     </td>
                     <td className={ADMIN_TABLE_TD_CENTER}>
                       <span
-                        className={`${ADMIN_BADGE} ${contactStatusBadgeClass(message.status)}`}
+                        className={`${CONTACT_STATUS_PILL_CLASS} ${contactStatusBadgeClass(message.status)}`}
                       >
-                        {message.status}
+                        {contactStatusLabel(message.status, t.statusLabels)}
                       </span>
                       {message.spamScore !== null ? (
                         <p className="mt-1 text-xs text-gray-500">
@@ -125,14 +129,13 @@ export function AdminMessagesView({
                         </p>
                       ) : null}
                     </td>
-                    <td className={ADMIN_TABLE_TD}>
-                      <span className="text-xs text-gray-500">
-                        {message.createdAt
-                          .toISOString()
-                          .slice(0, 16)
-                          .replace("T", " ")}{" "}
-                        {copy.common.utc}
-                      </span>
+                    <td className={ADMIN_TABLE_TD_CENTER}>
+                      <p className="text-sm text-gray-700">
+                        {formatAdminPlacedParts(message.createdAt).time}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatAdminPlacedParts(message.createdAt).date}
+                      </p>
                     </td>
                   </tr>
                 ))}

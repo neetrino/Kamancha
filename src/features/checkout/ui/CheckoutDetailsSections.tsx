@@ -298,17 +298,6 @@ export function CheckoutDetailsSections({
               />
             </label>
           </div>
-          <label className={FIELD_LABEL_CLASS}>
-            {labels.note}
-            <textarea
-              name="customerNote"
-              disabled={pending}
-              rows={3}
-              maxLength={500}
-              placeholder={labels.notePlaceholder}
-              className="min-h-[5.5rem] w-full resize-y rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-500 hover:border-gray-300 focus:border-gray-400 disabled:bg-gray-50"
-            />
-          </label>
           <DeliverySlotPicker
             schedule={deliverySchedule}
             selected={deliverySlot}
@@ -374,6 +363,21 @@ export function CheckoutDetailsSections({
         payableTotal={payableTotal}
         cashChangeDueFormatted={cashChangeDueFormatted}
       />
+
+      <section className={SECTION_CLASS}>
+        <h2 id="checkout-order-note" className={CHECKOUT_SECTION_TITLE_CLASS}>
+          {labels.note}
+        </h2>
+        <textarea
+          name="customerNote"
+          aria-labelledby="checkout-order-note"
+          disabled={pending}
+          rows={3}
+          maxLength={500}
+          placeholder={labels.notePlaceholder}
+          className="relative z-[2] min-h-[5.5rem] w-full resize-y rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-sm outline-none transition-colors placeholder:text-gray-500 hover:border-gray-300 focus:border-gray-400 disabled:bg-gray-50"
+        />
+      </section>
     </div>
   );
 }

@@ -190,6 +190,7 @@ export function ProductDrawerImages({
 
       {images.length > 0 ? (
         <AdminSortableRoot
+          id="admin-product-images"
           items={images.map((image) => image.key)}
           disabled={disabled}
           strategy={rectSortingStrategy}
